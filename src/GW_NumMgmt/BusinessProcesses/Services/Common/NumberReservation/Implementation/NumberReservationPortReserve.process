@@ -1,0 +1,830 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns14="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlPfx="http://www.zain.com/ZESB/Services/NumberReservation" xmlns:format="java://MSISDNFormatter" xmlns:ns5="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns6="http://www.ericsson.com/BusinessSchemas/Services/Common/JMSSchema/JMSHeader.xsd" xmlns:ns13="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx="http://www.zain.com/ZESB/Services/NumberReservation/Types" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.zain.com/ZESB/Types/Common" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/NumReservResponse.xsd" xmlns:ns3="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns0="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/NumReservRequest.xsd" xmlns:pfx4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/NumberReservationResponse.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:pfx2="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/NumberReservationRequest.xsd">
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/NumberReservation/Types" schemaLocation="/BusinessWSDLS/Services/WSDLS/NumberReservation/NumberReservationInbound.wsdl"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/NumberReservationRequest.xsd" schemaLocation="/BusinessSchemas/Services/Applications/Common/NumberReservation/NumberReservationRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/NumReservRequest.xsd" schemaLocation="/BusinessSchemas/Services/Applications/Common/NumberReservation/NumReservRequest.xsd"/>
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/NumberReservation" location="/BusinessWSDLS/Services/WSDLS/NumberReservation/NumberReservationInbound.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/NumberReservation/Implementation/NumberReservationPortReserve.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="wsdlPfx:ReserveRequest"/>
+    <pd:startX>41</pd:startX>
+    <pd:startY>174</pd:startY>
+    <pd:returnBindings>
+        <wsdlPfx:ReserveResponse>
+            <parameters>
+                <pfx:ReserveResponse>
+                    <pfx:RequestStatus>
+                        <xsl:value-of select="if(string-length($ESI_Call_ReserveNumber/ns4:numReservResponse/ns4:reservationNum)>0)&#xA;then&#xA;&quot;SUCCESS&quot;&#xA;else&#xA;&quot;FAIL&quot;"/>
+                    </pfx:RequestStatus>
+                </pfx:ReserveResponse>
+            </parameters>
+        </wsdlPfx:ReserveResponse>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="wsdlPfx:ReserveResponse"/>
+    <pd:endX>1516</pd:endX>
+    <pd:endY>170</pd:endY>
+    <pd:errorSchemas>
+        <Schema1 wsMsgRef="wsdlPfx:faultMessage"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442748198273</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>271</pd:x>
+        <pd:y>27</pd:y>
+        <pd:width>1135</pd:width>
+        <pd:height>278</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>simpleGroup</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>GetTransactionID</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogOut</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetTransactionID</pd:from>
+            <pd:to>LogIn</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call_ReserveNumber</pd:from>
+            <pd:to>LogOut</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call_ReserveNumber</pd:from>
+            <pd:to>GenerateErrorESI_NumberReservation</pd:to>
+            <pd:xpathDescription>ErrorExists</pd:xpathDescription>
+            <pd:lineType>Straight</pd:lineType>
+            <pd:lineColor>-52429</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>NativeToCDM-Call Reserve</pd:from>
+            <pd:to>ESI_Call_ReserveNumber</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogIn</pd:from>
+            <pd:to>Call_CivilID_Validation</pd:to>
+            <pd:xpathDescription>CivilIDExists</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-65281</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>string-length($Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:CivilID)&gt;0
+and
+not(string-length($Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:Requester)&gt;0)</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogIn</pd:from>
+            <pd:to>WrongInput_GenerateError</pd:to>
+            <pd:xpathDescription>WrongInput-Error</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-3394816</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>string-length($Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:Requester)&gt;0
+and
+string-length($Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:CivilID)&gt;0</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Call_CivilID_Validation</pd:from>
+            <pd:to>NativeToCDM-Call-QueryNumber</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogIn</pd:from>
+            <pd:to>NativeToCDM-Call-QueryNumber</pd:to>
+            <pd:xpathDescription/>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Call_CivilID_Validation</pd:from>
+            <pd:to>WrongCivilIDGenerateError</pd:to>
+            <pd:xpathDescription>InvalidCivilID</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-52480</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Call_CivilID_Validation/Result='false'</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>NativeToCDM-Call-QueryNumber</pd:from>
+            <pd:to>ESI_Call_QueryNumber</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call_QueryNumber</pd:from>
+            <pd:to>NativeToCDM-Call Reserve</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call_QueryNumber</pd:from>
+            <pd:to>GenerateErrorESI_NumberReservation-Query</pd:to>
+            <pd:xpathDescription>Error</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-52480</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="LogIn">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>448</pd:x>
+            <pd:y>90</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+                <spawn>false</spawn>
+            </config>
+            <pd:inputBindings>
+                <ns12:LogRequest>
+                    <ns0:Header>
+                        <ns0:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns0:ApplicationID>
+                        <ns0:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ReserveNumber/ComponentName"/>
+                        </ns0:ComponentName>
+                        <ns0:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns0:Hostname>
+                        <ns0:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns0:Timestamp>
+                        <ns0:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                        </ns0:TransactionDomain>
+                        <ns0:TransactionType>
+                            <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                        </ns0:TransactionType>
+                        <ns0:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns0:TransactionID>
+                        <xsl:if test="$GetContext/ns6:_applicationProperties/ns6:JMSMessageID">
+                            <ns0:CorrelationID>
+                                <xsl:value-of select="$GetContext/ns6:_applicationProperties/ns6:JMSMessageID"/>
+                            </ns0:CorrelationID>
+                        </xsl:if>
+                        <ns0:InterfaceID>
+                            <xsl:value-of select="$Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:Number"/>
+                        </ns0:InterfaceID>
+                        <ns0:Filename>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                        </ns0:Filename>
+                        <ns0:Message>
+                            <xsl:value-of select="tib:render-xml($Start/wsdlPfx:ReserveRequest)"/>
+                        </ns0:Message>
+                    </ns0:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_RECV"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns12:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="LogOut">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>1297</pd:x>
+            <pd:y>82</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+                <spawn>false</spawn>
+            </config>
+            <pd:inputBindings>
+                <ns12:LogRequest>
+                    <ns0:Header>
+                        <ns0:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns0:ApplicationID>
+                        <ns0:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ReserveNumber/ComponentName"/>
+                        </ns0:ComponentName>
+                        <ns0:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns0:Hostname>
+                        <ns0:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns0:Timestamp>
+                        <ns0:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                        </ns0:TransactionDomain>
+                        <ns0:TransactionType>
+                            <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                        </ns0:TransactionType>
+                        <ns0:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns0:TransactionID>
+                        <ns0:Filename>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                        </ns0:Filename>
+                        <ns0:Message>
+                            <xsl:value-of select="tib:render-xml($ESI_Call_ReserveNumber/ns4:numReservResponse)"/>
+                        </ns0:Message>
+                        <ns0:Transaction>
+                            <xsl:value-of select="tib:render-xml($Start/wsdlPfx:ReserveRequest)"/>
+                        </ns0:Transaction>
+                    </ns0:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="tib:timestamp()-$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_SENT"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns12:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ESI_Call_ReserveNumber">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>1162</pd:x>
+            <pd:y>82</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/NumberReservation/HelperProcess/ESI_Call_ReserveNumber.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <xsl:copy-of select="$NativeToCDM-Call-Reserve/root/pfx5:numReservRequest"/>
+                    <TransactionId>
+                        <xsl:value-of select="$NativeToCDM-Call-Reserve/root/TransactionId"/>
+                    </TransactionId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$NativeToCDM-Call-Reserve/root/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GetTransactionID">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>332</pd:x>
+            <pd:y>90</pd:y>
+            <config>
+                <processName>/CommonProcesses/Utilities/GUID.process</processName>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="GenerateErrorESI_NumberReservation">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>1163</pd:x>
+            <pd:y>228</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns3:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                    </message>
+                    <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                        <messageCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </messageCode>
+                    </xsl:if>
+                </ns3:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="NativeToCDM-Call Reserve">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>1028</pd:x>
+            <pd:y>92</pd:y>
+            <config>
+                <element>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element ref="pfx5:numReservRequest"/>
+                                <xsd:element name="TransactionId" type="xsd:string"/>
+                                <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </element>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <pfx5:numReservRequest>
+                        <pfx5:number>
+                            <xsl:value-of select="format:FormatMSISDN($Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:Number, $_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/MSISDN_Length)"/>
+                        </pfx5:number>
+                        <xsl:if test="tib:tokenize($ESI_Call_QueryNumber/ns4:numReservResponse/ns4:numberList[1]/ns4:dealerName, '_')[3]">
+                            <pfx5:billingType>
+                                <xsl:value-of select="tib:tokenize($ESI_Call_QueryNumber/ns4:numReservResponse/ns4:numberList[1]/ns4:dealerName, '_')[3]"/>
+                            </pfx5:billingType>
+                        </xsl:if>
+                        <xsl:if test="tib:tokenize($ESI_Call_QueryNumber/ns4:numReservResponse/ns4:numberList[1]/ns4:dealerName, '_')[2]">
+                            <pfx5:bsType>
+                                <xsl:value-of select="tib:tokenize($ESI_Call_QueryNumber/ns4:numReservResponse/ns4:numberList[1]/ns4:dealerName, '_')[2]"/>
+                            </pfx5:bsType>
+                        </xsl:if>
+                        <xsl:if test="$Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:CivilID">
+                            <pfx5:ReservationNumber>
+                                <xsl:value-of select="$Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:CivilID"/>
+                            </pfx5:ReservationNumber>
+                        </xsl:if>
+                        <xsl:if test="string-length($Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:Requester)>0">
+                            <pfx5:requesterMsisdn>
+                                <xsl:value-of select="format:FormatMSISDN($Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:Requester, &#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/MSISDN_Length)"/>
+                            </pfx5:requesterMsisdn>
+                        </xsl:if>
+                    </pfx5:numReservRequest>
+                    <TransactionId>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="WrongInput_GenerateError">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>450</pd:x>
+            <pd:y>223</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns3:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/WrongInputDateErrorDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/WrongInputDateErrorCode"/>
+                    </messageCode>
+                </ns3:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Call_CivilID_Validation">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>601</pd:x>
+            <pd:y>190</pd:y>
+            <config>
+                <processName>/CommonProcesses/Utilities/CivilID_Validation.process</processName>
+            </config>
+            <pd:inputBindings>
+                <CivilID>
+                    <xsl:value-of select="$Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:CivilID"/>
+                </CivilID>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="WrongCivilIDGenerateError">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>773</pd:x>
+            <pd:y>188</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns3:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/WrongCivilIDErrorDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/WrongCivilIDErrorCode"/>
+                    </messageCode>
+                </ns3:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="NativeToCDM-Call-QueryNumber">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>732</pd:x>
+            <pd:y>86</pd:y>
+            <config>
+                <element>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element ref="pfx5:numReservRequest"/>
+                                <xsd:element name="TransactionId" type="xsd:string"/>
+                                <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </element>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <pfx5:numReservRequest>
+                        <pfx5:number>
+                            <xsl:value-of select="format:FormatMSISDN($Start/wsdlPfx:ReserveRequest/parameters/pfx:ReserveRequest/pfx:Number, $_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/MSISDN_Length)"/>
+                        </pfx5:number>
+                        <pfx5:market>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ReserveNumber/MarketCode"/>
+                        </pfx5:market>
+                    </pfx5:numReservRequest>
+                    <TransactionId>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ESI_Call_QueryNumber">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>881</pd:x>
+            <pd:y>84</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/NumberReservation/HelperProcess/ESI_Call_QueryNumber.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <xsl:copy-of select="$NativeToCDM-Call-QueryNumber/root/pfx5:numReservRequest"/>
+                    <TransactionId>
+                        <xsl:value-of select="$NativeToCDM-Call-QueryNumber/root/TransactionId"/>
+                    </TransactionId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$NativeToCDM-Call-QueryNumber/root/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GenerateErrorESI_NumberReservation-Query">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>880</pd:x>
+            <pd:y>224</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns3:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                    </message>
+                    <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                        <messageCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </messageCode>
+                    </xsl:if>
+                </ns3:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>718</pd:x>
+        <pd:y>378</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns0:Header>
+                    <ns0:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns0:ApplicationID>
+                    <ns0:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ReserveNumber/ComponentName"/>
+                    </ns0:ComponentName>
+                    <ns0:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns0:Hostname>
+                    <ns0:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns0:Timestamp>
+                    <ns0:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns0:TransactionDomain>
+                    <ns0:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns0:TransactionType>
+                    <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                        <ns0:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns0:TransactionID>
+                    </xsl:if>
+                    <ns0:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns0:Filename>
+                    <ns0:Message>
+                        <xsl:value-of select="$SetFaultContext-1/Fault/faultstring"/>
+                    </ns0:Message>
+                </ns0:Header>
+                <xsl:if test="string-length($GetTransactionID/GUID/StartTimeStamp)>0">
+                    <TimeDuration>
+                        <xsl:value-of select="tib:timestamp()-$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                </xsl:if>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>42</pd:x>
+        <pd:y>385</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:ExceptionRequest>
+                <ns0:Header>
+                    <ns0:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns0:ApplicationID>
+                    <ns0:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ReserveNumber/ComponentName"/>
+                    </ns0:ComponentName>
+                    <ns0:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns0:Hostname>
+                    <ns0:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns0:Timestamp>
+                    <ns0:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns0:TransactionDomain>
+                    <ns0:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns0:TransactionType>
+                    <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                        <ns0:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns0:TransactionID>
+                    </xsl:if>
+                </ns0:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+                <StackTrace>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </StackTrace>
+            </ns13:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>901</pd:x>
+        <pd:y>375</pd:y>
+        <config>
+            <faultName>Schema1</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInput>
+                <data>
+                    <wsdlPfx:faultMessage>
+                        <fault>
+                            <ns2:FaultType>
+                                <ns2:type>
+                                    <xsl:value-of select="$Call_Error_Process/root/ErrorType"/>
+                                </ns2:type>
+                                <ns2:code>
+                                    <xsl:value-of select="$Call_Error_Process/root/ErrorUserErrCode"/>
+                                </ns2:code>
+                                <ns2:description>
+                                    <xsl:value-of select="$Call_Error_Process/root/ErrorUserErrDesc"/>
+                                </ns2:description>
+                                <ns2:sourceSystem>
+                                    <xsl:value-of select="$Call_Error_Process/root/ErrorSourceSystem"/>
+                                </ns2:sourceSystem>
+                                <xsl:if test="$Call_Error_Process/root/ErrorSourceErrCode">
+                                    <ns2:extErrorCode>
+                                        <xsl:value-of select="$Call_Error_Process/root/ErrorSourceErrCode"/>
+                                    </ns2:extErrorCode>
+                                </xsl:if>
+                                <xsl:if test="$Call_Error_Process/root/ErrorSourceErrDesc">
+                                    <ns2:detail>
+                                        <xsl:value-of select="$Call_Error_Process/root/ErrorSourceErrDesc"/>
+                                    </ns2:detail>
+                                </xsl:if>
+                            </ns2:FaultType>
+                        </fault>
+                    </wsdlPfx:faultMessage>
+                </data>
+            </ns3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>203</pd:x>
+        <pd:y>429</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns14:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                </message>
+                <msgCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </msgCode>
+            </ns14:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetContext">
+        <pd:type>com.tibco.ae.tools.palettes.servicepalette.GetContextActivity</pd:type>
+        <pd:resourceType>service.activity.getContext</pd:resourceType>
+        <pd:x>157</pd:x>
+        <pd:y>174</pd:y>
+        <config>
+            <variableConfig>/BusinessSchemas/Services/Common/JMSSchema/InputContext.contextResource</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="SetFaultContext-1">
+        <pd:type>com.tibco.ae.tools.palettes.servicepalette.SetContextActivity</pd:type>
+        <pd:resourceType>service.activity.setContext</pd:resourceType>
+        <pd:x>549</pd:x>
+        <pd:y>380</pd:y>
+        <config>
+            <variableConfig>/CommonResources/Context/Internal/EAIFaultContext.contextResource</variableConfig>
+            <showResult>true</showResult>
+        </config>
+        <pd:inputBindings>
+            <Fault>
+                <faultcode>
+                    <xsl:value-of select="$Call_Error_Process/root/ErrorUserErrCode"/>
+                </faultcode>
+                <faultstring>
+                    <xsl:value-of select="$Call_Error_Process/root/ErrorUserErrDesc"/>
+                </faultstring>
+                <faultfactor>
+                    <xsl:value-of select="$Call_Error_Process/root/ErrorSourceSystem"/>
+                </faultfactor>
+            </Fault>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_Error_Process">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>372</pd:x>
+        <pd:y>379</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/ErrorResponseMapFromEOM.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <SourceSystem>
+                    <xsl:value-of select="if(string-length(substring-before($ErrorHandler/ns13:ExceptionRequest/StackTrace, '|'))>0)&#xA;then&#xA;substring-before($ErrorHandler/ns13:ExceptionRequest/StackTrace, '|')&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/Tibco_SourceErr"/>
+                </SourceSystem>
+                <ChannelName>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ChannelName"/>
+                </ChannelName>
+                <ChannelType>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/External_Channel_type"/>
+                </ChannelType>
+                <ResponseCode>
+                    <xsl:value-of select="$ErrorHandler/ns13:ExceptionRequest/ExceptionCode"/>
+                </ResponseCode>
+                <ResponseDescription>
+                    <xsl:value-of select="if(string-length(substring-after($ErrorHandler/ns13:ExceptionRequest/StackTrace, '|'))>0)&#xA;then&#xA;substring-after($ErrorHandler/ns13:ExceptionRequest/StackTrace, '|')&#xA;else&#xA;$ErrorHandler/ns13:ExceptionRequest/StackTrace"/>
+                </ResponseDescription>
+                <TIBCOServiceName>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ReserveNumber/ComponentName"/>
+                </TIBCOServiceName>
+                <ErrorCategory>
+                    <xsl:value-of select="&quot;&quot;"/>
+                </ErrorCategory>
+                <TargetSystem>
+                    <xsl:value-of select="&quot;&quot;"/>
+                </TargetSystem>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:xpathDescription/>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:xpathDescription>Error</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetContext</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetContext</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SetFaultContext-1</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>Call_Error_Process</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>Call_Error_Process</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_Error_Process</pd:from>
+        <pd:to>SetFaultContext-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

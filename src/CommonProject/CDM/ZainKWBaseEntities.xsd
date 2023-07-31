@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns:bs="http://xmlns.zain.com/BSS/ESB/CDM/Base"
+	 targetNamespace="http://xmlns.zain.com/BSS/ESB/CDM/Base"
+	 version="2.2"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:complexType name="Header">
+		<xs:sequence>
+			<xs:element name="ExternalTransactionID" type="xs:string" minOccurs="0"/>
+			<xs:element name="COName" type="xs:string" minOccurs="0"/>
+			<xs:element name="Consumer" type="xs:string" minOccurs="0"/>
+			<xs:element name="Provider" type="xs:string" minOccurs="0"/>
+			<xs:element name="Timestamp" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="Action" type="xs:string" minOccurs="0"/>
+			<xs:element name="ApplicationID" type="xs:string" minOccurs="0"/>
+			<xs:element name="ComponentName" type="xs:string" minOccurs="0"/>
+			<xs:element name="Hostname" type="xs:string" minOccurs="0"/>
+			<xs:element name="TransactionDomain" type="xs:string" minOccurs="0"/>
+			<xs:element name="TransactionType" type="xs:string" minOccurs="0"/>
+			<xs:element name="TransactionID" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Header" type="bs:Header"/>
+	<xs:element name="Response">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="ResponseCode" type="xs:string" minOccurs="0"/>
+				<xs:element name="ResponseDescription" type="xs:string" minOccurs="0"/>
+				<xs:element name="CorrelationID" type="xs:string" minOccurs="0"/>
+				<xs:element name="ResponseRefernces" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Reference" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Name" type="xs:string" minOccurs="0"/>
+										<xs:element name="Value" type="xs:string" minOccurs="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="bs:ResponseObject" minOccurs="0"/>
+				<xs:element ref="bs:Error" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Error" type="bs:Error"/>
+	<xs:complexType name="Error">
+		<xs:sequence>
+			<xs:element name="errorCode" type="xs:string"/>
+			<xs:element name="errorType">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Business"/>
+						<xs:enumeration value="Technical"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="errorDescription" type="xs:string" minOccurs="0"/>
+			<xs:element name="errorSource" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="TimePeriod" type="bs:TimePeriod"/>
+	<xs:complexType name="TimePeriod">
+		<xs:annotation>
+			<xs:documentation>A base / value business entity used to represent a period of time,
+                between two timepoints</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="endDateTime" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>An instant of time, ending at the
+                        TimePeriod</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="startDateTime" type="xs:dateTime" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>An instant of time, starting at the
+                        TimePeriod</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Money" type="bs:Money"/>
+	<xs:complexType name="Money">
+		<xs:annotation>
+			<xs:documentation>A base / value business entity used to represent
+                money</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="amount" type="xs:double" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A positive floating point number.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="units" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Currency.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="conversionRate" type="xs:string"/>
+	<xs:element name="ZainCurrency" type="bs:ZainCurrency"/>
+	<xs:complexType name="ZainCurrency">
+		<xs:sequence>
+			<xs:element name="currencyCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="currencyId" type="xs:long" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<!-- All Ids-->
+	<xs:complexType name="ZainIdentifiers">
+		<xs:choice>
+			<xs:element ref="bs:customerId"/>
+			<xs:element ref="bs:billId"/>
+			<xs:element ref="bs:accountId"/>
+			<xs:element ref="bs:productId"/>
+			<xs:element ref="bs:orderId"/>
+			<xs:element ref="bs:SubscriberIdentifier"/>
+			<xs:element ref="bs:UserId"/>
+			<xs:element ref="bs:BankID"/>
+			<xs:element name="contractID" type="bs:ZainIdentifierAttributes"/>
+			<xs:element name="billingAccountID" type="bs:ZainIdentifierAttributes"/>
+		</xs:choice>
+	</xs:complexType>
+	<xs:element name="customerId" type="bs:ZainIdentifierAttributes"/>
+	<xs:element name="billId" type="bs:ZainIdentifierAttributes"/>
+	<xs:element name="accountId" type="bs:ZainIdentifierAttributes"/>
+	<xs:element name="productId">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="bs:ZainIdentifierAttributes">
+					<xs:sequence>
+						<xs:element name="category" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="orderId" type="bs:ZainIdentifierAttributes"/>
+	<xs:element name="addressId" type="bs:ZainIdentifierAttributes"/>
+	<xs:element name="BankID" type="bs:ZainIdentifierAttributes"/>
+	<xs:element name="ZainIdentifiers" type="bs:ZainIdentifiers"/>
+	<xs:element name="EmployeeIdentifier">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="PFnumber" type="xs:string" minOccurs="0"/>
+				<xs:element name="EmployeeId" minOccurs="0">
+					<xs:complexType>
+						<xs:complexContent>
+							<xs:extension base="bs:ZainIdentifierAttributes"/>
+						</xs:complexContent>
+					</xs:complexType>
+				</xs:element>
+				<xs:element ref="bs:SubscriberIdentifier" minOccurs="0"/>
+				<xs:element name="IsEmployee" type="xs:boolean" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="InvoiceNumber" type="xs:string"/>
+
+	<!--Ids end-->
+	<xs:element name="CustomDetails" type="bs:CustomDetails"/>
+	<xs:complexType name="CustomDetails">
+		<xs:annotation>
+			<xs:documentation>This is a generic type which can be used to pass and store data in  name value pairs.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="CustomName" type="xs:string" minOccurs="0"/>
+			<xs:element name="CustomValue" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ZainIdentifierAttributes">
+		<xs:sequence>
+			<xs:element ref="bs:systemName" minOccurs="0"/>
+			<xs:element ref="bs:value" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="systemName" type="xs:string"/>
+	<xs:element name="value" type="xs:string"/>
+	<xs:complexType name="Language">
+		<xs:sequence>
+			<xs:element name="LanguageCode" type="xs:string" minOccurs="0"/>
+			<xs:element name="strLanguage" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Language" type="bs:Language"/>
+	<xs:element name="Status" type="xs:string"/>
+	<xs:element name="MSISDN" type="xs:string"/>
+	<xs:element name="UserId" type="bs:ZainIdentifierAttributes"/>
+	<xs:element name="PUK" type="xs:string"/>
+	<xs:element name="IMSI" type="xs:string"/>
+	<xs:element name="SubscriberIdentifier" type="bs:SubscriberIdentifier"/>
+	<xs:complexType name="SubscriberIdentifier">
+		<xs:sequence>
+			<xs:element ref="bs:MSISDN" minOccurs="0"/>
+			<xs:element ref="bs:IMSI" minOccurs="0"/>
+			<xs:element ref="bs:SIMSerialNumber" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Country" type="bs:Country"/>
+	<xs:complexType name="Country">
+		<xs:annotation>
+			<xs:documentation>This is an example of a concrete Geographic Location
+                entity.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="countryCode" type="xs:string"/>
+			<xs:element name="Iso2Code" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ISO 2 letter country abbreviation</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="Iso3Code" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ISO 3 letter country abbreviation</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="name" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the name that the Country is known by</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="type" type="xs:int" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>the type of country</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ChequeDetails">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="bs:chequeNumber"/>
+				<xs:element ref="bs:bankName" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="Amount">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="bs:amount" minOccurs="0"/>
+				<xs:element ref="bs:units" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="amount" type="xs:double"/>
+	<xs:element name="units" type="xs:string"/>
+	<xs:element name="chequeNumber" type="xs:int"/>
+	<xs:element name="bankName" type="xs:string"/>
+	<xs:element name="routingID" type="xs:int"/>
+	<xs:element name="chequeDate" type="xs:date"/>
+	<xs:element name="paymentReferenceNumber" type="xs:string"/>
+	<xs:complexType name="Location">
+		<xs:annotation>
+			<xs:documentation> A geogarphical Location where any intercation can occur. It can be an office, store, customer address, current locationetc
+            </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="LocationId" type="xs:string" minOccurs="0"/>
+			<xs:element name="Place" type="xs:string" minOccurs="0"/>
+			<xs:element name="LocationType" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="Location" type="bs:Location"/>
+	<xs:element name="SIMSerialNumber" type="xs:string"/>
+	<xs:element name="DirectoryNumberId" type="xs:string"/>
+	<xs:element name="ResponseObject" type="xs:anyType"/>
+</xs:schema>

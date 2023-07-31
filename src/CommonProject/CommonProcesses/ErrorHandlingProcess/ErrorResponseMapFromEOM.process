@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariable/Internal/ResponseCodes_Ph2_ext.xsd" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariable/Internal/ResponseCodes_Ph2.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <pd:name>CommonProcesses/ErrorHandlingProcess/ErrorResponseMapFromEOM.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="SourceSystem" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ChannelName" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ChannelType" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ResponseCode" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ResponseDescription" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="TIBCOServiceName" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorCategory" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="TargetSystem" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>89</pd:startX>
+    <pd:startY>113</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <xsl:if test="$AddDefaultIfNeeded/root/ErrorSourceSystem">
+                <ErrorSourceSystem>
+                    <xsl:value-of select="$AddDefaultIfNeeded/root/ErrorSourceSystem"/>
+                </ErrorSourceSystem>
+            </xsl:if>
+            <ErrorAdditionalDesc1>
+                <xsl:value-of select="$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$Start/root/ResponseCode]/ns:USERERRORCODE"/>
+            </ErrorAdditionalDesc1>
+            <xsl:if test="$AddDefaultIfNeeded/root/ErrorAdditionalDesc2">
+                <ErrorAdditionalDesc2>
+                    <xsl:value-of select="$AddDefaultIfNeeded/root/ErrorAdditionalDesc2"/>
+                </ErrorAdditionalDesc2>
+            </xsl:if>
+            <xsl:if test="$AddDefaultIfNeeded/root/ErrorOccuranceTime">
+                <ErrorOccuranceTime>
+                    <xsl:value-of select="$AddDefaultIfNeeded/root/ErrorOccuranceTime"/>
+                </ErrorOccuranceTime>
+            </xsl:if>
+            <ErrorSourceErrCode>
+                <xsl:value-of select="$AddDefaultIfNeeded/root/ErrorSourceErrCode"/>
+            </ErrorSourceErrCode>
+            <xsl:if test="$AddDefaultIfNeeded/root/ErrorSourceErrDesc">
+                <ErrorSourceErrDesc>
+                    <xsl:value-of select="$AddDefaultIfNeeded/root/ErrorSourceErrDesc"/>
+                </ErrorSourceErrDesc>
+            </xsl:if>
+            <ErrorType>
+                <xsl:value-of select="if ($AddDefaultIfNeeded/root/ErrorType = 2)&#xA;then&#xA;&quot;Business&quot;&#xA;else&#xA;&quot;Technical&quot;"/>
+            </ErrorType>
+            <ErrorUserErrCode>
+                <xsl:value-of select="if(tib:trim($AddDefaultIfNeeded/root/ErrorUserErrCode) ='TIB-ERR-9999')&#xA;then&#xA;'ZESB-9999'&#xA;else&#xA;$AddDefaultIfNeeded/root/ErrorUserErrCode"/>
+            </ErrorUserErrCode>
+            <xsl:if test="$AddDefaultIfNeeded/root/ErrorUserErrDesc">
+                <ErrorUserErrDesc>
+                    <xsl:value-of select="$AddDefaultIfNeeded/root/ErrorUserErrDesc"/>
+                </ErrorUserErrDesc>
+            </xsl:if>
+            <xsl:if test="$AddDefaultIfNeeded/root/RetryFlag">
+                <RetryFlag>
+                    <xsl:value-of select="$AddDefaultIfNeeded/root/RetryFlag"/>
+                </RetryFlag>
+            </xsl:if>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="ErrorSourceSystem" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorAdditionalDesc1" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorAdditionalDesc2" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorOccuranceTime" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorSourceErrCode" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorSourceErrDesc" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorType" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorUserErrCode" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorUserErrDesc" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="RetryFlag" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>890</pd:endX>
+    <pd:endY>111</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1448686875156</pd:targetNamespace>
+    <pd:activity name="GetResponseCodes">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>209</pd:x>
+        <pd:y>113</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/ResponseCodes_Ph2.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Map-Error">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>444</pd:x>
+        <pd:y>36</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="ErrorSourceSystem" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorAdditionalDesc1" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorAdditionalDesc2" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorOccuranceTime" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorSourceErrCode" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorSourceErrDesc" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorType" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorUserErrCode" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorUserErrDesc" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="RetryFlag" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="upper-case($Start/root/ChannelType)='INTERNAL'">
+                    <root>
+                        <ErrorSourceSystem>
+                            <xsl:value-of select="$Start/root/SourceSystem"/>
+                        </ErrorSourceSystem>
+                        <ErrorAdditionalDesc1>
+                            <xsl:value-of select="''"/>
+                        </ErrorAdditionalDesc1>
+                        <ErrorAdditionalDesc2>
+                            <xsl:value-of select="''"/>
+                        </ErrorAdditionalDesc2>
+                        <ErrorOccuranceTime>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ErrorOccuranceTime>
+                        <xsl:variable name="var" select="$Start/root/ResponseCode"/>
+                        <ErrorSourceErrCode>
+                            <xsl:value-of select="$Start/root/ResponseCode"/>
+                        </ErrorSourceErrCode>
+                        <ErrorSourceErrDesc>
+                            <xsl:value-of select="$Start/root/ResponseDescription"/>
+                        </ErrorSourceErrDesc>
+                        <xsl:if test="if(exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:ERRORTYPE)) then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:ERRORTYPE else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:ERRORTYPE">
+                            <ErrorType>
+                                <xsl:value-of select="if(exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:ERRORTYPE)) then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:ERRORTYPE else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:ERRORTYPE"/>
+                            </ErrorType>
+                        </xsl:if>
+                        <ErrorUserErrCode>
+                            <xsl:value-of select="if(exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:USERERRORCODE)) then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:USERERRORCODE else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:USERERRORCODE"/>
+                        </ErrorUserErrCode>
+                        <ErrorUserErrDesc>
+                            <xsl:value-of select="if(exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:USERERRORDESC)) then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:USERERRORDESC else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:USERERRORDESC"/>
+                        </ErrorUserErrDesc>
+                        <RetryFlag>
+                            <xsl:value-of select="if (exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:RETRYFLAG))&#xA;then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:RETRYFLAG&#xA;else&#xA;'0'"/>
+                        </RetryFlag>
+                    </root>
+                </xsl:when>
+                <xsl:otherwise>
+                    <root>
+                        <ErrorSourceSystem>
+                            <xsl:value-of select="$Start/root/SourceSystem"/>
+                        </ErrorSourceSystem>
+                        <ErrorAdditionalDesc1>
+                            <xsl:value-of select="''"/>
+                        </ErrorAdditionalDesc1>
+                        <ErrorAdditionalDesc2>
+                            <xsl:value-of select="''"/>
+                        </ErrorAdditionalDesc2>
+                        <ErrorOccuranceTime>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ErrorOccuranceTime>
+                        <xsl:variable name="var" select="$Start/root/ResponseCode"/>
+                        <ErrorSourceErrCode>
+                            <xsl:value-of select="$Start/root/ResponseCode"/>
+                        </ErrorSourceErrCode>
+                        <ErrorSourceErrDesc>
+                            <xsl:value-of select="$Start/root/ResponseDescription"/>
+                        </ErrorSourceErrDesc>
+                        <xsl:if test="if(exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:ERRORTYPE)) then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:ERRORTYPE else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:ERRORTYPE">
+                            <ErrorType>
+                                <xsl:value-of select="if(exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:ERRORTYPE)) then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:ERRORTYPE else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:ERRORTYPE"/>
+                            </ErrorType>
+                        </xsl:if>
+                        <ErrorUserErrCode>
+                            <xsl:value-of select="if(exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:USERERRORCODE)) then&#xA;substring-after($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:USERERRORCODE, '-') else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:USERERRORCODE"/>
+                        </ErrorUserErrCode>
+                        <ErrorUserErrDesc>
+                            <xsl:value-of select="if(exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup&#xA;[     ns:SOURCESYSTEM=$Start/root/SourceSystem &#xA;  and ns:SOURCEERRORCODE=$Start/root/ChannelType]/ns:USERERRORDESC)) &#xA;then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem &#xA;and ns:SOURCEERRORCODE=$Start/root/ResponseCode]/ns:USERERRORDESC &#xA;else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:USERERRORDESC"/>
+                        </ErrorUserErrDesc>
+                        <RetryFlag>
+                            <xsl:value-of select="if (exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:RETRYFLAG))&#xA;then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:RETRYFLAG&#xA;else&#xA;'0'"/>
+                        </RetryFlag>
+                    </root>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetResponseCodes_Ext">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>445</pd:x>
+        <pd:y>227</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/ResponseCodes_Ph2_ext.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Map-Error-Ext">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>587</pd:x>
+        <pd:y>228</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="ErrorSourceSystem" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorAdditionalDesc1" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorAdditionalDesc2" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorOccuranceTime" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorSourceErrCode" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorSourceErrDesc" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorType" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorUserErrCode" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorUserErrDesc" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="RetryFlag" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[$Start/root/TIBCOServiceName = ns2:TIBCOSERVICENAME]&#xA;/ns2:SOURCEERRORCODE =$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/NO-ERROR-CODE">
+                    <root>
+                        <ErrorSourceSystem>
+                            <xsl:value-of select="$Start/root/SourceSystem"/>
+                        </ErrorSourceSystem>
+                        <ErrorAdditionalDesc1>
+                            <xsl:value-of select="&quot;1&quot;"/>
+                        </ErrorAdditionalDesc1>
+                        <ErrorAdditionalDesc2>
+                            <xsl:value-of select="''"/>
+                        </ErrorAdditionalDesc2>
+                        <ErrorOccuranceTime>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ErrorOccuranceTime>
+                        <xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="var" select="$Start/root/ResponseCode"/>
+                        <ErrorSourceErrCode>
+                            <xsl:value-of select="$Start/root/ResponseCode"/>
+                        </ErrorSourceErrCode>
+                        <ErrorSourceErrDesc>
+                            <xsl:value-of select="$Start/root/ResponseDescription"/>
+                        </ErrorSourceErrDesc>
+                        <ErrorType>
+                            <xsl:value-of select="if(tib:trim(string-length($GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[$Start/root/TIBCOServiceName = ns2:TIBCOSERVICENAME and &#xA;ns2:SOURCEERRORCODE =$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/NO-ERROR-CODE]/ns2:ERRORTYPE))>0)&#xA;then&#xA;$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[$Start/root/TIBCOServiceName = ns2:TIBCOSERVICENAME and &#xA;ns2:SOURCEERRORCODE =$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/NO-ERROR-CODE]/ns2:ERRORTYPE&#xA;else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:ERRORTYPE"/>
+                        </ErrorType>
+                        <ErrorUserErrCode>
+                            <xsl:value-of select="concat(&quot;ZESB-&quot;,$Start/root/ResponseCode)"/>
+                        </ErrorUserErrCode>
+                        <ErrorUserErrDesc>
+                            <xsl:value-of select="$Start/root/ResponseDescription"/>
+                        </ErrorUserErrDesc>
+                        <RetryFlag>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[$Start/root/TIBCOServiceName = ns2:TIBCOSERVICENAME and &#xA;ns2:SOURCEERRORCODE =$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/NO-ERROR-CODE]/ns2:RETRYFLAG"/>
+                        </RetryFlag>
+                    </root>
+                </xsl:when>
+                <xsl:when test="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[ns2:TIBCOSERVICENAME=$Start/root/TIBCOServiceName]&#xA;/ns2:SOURCEERRORCODE&#xA;=$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/SINGLE">
+                    <root>
+                        <ErrorSourceSystem>
+                            <xsl:value-of select="$Start/root/SourceSystem"/>
+                        </ErrorSourceSystem>
+                        <ErrorAdditionalDesc1>
+                            <xsl:value-of select="&quot;2&quot;"/>
+                        </ErrorAdditionalDesc1>
+                        <ErrorAdditionalDesc2>
+                            <xsl:value-of select="&quot;&quot;"/>
+                        </ErrorAdditionalDesc2>
+                        <ErrorOccuranceTime>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ErrorOccuranceTime>
+                        <xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="var" select="$Start/root/ResponseCode"/>
+                        <ErrorSourceErrCode>
+                            <xsl:value-of select="$Start/root/ResponseCode"/>
+                        </ErrorSourceErrCode>
+                        <ErrorSourceErrDesc>
+                            <xsl:value-of select="$Start/root/ResponseDescription"/>
+                        </ErrorSourceErrDesc>
+                        <ErrorType>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCEERRORCODE=$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/SINGLE&#xA;and &#xA;ns2:TIBCOSERVICENAME=$Start/root/TIBCOServiceName&#xA;]/ns2:ERRORTYPE"/>
+                        </ErrorType>
+                        <ErrorUserErrCode>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCEERRORCODE=$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/SINGLE&#xA;and &#xA;ns2:TIBCOSERVICENAME = $Start/root/TIBCOServiceName ]/ns2:CHANNELERRORCODE"/>
+                        </ErrorUserErrCode>
+                        <ErrorUserErrDesc>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCEERRORCODE=$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/SINGLE&#xA;and &#xA;ns2:TIBCOSERVICENAME=$Start/root/TIBCOServiceName&#xA;]&#xA;/ns2:CHANNELERRORDESC"/>
+                        </ErrorUserErrDesc>
+                        <RetryFlag>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCEERRORCODE=$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/SINGLE&#xA;and &#xA;ns2:TIBCOSERVICENAME = $Start/root/TIBCOServiceName]&#xA;/ns2:RETRYFLAG"/>
+                        </RetryFlag>
+                    </root>
+                </xsl:when>
+                <xsl:when test="count($GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCESYSTEM = $Start/root/SourceSystem&#xA; and&#xA;ns2:TIBCOSERVICENAME =$Start/root/TIBCOServiceName&#xA;and &#xA;ns2:SOURCEERRORCODE=$Start/root/ResponseCode&#xA;]&#xA;/ns2:CHANNELERRORCODE&#xA;)>0">
+                    <root>
+                        <ErrorSourceSystem>
+                            <xsl:value-of select="$Start/root/SourceSystem"/>
+                        </ErrorSourceSystem>
+                        <ErrorAdditionalDesc1>
+                            <xsl:value-of select="&quot;3&quot;"/>
+                        </ErrorAdditionalDesc1>
+                        <ErrorAdditionalDesc2>
+                            <xsl:value-of select="''"/>
+                        </ErrorAdditionalDesc2>
+                        <ErrorOccuranceTime>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ErrorOccuranceTime>
+                        <xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="var" select="$Start/root/ResponseCode"/>
+                        <ErrorSourceErrCode>
+                            <xsl:value-of select="$Start/root/ResponseCode"/>
+                        </ErrorSourceErrCode>
+                        <ErrorSourceErrDesc>
+                            <xsl:value-of select="$Start/root/ResponseDescription"/>
+                        </ErrorSourceErrDesc>
+                        <ErrorType>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCESYSTEM = $Start/root/SourceSystem&#xA; and&#xA;ns2:TIBCOSERVICENAME =$Start/root/TIBCOServiceName&#xA;and &#xA;ns2:SOURCEERRORCODE=$Start/root/ResponseCode&#xA;]&#xA;/ns2:ERRORTYPE"/>
+                        </ErrorType>
+                        <ErrorUserErrCode>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCESYSTEM = $Start/root/SourceSystem&#xA; and&#xA;ns2:TIBCOSERVICENAME =$Start/root/TIBCOServiceName&#xA;and &#xA;ns2:SOURCEERRORCODE=$Start/root/ResponseCode&#xA;]&#xA;/ns2:CHANNELERRORCODE"/>
+                        </ErrorUserErrCode>
+                        <ErrorUserErrDesc>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCESYSTEM = $Start/root/SourceSystem&#xA; and&#xA;ns2:TIBCOSERVICENAME =$Start/root/TIBCOServiceName&#xA;and &#xA;ns2:SOURCEERRORCODE=$Start/root/ResponseCode&#xA;]&#xA;/ns2:CHANNELERRORDESC"/>
+                        </ErrorUserErrDesc>
+                        <RetryFlag>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCESYSTEM = $Start/root/SourceSystem&#xA; and&#xA;ns2:TIBCOSERVICENAME =$Start/root/TIBCOServiceName&#xA;and &#xA;ns2:SOURCEERRORCODE=$Start/root/ResponseCode&#xA;]&#xA;/ns2:RETRYFLAG"/>
+                        </RetryFlag>
+                    </root>
+                </xsl:when>
+                <xsl:when test="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:TIBCOSERVICENAME =$Start/root/TIBCOServiceName]&#xA;/ns2:SOURCEERRORCODE = $_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/ALL-OTHER">
+                    <root>
+                        <ErrorSourceSystem>
+                            <xsl:value-of select="$Start/root/SourceSystem"/>
+                        </ErrorSourceSystem>
+                        <ErrorAdditionalDesc1>
+                            <xsl:value-of select="&quot;4&quot;"/>
+                        </ErrorAdditionalDesc1>
+                        <ErrorAdditionalDesc2>
+                            <xsl:value-of select="''"/>
+                        </ErrorAdditionalDesc2>
+                        <ErrorOccuranceTime>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ErrorOccuranceTime>
+                        <xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="var" select="$Start/root/ResponseCode"/>
+                        <ErrorSourceErrCode>
+                            <xsl:value-of select="$Start/root/ResponseCode"/>
+                        </ErrorSourceErrCode>
+                        <ErrorSourceErrDesc>
+                            <xsl:value-of select="$Start/root/ResponseDescription"/>
+                        </ErrorSourceErrDesc>
+                        <ErrorType>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCESYSTEM=$Start/root/SourceSystem&#xA;and&#xA;$Start/root/TIBCOServiceName=ns2:TIBCOSERVICENAME&#xA;&#xA;]&#xA;/ns2:ERRORTYPE"/>
+                        </ErrorType>
+                        <xsl:if test="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCESYSTEM=$Start/root/SourceSystem&#xA;and&#xA;$Start/root/TIBCOServiceName=ns2:TIBCOSERVICENAME&#xA;&#xA;]&#xA;/ns2:CHANNELERRORCODE">
+                            <ErrorUserErrCode>
+                                <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCESYSTEM=$Start/root/SourceSystem&#xA;and&#xA;$Start/root/TIBCOServiceName=ns2:TIBCOSERVICENAME&#xA;&#xA;]&#xA;/ns2:CHANNELERRORCODE"/>
+                            </ErrorUserErrCode>
+                        </xsl:if>
+                        <ErrorUserErrDesc>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCESYSTEM=$Start/root/SourceSystem&#xA;and&#xA;$Start/root/TIBCOServiceName=ns2:TIBCOSERVICENAME&#xA;&#xA;]&#xA;/ns2:CHANNELERRORDESC"/>
+                        </ErrorUserErrDesc>
+                        <RetryFlag>
+                            <xsl:value-of select="$GetResponseCodes_Ext/ns2:ResponseCodeVar/ns2:paramgroup&#xA;[&#xA;ns2:SOURCESYSTEM=$Start/root/SourceSystem&#xA;and&#xA;$Start/root/TIBCOServiceName=ns2:TIBCOSERVICENAME&#xA;&#xA;]&#xA;/ns2:RETRYFLAG"/>
+                        </RetryFlag>
+                    </root>
+                </xsl:when>
+                <xsl:otherwise>
+                    <root>
+                        <ErrorSourceSystem>
+                            <xsl:value-of select="$Start/root/SourceSystem"/>
+                        </ErrorSourceSystem>
+                        <ErrorAdditionalDesc1>
+                            <xsl:value-of select="&quot;5&quot;"/>
+                        </ErrorAdditionalDesc1>
+                        <ErrorAdditionalDesc2>
+                            <xsl:value-of select="''"/>
+                        </ErrorAdditionalDesc2>
+                        <ErrorOccuranceTime>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ErrorOccuranceTime>
+                        <xsl:variable xmlns:xsl="http://www.w3.org/1999/XSL/Transform" name="var" select="$Start/root/ResponseCode"/>
+                        <ErrorSourceErrCode>
+                            <xsl:value-of select="$Start/root/ResponseCode"/>
+                        </ErrorSourceErrCode>
+                        <ErrorSourceErrDesc>
+                            <xsl:value-of select="$Start/root/ResponseDescription"/>
+                        </ErrorSourceErrDesc>
+                        <ErrorType>
+                            <xsl:value-of select="$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE=$Start/root/ResponseCode&#xA;and&#xA;$Start/root/SourceSystem= ns:SOURCESYSTEM]/ns:ERRORTYPE"/>
+                        </ErrorType>
+                        <ErrorUserErrCode>
+                            <xsl:value-of select="$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE=$Start/root/ResponseCode&#xA;and&#xA;$Start/root/SourceSystem= ns:SOURCESYSTEM ]/ns:USERERRORCODE"/>
+                        </ErrorUserErrCode>
+                        <ErrorUserErrDesc>
+                            <xsl:value-of select="$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE=$Start/root/ResponseCode&#xA;and&#xA;&#xA;$Start/root/SourceSystem= ns:SOURCESYSTEM]/ns:USERERRORDESC"/>
+                        </ErrorUserErrDesc>
+                        <RetryFlag>
+                            <xsl:value-of select="if (exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:RETRYFLAG))&#xA;then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:RETRYFLAG&#xA;else&#xA;'0'"/>
+                        </RetryFlag>
+                    </root>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="AddDefaultIfNeeded">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>762</pd:x>
+        <pd:y>107</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="ErrorSourceSystem" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorAdditionalDesc1" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorAdditionalDesc2" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorOccuranceTime" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorSourceErrCode" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorSourceErrDesc" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorType" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorUserErrCode" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ErrorUserErrDesc" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="RetryFlag" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="exists($Map-Error)">
+                    <root>
+                        <xsl:if test="$Map-Error/root/ErrorSourceSystem">
+                            <ErrorSourceSystem>
+                                <xsl:value-of select="$Map-Error/root/ErrorSourceSystem"/>
+                            </ErrorSourceSystem>
+                        </xsl:if>
+                        <xsl:if test="$Map-Error/root/ErrorAdditionalDesc1">
+                            <ErrorAdditionalDesc1>
+                                <xsl:value-of select="$Map-Error/root/ErrorAdditionalDesc1"/>
+                            </ErrorAdditionalDesc1>
+                        </xsl:if>
+                        <xsl:if test="$Map-Error/root/ErrorAdditionalDesc2">
+                            <ErrorAdditionalDesc2>
+                                <xsl:value-of select="$Map-Error/root/ErrorAdditionalDesc2"/>
+                            </ErrorAdditionalDesc2>
+                        </xsl:if>
+                        <xsl:if test="$Map-Error/root/ErrorOccuranceTime">
+                            <ErrorOccuranceTime>
+                                <xsl:value-of select="$Map-Error/root/ErrorOccuranceTime"/>
+                            </ErrorOccuranceTime>
+                        </xsl:if>
+                        <xsl:if test="$Map-Error/root/ErrorSourceErrCode">
+                            <ErrorSourceErrCode>
+                                <xsl:value-of select="$Map-Error/root/ErrorSourceErrCode"/>
+                            </ErrorSourceErrCode>
+                        </xsl:if>
+                        <xsl:if test="$Map-Error/root/ErrorSourceErrDesc">
+                            <ErrorSourceErrDesc>
+                                <xsl:value-of select="$Map-Error/root/ErrorSourceErrDesc"/>
+                            </ErrorSourceErrDesc>
+                        </xsl:if>
+                        <ErrorType>
+                            <xsl:value-of select="if(string-length($Map-Error/root/ErrorType)>0)&#xA;then&#xA;$Map-Error/root/ErrorType&#xA;else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:ERRORTYPE"/>
+                        </ErrorType>
+                        <ErrorUserErrCode>
+                            <xsl:value-of select="if(string-length($Map-Error/root/ErrorUserErrCode)>0)&#xA;then&#xA;$Map-Error/root/ErrorUserErrCode&#xA;else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:USERERRORCODE"/>
+                        </ErrorUserErrCode>
+                        <ErrorUserErrDesc>
+                            <xsl:value-of select="if(string-length($Map-Error/root/ErrorUserErrDesc)>0)&#xA;then&#xA;$Map-Error/root/ErrorUserErrDesc&#xA;else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:USERERRORCODE"/>
+                        </ErrorUserErrDesc>
+                        <RetryFlag>
+                            <xsl:value-of select="if(string-length($Map-Error/root/RetryFlag)>0)&#xA;then&#xA;$Map-Error/root/RetryFlag&#xA;else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:RETRYFLAG"/>
+                        </RetryFlag>
+                    </root>
+                </xsl:when>
+                <xsl:otherwise>
+                    <root>
+                        <xsl:if test="$Map-Error-Ext/root/ErrorSourceSystem">
+                            <ErrorSourceSystem>
+                                <xsl:value-of select="$Map-Error-Ext/root/ErrorSourceSystem"/>
+                            </ErrorSourceSystem>
+                        </xsl:if>
+                        <xsl:if test="$Map-Error-Ext/root/ErrorAdditionalDesc1">
+                            <ErrorAdditionalDesc1>
+                                <xsl:value-of select="$Map-Error-Ext/root/ErrorAdditionalDesc1"/>
+                            </ErrorAdditionalDesc1>
+                        </xsl:if>
+                        <xsl:if test="$Map-Error-Ext/root/ErrorAdditionalDesc2">
+                            <ErrorAdditionalDesc2>
+                                <xsl:value-of select="$Map-Error-Ext/root/ErrorAdditionalDesc2"/>
+                            </ErrorAdditionalDesc2>
+                        </xsl:if>
+                        <xsl:if test="$Map-Error-Ext/root/ErrorOccuranceTime">
+                            <ErrorOccuranceTime>
+                                <xsl:value-of select="$Map-Error-Ext/root/ErrorOccuranceTime"/>
+                            </ErrorOccuranceTime>
+                        </xsl:if>
+                        <xsl:if test="$Map-Error-Ext/root/ErrorSourceErrCode">
+                            <ErrorSourceErrCode>
+                                <xsl:value-of select="$Map-Error-Ext/root/ErrorSourceErrCode"/>
+                            </ErrorSourceErrCode>
+                        </xsl:if>
+                        <xsl:if test="$Map-Error-Ext/root/ErrorSourceErrDesc">
+                            <ErrorSourceErrDesc>
+                                <xsl:value-of select="$Map-Error-Ext/root/ErrorSourceErrDesc"/>
+                            </ErrorSourceErrDesc>
+                        </xsl:if>
+                        <ErrorType>
+                            <xsl:value-of select="if(string-length(tib:trim($Map-Error-Ext/root/ErrorType))>0) then&#xA;$Map-Error-Ext/root/ErrorType&#xA;else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:ERRORTYPE"/>
+                        </ErrorType>
+                        <ErrorUserErrCode>
+                            <xsl:value-of select="if(string-length(tib:trim($Map-Error-Ext/root/ErrorUserErrCode))  > 0)&#xA;then&#xA;$Map-Error-Ext/root/ErrorUserErrCode&#xA;else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:USERERRORCODE"/>
+                        </ErrorUserErrCode>
+                        <ErrorUserErrDesc>
+                            <xsl:value-of select="if(string-length(tib:trim($Map-Error-Ext/root/ErrorUserErrDesc))>0)&#xA;then&#xA;$Map-Error-Ext/root/ErrorUserErrDesc&#xA;else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:USERERRORDESC"/>
+                        </ErrorUserErrDesc>
+                        <RetryFlag>
+                            <xsl:value-of select="if(string-length($Map-Error-Ext/root/RetryFlag)>0)&#xA;then&#xA;$Map-Error-Ext/root/RetryFlag&#xA;else&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE='TIB-ERR-9999']/ns:RETRYFLAG"/>
+                        </RetryFlag>
+                    </root>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetResponseCodes</pd:to>
+        <pd:xpathDescription/>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetResponseCodes</pd:from>
+        <pd:to>Map-Error</pd:to>
+        <pd:xpathDescription>Internal Systems Error or Channel Code Exists</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>upper-case($Start/root/ChannelType)='INTERNAL'
+or
+(upper-case($Start/root/ChannelType)='EXTERNAL' 
+and
+upper-case($Start/root/SourceSystem)='TIBCO'
+and
+contains($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$Start/root/ResponseCode]/ns:USERERRORCODE,'GEN-')
+)</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map-Error</pd:from>
+        <pd:to>AddDefaultIfNeeded</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetResponseCodes</pd:from>
+        <pd:to>GetResponseCodes_Ext</pd:to>
+        <pd:xpathDescription>External System Error</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetResponseCodes_Ext</pd:from>
+        <pd:to>Map-Error-Ext</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map-Error-Ext</pd:from>
+        <pd:to>AddDefaultIfNeeded</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>AddDefaultIfNeeded</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

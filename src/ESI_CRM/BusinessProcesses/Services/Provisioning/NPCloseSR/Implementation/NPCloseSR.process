@@ -1,0 +1,699 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns14="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:ns="http://www.tibco.com/pe/EngineTypes" xmlns:ns15="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns5="http://siebel.com/CustomUI" xmlns:ns12="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns13="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pfx="http://np.systor.st/sp" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns4="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns3="http://np.systor.st/commontypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd">
+    <xsd:import namespace="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" schemaLocation="/CDM/ZainKWFault.xsd"/>
+    <xsd:import namespace="http://np.systor.st/sp" schemaLocation="/BusinessWSDLS/Services/WSDLS/SPService/SpService.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Provisioning/NPCloseSR/Implementation/NPCloseSR.process</pd:name>
+    <pd:startName>ReceiveNPCloseSR</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="ReceiveNPCloseSR">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>169</pd:x>
+        <pd:y>228</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/CRM/Provisioning/NPCloseSR/ESI_RequestQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1035</pd:endX>
+    <pd:endY>230</pd:endY>
+    <pd:errorSchemas>
+        <ErrorSchema ref="pfx2:ErrorResponse"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1469185681333</pd:targetNamespace>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>446</pd:x>
+        <pd:y>226</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/CRM/Provisioning/NPCloseSR/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <xsl:if test="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/TransactionID">
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns2:TransactionID>
+                    </xsl:if>
+                    <xsl:if test="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/CorrelationId">
+                        <ns2:CorrelationID>
+                            <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/CorrelationId"/>
+                        </ns2:CorrelationID>
+                    </xsl:if>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$ParseRequest/pfx:NPExecuteBroadcast/pfx:NPOrderID"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/Body"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="tib:render-xml($ParseRequest/pfx:NPExecuteBroadcast)"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>882</pd:x>
+        <pd:y>230</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/CRM/Provisioning/NPCloseSR/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns2:TransactionID>
+                    <xsl:if test="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/CorrelationId">
+                        <ns2:CorrelationID>
+                            <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/CorrelationId"/>
+                        </ns2:CorrelationID>
+                    </xsl:if>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Call_NPCloseSR/*)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="if(exists($ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_NPCloseSR">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>597</pd:x>
+        <pd:y>229</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Provisioning/NPCloseSR/HelperProcess/ESI_Call_NPCloseSR.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:copy-of select="$ParseRequest/pfx:NPExecuteBroadcast"/>
+                <TrackingID>
+                    <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/TransactionID"/>
+                </TrackingID>
+                <StartTimestamp>
+                    <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </StartTimestamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseRequest">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>320</pd:x>
+        <pd:y>227</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx:NPExecuteBroadcast"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ReplyOnSuccess">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>737</pd:x>
+        <pd:y>229</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>NON_PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>ReceiveNPCloseSR</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns4:ActivityInput>
+                <OtherProperties>
+                    <TransactionID>
+                        <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TransactionID>
+                    <xsl:if test="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/ReplyToEngineID">
+                        <ReplyToEngineID>
+                            <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/ReplyToEngineID"/>
+                        </ReplyToEngineID>
+                    </xsl:if>
+                    <xsl:if test="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/ReplyToDeploymentName">
+                        <ReplyToDeploymentName>
+                            <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/ReplyToDeploymentName"/>
+                        </ReplyToDeploymentName>
+                    </xsl:if>
+                    <StartTimeStamp>
+                        <xsl:value-of select="if(exists($ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                    </StartTimeStamp>
+                </OtherProperties>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($Call_NPCloseSR/root)"/>
+                </Body>
+            </ns4:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParsingError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>321</pd:x>
+        <pd:y>104</pd:y>
+        <config>
+            <faultName>ErrorSchema</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns12:ActivityInput>
+                <data>
+                    <pfx2:ErrorResponse>
+                        <pfx2:Error_SourceErrCode>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorCode"/>
+                        </pfx2:Error_SourceErrCode>
+                        <pfx2:Error_SourceErrDesc>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorDesc"/>
+                        </pfx2:Error_SourceErrDesc>
+                    </pfx2:ErrorResponse>
+                </data>
+            </ns12:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSReceiverError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>171</pd:x>
+        <pd:y>105</pd:y>
+        <config>
+            <faultName>ErrorSchema</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns12:ActivityInput>
+                <data>
+                    <pfx2:ErrorResponse>
+                        <pfx2:Error_SourceErrCode>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                        </pfx2:Error_SourceErrCode>
+                        <pfx2:Error_SourceErrDesc>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSReceiveErrorDesc"/>
+                        </pfx2:Error_SourceErrDesc>
+                    </pfx2:ErrorResponse>
+                </data>
+            </ns12:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>946</pd:x>
+        <pd:y>423</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/CRM/Provisioning/NPCloseSR/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns2:TransactionID>
+                    <xsl:if test="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/CorrelationId">
+                        <ns2:CorrelationID>
+                            <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/CorrelationId"/>
+                        </ns2:CorrelationID>
+                    </xsl:if>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($CLE_To_CDM/root)"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="if(exists($_error/ns:ErrorReport))&#xA;then $_error/ns:ErrorReport&#xA;else ''"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="if(exists($ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then ($ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp)&#xA;else 0"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>286</pd:x>
+        <pd:y>423</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="CLE_To_CDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>611</pd:x>
+        <pd:y>423</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:choice>
+                            <xsd:element ref="pfx:MessageAck" minOccurs="0"/>
+                            <xsd:element ref="pfx2:ErrorResponse" minOccurs="0"/>
+                        </xsd:choice>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:choose>
+                    <xsl:when test="exists($_error_Call_NPCloseSR/pfx2:ErrorResponse)">
+                        <xsl:for-each select="$_error_Call_NPCloseSR/pfx2:ErrorResponse">
+                            <pfx2:ErrorResponse>
+                                <xsl:if test="pfx2:Error_SourceSystem">
+                                    <pfx2:Error_SourceSystem>
+                                        <xsl:value-of select="pfx2:Error_SourceSystem"/>
+                                    </pfx2:Error_SourceSystem>
+                                </xsl:if>
+                                <xsl:if test="pfx2:Error_SourceErrCode">
+                                    <pfx2:Error_SourceErrCode>
+                                        <xsl:value-of select="pfx2:Error_SourceErrCode"/>
+                                    </pfx2:Error_SourceErrCode>
+                                </xsl:if>
+                                <xsl:if test="pfx2:Error_SourceErrDesc">
+                                    <pfx2:Error_SourceErrDesc>
+                                        <xsl:value-of select="pfx2:Error_SourceErrDesc"/>
+                                    </pfx2:Error_SourceErrDesc>
+                                </xsl:if>
+                                <xsl:if test="pfx2:Error_Type">
+                                    <pfx2:Error_Type>
+                                        <xsl:value-of select="pfx2:Error_Type"/>
+                                    </pfx2:Error_Type>
+                                </xsl:if>
+                                <xsl:if test="pfx2:Error_UserErrCode">
+                                    <pfx2:Error_UserErrCode>
+                                        <xsl:value-of select="pfx2:Error_UserErrCode"/>
+                                    </pfx2:Error_UserErrCode>
+                                </xsl:if>
+                                <xsl:if test="pfx2:Error_UserErrDesc">
+                                    <pfx2:Error_UserErrDesc>
+                                        <xsl:value-of select="pfx2:Error_UserErrDesc"/>
+                                    </pfx2:Error_UserErrDesc>
+                                </xsl:if>
+                                <xsl:if test="pfx2:Error_Occurance_Time">
+                                    <pfx2:Error_Occurance_Time>
+                                        <xsl:value-of select="pfx2:Error_Occurance_Time"/>
+                                    </pfx2:Error_Occurance_Time>
+                                </xsl:if>
+                                <xsl:if test="pfx2:Error_Additional_Desc1">
+                                    <pfx2:Error_Additional_Desc1>
+                                        <xsl:value-of select="pfx2:Error_Additional_Desc1"/>
+                                    </pfx2:Error_Additional_Desc1>
+                                </xsl:if>
+                                <xsl:if test="pfx2:Error_Additional_Desc2">
+                                    <pfx2:Error_Additional_Desc2>
+                                        <xsl:value-of select="pfx2:Error_Additional_Desc2"/>
+                                    </pfx2:Error_Additional_Desc2>
+                                </xsl:if>
+                            </pfx2:ErrorResponse>
+                        </xsl:for-each>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <pfx2:ErrorResponse>
+                            <pfx2:Error_SourceErrCode>
+                                <xsl:value-of select="$ErrorHandler/ns14:ExceptionRequest/ExceptionCode"/>
+                            </pfx2:Error_SourceErrCode>
+                            <xsl:if test="$ErrorHandler/ns14:ExceptionRequest/StackTrace">
+                                <pfx2:Error_SourceErrDesc>
+                                    <xsl:value-of select="$ErrorHandler/ns14:ExceptionRequest/StackTrace"/>
+                                </pfx2:Error_SourceErrDesc>
+                            </xsl:if>
+                        </pfx2:ErrorResponse>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>454</pd:x>
+        <pd:y>423</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns14:ExceptionRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/CRM/Provisioning/NPCloseSR/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                </ns2:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="if(exists($_error_Call_NPCloseSR/pfx2:ErrorResponse))&#xA;then $_error_Call_NPCloseSR/pfx2:ErrorResponse/pfx2:Error_SourceErrCode&#xA;else if(exists($_error_ParsingError/pfx2:ErrorResponse))&#xA;then $_error_ParsingError/pfx2:ErrorResponse/pfx2:Error_SourceErrCode&#xA;else if($_error_JMSReceiverError/pfx2:ErrorResponse)&#xA;then  $_error_JMSReceiverError/pfx2:ErrorResponse/pfx2:Error_SourceErrCode&#xA;else $_error/ns:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+                <StackTrace>
+                    <xsl:value-of select="if(exists($_error_Call_NPCloseSR/pfx2:ErrorResponse))&#xA;then $_error_Call_NPCloseSR/pfx2:ErrorResponse/pfx2:Error_SourceErrDesc&#xA;else if(exists($_error_ParsingError/pfx2:ErrorResponse/pfx2:Error_SourceErrDesc))&#xA;then  $_error_ParsingError/pfx2:ErrorResponse/pfx2:Error_SourceErrDesc&#xA;else $_error/ns:ErrorReport/StackTrace"/>
+                </StackTrace>
+            </ns14:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>777</pd:x>
+        <pd:y>581</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns15:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns:ErrorReport/StackTrace"/>
+                </message>
+                <xsl:if test="$_error/ns:ErrorReport/MsgCode">
+                    <msgCode>
+                        <xsl:value-of select="$_error/ns:ErrorReport/MsgCode"/>
+                    </msgCode>
+                </xsl:if>
+            </ns15:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ReplyOnError">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>781</pd:x>
+        <pd:y>426</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>NON_PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>ReceiveNPCloseSR</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns4:ActivityInput>
+                <xsl:if test="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/CorrelationId">
+                    <JMSCorrelationID>
+                        <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/CorrelationId"/>
+                    </JMSCorrelationID>
+                </xsl:if>
+                <OtherProperties>
+                    <TransactionID>
+                        <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TransactionID>
+                    <xsl:if test="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/ReplyToEngineID">
+                        <ReplyToEngineID>
+                            <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/ReplyToEngineID"/>
+                        </ReplyToEngineID>
+                    </xsl:if>
+                    <xsl:if test="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/ReplyToDeploymentName">
+                        <ReplyToDeploymentName>
+                            <xsl:value-of select="$ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/ReplyToDeploymentName"/>
+                        </ReplyToDeploymentName>
+                    </xsl:if>
+                    <StartTimeStamp>
+                        <xsl:value-of select="if(exists($ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $ReceiveNPCloseSR/ns4:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                    </StartTimeStamp>
+                </OtherProperties>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($CLE_To_CDM/root)"/>
+                </Body>
+            </ns4:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>Call_NPCloseSR</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_NPCloseSR</pd:from>
+        <pd:to>ReplyOnSuccess</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReplyOnSuccess</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseRequest</pd:from>
+        <pd:to>ParsingError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseRequest</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>CLE_To_CDM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_To_CDM</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_To_CDM</pd:from>
+        <pd:to>ReplyOnError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReplyOnError</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReplyOnError</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:xpathDescription>Error</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReceiveNPCloseSR</pd:from>
+        <pd:to>JMSReceiverError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReceiveNPCloseSR</pd:from>
+        <pd:to>ParseRequest</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:label>
+        <pd:name>Label</pd:name>
+        <pd:description>Handles Request confirmation for PORT IN requests in CRM.</pd:description>
+        <pd:x>191</pd:x>
+        <pd:y>26</pd:y>
+        <pd:width>363</pd:width>
+        <pd:height>33</pd:height>
+        <pd:fontColor>-16777012</pd:fontColor>
+        <pd:color>-16711885</pd:color>
+        <pd:type>solid</pd:type>
+        <pd:thickness>0</pd:thickness>
+        <pd:fade>true</pd:fade>
+    </pd:label>
+</pd:ProcessDefinition>

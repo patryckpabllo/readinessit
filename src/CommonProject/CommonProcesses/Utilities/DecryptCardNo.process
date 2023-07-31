@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns14="http://tibco.com/namespaces/tnt/plugins/soap" xmlns:ns="www.tibco.com/plugin/java/JavaMethodActivityInput" xmlns:ns15="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns13="http://ericsson.com/services/ws_CIL_5/cardencryptioncreate" xmlns:pfx="http://ericsson.com/services/ws_CIL_5" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="www.tibco.com/plugin/java/JavaMethodActivityOutput" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns3="http://www.tibco.com/pe/EngineTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd">
+    <xsd:import namespace="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" schemaLocation="/CDM/ZainKWFault.xsd"/>
+    <wsdl:import namespace="http://ericsson.com/services/ws_CIL_5" location="/BusinessWSDLS/Services/BSCS/EncryptionDecryption/ws_CIL_5_CardEncryptionCreateService.wsdl"/>
+    <pd:name>CommonProcesses/Utilities/DecryptCardNo.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="CardNumber" type="xsd:string"/>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>60</pd:startY>
+    <pd:returnBindings>
+        <DecryptedCardNo>
+            <xsl:value-of select="$DecryptCardNumber/outputMessage/ns13:cardEncryptionCreateResponse/ns13:original"/>
+        </DecryptedCardNo>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="DecryptedCardNo" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>449</pd:endX>
+    <pd:endY>60</pd:endY>
+    <pd:errorSchemas>
+        <ErrSchema ref="pfx2:ErrorResponse"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1471434251545</pd:targetNamespace>
+    <pd:activity name="DecryptCardNumber">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>289</pd:x>
+        <pd:y>62</pd:y>
+        <config>
+            <timeout>%%BusinessProcesses/EncryptDecryptCardNo/Timeout%%</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx:CardEncryptionCreateService</service>
+            <servicePort>CardEncryptionCreateServiceSoap11</servicePort>
+            <operation>cardEncryptionCreate</operation>
+            <soapAction/>
+            <endpointURL>%%CommonResources/Connections/SOAP/External/BSCS/BSCS_HTTP/SoapIP%%%%BusinessProcesses/EncryptDecryptCardNo/BSCSURL%%</endpointURL>
+            <authScheme>NONE</authScheme>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <ns13:cardEncryptionCreateRequest>
+                    <ns13:inputAttributes>
+                        <ns13:cardno>
+                            <xsl:value-of select="$Start/CardNumber"/>
+                        </ns13:cardno>
+                        <ns13:action>
+                            <xsl:value-of select="&quot;d&quot;"/>
+                        </ns13:action>
+                    </ns13:inputAttributes>
+                </ns13:cardEncryptionCreateRequest>
+                <ns14:_configData>
+                    <endpointURL>
+                        <xsl:value-of select="concat($_globalVariables/ns1:GlobalVariables/CommonResources/Connections/SOAP/External/BSCS/BSCS_HTTP/SoapIP,$_globalVariables/ns1:GlobalVariables/BusinessProcesses/EncryptDecryptCardNo/BSCSURL)"/>
+                    </endpointURL>
+                </ns14:_configData>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="DecErr">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>457</pd:x>
+        <pd:y>190</pd:y>
+        <config>
+            <faultName>ErrSchema</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns12:ActivityInput>
+                <data>
+                    <pfx2:ErrorResponse>
+                        <pfx2:Error_SourceSystem>
+                            <xsl:value-of select="&quot;BSCS&quot;"/>
+                        </pfx2:Error_SourceSystem>
+                        <pfx2:Error_SourceErrCode>
+                            <xsl:value-of select="$_error_DecryptCardNumber/ActivityErrors/defaultFaultElement/faultcode"/>
+                        </pfx2:Error_SourceErrCode>
+                        <pfx2:Error_SourceErrDesc>
+                            <xsl:value-of select="$_error_DecryptCardNumber/ActivityErrors/defaultFaultElement/faultstring"/>
+                        </pfx2:Error_SourceErrDesc>
+                        <pfx2:Error_Type>
+                            <xsl:value-of select="&quot;Technical&quot;"/>
+                        </pfx2:Error_Type>
+                        <pfx2:Error_UserErrCode>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/EncryptDecryptCardNo/ErrorMessageCode"/>
+                        </pfx2:Error_UserErrCode>
+                        <pfx2:Error_UserErrDesc>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/EncryptDecryptCardNo/ErrorMessageString"/>
+                        </pfx2:Error_UserErrDesc>
+                    </pfx2:ErrorResponse>
+                </data>
+            </ns12:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Logging_Message_Masking">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>288</pd:x>
+        <pd:y>190</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message_Masking.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns15:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="&quot;DecryptCardNo&quot;"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/UPDATE"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:InterfaceID>
+                        <xsl:value-of select="concat(tib:left($Start/CardNumber,6),'XXXXXX',tib:right($Start/CardNumber,4))"/>
+                    </ns22:InterfaceID>
+                    <ns22:Transaction>
+                        <xsl:value-of select="concat(tib:render-xml($_error),tib:render-xml($_error_DecryptCardNumber))"/>
+                    </ns22:Transaction>
+                    <ns22:AltKey>
+                        <ns22:AltKeyName>
+                            <xsl:value-of select="&quot;SecretValue&quot;"/>
+                        </ns22:AltKeyName>
+                        <ns22:AltKeyValue>
+                            <xsl:value-of select="$Start/CardNumber"/>
+                        </ns22:AltKeyValue>
+                    </ns22:AltKey>
+                    <ns22:AltKey>
+                        <ns22:AltKeyName>
+                            <xsl:value-of select="&quot;MaskedValue&quot;"/>
+                        </ns22:AltKeyName>
+                        <ns22:AltKeyValue>
+                            <xsl:value-of select="concat(tib:left($Start/CardNumber,6),'XXXXXX',tib:right($Start/CardNumber,4))"/>
+                        </ns22:AltKeyValue>
+                    </ns22:AltKey>
+                </ns22:Header>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns15:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>DecryptCardNumber</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>DecryptCardNumber</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>DecryptCardNumber</pd:from>
+        <pd:to>Logging_Message_Masking</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Logging_Message_Masking</pd:from>
+        <pd:to>DecErr</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

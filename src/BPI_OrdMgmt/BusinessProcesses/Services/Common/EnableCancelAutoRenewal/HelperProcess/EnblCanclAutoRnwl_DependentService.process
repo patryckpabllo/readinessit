@@ -1,0 +1,752 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:format="java://MSISDNFormatter" xmlns:ns5="http://www.ericsson.com/CDM/telecom/Subscriber" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns13="http://www.siebel.com/xml/CBiO2AutoRenewalCancelReq" xmlns:pfx="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateRes.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns4="http://www.ericsson.com/CDM/telecom/Header" xmlns:ns3="http://www.ericsson.com/CDM/telecom/SubscriberAssets" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/Common/EnableCancelAutoRenewal/HelperProcess/DependentServices.xsd" xmlns:pfx3="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateReq.xsd" xmlns:pfx2="http://www.ericsson.com/CDM/telecom/Response" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/AutoRenewalCancel/AutoRenewalFlagUpdateReq.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/AutoRenewalCancel/AutoRenewalFlagUpdateRes.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/Common/EnableCancelAutoRenewal/HelperProcess/DependentServices.xsd" schemaLocation="/BusinessProcesses/Services/Common/EnableCancelAutoRenewal/HelperProcess/DependentServices.xsd"/>
+    <pd:name>BusinessProcesses/Services/Common/EnableCancelAutoRenewal/HelperProcess/EnblCanclAutoRnwl_DependentService.process</pd:name>
+    <pd:description>CR-20-051_Prepaid Order and Asset Process Enhancement: A new 
+spawned sub process is created which will update 'cancelautorenewal'
+flag in OLM for dependent services sequentially in a loop and 
+asynchronously.</pd:description>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx3:AutoRenewalFlagUpdateReq"/>
+                    <xsd:element name="TrackingId" type="xsd:string"/>
+                    <xsd:element name="StartTimestamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>101</pd:startX>
+    <pd:startY>130</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1608</pd:endX>
+    <pd:endY>130</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1602657634251</pd:targetNamespace>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>197</pd:x>
+        <pd:y>67</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/EnableCancelAutoRenewal/ComponentNameDpndtSrvc"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </ns22:TransactionID>
+                    <xsl:if test="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:Subscriber/ns3:ServiceNo">
+                        <ns22:InterfaceID>
+                            <xsl:value-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:Subscriber/ns3:ServiceNo"/>
+                        </ns22:InterfaceID>
+                    </xsl:if>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx3:AutoRenewalFlagUpdateReq)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimestamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1507</pd:x>
+        <pd:y>128</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/EnableCancelAutoRenewal/ComponentNameDpndtSrvc"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($MapFinalRes/pfx:AutoRenewalFlagUpdateRes)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimestamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1596</pd:x>
+        <pd:y>386</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/EnableCancelAutoRenewal/ComponentNameDpndtSrvc"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </ns22:TransactionID>
+                    <xsl:if test="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:Subscriber/ns3:ServiceNo">
+                        <ns22:InterfaceID>
+                            <xsl:value-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:Subscriber/ns3:ServiceNo"/>
+                        </ns22:InterfaceID>
+                    </xsl:if>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($_error/ns2:ErrorReport)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimestamp"/>
+                </TimeDuration>
+                <xsl:if test="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError">
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                    </Category>
+                </xsl:if>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>1312</pd:x>
+        <pd:y>388</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="CallCRMSP">
+        <pd:type>com.tibco.plugin.jdbc.JDBCCallActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCCallActivity</pd:resourceType>
+        <pd:x>279</pd:x>
+        <pd:y>135</pd:y>
+        <config>
+            <timeout>%%BusinessProcesses/Services/Update/EnableCancelAutoRenewal/JDBC_Timeout%%</timeout>
+            <maxRows>0</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/External/SeibelLOVConnection.sharedjdbc</jdbcSharedConfig>
+            <ProcedureName>ZAINKW_AUTORENEW_DPNDCY_SP</ProcedureName>
+            <parameterTypes>
+                <parameter>
+                    <colName>P_SUBNO_IN</colName>
+                    <colType>1</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_PARTNUM_IN</colName>
+                    <colType>1</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_OPERATION</colName>
+                    <colType>1</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_DPNDC_OUT</colName>
+                    <colType>3</colType>
+                    <dataType>-10</dataType>
+                    <typeName>REF CURSOR</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_ERRORCODE_OUT</colName>
+                    <colType>4</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_ERRORMSG_OUT</colName>
+                    <colType>4</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+            </parameterTypes>
+        </config>
+        <pd:inputBindings>
+            <inputs>
+                <inputSet>
+                    <P_SUBNO_IN>
+                        <xsl:choose>
+                            <xsl:when test="exists($Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:Subscriber/ns3:ServiceNo)">
+                                <xsl:value-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:Subscriber/ns3:ServiceNo"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </P_SUBNO_IN>
+                    <P_PARTNUM_IN>
+                        <xsl:choose>
+                            <xsl:when test="exists($Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:ListOfAssets/ns3:Asset[1]/ns3:AssetID)">
+                                <xsl:value-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:ListOfAssets/ns3:Asset[1]/ns3:AssetID"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </P_PARTNUM_IN>
+                    <P_OPERATION>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/EnableCancelAutoRenewal/OperationDisable"/>
+                    </P_OPERATION>
+                </inputSet>
+            </inputs>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>686</pd:x>
+        <pd:y>3</pd:y>
+        <pd:width>649</pd:width>
+        <pd:height>238</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$ParseCRMOutput/Resultsets/ResultSet1/Record1</pd:over>
+            <pd:iterationElementSlot>eachRecord</pd:iterationElementSlot>
+            <pd:indexSlot>itrRecord</pd:indexSlot>
+            <pd:activityOutputName/>
+            <pd:accumulateOutput>false</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Call_OM_GetOffer</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Call_CRM_Update</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Multiple Bends</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Call_OLM_AutoRenewalFlagSet</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Call_OM_GetOffer</pd:from>
+            <pd:to>Call_OLM_AutoRenewalFlagSet</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Call_OLM_AutoRenewalFlagSet</pd:from>
+            <pd:to>Call_CRM_Update</pd:to>
+            <pd:xpathDescription>OLMSuccess</pd:xpathDescription>
+            <pd:lineType>Multiple Bends</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Call_OLM_AutoRenewalFlagSet/pfx:AutoRenewalFlagUpdateRes/pfx2:Response/ResponseCode=1
+or
+$Call_OLM_AutoRenewalFlagSet/pfx:AutoRenewalFlagUpdateRes/pfx2:Response/ResponseCode=0</pd:xpath>
+        </pd:transition>
+        <pd:activity name="Call_OLM_AutoRenewalFlagSet">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>983</pd:x>
+            <pd:y>127</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/EnableCancelAutoRenewal/HelperProcess/OLM_SetAutoRenewalFlag.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <pfx3:AutoRenewalFlagUpdateReq>
+                        <xsl:copy-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns4:BusinessMessageHeader"/>
+                        <xsl:copy-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns5:Subscriber"/>
+                        <ns3:SubscriberAssets>
+                            <xsl:copy-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:Subscriber"/>
+                            <ns3:ListOfAssets>
+                                <ns3:Asset>
+                                    <xsl:choose xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                                        <xsl:when test="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns4:BusinessMessageHeader/Consumer=&quot;FixedRenewalOffer&quot;">
+                                            <ns3:AssetID>
+                                                <xsl:value-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:ListOfAssets/ns3:Asset[1]/ns3:AssetID"/>
+                                            </ns3:AssetID>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <ns3:AssetID>
+                                                <xsl:value-of select="$Call_OM_GetOffer/pfx:AutoRenewalFlagUpdateRes/pfx2:Response/ResponseCode"/>
+                                            </ns3:AssetID>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    <xsl:if test="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:ListOfAssets/ns3:Asset[1]/ns3:AssetAutoRenewalFlag">
+                                        <ns3:AssetAutoRenewalFlag>
+                                            <xsl:value-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:ListOfAssets/ns3:Asset[1]/ns3:AssetAutoRenewalFlag"/>
+                                        </ns3:AssetAutoRenewalFlag>
+                                    </xsl:if>
+                                    <ListOfServices>
+                                        <ns3:Service>
+                                            <ns3:ServiceID>
+                                                <xsl:value-of select="''"/>
+                                            </ns3:ServiceID>
+                                        </ns3:Service>
+                                    </ListOfServices>
+                                    <ns3:AssetStartDate>
+                                        <xsl:value-of select="current-dateTime()"/>
+                                    </ns3:AssetStartDate>
+                                    <ns3:AssetEndDate>
+                                        <xsl:value-of select="current-dateTime()"/>
+                                    </ns3:AssetEndDate>
+                                </ns3:Asset>
+                            </ns3:ListOfAssets>
+                        </ns3:SubscriberAssets>
+                    </pfx3:AutoRenewalFlagUpdateReq>
+                    <TrackingId>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </TrackingId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$Start/root/StartTimestamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Call_OM_GetOffer">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>808</pd:x>
+            <pd:y>131</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/EnableCancelAutoRenewal/HelperProcess/OM_GetOffer.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <pfx3:AutoRenewalFlagUpdateReq>
+                        <xsl:copy-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns4:BusinessMessageHeader"/>
+                        <xsl:copy-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns5:Subscriber"/>
+                        <ns3:SubscriberAssets>
+                            <xsl:copy-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:Subscriber"/>
+                            <ns3:ListOfAssets>
+                                <ns3:Asset>
+                                    <xsl:choose xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                                        <xsl:when test="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns4:BusinessMessageHeader/Consumer=&quot;FixedRenewalOffer&quot;">
+                                            <ns3:AssetID>
+                                                <xsl:value-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:ListOfAssets/ns3:Asset[1]/ns3:AssetID"/>
+                                            </ns3:AssetID>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:if test="$eachRecord/Record1/X_ECM_ID">
+                                                <ns3:AssetID>
+                                                    <xsl:value-of select="$eachRecord/Record1/X_ECM_ID"/>
+                                                </ns3:AssetID>
+                                            </xsl:if>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                    <ns3:AssetAutoRenewalFlag>
+                                        <xsl:value-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:ListOfAssets/ns3:Asset[1]/ns3:AssetAutoRenewalFlag"/>
+                                    </ns3:AssetAutoRenewalFlag>
+                                    <ListOfServices>
+                                        <ns3:Service>
+                                            <ns3:ServiceID>
+                                                <xsl:value-of select="''"/>
+                                            </ns3:ServiceID>
+                                        </ns3:Service>
+                                    </ListOfServices>
+                                </ns3:Asset>
+                            </ns3:ListOfAssets>
+                        </ns3:SubscriberAssets>
+                    </pfx3:AutoRenewalFlagUpdateReq>
+                    <TrackingId>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </TrackingId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$Start/root/StartTimestamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Call_CRM_Update">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>1156</pd:x>
+            <pd:y>67</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/EnableCancelAutoRenewal/HelperProcess/CRM_UpdateAutoRenewCancel.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <ns13:ListOfCBiO2AutoRenewalCancelReq>
+                        <ns13:CBiO2AutoRenewal>
+                            <ns13:OrderDate>
+                                <xsl:value-of select="tib:format-date('MM/dd/yyyy',current-date())"/>
+                            </ns13:OrderDate>
+                            <xsl:if test="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:ListOfAssets/ns3:Asset[1]/ns3:AssetID">
+                                <ns13:OrderReason>
+                                    <xsl:value-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:ListOfAssets/ns3:Asset[1]/ns3:AssetID"/>
+                                </ns13:OrderReason>
+                            </xsl:if>
+                            <xsl:choose xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                                <xsl:when test="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns4:BusinessMessageHeader/Consumer=&quot;FixedRenewalOffer&quot;">
+                                    <ns13:ProductId>
+                                        <xsl:value-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:ListOfAssets/ns3:Asset[1]/ListOfServices/ns3:Service[1]/ns3:ServiceID"/>
+                                    </ns13:ProductId>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:if test="$eachRecord/Record1/X_ECM_ID">
+                                        <ns13:ProductId>
+                                            <xsl:value-of select="$eachRecord/Record1/X_ECM_ID"/>
+                                        </ns13:ProductId>
+                                    </xsl:if>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <ns13:MSISDN>
+                                <xsl:value-of select="format:FormatMSISDN($Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:Subscriber/ns3:ServiceNo,$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/EnableCancelAutoRenewal/MSISDNBaseLength)"/>
+                            </ns13:MSISDN>
+                        </ns13:CBiO2AutoRenewal>
+                    </ns13:ListOfCBiO2AutoRenewalCancelReq>
+                    <TrackingId>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </TrackingId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$Start/root/StartTimestamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="ParseCRMOutput">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>557</pd:x>
+        <pd:y>85</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>false</validateOutput>
+            <term ref="pfx4:Resultsets"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$CallCRMSP/resultSet/UnresolvedResultsets"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorSP">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>286</pd:x>
+        <pd:y>291</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/Msg"/>
+                </message>
+                <xsl:if test="$_error/ns2:ErrorReport/MsgCode">
+                    <messageCode>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>558</pd:x>
+        <pd:y>322</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="MapFinalRes">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1401</pd:x>
+        <pd:y>126</pd:y>
+        <config>
+            <element ref="pfx:AutoRenewalFlagUpdateRes"/>
+        </config>
+        <pd:inputBindings>
+            <pfx:AutoRenewalFlagUpdateRes>
+                <xsl:copy-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns4:BusinessMessageHeader"/>
+                <pfx2:Response>
+                    <ResponseDescription>
+                        <xsl:value-of select="'Success'"/>
+                    </ResponseDescription>
+                </pfx2:Response>
+            </pfx:AutoRenewalFlagUpdateRes>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogCRMResponse">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>406</pd:x>
+        <pd:y>132</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/EnableCancelAutoRenewal/ComponentNameDpndtSrvc"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </ns22:TransactionID>
+                    <xsl:if test="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:Subscriber/ns3:ServiceNo">
+                        <ns22:InterfaceID>
+                            <xsl:value-of select="$Start/root/pfx3:AutoRenewalFlagUpdateReq/ns3:SubscriberAssets/ns3:Subscriber/ns3:ServiceNo"/>
+                        </ns22:InterfaceID>
+                    </xsl:if>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($CallCRMSP/resultSet)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimestamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="'CRM_RES_RECV'"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>CallCRMSP</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>MapFinalRes</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseCRMOutput</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:xpathDescription>DependentRecordExists</pd:xpathDescription>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-13395712</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>count($ParseCRMOutput/Resultsets/ResultSet1/Record1)&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallCRMSP</pd:from>
+        <pd:to>ErrorSP</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapFinalRes</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>MapFinalRes</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseCRMOutput</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:xpathDescription>NoDependentService</pd:xpathDescription>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-52480</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallCRMSP</pd:from>
+        <pd:to>LogCRMResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogCRMResponse</pd:from>
+        <pd:to>ParseCRMOutput</pd:to>
+        <pd:xpathDescription>Success</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16738048</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>upper-case($CallCRMSP/resultSet/outputSet/P_ERRORMSG_OUT)='SUCCESS'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogCRMResponse</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:xpathDescription>CRMError</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-3394816</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

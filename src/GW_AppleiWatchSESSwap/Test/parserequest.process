@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:pfx="http://www.tibco.com/schemas/GW_AppleiWatch2/Services/SESEntServer/Resources/XSD/OutboundSubsActDeacforeSIMDeviceReqSchema.xsd">
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.tibco.com/schemas/GW_AppleiWatch2/Services/SESEntServer/Resources/XSD/OutboundSubsActDeacforeSIMDeviceReqSchema.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/OutboundSubsActDeacforeSIMDeviceReqSchema.xsd"/>
+    <pd:name>Test/parserequest.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>61</pd:startX>
+    <pd:startY>100</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>731</pd:endX>
+    <pd:endY>65</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1594273593459</pd:targetNamespace>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>507</pd:x>
+        <pd:y>26</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$XML_JSON/javaCodeActivityOutput/jsonOut"/>
+                </message>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="XML_JSON">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>264</pd:x>
+        <pd:y>29</pd:y>
+        <config>
+            <fileName>parserequestXML_JSON</fileName>
+            <packageName>Test.parserequest</packageName>
+            <fullsource>package Test.parserequest;
+import java.util.*;
+import java.io.*;
+import org.json.JSONObject;
+import org.json.XML;
+
+public class parserequestXML_JSON{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String jsonIn = "";
+	protected String xmlIn = "";
+	protected String xmlOut = "";
+	protected String jsonOut = "";
+	public String getjsonIn() {
+		return jsonIn;
+	}
+	public void setjsonIn(String val) {
+		jsonIn = val;
+	}
+	public String getxmlIn() {
+		return xmlIn;
+	}
+	public void setxmlIn(String val) {
+		xmlIn = val;
+	}
+	public String getxmlOut() {
+		return xmlOut;
+	}
+	public void setxmlOut(String val) {
+		xmlOut = val;
+	}
+	public String getjsonOut() {
+		return jsonOut;
+	}
+	public void setjsonOut(String val) {
+		jsonOut = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public parserequestXML_JSON() {
+	}
+	public void invoke() throws Exception {
+	String xmlOt="";
+	String jsonOt="";
+	if(getjsonIn()!=null &amp; getjsonIn()!="")
+	{
+		JSONObject jObj = new JSONObject(getjsonIn());
+		xmlOt=XML.toString(jObj);
+		setxmlOut(xmlOt);
+	}
+
+	if(getxmlIn()!=null &amp; getxmlIn()!="")
+	{
+		System.out.println("XML to JSON***********************************");
+		JSONObject jObj1 = XML.toJSONObject(getxmlIn());
+		
+		setjsonOut(jObj1.toString());
+	}
+/* Available Variables: DO NOT MODIFY
+	In  : String jsonIn
+	In  : String xmlIn
+	Out : String xmlOut
+	Out : String jsonOut
+* Available Variables: DO NOT MODIFY *****/
+
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>jsonIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>xmlIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>xmlOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>jsonOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>parserequestXML_JSON</name>
+                    <byteCode>yv66vgAAADMAUwkAEwAwCQATADEJABMAMgkAEwAzCgAUADQIADUKABMANgcANwoACAA4CgA5ADoKABMAOwoAEwA8CQA9AD4IAD8KAEAAQQoAOQBCCgAIAEMKABMARAcARQcARgEABmpzb25JbgEAEkxqYXZhL2xhbmcvU3RyaW5nOwEABXhtbEluAQAGeG1sT3V0AQAHanNvbk91dAEACWdldGpzb25JbgEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEACXNldGpzb25JbgEAFShMamF2YS9sYW5nL1N0cmluZzspVgEACGdldHhtbEluAQAIc2V0eG1sSW4BAAlnZXR4bWxPdXQBAAlzZXR4bWxPdXQBAApnZXRqc29uT3V0AQAKc2V0anNvbk91dAEABjxpbml0PgEAAygpVgEABmludm9rZQEADVN0YWNrTWFwVGFibGUHAEcHAEUBAApFeGNlcHRpb25zBwBIAQAKU291cmNlRmlsZQEAGXBhcnNlcmVxdWVzdFhNTF9KU09OLmphdmEMABUAFgwAFwAWDAAYABYMABkAFgwAJgAnAQAADAAaABsBABNvcmcvanNvbi9KU09OT2JqZWN0DAAmAB8HAEkMAEoASwwAIwAfDAAgABsHAEwMAE0ATgEALlhNTCB0byBKU09OKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioHAE8MAFAAHwwAUQBSDABKABsMACUAHwEAJlRlc3QvcGFyc2VyZXF1ZXN0L3BhcnNlcmVxdWVzdFhNTF9KU09OAQAQamF2YS9sYW5nL09iamVjdAEAEGphdmEvbGFuZy9TdHJpbmcBABNqYXZhL2xhbmcvRXhjZXB0aW9uAQAMb3JnL2pzb24vWE1MAQAIdG9TdHJpbmcBACYoTGphdmEvbGFuZy9PYmplY3Q7KUxqYXZhL2xhbmcvU3RyaW5nOwEAEGphdmEvbGFuZy9TeXN0ZW0BAANvdXQBABVMamF2YS9pby9QcmludFN0cmVhbTsBABNqYXZhL2lvL1ByaW50U3RyZWFtAQAHcHJpbnRsbgEADHRvSlNPTk9iamVjdAEAKShMamF2YS9sYW5nL1N0cmluZzspTG9yZy9qc29uL0pTT05PYmplY3Q7ACEAEwAUAAAABAAEABUAFgAAAAQAFwAWAAAABAAYABYAAAAEABkAFgAAAAoAAQAaABsAAQAcAAAAHQABAAEAAAAFKrQAAbAAAAABAB0AAAAGAAEAAAAOAAEAHgAfAAEAHAAAACIAAgACAAAABiortQABsQAAAAEAHQAAAAoAAgAAABEABQASAAEAIAAbAAEAHAAAAB0AAQABAAAABSq0AAKwAAAAAQAdAAAABgABAAAAFAABACEAHwABABwAAAAiAAIAAgAAAAYqK7UAArEAAAABAB0AAAAKAAIAAAAXAAUAGAABACIAGwABABwAAAAdAAEAAQAAAAUqtAADsAAAAAEAHQAAAAYAAQAAABoAAQAjAB8AAQAcAAAAIgACAAIAAAAGKiu1AAOxAAAAAQAdAAAACgACAAAAHQAFAB4AAQAkABsAAQAcAAAAHQABAAEAAAAFKrQABLAAAAABAB0AAAAGAAEAAAAgAAEAJQAfAAEAHAAAACIAAgACAAAABiortQAEsQAAAAEAHQAAAAoAAgAAACMABQAkAAEAJgAnAAEAHAAAAEkAAgABAAAAHSq3AAUqEga1AAEqEga1AAIqEga1AAMqEga1AASxAAAAAQAdAAAAGgAGAAAAJgAEAAkACgAKABAACwAWAAwAHAAnAAEAKAAnAAIAHAAAAPEAAwAEAAAAcRIGTBIGTSq2AAfGAAcEpwAEAyq2AAcSBqUABwSnAAQDfpkAGbsACFkqtgAHtwAJTi24AApMKiu2AAsqtgAMxgAHBKcABAMqtgAMEgalAAcEpwAEA36ZABuyAA0SDrYADyq2AAy4ABBOKi22ABG2ABKxAAAAAgAdAAAALgALAAAAKQADACoABgArACQALQAwAC4ANQAvADoAMgBYADQAYAA1AGgANwBwAEAAKQAAADoACv0AEQcAKgcAKkABTAH/AAAAAwcAKwcAKgcAKgACAQEZCkABTAH/AAAAAwcAKwcAKgcAKgACAQEbACwAAAAEAAEALQABAC4AAAACAC8=</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xmlIn>
+                    <xsl:value-of select="'&lt;?xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?>&#xA;&lt;OutboundSubsActDeacforeSIMDeviceReqSchema>&#xA;              &lt;callbackUrl>http://ses.carrier.com/outboundActivationCallback/ 9d6c1398-1792-45ca-abee-8ef63d649541&lt;/callbackUrl>&#xA;              &lt;subscriptionInfo>&#xA;                             &lt;planInfo>&#xA;                                           &lt;billingAccountNumber>Account A&lt;/billingAccountNumber>&#xA;                                           &lt;planName>Share Number Plan&lt;/planName>&#xA;                                           &lt;planType>Postpaid&lt;/planType>&#xA;                             &lt;/planInfo>&#xA;                             &lt;type>1&lt;/type>&#xA;              &lt;/subscriptionInfo>&#xA;              &lt;deviceInfo>&#xA;                             &lt;osVersion>3.0&lt;/osVersion>&#xA;                             &lt;supportedRatList>LTE&lt;/supportedRatList>&#xA;                             &lt;deviceType>1&lt;/deviceType>&#xA;                             &lt;deviceModel>Galaxy Watch 4&lt;/deviceModel>&#xA;                             &lt;euiccInfo>&#xA;                                           &lt;simAllianceProfileVersion>v3.0.0&lt;/simAllianceProfileVersion>&#xA;                                           &lt;gsmaSgp22Version>v3.0.0&lt;/gsmaSgp22Version>&#xA;                                           &lt;imei>356979067872692&lt;/imei>&#xA;                                           &lt;iccid>89014104277527978255&lt;/iccid>&#xA;                                           &lt;eid>8986010110231170983S&lt;/eid>&#xA;                             &lt;/euiccInfo>&#xA;                             &lt;serialNumber>CBAS2EFSE2Q&lt;/serialNumber>&#xA;                             &lt;osType>4&lt;/osType>&#xA;                             &lt;displayName>Georges watch&lt;/displayName>&#xA;                             &lt;deviceVendor>Samsung&lt;/deviceVendor>&#xA;              &lt;/deviceInfo>&#xA;              &lt;pairedDeviceInfo>&#xA;                             &lt;msisdn>8613922114763&lt;/msisdn>&#xA;                             &lt;imei>356979067872699&lt;/imei>&#xA;                             &lt;iccid>89014104277527978299&lt;/iccid>&#xA;                             &lt;imsi>312019876543212&lt;/imsi>&#xA;              &lt;/pairedDeviceInfo>&#xA;&lt;/OutboundSubsActDeacforeSIMDeviceReqSchema>'"/>
+                </xmlIn>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JSON_XML">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>263</pd:x>
+        <pd:y>141</pd:y>
+        <config>
+            <fileName>parserequestJSON_XML</fileName>
+            <packageName>Test.parserequest</packageName>
+            <fullsource>package Test.parserequest;
+import java.util.*;
+import java.io.*;
+import org.json.JSONObject;
+import org.json.XML;
+
+public class parserequestJSON_XML{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String jsonIn = "";
+	protected String xmlIn = "";
+	protected String xmlOut = "";
+	protected String jsonOut = "";
+	public String getjsonIn() {
+		return jsonIn;
+	}
+	public void setjsonIn(String val) {
+		jsonIn = val;
+	}
+	public String getxmlIn() {
+		return xmlIn;
+	}
+	public void setxmlIn(String val) {
+		xmlIn = val;
+	}
+	public String getxmlOut() {
+		return xmlOut;
+	}
+	public void setxmlOut(String val) {
+		xmlOut = val;
+	}
+	public String getjsonOut() {
+		return jsonOut;
+	}
+	public void setjsonOut(String val) {
+		jsonOut = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public parserequestJSON_XML() {
+	}
+	public void invoke() throws Exception {
+	String xmlOt="";
+	String jsonOt="";
+	if(getjsonIn()!=null)
+	{
+		JSONObject jObj = new JSONObject(getjsonIn());
+		xmlOt=XML.toString(jObj);
+		setxmlOut(xmlOt);
+	}
+
+	if(getxmlIn()!=null)
+	{
+		JSONObject jObj = XML.toJSONObject(getxmlIn());
+		setjsonOut(jObj.toString());
+	}
+/* Available Variables: DO NOT MODIFY
+	In  : String jsonIn
+	In  : String xmlIn
+	Out : String xmlOut
+	Out : String jsonOut
+* Available Variables: DO NOT MODIFY *****/
+
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>jsonIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>xmlIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>xmlOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>jsonOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>parserequestJSON_XML</name>
+                    <byteCode>yv66vgAAADMARQkAEAAsCQAQAC0JABAALgkAEAAvCgARADAIADEKABAAMgcAMwoACAA0CgA1ADYKABAANwoAEAA4CgA1ADkKAAgAOgoAEAA7BwA8BwA9AQAGanNvbkluAQASTGphdmEvbGFuZy9TdHJpbmc7AQAFeG1sSW4BAAZ4bWxPdXQBAAdqc29uT3V0AQAJZ2V0anNvbkluAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAJc2V0anNvbkluAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAIZ2V0eG1sSW4BAAhzZXR4bWxJbgEACWdldHhtbE91dAEACXNldHhtbE91dAEACmdldGpzb25PdXQBAApzZXRqc29uT3V0AQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQANU3RhY2tNYXBUYWJsZQcAPgEACkV4Y2VwdGlvbnMHAD8BAApTb3VyY2VGaWxlAQAZcGFyc2VyZXF1ZXN0SlNPTl9YTUwuamF2YQwAEgATDAAUABMMABUAEwwAFgATDAAjACQBAAAMABcAGAEAE29yZy9qc29uL0pTT05PYmplY3QMACMAHAcAQAwAQQBCDAAgABwMAB0AGAwAQwBEDABBABgMACIAHAEAJlRlc3QvcGFyc2VyZXF1ZXN0L3BhcnNlcmVxdWVzdEpTT05fWE1MAQAQamF2YS9sYW5nL09iamVjdAEAEGphdmEvbGFuZy9TdHJpbmcBABNqYXZhL2xhbmcvRXhjZXB0aW9uAQAMb3JnL2pzb24vWE1MAQAIdG9TdHJpbmcBACYoTGphdmEvbGFuZy9PYmplY3Q7KUxqYXZhL2xhbmcvU3RyaW5nOwEADHRvSlNPTk9iamVjdAEAKShMamF2YS9sYW5nL1N0cmluZzspTG9yZy9qc29uL0pTT05PYmplY3Q7ACEAEAARAAAABAAEABIAEwAAAAQAFAATAAAABAAVABMAAAAEABYAEwAAAAoAAQAXABgAAQAZAAAAHQABAAEAAAAFKrQAAbAAAAABABoAAAAGAAEAAAAOAAEAGwAcAAEAGQAAACIAAgACAAAABiortQABsQAAAAEAGgAAAAoAAgAAABEABQASAAEAHQAYAAEAGQAAAB0AAQABAAAABSq0AAKwAAAAAQAaAAAABgABAAAAFAABAB4AHAABABkAAAAiAAIAAgAAAAYqK7UAArEAAAABABoAAAAKAAIAAAAXAAUAGAABAB8AGAABABkAAAAdAAEAAQAAAAUqtAADsAAAAAEAGgAAAAYAAQAAABoAAQAgABwAAQAZAAAAIgACAAIAAAAGKiu1AAOxAAAAAQAaAAAACgACAAAAHQAFAB4AAQAhABgAAQAZAAAAHQABAAEAAAAFKrQABLAAAAABABoAAAAGAAEAAAAgAAEAIgAcAAEAGQAAACIAAgACAAAABiortQAEsQAAAAEAGgAAAAoAAgAAACMABQAkAAEAIwAkAAEAGQAAAEkAAgABAAAAHSq3AAUqEga1AAEqEga1AAIqEga1AAMqEga1AASxAAAAAQAaAAAAGgAGAAAAJgAEAAkACgAKABAACwAWAAwAHAAnAAEAJQAkAAIAGQAAAIkAAwAEAAAAOxIGTBIGTSq2AAfGABm7AAhZKrYAB7cACU4tuAAKTCortgALKrYADMYAEyq2AAy4AA1OKi22AA62AA+xAAAAAgAaAAAAKgAKAAAAKQADACoABgArAA0ALQAZAC4AHgAvACMAMgAqADQAMgA1ADoAPgAmAAAADAAC/QAjBwAnBwAnFgAoAAAABAABACkAAQAqAAAAAgAr</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <jsonIn>
+                    <xsl:value-of select="'{&#xA;&quot;OutboundSubsActDeacforeSIMDeviceReqSchema&quot;:{&#xA;  &quot;deviceInfo&quot;: {&#xA;    &quot;deviceVendor&quot;: &quot;Samsung&quot;,&#xA;    &quot;deviceModel&quot;: &quot;Galaxy Watch 4&quot;,&#xA;    &quot;deviceType&quot;: 1,&#xA;    &quot;serialNumber&quot;: &quot;CBAS2EFSE2Q&quot;,&#xA;    &quot;osType&quot;: 4,&#xA;    &quot;osVersion&quot;: &quot;3.0&quot;,&#xA;    &quot;supportedRatList&quot;:[&quot;LTE&quot;],&#xA;    &quot;displayName&quot;: &quot;Georges watch&quot;,&#xA;    &quot;euiccInfo&quot;: {&#xA;      &quot;imei&quot;: &quot;356979067872692&quot;,&#xA;      &quot;eid&quot;: &quot;8986010110231170983S&quot;,&#xA;      &quot;iccid&quot;: &quot;89014104277527978255&quot;,&#xA;      &quot;simAllianceProfileVersion&quot;: &quot;v3.0.0&quot;,&#xA;      &quot;gsmaSgp22Version&quot;: &quot;v3.0.0&quot;&#xA;    }&#xA;  },&#xA;  &quot;subscriptionInfo&quot;: {&#xA;    &quot;type&quot;: 1,&#xA;    &quot;planInfo&quot;: {&#xA;      &quot;planName&quot;: &quot;Share Number Plan&quot;,&#xA;      &quot;planType&quot;: &quot;Postpaid&quot;,&#xA;      &quot;billingAccountNumber&quot;: &quot;Account A&quot;,&#xA;    }&#xA;  },&#xA;  &quot;pairedDeviceInfo&quot;: {&#xA;    &quot;imsi&quot;: &quot;312019876543212&quot;,&#xA;    &quot;msisdn&quot;: &quot;8613922114763&quot;,&#xA;    &quot;imei&quot;: &quot;356979067872699&quot;,&#xA;    &quot;iccid&quot;: &quot;89014104277527978299&quot;&#xA;  },&#xA;  &quot;callbackUrl&quot;:&quot;http://ses.carrier.com/outboundActivationCallback/ 9d6c1398-1792-45ca-abee-8ef63d649541&quot;&#xA;}&#xA;}'"/>
+                </jsonIn>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log-1">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>527</pd:x>
+        <pd:y>142</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$Parse-XML/pfx:OutboundSubsActDeacforeSIMDeviceReqSchema/pfx:callbackUrl"/>
+                </message>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>412</pd:x>
+        <pd:y>143</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>false</validateOutput>
+            <term ref="pfx:OutboundSubsActDeacforeSIMDeviceReqSchema"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="concat('&lt;?xml version = &quot;1.0&quot; encoding = &quot;UTF-8&quot;?>',$JSON_XML/javaCodeActivityOutput/xmlOut)"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>XML_JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>XML_JSON</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>JSON_XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log-1</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JSON_XML</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Log-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

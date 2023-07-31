@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:tns="http://orm.zain.com/ServiceOrder" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns0="http://orm.zain.com/types/" xmlns:jms="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS" xmlns:soap1="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:jndi="http://www.tibco.com/namespaces/ws/2004/soap/apis/jndi" name="Untitled" targetNamespace="http://orm.zain.com/ServiceOrder">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://orm.zain.com/types/" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:complexType name="Param">
+                <xs:sequence>
+                    <xs:element name="name" nillable="true" type="xs:string"/>
+                    <xs:element name="value" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ParamList">
+                <xs:sequence>
+                    <xs:element name="param" nillable="true" type="ns0:Param" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ProcessOrderResponse">
+                <xs:sequence>
+                    <xs:element name="resultCode" type="xs:int"/>
+                    <xs:element name="paramList" nillable="true" type="ns0:ParamList"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Session">
+                <xs:sequence>
+                    <xs:element name="username" nillable="true" type="xs:string"/>
+                    <xs:element name="password" nillable="true" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="processOrderElement">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="session" nillable="true" type="ns0:Session"/>
+                        <xs:element name="orderType" nillable="true" type="xs:string"/>
+                        <xs:element name="msisdn" nillable="true" type="xs:string"/>
+                        <xs:element name="serviceCode" nillable="true" type="xs:string"/>
+                        <xs:element name="paramList" nillable="true" type="ns0:ParamList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="processOrderResponseElement">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="result" nillable="true" type="ns0:ProcessOrderResponse"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="ExternalChannelOrder">
+        <wsdl:port name="ServiceOrder" binding="tns:ServiceOrderBinding">
+            <soap:address location=""/>
+            <jms:connectionFactory>QueueConnectionFactory</jms:connectionFactory>
+            <jms:targetAddress destination="queue">CBIO.BSS.DOM_ESB.ESI.PROVISIONING.SERVICEEORDER.SVC.Q.EXT.REQ</jms:targetAddress>
+        </wsdl:port>
+        <wsdl:port name="ServiceOrderHTTP" binding="tns:ServiceOrderHTTPBinding">
+            <soap:address location="http://localhost:7088/ESB/SOAP/ServiceOrder"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="ServiceOrder">
+        <wsdl:operation name="processOrder">
+            <wsdl:input message="tns:ServiceOrderPortType_processOrder"/>
+            <wsdl:output message="tns:ServiceOrderPortType_processOrderResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ServiceOrderBinding" type="tns:ServiceOrder">
+        <soap:binding style="document" transport="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS"/>
+        <jms:binding messageFormat="Text"/>
+        <wsdl:operation name="processOrder">
+            <soap:operation style="document" soapAction="http://orm.zain.com//processOrder"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="ServiceOrderHTTPBinding" type="tns:ServiceOrder">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="processOrder">
+            <soap:operation style="document" soapAction="http://orm.zain.com//processOrder"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="parameters"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="parameters"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="ServiceOrderPortType_processOrder">
+        <wsdl:part name="parameters" element="ns0:processOrderElement"/>
+    </wsdl:message>
+    <wsdl:message name="ServiceOrderPortType_processOrderResponse">
+        <wsdl:part name="parameters" element="ns0:processOrderResponseElement"/>
+    </wsdl:message>
+</wsdl:definitions>

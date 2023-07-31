@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:ns2="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:ns1="http://www.tibco.com/schemas/GW_FinMgmt/Tester/Schema.xsd2" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.example.com/1550745596873" xmlns:ns0="http://www.tibco.com/schemas/GW_FinMgmt/Tester/Schema.xsd" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="Untitled" targetNamespace="http://xmlns.example.com/1550745596873">
+    <wsdl:types>
+        <xs:schema xmlns="http://www.tibco.com/schemas/GW_FinMgmt/Tester/Schema.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.tibco.com/schemas/GW_FinMgmt/Tester/Schema.xsd">
+            <xs:element name="BalanceCheckRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" ref="ns0:ListOfCustomers"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Customer">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns0:CustomerId"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="CustomerId" type="xs:string"/>
+            <xs:element name="ListOfCustomers">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" ref="ns0:Customer"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns="http://www.tibco.com/schemas/GW_FinMgmt/Tester/Schema.xsd2" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.tibco.com/schemas/GW_FinMgmt/Tester/Schema.xsd2">
+            <xs:element name="BalanceCheckResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" ref="ns1:Records"/>
+                        <xs:element ref="ns1:ResponseCode"/>
+                        <xs:element ref="ns1:ResponseDescription"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="CustNum" type="xs:string"/>
+            <xs:element name="CustomerLvlBal" type="xs:string"/>
+            <xs:element name="Records">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element ref="ns1:CustNum"/>
+                        <xs:element ref="ns1:CustomerLvlBal"/>
+                        <xs:element ref="ns1:TotalTerminatedSubBal"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ResponseCode" type="xs:string"/>
+            <xs:element name="ResponseDescription" type="xs:string"/>
+            <xs:element name="TotalTerminatedSubBal" type="xs:string"/>
+        </xs:schema>
+        <xs:schema xmlns="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" version="1.0">
+            <xs:complexType name="error">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Error_SourceSystem" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Error_SourceErrCode" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Error_SourceErrDesc" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Error_Type" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Error_UserErrCode" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Error_UserErrDesc" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Error_Occurance_Time" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Error_Additional_Desc1" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Error_Additional_Desc2" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ErrorResponse" type="ns2:error"/>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="BalanceCheckPrepaid">
+        <wsdl:port binding="tns:BalanceCheckEndpointBinding" name="BalanceCheckEndpoint">
+            <soap:address location="http://localhost:7073/BusinessProcesses/Services/CRM/Query/BalanceCheck/Implementation/BalanceCheckPrepaid.serviceagent/BalanceCheckEndpoint"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="BalanceCheck">
+        <wsdl:operation name="BalanceCheck">
+            <wsdl:input message="tns:MessageIn"/>
+            <wsdl:output message="tns:MessageOut"/>
+            <wsdl:fault message="tns:Fault" name="fault1"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="BalanceCheckEndpointBinding" type="tns:BalanceCheck">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="BalanceCheck">
+            <soap:operation soapAction="/BusinessProcesses/Services/CRM/Query/BalanceCheck/Implementation/BalanceCheckPrepaid.serviceagent/BalanceCheckEndpoint/BalanceCheck" style="document"/>
+            <wsdl:input>
+                <soap:body parts="Input" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="Output" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="MessageIn">
+        <wsdl:part element="ns0:BalanceCheckRequest" name="Input"/>
+    </wsdl:message>
+    <wsdl:message name="MessageOut">
+        <wsdl:part element="ns1:BalanceCheckResponse" name="Output"/>
+    </wsdl:message>
+    <wsdl:message name="Fault">
+        <wsdl:part element="ns2:ErrorResponse" name="Fault"/>
+    </wsdl:message>
+</wsdl:definitions>

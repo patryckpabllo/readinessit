@@ -1,0 +1,858 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pfx="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:pfx2="http://www.siebel.com/xml/CBiO2TremblantFinalOrderResIO" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/NumReservResponse.xsd" xmlns:pfx4="http://www.zain.com/ZESB/Services/PACIAuthentication/QueryPACIStatusRes" xmlns:pfx5="http://www.zain.com/ZESB/Services/PACIFinalAuthenticationResponse.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EntitleServer/EOM_NotifySES.xsd" xmlns:ns2="http://www.zain.com/ZESB/Services/QueryPACIStatusBiometricsResponse.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns1="http://www.zain.com/ZESB/Services/QueryPACIStatusBiometricsRequest.xsd" xmlns:ns4="http://www.tibco.com/pe/EngineTypes" xmlns:ns3="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns6="http://www.zain.com/ZESB/Services/PACIFinalAuthenticationRequest.xsd" xmlns:ns5="http://www.zain.com/ZESB/Services/PACIAuthentication/QueryPACIStatusReq" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns13="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns12="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd">
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2TremblantFinalOrderResIO" schemaLocation="/Services/SESEntServer/Resources/XSD/CRM_TremblantFinalOrderRes/CBiO2TremblantFinalOrderResIO.xsd"/>
+    <pd:name>test/PACIAuthentication/PACITimerProcesses/ReceivePACINonExpiredRecords.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>93</pd:x>
+        <pd:y>280</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/CRM/Query/PACIAuthentication/PACITimerProcess/PACI_NonExpiredRecords_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1427</pd:endX>
+    <pd:endY>279</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1641231132864</pd:targetNamespace>
+    <pd:activity name="Call_BID_PACIFinalResponse">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>815</pd:x>
+        <pd:y>279</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/CRM/Query/PACIAuthentication/PACIFinalResponse/HelperProcess/ESI_CallBID_PACIFinalResponse.process</processName>
+        </config>
+        <pd:inputBindings>
+            <group>
+                <ns6:root>
+                    <ns6:RequestID>
+                        <xsl:value-of select="$ParseDBRecords/Record/REQUEST_ID"/>
+                    </ns6:RequestID>
+                    <ns6:Status>
+                        <xsl:value-of select="$QueryPACIStatus/pfx4:root/pfx4:Status"/>
+                    </ns6:Status>
+                    <xsl:for-each select="$QueryPACIStatus/pfx4:root/pfx4:UserInfo">
+                        <ns6:UserInfo>
+                            <ns6:CivilID>
+                                <xsl:value-of select="pfx4:CivilID"/>
+                            </ns6:CivilID>
+                            <ns6:CardExpiryDate>
+                                <xsl:value-of select="pfx4:CardExpiryDate"/>
+                            </ns6:CardExpiryDate>
+                            <ns6:Photo>
+                                <xsl:value-of select="pfx4:Photo"/>
+                            </ns6:Photo>
+                            <ns6:FullNameAr>
+                                <xsl:value-of select="pfx4:FullNameAr"/>
+                            </ns6:FullNameAr>
+                            <ns6:FullNameEn>
+                                <xsl:value-of select="pfx4:FullNameEn"/>
+                            </ns6:FullNameEn>
+                            <ns6:BirthDate>
+                                <xsl:value-of select="pfx4:BirthDate"/>
+                            </ns6:BirthDate>
+                            <ns6:Gender>
+                                <xsl:value-of select="pfx4:Gender"/>
+                            </ns6:Gender>
+                            <ns6:NationalityAr>
+                                <xsl:value-of select="pfx4:NationalityAr"/>
+                            </ns6:NationalityAr>
+                            <ns6:NationalityEn>
+                                <xsl:value-of select="pfx4:NationalityEn"/>
+                            </ns6:NationalityEn>
+                            <xsl:for-each select="pfx4:Address">
+                                <ns6:Address>
+                                    <ns6:PaciBuildingNumber>
+                                        <xsl:value-of select="pfx4:PaciBuildingNumber"/>
+                                    </ns6:PaciBuildingNumber>
+                                    <ns6:Governerate>
+                                        <xsl:value-of select="pfx4:Governerate"/>
+                                    </ns6:Governerate>
+                                    <ns6:Area>
+                                        <xsl:value-of select="pfx4:Area"/>
+                                    </ns6:Area>
+                                    <ns6:StreetName>
+                                        <xsl:value-of select="pfx4:StreetName"/>
+                                    </ns6:StreetName>
+                                    <ns6:BlockNumber>
+                                        <xsl:value-of select="pfx4:BlockNumber"/>
+                                    </ns6:BlockNumber>
+                                    <ns6:BuildingNumber>
+                                        <xsl:value-of select="pfx4:BuildingNumber"/>
+                                    </ns6:BuildingNumber>
+                                    <ns6:FloorNumber>
+                                        <xsl:value-of select="pfx4:FloorNumber"/>
+                                    </ns6:FloorNumber>
+                                    <ns6:UnitType>
+                                        <xsl:value-of select="pfx4:UnitType"/>
+                                    </ns6:UnitType>
+                                    <xsl:if test="pfx4:UnitNumber">
+                                        <ns6:UnitNumber>
+                                            <xsl:value-of select="pfx4:UnitNumber"/>
+                                        </ns6:UnitNumber>
+                                    </xsl:if>
+                                </ns6:Address>
+                            </xsl:for-each>
+                            <xsl:for-each select="pfx4:GovData">
+                                <ns6:GovData>
+                                    <ns6:CivilIdExpiryDate>
+                                        <xsl:value-of select="pfx4:CivilIdExpiryDate"/>
+                                    </ns6:CivilIdExpiryDate>
+                                    <ns6:MOIReference>
+                                        <xsl:value-of select="pfx4:MOIReference"/>
+                                    </ns6:MOIReference>
+                                    <ns6:SponsorName>
+                                        <xsl:value-of select="pfx4:SponsorName"/>
+                                    </ns6:SponsorName>
+                                </ns6:GovData>
+                            </xsl:for-each>
+                            <ns6:DocumentNumber>
+                                <xsl:value-of select="pfx4:DocumentNumber"/>
+                            </ns6:DocumentNumber>
+                            <xsl:if test="pfx4:ProfessionDetails">
+                                <ns6:ProfessionDetails>
+                                    <xsl:value-of select="pfx4:ProfessionDetails"/>
+                                </ns6:ProfessionDetails>
+                            </xsl:if>
+                            <xsl:if test="pfx4:ResidencyType">
+                                <ns6:ResidencyType>
+                                    <xsl:value-of select="pfx4:ResidencyType"/>
+                                </ns6:ResidencyType>
+                            </xsl:if>
+                            <xsl:if test="pfx4:ArabicName1">
+                                <ns6:ArabicName1>
+                                    <xsl:value-of select="pfx4:ArabicName1"/>
+                                </ns6:ArabicName1>
+                            </xsl:if>
+                            <xsl:if test="pfx4:ArabicName2">
+                                <ns6:ArabicName2>
+                                    <xsl:value-of select="pfx4:ArabicName2"/>
+                                </ns6:ArabicName2>
+                            </xsl:if>
+                            <xsl:if test="pfx4:ArabicName3">
+                                <ns6:ArabicName3>
+                                    <xsl:value-of select="pfx4:ArabicName3"/>
+                                </ns6:ArabicName3>
+                            </xsl:if>
+                            <xsl:if test="pfx4:ArabicName4">
+                                <ns6:ArabicName4>
+                                    <xsl:value-of select="pfx4:ArabicName4"/>
+                                </ns6:ArabicName4>
+                            </xsl:if>
+                            <xsl:if test="pfx4:EnglishName1">
+                                <ns6:EnglishName1>
+                                    <xsl:value-of select="pfx4:EnglishName1"/>
+                                </ns6:EnglishName1>
+                            </xsl:if>
+                            <xsl:if test="pfx4:EnglishName2">
+                                <ns6:EnglishName2>
+                                    <xsl:value-of select="pfx4:EnglishName2"/>
+                                </ns6:EnglishName2>
+                            </xsl:if>
+                            <xsl:if test="pfx4:EnglishName3">
+                                <ns6:EnglishName3>
+                                    <xsl:value-of select="pfx4:EnglishName3"/>
+                                </ns6:EnglishName3>
+                            </xsl:if>
+                            <xsl:if test="pfx4:EnglishName4">
+                                <ns6:EnglishName4>
+                                    <xsl:value-of select="pfx4:EnglishName4"/>
+                                </ns6:EnglishName4>
+                            </xsl:if>
+                        </ns6:UserInfo>
+                    </xsl:for-each>
+                </ns6:root>
+                <TrackingId>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                </TrackingId>
+                <xsl:if test="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp">
+                    <StartTimeStamp>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </xsl:if>
+            </group>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_CRM_PACIFinalResponse">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>674</pd:x>
+        <pd:y>279</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/CRM/Query/PACIAuthentication/PACIFinalResponse/HelperProcess/ESI_CallCRM_PACIFinalResponse.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns6:root>
+                    <ns6:RequestID>
+                        <xsl:value-of select="$ParseDBRecords/Record/REQUEST_ID"/>
+                    </ns6:RequestID>
+                    <ns6:Status>
+                        <xsl:value-of select="$QueryPACIStatus/pfx4:root/pfx4:Status"/>
+                    </ns6:Status>
+                    <xsl:for-each select="$QueryPACIStatus/pfx4:root/pfx4:UserInfo">
+                        <ns6:UserInfo>
+                            <ns6:CivilID>
+                                <xsl:value-of select="pfx4:CivilID"/>
+                            </ns6:CivilID>
+                            <ns6:CardExpiryDate>
+                                <xsl:value-of select="pfx4:CardExpiryDate"/>
+                            </ns6:CardExpiryDate>
+                            <ns6:Photo>
+                                <xsl:value-of select="pfx4:Photo"/>
+                            </ns6:Photo>
+                            <ns6:FullNameAr>
+                                <xsl:value-of select="pfx4:FullNameAr"/>
+                            </ns6:FullNameAr>
+                            <ns6:FullNameEn>
+                                <xsl:value-of select="pfx4:FullNameEn"/>
+                            </ns6:FullNameEn>
+                            <ns6:BirthDate>
+                                <xsl:value-of select="pfx4:BirthDate"/>
+                            </ns6:BirthDate>
+                            <ns6:Gender>
+                                <xsl:value-of select="pfx4:Gender"/>
+                            </ns6:Gender>
+                            <ns6:NationalityAr>
+                                <xsl:value-of select="pfx4:NationalityAr"/>
+                            </ns6:NationalityAr>
+                            <ns6:NationalityEn>
+                                <xsl:value-of select="pfx4:NationalityEn"/>
+                            </ns6:NationalityEn>
+                            <xsl:for-each select="pfx4:Address">
+                                <ns6:Address>
+                                    <ns6:PaciBuildingNumber>
+                                        <xsl:value-of select="pfx4:PaciBuildingNumber"/>
+                                    </ns6:PaciBuildingNumber>
+                                    <ns6:Governerate>
+                                        <xsl:value-of select="pfx4:Governerate"/>
+                                    </ns6:Governerate>
+                                    <ns6:Area>
+                                        <xsl:value-of select="pfx4:Area"/>
+                                    </ns6:Area>
+                                    <ns6:StreetName>
+                                        <xsl:value-of select="pfx4:StreetName"/>
+                                    </ns6:StreetName>
+                                    <ns6:BlockNumber>
+                                        <xsl:value-of select="pfx4:BlockNumber"/>
+                                    </ns6:BlockNumber>
+                                    <ns6:BuildingNumber>
+                                        <xsl:value-of select="pfx4:BuildingNumber"/>
+                                    </ns6:BuildingNumber>
+                                    <ns6:FloorNumber>
+                                        <xsl:value-of select="pfx4:FloorNumber"/>
+                                    </ns6:FloorNumber>
+                                    <ns6:UnitType>
+                                        <xsl:value-of select="pfx4:UnitType"/>
+                                    </ns6:UnitType>
+                                    <xsl:if test="pfx4:UnitNumber">
+                                        <ns6:UnitNumber>
+                                            <xsl:value-of select="pfx4:UnitNumber"/>
+                                        </ns6:UnitNumber>
+                                    </xsl:if>
+                                </ns6:Address>
+                            </xsl:for-each>
+                            <xsl:for-each select="pfx4:GovData">
+                                <ns6:GovData>
+                                    <ns6:CivilIdExpiryDate>
+                                        <xsl:value-of select="pfx4:CivilIdExpiryDate"/>
+                                    </ns6:CivilIdExpiryDate>
+                                    <ns6:MOIReference>
+                                        <xsl:value-of select="pfx4:MOIReference"/>
+                                    </ns6:MOIReference>
+                                    <ns6:SponsorName>
+                                        <xsl:value-of select="pfx4:SponsorName"/>
+                                    </ns6:SponsorName>
+                                </ns6:GovData>
+                            </xsl:for-each>
+                            <ns6:DocumentNumber>
+                                <xsl:value-of select="pfx4:DocumentNumber"/>
+                            </ns6:DocumentNumber>
+                            <xsl:if test="pfx4:ProfessionDetails">
+                                <ns6:ProfessionDetails>
+                                    <xsl:value-of select="pfx4:ProfessionDetails"/>
+                                </ns6:ProfessionDetails>
+                            </xsl:if>
+                            <xsl:if test="pfx4:ResidencyType">
+                                <ns6:ResidencyType>
+                                    <xsl:value-of select="pfx4:ResidencyType"/>
+                                </ns6:ResidencyType>
+                            </xsl:if>
+                            <xsl:if test="pfx4:ArabicName1">
+                                <ns6:ArabicName1>
+                                    <xsl:value-of select="pfx4:ArabicName1"/>
+                                </ns6:ArabicName1>
+                            </xsl:if>
+                            <xsl:if test="pfx4:ArabicName2">
+                                <ns6:ArabicName2>
+                                    <xsl:value-of select="pfx4:ArabicName2"/>
+                                </ns6:ArabicName2>
+                            </xsl:if>
+                            <xsl:if test="pfx4:ArabicName3">
+                                <ns6:ArabicName3>
+                                    <xsl:value-of select="pfx4:ArabicName3"/>
+                                </ns6:ArabicName3>
+                            </xsl:if>
+                            <xsl:if test="pfx4:ArabicName4">
+                                <ns6:ArabicName4>
+                                    <xsl:value-of select="pfx4:ArabicName4"/>
+                                </ns6:ArabicName4>
+                            </xsl:if>
+                            <xsl:if test="pfx4:EnglishName1">
+                                <ns6:EnglishName1>
+                                    <xsl:value-of select="pfx4:EnglishName1"/>
+                                </ns6:EnglishName1>
+                            </xsl:if>
+                            <xsl:if test="pfx4:EnglishName2">
+                                <ns6:EnglishName2>
+                                    <xsl:value-of select="pfx4:EnglishName2"/>
+                                </ns6:EnglishName2>
+                            </xsl:if>
+                            <xsl:if test="pfx4:EnglishName3">
+                                <ns6:EnglishName3>
+                                    <xsl:value-of select="pfx4:EnglishName3"/>
+                                </ns6:EnglishName3>
+                            </xsl:if>
+                            <xsl:if test="pfx4:EnglishName4">
+                                <ns6:EnglishName4>
+                                    <xsl:value-of select="pfx4:EnglishName4"/>
+                                </ns6:EnglishName4>
+                            </xsl:if>
+                        </ns6:UserInfo>
+                    </xsl:for-each>
+                </ns6:root>
+                <TransactionID>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                </TransactionID>
+                <StartTimeStamp>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>710</pd:x>
+        <pd:y>508</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="JMSReceiverError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>96</pd:x>
+        <pd:y>128</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns12:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonErrors/JMSErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                </messageCode>
+            </ns12:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Error_Msg-Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1423</pd:x>
+        <pd:y>504</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/CRM/Query/PACIAuthentication/PACITimerProcess/ComponentNamePACINonExpired"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <xsl:if test="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID">
+                        <ns22:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns22:TransactionID>
+                    </xsl:if>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Transaction>
+                        <xsl:value-of select="concat(tib:render-xml($_error),'&#xA;&#xA;','Parse DB Records error->','&#xA;',tib:render-xml($_error_ParseDBRecords/ActivityErrors),'&#xA;&#xA;','Error reponse from QueryPACI API->','&#xA;',tib:render-xml($_error_QueryPACIStatus/pfx:ErrorResponse),'&#xA;&#xA;','Error response received from CRM PACIFinalResponse API->','&#xA;',tib:render-xml($_error_Call_CRM_PACIFinalResponse/pfx:ErrorResponse),'&#xA;&#xA;','Error response received from BID  PACIFinalResponse API->','&#xA;',tib:render-xml($_error_Call_BID_PACIFinalResponse/pfx:ErrorResponse),'&#xA;&#xA;',tib:render-xml($Catch/exceptiondata))"/>
+                    </ns22:Transaction>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-In">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>223</pd:x>
+        <pd:y>280</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/CRM/Query/PACIAuthentication/PACITimerProcess/ComponentNamePACINonExpired"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1282</pd:x>
+        <pd:y>281</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/CRM/Query/PACIAuthentication/PACITimerProcess/ComponentNamePACINonExpired"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Transaction>
+                        <xsl:value-of select="concat('Non-expired DB Records picked by DB Pollar service->','&#xA;',tib:render-xml($ParseDBRecords/Record),'&#xA;&#xA;','QueryPACI API Response->','&#xA;',tib:render-xml($QueryPACIStatus/pfx4:root),'&#xA;&#xA;','Response from CRM PACIFinalResponse API->','&#xA;',tib:render-xml($Call_CRM_PACIFinalResponse/pfx5:root),'&#xA;&#xA;','Response from BID PACIFinalResponse API->','&#xA;',tib:render-xml($Call_BID_PACIFinalResponse/root))"/>
+                    </ns22:Transaction>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>820</pd:x>
+        <pd:y>432</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Null-1">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>965</pd:x>
+        <pd:y>279</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Null-4">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>876</pd:x>
+        <pd:y>154</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ParseDBRecords">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>349</pd:x>
+        <pd:y>279</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term>
+                <xsd:element name="Record" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="ESB_ID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="CUSTOMER_ID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="CIVIL_ID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="STATUS" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="TIME_STAMP" type="xsd:dateTime" minOccurs="0"/>
+                            <xsd:element name="IN_PROCESS_FLAG" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="REQUEST_ID" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </term>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParsingDBRecordsError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>350</pd:x>
+        <pd:y>131</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns12:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonErrors/ParsingErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonErrors/ParsingErrorCode"/>
+                </messageCode>
+            </ns12:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="QueryPACIStatus">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>485</pd:x>
+        <pd:y>277</pd:y>
+        <config>
+            <processName>/test/PACIAuthentication/QueryPACIStatus/ESI_Call_QueryPACIStatus.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns5:root>
+                    <ns5:channel_name>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/CRM/Query/PACIAuthentication/QueryPACIStatus/ChannelName"/>
+                    </ns5:channel_name>
+                    <ns5:RequestId>
+                        <xsl:value-of select="$ParseDBRecords/Record/ESB_ID"/>
+                    </ns5:RequestId>
+                </ns5:root>
+                <TransactionID>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                </TransactionID>
+                <StartTimeStamp>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="UpdateFlagTo_N">
+        <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+        <pd:x>1005</pd:x>
+        <pd:y>509</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/QueryTimeout%%</timeout>
+            <commit>false</commit>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>UPDATE T_PACI_TRANS_REC SET IN_PROCESS_FLAG = 'N' WHERE ESB_ID = ?</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>ESB_ID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+        </config>
+        <pd:inputBindings>
+            <jdbcUpdateActivityInput>
+                <ESB_ID>
+                    <xsl:choose>
+                        <xsl:when test="exists($ParseDBRecords/Record/ESB_ID)">
+                            <xsl:value-of select="$ParseDBRecords/Record/ESB_ID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ESB_ID>
+            </jdbcUpdateActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="UpdateFlagToY_withStatusSuccess">
+        <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+        <pd:x>1119</pd:x>
+        <pd:y>279</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/QueryTimeout%%</timeout>
+            <commit>false</commit>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>UPDATE T_PACI_TRANS_REC SET status = ?, IN_PROCESS_FLAG = 'Y' WHERE ESB_ID = ?</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>Status</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>ESB_ID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+        </config>
+        <pd:inputBindings>
+            <jdbcUpdateActivityInput>
+                <Status>
+                    <xsl:value-of select="$QueryPACIStatus/pfx4:root/pfx4:Status"/>
+                </Status>
+                <ESB_ID>
+                    <xsl:choose>
+                        <xsl:when test="exists($ParseDBRecords/Record/ESB_ID)">
+                            <xsl:value-of select="$ParseDBRecords/Record/ESB_ID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ESB_ID>
+            </jdbcUpdateActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>JMSReceiverError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>Log_Msg-In</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseDBRecords</pd:from>
+        <pd:to>QueryPACIStatus</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-In</pd:from>
+        <pd:to>ParseDBRecords</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-Out</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>QueryPACIStatus</pd:from>
+        <pd:to>Null-4</pd:to>
+        <pd:xpathDescription>PACI AUthentication Pending - Retry</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>UpdateFlagTo_N</pd:to>
+        <pd:xpathDescription/>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseDBRecords</pd:from>
+        <pd:to>ParsingDBRecordsError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>UpdateFlagTo_N</pd:from>
+        <pd:to>Log_Error_Msg-Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Error_Msg-Out</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>QueryPACIStatus</pd:from>
+        <pd:to>Call_CRM_PACIFinalResponse</pd:to>
+        <pd:xpathDescription>QueryPACI Response received</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$QueryPACIStatus/pfx4:root/pfx4:Status='UserAccepted'
+or
+$QueryPACIStatus/pfx4:root/pfx4:Status='UserDeclined'
+or
+$QueryPACIStatus/pfx4:root/pfx4:Status='AuthenticationFailed'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null-4</pd:from>
+        <pd:to>Log_Msg-Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_BID_PACIFinalResponse</pd:from>
+        <pd:to>Null-1</pd:to>
+        <pd:xpathDescription>Success</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>UpdateFlagToY_withStatusSuccess</pd:from>
+        <pd:to>Log_Msg-Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_CRM_PACIFinalResponse</pd:from>
+        <pd:to>Call_BID_PACIFinalResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_BID_PACIFinalResponse</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>Null-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null-1</pd:from>
+        <pd:to>UpdateFlagToY_withStatusSuccess</pd:to>
+        <pd:xpathDescription/>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

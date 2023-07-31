@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:typ="http://www.zain.com/ZESB/Services/Inventory/Types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"  targetNamespace="http://www.zain.com/ZESB/Services/Inventory" xmlns:tns="http://www.zain.com/ZESB/Services/Inventory" 
+xmlns:com="http://www.zain.com/ZESB/Types/Common"
+xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<wsdl:types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema xmlns:typ="http://www.zain.com/ZESB/Services/Inventory/Types" targetNamespace="http://www.zain.com/ZESB/Services/Inventory/Types" elementFormDefault="qualified">
+			<xs:element name="CheckAvailabilityInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ItemCode" nillable="false" type="xs:string"/>
+						<xs:element name="MinQuantity" nillable="false" type="xs:int"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="WarehouseType">
+				<xs:sequence>
+					<xs:element name="Code" type="xs:string"/>
+					<xs:element name="Name" minOccurs="0" type="xs:string"/>
+					<xs:element name="NameAr" minOccurs="0" type="xs:string"/>
+					<xs:element name="Category" minOccurs="0" type="xs:string"/>
+					<xs:element name="ServiceCenter" minOccurs="0" type="xs:boolean"/>
+					<xs:element name="OnHand" type="xs:int"/>
+					<xs:element name="OnWay" type="xs:int"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="WarehouseList">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Warehouse" type="typ:WarehouseType"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="CheckAvailabilityOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Warehouses" type="typ:WarehouseList"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="CheckAvailabilityRequest">
+		<wsdl:part name="parameters" element="typ:CheckAvailabilityInput"/>
+	</wsdl:message>
+	<wsdl:message name="CheckAvailabilityResponse">
+		<wsdl:part name="parameters" element="typ:CheckAvailabilityOutput"/>
+	</wsdl:message>
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType"/>
+	</wsdl:message>
+	<wsdl:portType name="InventoryPort">
+		<wsdl:operation name="CheckAvailability">
+			<wsdl:input name="CheckAvailabilityRequest" message="tns:CheckAvailabilityRequest"/>
+			<wsdl:output name="CheckAvailabilityResponse" message="tns:CheckAvailabilityResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="InventoryBinding" type="tns:InventoryPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="CheckAvailability">
+			<soap:operation soapAction="CheckAvailability"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="InventoryService">
+		<wsdl:port name="InventoryPort" binding="tns:InventoryBinding">
+			<soap:address location="URL"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

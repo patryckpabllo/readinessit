@@ -1,0 +1,1313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pfx5="http://www.siebel.com/xml/CBiO2PortOutNotificationReqIO" xmlns:pfx4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/NumReservResponse.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderReq.xsd" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx9="http://schemas.ericsson.com/ema/UserProvisioning/CRDBSV/" xmlns:pfx8="http://schemas.ericsson.com/cai3g1.2/" xmlns:pfx7="http://schemas.ericsson.com/ema/UserProvisioning/CRDBSV2/" xmlns:pfx6="http://www.siebel.com/xml/CBiO2PortOutNotificationResIO" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns9="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" xmlns:ns6="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" xmlns:ns7="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderRes.xsd" xmlns:ns8="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/NumReservRequest.xsd" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns4="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerReq.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/BusinessSchemas/Services/Common/CLE/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderReq.xsd" schemaLocation="/BusinessSchemas/Services/Provisioning/CreateOrder/CreateOrderReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderRes.xsd" schemaLocation="/BusinessSchemas/Services/Provisioning/CreateOrder/CreateOrderRes.xsd"/>
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2PortOutNotificationReqIO" schemaLocation="/BusinessSchemas/Services/Provisioning/FinalBillNotification/ListOfCbio2finalbillnotificationreqio.xsd"/>
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2PortOutNotificationResIO" schemaLocation="/BusinessSchemas/Services/Provisioning/FinalBillNotification/ListOfCbio2finalbillnotificationresio.xsd"/>
+    <pd:name>BusinessProcesses/Services/Provisioning/FinalBillNotification/Implementation/FinalBillNotification.process</pd:name>
+    <pd:startName>ReceiveFinalBillData</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="ReceiveFinalBillData">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>82</pd:x>
+        <pd:y>190</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>%%BusinessProcesses/CommonSettings/JMSReceiver/MaxSessions%%</maxSessions>
+                <destination>%%BusinessProcesses/Services/Provisioning/FinalBillNotification/BPI_Request_FinalBillNotification%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1706</pd:endX>
+    <pd:endY>346</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442397282862</pd:targetNamespace>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>299</pd:x>
+        <pd:y>190</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx5:SiebelMessage"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_TotalOutstndAmount">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>663</pd:x>
+        <pd:y>196</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Provisioning/FinalBillNotification/HelperProcess/ESI_BSCS_OutstandingAmount.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:copy-of select="$Parse-XML/pfx5:SiebelMessage"/>
+                <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <StartTimeStamp>
+                    <xsl:value-of select="if(exists($ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_FinalBillUnSettled">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1046</pd:x>
+        <pd:y>201</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Provisioning/FinalBillNotification/HelperProcess/ESI_EMA_FinalBillUnSettled.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx5:SiebelMessage>
+                    <pfx5:ListOfCbio2finalbillnotificationreqio>
+                        <xsl:for-each select="$Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest">
+                            <pfx5:ServiceRequest>
+                                <xsl:if test="pfx5:CustomerId">
+                                    <pfx5:CustomerId>
+                                        <xsl:value-of select="pfx5:CustomerId"/>
+                                    </pfx5:CustomerId>
+                                </xsl:if>
+                                <xsl:if test="pfx5:DonorId">
+                                    <pfx5:DonorId>
+                                        <xsl:value-of select="pfx5:DonorId"/>
+                                    </pfx5:DonorId>
+                                </xsl:if>
+                                <xsl:if test="pfx5:MessageID">
+                                    <pfx5:MessageID>
+                                        <xsl:value-of select="pfx5:MessageID"/>
+                                    </pfx5:MessageID>
+                                </xsl:if>
+                                <xsl:if test="pfx5:NPOrderId">
+                                    <pfx5:NPOrderId>
+                                        <xsl:value-of select="pfx5:NPOrderId"/>
+                                    </pfx5:NPOrderId>
+                                </xsl:if>
+                                <xsl:if test="pfx5:SenderId">
+                                    <pfx5:SenderId>
+                                        <xsl:value-of select="pfx5:SenderId"/>
+                                    </pfx5:SenderId>
+                                </xsl:if>
+                                <xsl:if test="pfx5:ThresholdAmount">
+                                    <pfx5:ThresholdAmount>
+                                        <xsl:value-of select="pfx5:ThresholdAmount"/>
+                                    </pfx5:ThresholdAmount>
+                                </xsl:if>
+                                <xsl:if test="pfx5:ValidationMSISDN">
+                                    <pfx5:ValidationMSISDN>
+                                        <xsl:value-of select="pfx5:ValidationMSISDN"/>
+                                    </pfx5:ValidationMSISDN>
+                                </xsl:if>
+                                <xsl:if test="pfx5:SRNumber">
+                                    <pfx5:SRNumber>
+                                        <xsl:value-of select="pfx5:SRNumber"/>
+                                    </pfx5:SRNumber>
+                                </xsl:if>
+                                <xsl:if test="pfx5:FinalSettlement">
+                                    <pfx5:FinalSettlement>
+                                        <xsl:value-of select="pfx5:FinalSettlement"/>
+                                    </pfx5:FinalSettlement>
+                                </xsl:if>
+                                <xsl:for-each select="pfx5:ListOfCbio2PortoutNotification">
+                                    <pfx5:ListOfCbio2PortoutNotification>
+                                        <xsl:for-each select="pfx5:NotificationLists">
+                                            <pfx5:NotificationLists>
+                                                <xsl:if test="pfx5:NotificationId">
+                                                    <pfx5:NotificationId>
+                                                        <xsl:value-of select="pfx5:NotificationId"/>
+                                                    </pfx5:NotificationId>
+                                                </xsl:if>
+                                                <xsl:if test="pfx5:NotificationType">
+                                                    <pfx5:NotificationType>
+                                                        <xsl:value-of select="pfx5:NotificationType"/>
+                                                    </pfx5:NotificationType>
+                                                </xsl:if>
+                                                <xsl:if test="pfx5:NotificationDate">
+                                                    <pfx5:NotificationDate>
+                                                        <xsl:value-of select="pfx5:NotificationDate"/>
+                                                    </pfx5:NotificationDate>
+                                                </xsl:if>
+                                            </pfx5:NotificationLists>
+                                        </xsl:for-each>
+                                    </pfx5:ListOfCbio2PortoutNotification>
+                                </xsl:for-each>
+                                <xsl:for-each select="pfx5:ListOfCbio2Mnp">
+                                    <pfx5:ListOfCbio2Mnp>
+                                        <xsl:for-each select="pfx5:MSISDNLists">
+                                            <pfx5:MSISDNLists>
+                                                <xsl:if test="pfx5:MSISDN">
+                                                    <pfx5:MSISDN>
+                                                        <xsl:value-of select="pfx5:MSISDN"/>
+                                                    </pfx5:MSISDN>
+                                                </xsl:if>
+                                            </pfx5:MSISDNLists>
+                                        </xsl:for-each>
+                                    </pfx5:ListOfCbio2Mnp>
+                                </xsl:for-each>
+                            </pfx5:ServiceRequest>
+                        </xsl:for-each>
+                    </pfx5:ListOfCbio2finalbillnotificationreqio>
+                </pfx5:SiebelMessage>
+                <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <StartTimeStamp>
+                    <xsl:value-of select="if(exists($ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply to BPI">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>1556</pd:x>
+        <pd:y>198</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>ReceiveFinalBillData</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInput>
+                <OtherProperties>
+                    <TransactionID>
+                        <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TransactionID>
+                    <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/ReplyToEngineID">
+                        <ReplyToEngineID>
+                            <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/ReplyToEngineID"/>
+                        </ReplyToEngineID>
+                    </xsl:if>
+                    <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName">
+                        <ReplyToDeploymentName>
+                            <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName"/>
+                        </ReplyToDeploymentName>
+                    </xsl:if>
+                    <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                        <StartTimeStamp>
+                            <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </StartTimeStamp>
+                    </xsl:if>
+                    <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/CorrelationId">
+                        <CorrelationId>
+                            <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/CorrelationId"/>
+                        </CorrelationId>
+                    </xsl:if>
+                    <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionDetails">
+                        <TransactionDetails>
+                            <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionDetails"/>
+                        </TransactionDetails>
+                    </xsl:if>
+                </OtherProperties>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($ResponseData/pfx6:ListOfCbio2finalbillnotificationresio)"/>
+                </Body>
+            </ns3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSReceiverError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>85</pd:x>
+        <pd:y>311</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParsingError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>301</pd:x>
+        <pd:y>319</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>190</pd:x>
+        <pd:y>76</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>true</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/CREATE_ORDER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($ReceiveFinalBillData/ns3:ActivityOutput/Body)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1444</pd:x>
+        <pd:y>200</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>true</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/CREATE_ORDER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($ResponseData/pfx6:ListOfCbio2finalbillnotificationresio)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>63</pd:x>
+        <pd:y>616</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>295</pd:x>
+        <pd:y>617</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ExceptionRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/CREATE_ORDER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID">
+                        <ns22:TransactionID>
+                            <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns22:TransactionID>
+                    </xsl:if>
+                </ns22:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+                <StackTrace>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/Msg"/>
+                </StackTrace>
+            </pfx2:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CLE_to_CDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>509</pd:x>
+        <pd:y>614</pd:y>
+        <config>
+            <element ref="pfx6:ListOfCbio2finalbillnotificationresio"/>
+        </config>
+        <pd:inputBindings>
+            <pfx6:ListOfCbio2finalbillnotificationresio>
+                <pfx6:ServiceRequest>
+                    <xsl:if test="$Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:NPOrderId">
+                        <pfx6:NPOrderId>
+                            <xsl:value-of select="$Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:NPOrderId"/>
+                        </pfx6:NPOrderId>
+                    </xsl:if>
+                    <pfx6:ListOfCbio2PortoutNotification>
+                        <pfx6:NotificationLists>
+                            <pfx6:NotificationId>
+                                <xsl:value-of select="if(upper-case($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:FinalSettlement)=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBNFlagTrue)&#xA;then $Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:ListOfCbio2PortoutNotification/pfx5:NotificationLists[upper-case(pfx5:NotificationType)='FINAL NOTIFICATION']/pfx5:NotificationId&#xA;else $Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:ListOfCbio2PortoutNotification/pfx5:NotificationLists/pfx5:NotificationId"/>
+                            </pfx6:NotificationId>
+                            <pfx6:NotificationStatus>
+                                <xsl:value-of select="'ERROR'"/>
+                            </pfx6:NotificationStatus>
+                            <pfx6:ErrorSourceErrCode>
+                                <xsl:value-of select="$ErrorHandler/pfx2:ExceptionRequest/ExceptionCode"/>
+                            </pfx6:ErrorSourceErrCode>
+                            <xsl:if test="$ErrorHandler/pfx2:ExceptionRequest/StackTrace">
+                                <pfx6:ErrorSourceErrDesc>
+                                    <xsl:value-of select="$ErrorHandler/pfx2:ExceptionRequest/StackTrace"/>
+                                </pfx6:ErrorSourceErrDesc>
+                            </xsl:if>
+                            <pfx6:ErrorSourceSystem>
+                                <xsl:value-of select="if(exists($CallFinalBillSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode) &#xA;or exists($Call_FinalBillNotification/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode)&#xA; or exists($Call_FinalBillUnSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode))&#xA;then &quot;EMA&quot;&#xA;else if(string-length($Call_TotalOutstndAmount/root/ns9:ErrorResponse/ns9:Error_SourceErrDesc)>0)&#xA;then &quot;BSCS&quot;&#xA;else &quot;TIBCO&quot;"/>
+                            </pfx6:ErrorSourceSystem>
+                        </pfx6:NotificationLists>
+                    </pfx6:ListOfCbio2PortoutNotification>
+                </pfx6:ServiceRequest>
+            </pfx6:ListOfCbio2finalbillnotificationresio>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1207</pd:x>
+        <pd:y>615</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($CLE_to_CDM/pfx6:ListOfCbio2finalbillnotificationresio)"/>
+                    </ns22:Message>
+                    <ns22:Transaction>
+                        <xsl:value-of select="tib:render-xml($_error/ns2:ErrorReport)"/>
+                    </ns22:Transaction>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <xsl:if test="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError">
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                    </Category>
+                </xsl:if>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>711</pd:x>
+        <pd:y>787</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns6:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                </message>
+                <xsl:if test="$_error/ns2:ErrorReport/MsgCode">
+                    <msgCode>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                    </msgCode>
+                </xsl:if>
+            </ns6:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_FinalBillNotification">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>936</pd:x>
+        <pd:y>85</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Provisioning/FinalBillNotification/HelperProcess/ESI_EMA_FinalBillNotification.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx5:SiebelMessage>
+                    <xsl:if test="$Parse-XML/pfx5:SiebelMessage/@MessageId">
+                        <xsl:attribute name="MessageId">
+                            <xsl:value-of select="$Parse-XML/pfx5:SiebelMessage/@MessageId"/>
+                        </xsl:attribute>
+                    </xsl:if>
+                    <xsl:if test="$Parse-XML/pfx5:SiebelMessage/@MessageType">
+                        <xsl:attribute name="MessageType">
+                            <xsl:value-of select="$Parse-XML/pfx5:SiebelMessage/@MessageType"/>
+                        </xsl:attribute>
+                    </xsl:if>
+                    <xsl:if test="$Parse-XML/pfx5:SiebelMessage/@IntObjectName">
+                        <xsl:attribute name="IntObjectName">
+                            <xsl:value-of select="$Parse-XML/pfx5:SiebelMessage/@IntObjectName"/>
+                        </xsl:attribute>
+                    </xsl:if>
+                    <xsl:if test="$Parse-XML/pfx5:SiebelMessage/@IntObjectFormat">
+                        <xsl:attribute name="IntObjectFormat">
+                            <xsl:value-of select="$Parse-XML/pfx5:SiebelMessage/@IntObjectFormat"/>
+                        </xsl:attribute>
+                    </xsl:if>
+                    <pfx5:ListOfCbio2finalbillnotificationreqio>
+                        <xsl:for-each select="$Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest">
+                            <pfx5:ServiceRequest>
+                                <xsl:if test="pfx5:CustomerId">
+                                    <pfx5:CustomerId>
+                                        <xsl:value-of select="pfx5:CustomerId"/>
+                                    </pfx5:CustomerId>
+                                </xsl:if>
+                                <xsl:if test="pfx5:DonorId">
+                                    <pfx5:DonorId>
+                                        <xsl:value-of select="pfx5:DonorId"/>
+                                    </pfx5:DonorId>
+                                </xsl:if>
+                                <xsl:if test="pfx5:MessageID">
+                                    <pfx5:MessageID>
+                                        <xsl:value-of select="pfx5:MessageID"/>
+                                    </pfx5:MessageID>
+                                </xsl:if>
+                                <xsl:if test="pfx5:NPOrderId">
+                                    <pfx5:NPOrderId>
+                                        <xsl:value-of select="pfx5:NPOrderId"/>
+                                    </pfx5:NPOrderId>
+                                </xsl:if>
+                                <xsl:if test="pfx5:SenderId">
+                                    <pfx5:SenderId>
+                                        <xsl:value-of select="pfx5:SenderId"/>
+                                    </pfx5:SenderId>
+                                </xsl:if>
+                                <xsl:if test="$Call_TotalOutstndAmount/root/NetOutstandingAmount">
+                                    <pfx5:ThresholdAmount>
+                                        <xsl:value-of select="$Call_TotalOutstndAmount/root/NetOutstandingAmount"/>
+                                    </pfx5:ThresholdAmount>
+                                </xsl:if>
+                                <xsl:if test="pfx5:ValidationMSISDN">
+                                    <pfx5:ValidationMSISDN>
+                                        <xsl:value-of select="pfx5:ValidationMSISDN"/>
+                                    </pfx5:ValidationMSISDN>
+                                </xsl:if>
+                                <xsl:if test="pfx5:SRNumber">
+                                    <pfx5:SRNumber>
+                                        <xsl:value-of select="pfx5:SRNumber"/>
+                                    </pfx5:SRNumber>
+                                </xsl:if>
+                                <xsl:if test="pfx5:FinalSettlement">
+                                    <pfx5:FinalSettlement>
+                                        <xsl:value-of select="pfx5:FinalSettlement"/>
+                                    </pfx5:FinalSettlement>
+                                </xsl:if>
+                                <xsl:for-each select="pfx5:ListOfCbio2PortoutNotification">
+                                    <pfx5:ListOfCbio2PortoutNotification>
+                                        <xsl:for-each select="pfx5:NotificationLists">
+                                            <pfx5:NotificationLists>
+                                                <xsl:if test="pfx5:NotificationId">
+                                                    <pfx5:NotificationId>
+                                                        <xsl:value-of select="pfx5:NotificationId"/>
+                                                    </pfx5:NotificationId>
+                                                </xsl:if>
+                                                <xsl:if test="pfx5:NotificationType">
+                                                    <pfx5:NotificationType>
+                                                        <xsl:value-of select="pfx5:NotificationType"/>
+                                                    </pfx5:NotificationType>
+                                                </xsl:if>
+                                                <xsl:if test="pfx5:NotificationDate">
+                                                    <pfx5:NotificationDate>
+                                                        <xsl:value-of select="pfx5:NotificationDate"/>
+                                                    </pfx5:NotificationDate>
+                                                </xsl:if>
+                                            </pfx5:NotificationLists>
+                                        </xsl:for-each>
+                                    </pfx5:ListOfCbio2PortoutNotification>
+                                </xsl:for-each>
+                                <xsl:for-each select="pfx5:ListOfCbio2Mnp">
+                                    <pfx5:ListOfCbio2Mnp>
+                                        <xsl:for-each select="pfx5:MSISDNLists">
+                                            <pfx5:MSISDNLists>
+                                                <xsl:if test="pfx5:MSISDN">
+                                                    <pfx5:MSISDN>
+                                                        <xsl:value-of select="pfx5:MSISDN"/>
+                                                    </pfx5:MSISDN>
+                                                </xsl:if>
+                                            </pfx5:MSISDNLists>
+                                        </xsl:for-each>
+                                    </pfx5:ListOfCbio2Mnp>
+                                </xsl:for-each>
+                            </pfx5:ServiceRequest>
+                        </xsl:for-each>
+                    </pfx5:ListOfCbio2finalbillnotificationreqio>
+                </pfx5:SiebelMessage>
+                <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <StartTimeStamp>
+                    <xsl:value-of select="if(exists($ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CheckFinalBillCall">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>838</pd:x>
+        <pd:y>199</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="CallFinalBillSettled">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>786</pd:x>
+        <pd:y>71</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Provisioning/FinalBillNotification/HelperProcess/ESI_EMA_FinalBillSettled.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx5:SiebelMessage>
+                    <pfx5:ListOfCbio2finalbillnotificationreqio>
+                        <xsl:for-each select="$Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest">
+                            <pfx5:ServiceRequest>
+                                <xsl:if test="pfx5:CustomerId">
+                                    <pfx5:CustomerId>
+                                        <xsl:value-of select="pfx5:CustomerId"/>
+                                    </pfx5:CustomerId>
+                                </xsl:if>
+                                <xsl:if test="pfx5:DonorId">
+                                    <pfx5:DonorId>
+                                        <xsl:value-of select="pfx5:DonorId"/>
+                                    </pfx5:DonorId>
+                                </xsl:if>
+                                <xsl:if test="pfx5:MessageID">
+                                    <pfx5:MessageID>
+                                        <xsl:value-of select="pfx5:MessageID"/>
+                                    </pfx5:MessageID>
+                                </xsl:if>
+                                <xsl:if test="pfx5:NPOrderId">
+                                    <pfx5:NPOrderId>
+                                        <xsl:value-of select="pfx5:NPOrderId"/>
+                                    </pfx5:NPOrderId>
+                                </xsl:if>
+                                <xsl:if test="pfx5:SenderId">
+                                    <pfx5:SenderId>
+                                        <xsl:value-of select="pfx5:SenderId"/>
+                                    </pfx5:SenderId>
+                                </xsl:if>
+                                <xsl:if test="pfx5:ThresholdAmount">
+                                    <pfx5:ThresholdAmount>
+                                        <xsl:value-of select="pfx5:ThresholdAmount"/>
+                                    </pfx5:ThresholdAmount>
+                                </xsl:if>
+                                <xsl:if test="pfx5:ValidationMSISDN">
+                                    <pfx5:ValidationMSISDN>
+                                        <xsl:value-of select="pfx5:ValidationMSISDN"/>
+                                    </pfx5:ValidationMSISDN>
+                                </xsl:if>
+                                <xsl:if test="pfx5:SRNumber">
+                                    <pfx5:SRNumber>
+                                        <xsl:value-of select="pfx5:SRNumber"/>
+                                    </pfx5:SRNumber>
+                                </xsl:if>
+                                <xsl:if test="pfx5:FinalSettlement">
+                                    <pfx5:FinalSettlement>
+                                        <xsl:value-of select="pfx5:FinalSettlement"/>
+                                    </pfx5:FinalSettlement>
+                                </xsl:if>
+                                <xsl:for-each select="pfx5:ListOfCbio2PortoutNotification">
+                                    <pfx5:ListOfCbio2PortoutNotification>
+                                        <xsl:for-each select="pfx5:NotificationLists">
+                                            <pfx5:NotificationLists>
+                                                <xsl:if test="pfx5:NotificationId">
+                                                    <pfx5:NotificationId>
+                                                        <xsl:value-of select="pfx5:NotificationId"/>
+                                                    </pfx5:NotificationId>
+                                                </xsl:if>
+                                                <xsl:if test="pfx5:NotificationType">
+                                                    <pfx5:NotificationType>
+                                                        <xsl:value-of select="pfx5:NotificationType"/>
+                                                    </pfx5:NotificationType>
+                                                </xsl:if>
+                                                <xsl:if test="pfx5:NotificationDate">
+                                                    <pfx5:NotificationDate>
+                                                        <xsl:value-of select="pfx5:NotificationDate"/>
+                                                    </pfx5:NotificationDate>
+                                                </xsl:if>
+                                            </pfx5:NotificationLists>
+                                        </xsl:for-each>
+                                    </pfx5:ListOfCbio2PortoutNotification>
+                                </xsl:for-each>
+                                <xsl:for-each select="pfx5:ListOfCbio2Mnp">
+                                    <pfx5:ListOfCbio2Mnp>
+                                        <xsl:for-each select="pfx5:MSISDNLists">
+                                            <pfx5:MSISDNLists>
+                                                <xsl:if test="pfx5:MSISDN">
+                                                    <pfx5:MSISDN>
+                                                        <xsl:value-of select="pfx5:MSISDN"/>
+                                                    </pfx5:MSISDN>
+                                                </xsl:if>
+                                            </pfx5:MSISDNLists>
+                                        </xsl:for-each>
+                                    </pfx5:ListOfCbio2Mnp>
+                                </xsl:for-each>
+                            </pfx5:ServiceRequest>
+                        </xsl:for-each>
+                    </pfx5:ListOfCbio2finalbillnotificationreqio>
+                </pfx5:SiebelMessage>
+                <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <StartTimeStamp>
+                    <xsl:value-of select="if(exists($ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="FBSettledError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>586</pd:x>
+        <pd:y>125</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:if test="$CallFinalBillSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respDesc">
+                    <message>
+                        <xsl:value-of select="$CallFinalBillSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respDesc"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$CallFinalBillSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode">
+                    <messageCode>
+                        <xsl:value-of select="$CallFinalBillSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="FBNotifyError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>1254</pd:x>
+        <pd:y>86</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:if test="$Call_FinalBillNotification/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respDesc">
+                    <message>
+                        <xsl:value-of select="$Call_FinalBillNotification/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respDesc"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$Call_FinalBillNotification/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode">
+                    <messageCode>
+                        <xsl:value-of select="$Call_FinalBillNotification/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="FBUnSettledError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>1052</pd:x>
+        <pd:y>313</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:if test="$Call_FinalBillUnSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respDesc">
+                    <message>
+                        <xsl:value-of select="$Call_FinalBillUnSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respDesc"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$Call_FinalBillUnSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode">
+                    <messageCode>
+                        <xsl:value-of select="$Call_FinalBillUnSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ResponseData">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1278</pd:x>
+        <pd:y>200</pd:y>
+        <config>
+            <element ref="pfx6:ListOfCbio2finalbillnotificationresio"/>
+        </config>
+        <pd:inputBindings>
+            <pfx6:ListOfCbio2finalbillnotificationresio>
+                <pfx6:ServiceRequest>
+                    <xsl:if test="$Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:NPOrderId">
+                        <pfx6:NPOrderId>
+                            <xsl:value-of select="$Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:NPOrderId"/>
+                        </pfx6:NPOrderId>
+                    </xsl:if>
+                    <pfx6:FBNNPOrderId>
+                        <xsl:value-of select="if(string-length($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:FBNNPOrderId)>0)&#xA;then $Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:FBNNPOrderId&#xA;else if(string-length($CallFinalBillSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:npOrderID)>0)&#xA;then $CallFinalBillSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:npOrderID&#xA;else if(string-length($Call_FinalBillNotification/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:npOrderID))&#xA;then $Call_FinalBillNotification/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:npOrderID&#xA;else if(string-length($Call_FinalBillUnSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:npOrderID)>0)&#xA;then $Call_FinalBillUnSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:npOrderID&#xA;else ''"/>
+                    </pfx6:FBNNPOrderId>
+                    <pfx6:ListOfCbio2PortoutNotification>
+                        <pfx6:NotificationLists>
+                            <pfx6:NotificationId>
+                                <xsl:value-of select="if(upper-case($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:FinalSettlement)=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBNFlagTrue)&#xA;then $Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:ListOfCbio2PortoutNotification/pfx5:NotificationLists[upper-case(pfx5:NotificationType)='FINAL NOTIFICATION']/pfx5:NotificationId&#xA;else $Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:ListOfCbio2PortoutNotification/pfx5:NotificationLists/pfx5:NotificationId"/>
+                            </pfx6:NotificationId>
+                            <xsl:choose>
+                                <xsl:when test="($Call_FinalBillNotification/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode)=0">
+                                    <pfx6:NotificationStatus>
+                                        <xsl:value-of select="if(upper-case($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:FinalSettlement)=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBNFlagFalse)&#xA;then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/OutStndBill&#xA;else $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBUnSettle"/>
+                                    </pfx6:NotificationStatus>
+                                </xsl:when>
+                                <xsl:when test="($Call_FinalBillUnSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode)=0">
+                                    <pfx6:NotificationStatus>
+                                        <xsl:value-of select="if(upper-case($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:FinalSettlement)=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBNFlagFalse)&#xA;then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/OutStndBill&#xA;else $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBUnSettle"/>
+                                    </pfx6:NotificationStatus>
+                                </xsl:when>
+                                <xsl:when test="(($CallFinalBillSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode)=0)&#xA;or&#xA;($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:ThresholdAmount>=$Call_TotalOutstndAmount/root/NetOutstandingAmount&#xA;and&#xA;upper-case($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:FinalSettlement)=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBNFlagFalse)">
+                                    <pfx6:NotificationStatus>
+                                        <xsl:value-of select="if(upper-case($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:FinalSettlement)=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBNFlagFalse)&#xA;then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/NoOutStndBill&#xA;else $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBSettle"/>
+                                    </pfx6:NotificationStatus>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <pfx6:NotificationStatus>
+                                        <xsl:value-of select="''"/>
+                                    </pfx6:NotificationStatus>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx6:NotificationLists>
+                    </pfx6:ListOfCbio2PortoutNotification>
+                </pfx6:ServiceRequest>
+            </pfx6:ListOfCbio2finalbillnotificationresio>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>1007</pd:x>
+        <pd:y>40</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Reply-to-Error">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>767</pd:x>
+        <pd:y>613</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>ReceiveFinalBillData</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInput>
+                <OtherProperties>
+                    <TransactionID>
+                        <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TransactionID>
+                    <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/ReplyToEngineID">
+                        <ReplyToEngineID>
+                            <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/ReplyToEngineID"/>
+                        </ReplyToEngineID>
+                    </xsl:if>
+                    <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName">
+                        <ReplyToDeploymentName>
+                            <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName"/>
+                        </ReplyToDeploymentName>
+                    </xsl:if>
+                    <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                        <StartTimeStamp>
+                            <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </StartTimeStamp>
+                    </xsl:if>
+                    <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/CorrelationId">
+                        <CorrelationId>
+                            <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/CorrelationId"/>
+                        </CorrelationId>
+                    </xsl:if>
+                    <xsl:if test="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionDetails">
+                        <TransactionDetails>
+                            <xsl:value-of select="$ReceiveFinalBillData/ns3:ActivityOutput/OtherProperties/TransactionDetails"/>
+                        </TransactionDetails>
+                    </xsl:if>
+                </OtherProperties>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($CLE_to_CDM/pfx6:ListOfCbio2finalbillnotificationresio)"/>
+                </Body>
+            </ns3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null-1">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>1033</pd:x>
+        <pd:y>461</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="CheckThreshold">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>461</pd:x>
+        <pd:y>194</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ErrorBlankThreshold">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>465</pd:x>
+        <pd:y>317</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/ErrBlankThreshold"/>
+                </message>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorOutstandingQry">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>669</pd:x>
+        <pd:y>318</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:if test="$Call_TotalOutstndAmount/root/ns9:ErrorResponse/ns9:Error_SourceErrDesc">
+                    <message>
+                        <xsl:value-of select="$Call_TotalOutstndAmount/root/ns9:ErrorResponse/ns9:Error_SourceErrDesc"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$Call_TotalOutstndAmount/root/ns9:ErrorResponse/ns9:Error_SourceErrCode">
+                    <messageCode>
+                        <xsl:value-of select="$Call_TotalOutstndAmount/root/ns9:ErrorResponse/ns9:Error_SourceErrCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>ReceiveFinalBillData</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>CheckThreshold</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply to BPI</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReceiveFinalBillData</pd:from>
+        <pd:to>JMSReceiverError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>ParsingError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>Reply to BPI</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_to_CDM</pd:from>
+        <pd:to>Reply-to-Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_to_CDM</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_TotalOutstndAmount</pd:from>
+        <pd:to>CallFinalBillSettled</pd:to>
+        <pd:xpathDescription>CallFinalBillSettled</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-13434676</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:ThresholdAmount)&gt;=$Call_TotalOutstndAmount/root/NetOutstandingAmount
+and
+upper-case($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:FinalSettlement)=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBNFlagTrue</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CheckFinalBillCall</pd:from>
+        <pd:to>Call_FinalBillNotification</pd:to>
+        <pd:xpathDescription>FinalBillNotify</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-6750055</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:ThresholdAmount&lt;$Call_TotalOutstndAmount/root/NetOutstandingAmount
+and
+upper-case($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:FinalSettlement)=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBNFlagFalse</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CheckFinalBillCall</pd:from>
+        <pd:to>Call_FinalBillUnSettled</pd:to>
+        <pd:xpathDescription>FinalBillUnsettled</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777165</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallFinalBillSettled</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16711834</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallFinalBillSettled</pd:from>
+        <pd:to>FBSettledError</pd:to>
+        <pd:xpathDescription>FBSettledError</pd:xpathDescription>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-3407872</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>($CallFinalBillSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode)!=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_FinalBillUnSettled</pd:from>
+        <pd:to>FBUnSettledError</pd:to>
+        <pd:xpathDescription>FBUnSettledError</pd:xpathDescription>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-3407821</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>($Call_FinalBillUnSettled/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode)!=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_FinalBillNotification</pd:from>
+        <pd:to>FBNotifyError</pd:to>
+        <pd:xpathDescription>FBNotifyError</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-3407872</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>($Call_FinalBillNotification/pfx8:SetResponse/pfx8:MOAttributes/pfx9:setResponseSubscription/pfx9:respCode)!=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ResponseData</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_FinalBillNotification</pd:from>
+        <pd:to>ResponseData</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16751002</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_FinalBillUnSettled</pd:from>
+        <pd:to>ResponseData</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_TotalOutstndAmount</pd:from>
+        <pd:to>CheckFinalBillCall</pd:to>
+        <pd:xpathDescription>No Match</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65383</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>ResponseData</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply-to-Error</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply-to-Error</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CheckFinalBillCall</pd:from>
+        <pd:to>Null-1</pd:to>
+        <pd:xpathDescription>FirstThreeNotificationSettled</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:ThresholdAmount&gt;=$Call_TotalOutstndAmount/root/NetOutstandingAmount
+and
+upper-case($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:FinalSettlement)=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Provisioning/FinalBillNotification/FBNFlagFalse</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null-1</pd:from>
+        <pd:to>ResponseData</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CheckThreshold</pd:from>
+        <pd:to>Call_TotalOutstndAmount</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CheckThreshold</pd:from>
+        <pd:to>ErrorBlankThreshold</pd:to>
+        <pd:xpathDescription>BlankThresholdValue</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>string-length($Parse-XML/pfx5:SiebelMessage/pfx5:ListOfCbio2finalbillnotificationreqio/pfx5:ServiceRequest[1]/pfx5:ThresholdAmount)=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>CLE_to_CDM</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_TotalOutstndAmount</pd:from>
+        <pd:to>ErrorOutstandingQry</pd:to>
+        <pd:xpathDescription>ErrorFetchingOutstandingBal</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>string-length($Call_TotalOutstndAmount/root/NetOutstandingAmount)=0
+and 
+string-length($Call_TotalOutstndAmount/root/ns9:ErrorResponse/ns9:Error_SourceErrDesc)&gt;0</pd:xpath>
+    </pd:transition>
+</pd:ProcessDefinition>

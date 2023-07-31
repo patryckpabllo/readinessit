@@ -1,0 +1,1076 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:pfx16="http://www.tibco.com/pe/CheckpointSchema" xmlns:pfx15="http://cade.ericsson.com/" xmlns:pfx14="http://schemas.tibco.com/bw/plugins/jdbc/5.0/jdbcExceptions" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:pfx13="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/Common/ExpiredOfferRemoval/HelperProcess/ParseCRMResponse.xsd" xmlns:pfx12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pfx11="http://www.zain.kw.com/BSS/OrderManagement/CreateOrderRequest" xmlns:pfx10="http://www.siebel.com/xml/CBiO2ExpiredCFSSRemovalIO" xmlns:zainesbcustom="java://GenUUID" xmlns:pfx19="http://www.siebel.com/xml/CBiO2SendSMS" xmlns:pfx18="http://schemas.tibco.com/bw/plugins/jms/5.0/jmsExceptions" xmlns:pfx17="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions" xmlns:pfx5="http://xmlns.example.com/1323156482391/OperationImpl" xmlns:pfx4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderReq.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pfx2="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/CreateOrder/CreateOrderResponse.xsd" xmlns:pfx9="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/VbankMsisdnSearch.xsd" xmlns:pfx8="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:pfx7="http://www.tibco.com/pe/SignalInActivitySchema" xmlns:pfx6="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:pfx52="http://www.zain.kw.com/BSS/OrderManagement/managedServices" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:ns9="http://www.tibco.com/pe/EngineTypes" xmlns:ns5="www.tibco.com/createcustomer" xmlns:ns12="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns13="http://schemas.tibco.com/bw/plugins/xml/5.0/xmlExceptions" xmlns:ns7="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns10="http://www.tibco.com/namespaces/tnt/plugins/file" xmlns:ns8="http://www.tibco.com/pe/DeployedVarsType" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://tibco.com/namespaces/tnt/plugins/soap" xmlns:ns1="pfx41" xmlns:ns0="www.tibco.com/plugin/Sleep" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/BusinessSchemas/Common/CLE/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" schemaLocation="/CDM/ZainKWFault.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/VbankMsisdnSearch.xsd" schemaLocation="/BusinessSchemas/Services/Query/VbankMsisdnSearch/VbankMsisdnSearch.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/Common/ExpiredOfferRemoval/HelperProcess/ParseCRMResponse.xsd" schemaLocation="/BusinessProcesses/Services/Common/ExpiredOfferRemoval/HelperProcess/ParseCRMResponse.xsd"/>
+    <xsd:import namespace="http://www.zain.kw.com/BSS/OrderManagement/CreateOrderRequest" schemaLocation="/BusinessWSDLS/Services/OM/syncCreateService.wsdl"/>
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2SendSMS" schemaLocation="/BusinessSchemas/Services/Applications/CRM/Update/ListOfCbio2sendsms.xsd"/>
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2ExpiredCFSSRemovalIO" schemaLocation="/BusinessSchemas/Services/Applications/CRM/Update/ListOfCbio2expiredcfssremovalio.xsd"/>
+    <wsdl:import namespace="http://xmlns.example.com/1323156482391/OperationImpl" location="/SharedResources/WSDL/BscsWsdl.wsdl"/>
+    <wsdl:import namespace="http://www.zain.kw.com/BSS/OrderManagement/managedServices" location="/BusinessWSDLS/Services/OM/syncCreateService.wsdl"/>
+    <wsdl:import namespace="http://cade.ericsson.com/" location="/BusinessWSDLS/Services/CADE/SMSService/SMSServiceGateway.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/ExpiredOfferRemoval/HelperProcess/ExpiredOfferRemovalHelper.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="TransactionID" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="SourceSystem" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>133</pd:startX>
+    <pd:startY>169</pd:startY>
+    <pd:returnBindings>
+        <xsl:choose>
+            <xsl:when test="exists($CDMToNative/pfx9:VbankMsisdnSearchResponse)">
+                <xsl:copy-of select="$CDMToNative/pfx9:VbankMsisdnSearchResponse"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:copy-of select="$MapErrorResponse/pfx9:VbankMsisdnSearchResponse"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endX>2503</pd:endX>
+    <pd:endY>180</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1318823885551</pd:targetNamespace>
+    <pd:activity name="PepareDataForCRM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>803</pd:x>
+        <pd:y>366</pd:y>
+        <config>
+            <element ref="pfx10:ListOfCbio2expiredcfssremovalio"/>
+        </config>
+        <pd:inputBindings>
+            <pfx10:ListOfCbio2expiredcfssremovalio>
+                <xsl:for-each select="$Parse-XML/Resultsets/ResultSet1/Record1">
+                    <pfx10:cfssrecords>
+                        <xsl:if test="not((ROW_ID/@xsi:nil=(&quot;true&quot;)) or (ROW_ID/@xsi:nil=(&quot;1&quot;)))">
+                            <pfx10:AssetId>
+                                <xsl:value-of select="ROW_ID"/>
+                            </pfx10:AssetId>
+                        </xsl:if>
+                        <pfx10:Status>
+                            <xsl:value-of select="'Inactive'"/>
+                        </pfx10:Status>
+                        <xsl:if test="not((ROW_ID/@xsi:nil=(&quot;true&quot;)) or (ROW_ID/@xsi:nil=(&quot;1&quot;)))">
+                            <pfx10:OriginalOrderId>
+                                <xsl:value-of select="ROW_ID"/>
+                            </pfx10:OriginalOrderId>
+                        </xsl:if>
+                    </pfx10:cfssrecords>
+                </xsl:for-each>
+            </pfx10:ListOfCbio2expiredcfssremovalio>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>529</pd:x>
+        <pd:y>497</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>false</validateOutput>
+            <term ref="pfx13:Resultsets"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Call-CRM-SP/resultSet/UnresolvedResultsets"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SendRequestCRM">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>985</pd:x>
+        <pd:y>366</pd:y>
+        <config>
+            <processName>/CommonProcesses/HelperProcesses/Common_EAI_EMSSender.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <MessageBody>
+                    <xsl:value-of select="tib:render-xml($PepareDataForCRM/pfx10:ListOfCbio2expiredcfssremovalio)"/>
+                </MessageBody>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TransactionID>
+                <EMS_DestinationQueue>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/Services/Common/ExpiredOfferRemoval/CRMOrderExpirationQueue"/>
+                </EMS_DestinationQueue>
+                <TransactionDomain>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                </TransactionDomain>
+                <TransactionType>
+                    <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns9:ProcessContext/ProcessId))"/>
+                </TransactionType>
+                <ReplyToEngineID>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/EngineID"/>
+                </ReplyToEngineID>
+                <ReplyToDeployment>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/Deployment"/>
+                </ReplyToDeployment>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>1229</pd:x>
+        <pd:y>244</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="GetEOMItemCode">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>525</pd:x>
+        <pd:y>54</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/External/FetchExpiredOfferDetails.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ErrorCRMQuery">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>68</pd:x>
+        <pd:y>842</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx:ActivityInput>
+                <message>
+                    <xsl:value-of select="&quot;Error in fetching records from CRM database&quot;"/>
+                </message>
+            </pfx:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null-1">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>593</pd:x>
+        <pd:y>239</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="UpdateError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>1222</pd:x>
+        <pd:y>397</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx:ActivityInput>
+                <message>
+                    <xsl:value-of select="&quot;Error in update in CRM database&quot;"/>
+                </message>
+            </pfx:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>81</pd:x>
+        <pd:y>413</pd:y>
+        <pd:width>330</pd:width>
+        <pd:height>348</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>errorLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:indexSlot>iError</pd:indexSlot>
+            <pd:errorCondition>$iError=$_globalVariables/ns8:GlobalVariables/CommonProcesses/ErrorHandling/Retry/MaxRetryCount</pd:errorCondition>
+            <pd:suspendAfterErrorRetry>false</pd:suspendAfterErrorRetry>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Call CRM SP</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Call CRM SP</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Null-2</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Call CRM SP</pd:from>
+            <pd:to>Null-2</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Null-2</pd:from>
+            <pd:to>Sleep</pd:to>
+            <pd:xpathDescription>TimeoutError</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>exists($_error_Call-CRM-SP/ActivityErrors/pfx14:JDBCTimedOutException)
+or
+exists($_error_Call-CRM-SP/ActivityErrors/pfx14:LoginTimedOutException)</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Sleep</pd:from>
+            <pd:to>TechnicalError</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Call CRM SP">
+            <pd:type>com.tibco.plugin.jdbc.JDBCCallActivity</pd:type>
+            <pd:resourceType>ae.activities.JDBCCallActivity</pd:resourceType>
+            <pd:x>218</pd:x>
+            <pd:y>502</pd:y>
+            <config>
+                <timeout>%%BusinessProcesses/Services/Common/ExpiredOfferRemoval/JDBCTimeout%%</timeout>
+                <maxRows>%%BusinessProcesses/Services/Common/ExpiredOfferRemoval/MaxRows%%</maxRows>
+                <emptyStrAsNil>true</emptyStrAsNil>
+                <jdbcSharedConfig>/CommonResources/Connections/JDBC/External/SeibelLOVConnection.sharedjdbc</jdbcSharedConfig>
+                <catalog>ZAINKW_SERVICE_EXPIRY_PKG</catalog>
+                <ProcedureName>ZAINKW_SERVICE_EXP_QUERY_SP</ProcedureName>
+                <parameterTypes>
+                    <parameter>
+                        <colName>P_RESULT_OUT</colName>
+                        <colType>3</colType>
+                        <dataType>-10</dataType>
+                        <typeName>REF CURSOR</typeName>
+                    </parameter>
+                    <parameter>
+                        <colName>P_ERRORCODE_OUT</colName>
+                        <colType>4</colType>
+                        <dataType>12</dataType>
+                        <typeName>VARCHAR2</typeName>
+                    </parameter>
+                    <parameter>
+                        <colName>P_ERRORMSG_OUT</colName>
+                        <colType>4</colType>
+                        <dataType>12</dataType>
+                        <typeName>VARCHAR2</typeName>
+                    </parameter>
+                </parameterTypes>
+                <useSchema>true</useSchema>
+            </config>
+            <pd:inputBindings>
+                <inputs/>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Null-2">
+            <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+            <pd:resourceType>ae.activities.null</pd:resourceType>
+            <pd:x>187</pd:x>
+            <pd:y>611</pd:y>
+            <config/>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="Sleep">
+            <pd:type>com.tibco.plugin.timer.SleepActivity</pd:type>
+            <pd:resourceType>ae.activities.sleep</pd:resourceType>
+            <pd:x>344</pd:x>
+            <pd:y>690</pd:y>
+            <config/>
+            <pd:inputBindings>
+                <ns0:SleepInputSchema>
+                    <IntervalInMillisec>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/CommonSettings/JMSTimeOuts/Timeout_Regular_Wait"/>
+                    </IntervalInMillisec>
+                </ns0:SleepInputSchema>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="TechnicalError">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>195</pd:x>
+            <pd:y>698</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <pfx:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_error/ns9:ErrorReport/Msg"/>
+                    </message>
+                    <xsl:if test="$_error/ns9:ErrorReport/MsgCode">
+                        <messageCode>
+                            <xsl:value-of select="$_error/ns9:ErrorReport/MsgCode"/>
+                        </messageCode>
+                    </xsl:if>
+                </pfx:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:group name="Group (1)">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>1343</pd:x>
+        <pd:y>128</pd:y>
+        <pd:width>371</pd:width>
+        <pd:height>313</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>errorLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:indexSlot>Error</pd:indexSlot>
+            <pd:errorCondition>$Error=$_globalVariables/ns8:GlobalVariables/CommonProcesses/ErrorHandling/Retry/MaxRetryCount</pd:errorCondition>
+            <pd:suspendAfterErrorRetry>false</pd:suspendAfterErrorRetry>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>UpdateCRM</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>UpdateCRM</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Null-3</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>UpdateCRM</pd:from>
+            <pd:to>Null-3</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Null-3</pd:from>
+            <pd:to>Sleep-1</pd:to>
+            <pd:xpathDescription>Timeout</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>exists($_error_UpdateCRM/ActivityErrors/pfx14:JDBCTimedOutException)
+or
+exists($_error_UpdateCRM/ActivityErrors/pfx14:LoginTimedOutException)</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Sleep-1</pd:from>
+            <pd:to>GenerateUpdateError</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="UpdateCRM">
+            <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+            <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+            <pd:x>1513</pd:x>
+            <pd:y>190</pd:y>
+            <config>
+                <timeout>%%BusinessProcesses/Services/Common/ExpiredOfferRemoval/JDBCTimeout%%</timeout>
+                <commit>false</commit>
+                <emptyStrAsNil>true</emptyStrAsNil>
+                <jdbcSharedConfig>/CommonResources/Connections/JDBC/External/SeibelLOVConnection.sharedjdbc</jdbcSharedConfig>
+                <statement>UPDATE SIEBEL.CX_EXPIRED_CFSS
+SET
+TRANSACTION_DT = sysdate,
+TRANSACTION_STAT_CD = '1'
+where
+ROW_ID =?
+</statement>
+                <Prepared_Param_DataType>
+                    <parameter>
+                        <parameterName>Row_Id</parameterName>
+                        <dataType>VARCHAR</dataType>
+                    </parameter>
+                </Prepared_Param_DataType>
+                <batchUpdate>true</batchUpdate>
+            </config>
+            <pd:inputBindings>
+                <jdbcUpdateActivityInput>
+                    <xsl:for-each select="$Parse-XML/Resultsets/ResultSet1/Record1">
+                        <Record>
+                            <Row_Id>
+                                <xsl:copy-of select="ROW_ID/@xsi:nil"/>
+                                <xsl:value-of select="ROW_ID"/>
+                            </Row_Id>
+                        </Record>
+                    </xsl:for-each>
+                </jdbcUpdateActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Null-3">
+            <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+            <pd:resourceType>ae.activities.null</pd:resourceType>
+            <pd:x>1456</pd:x>
+            <pd:y>295</pd:y>
+            <config/>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="Sleep-1">
+            <pd:type>com.tibco.plugin.timer.SleepActivity</pd:type>
+            <pd:resourceType>ae.activities.sleep</pd:resourceType>
+            <pd:x>1660</pd:x>
+            <pd:y>350</pd:y>
+            <config/>
+            <pd:inputBindings>
+                <ns0:SleepInputSchema>
+                    <IntervalInMillisec>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/CommonSettings/JMSTimeOuts/Timeout_Regular_Wait"/>
+                    </IntervalInMillisec>
+                </ns0:SleepInputSchema>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GenerateUpdateError">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>1480</pd:x>
+            <pd:y>357</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <pfx:ActivityInput>
+                    <message>
+                        <xsl:value-of select="&quot;Error in update&quot;"/>
+                    </message>
+                </pfx:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="SendSMSCade">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>2108</pd:x>
+        <pd:y>286</pd:y>
+        <config>
+            <processName>/CommonProcesses/HelperProcesses/Common_EAI_EMSSender.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <MessageBody>
+                    <xsl:value-of select="tib:render-xml($CreateSMSRequest/pfx19:SiebelMessage)"/>
+                </MessageBody>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TransactionID>
+                <EMS_DestinationQueue>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/Services/Common/ExpiredOfferRemoval/ESI_SMSCADEQueue"/>
+                </EMS_DestinationQueue>
+                <TransactionDomain>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                </TransactionDomain>
+                <TransactionType>
+                    <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns9:ProcessContext/ProcessId))"/>
+                </TransactionType>
+                <ReplyToEngineID>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/EngineID"/>
+                </ReplyToEngineID>
+                <ReplyToDeployment>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/Deployment"/>
+                </ReplyToDeployment>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CreateSMSRequest">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1947</pd:x>
+        <pd:y>289</pd:y>
+        <config>
+            <element ref="pfx19:SiebelMessage"/>
+        </config>
+        <pd:inputBindings>
+            <pfx19:SiebelMessage>
+                <pfx19:ListOfCbio2sendsms>
+                    <xsl:for-each select="$Parse-XML/Resultsets/ResultSet1/Record1[string-length(SMS_TEXT)>0]">
+                        <pfx19:Cbio2sendsms>
+                            <xsl:if test="not((SMS_TEXT/@xsi:nil=(&quot;true&quot;)) or (SMS_TEXT/@xsi:nil=(&quot;1&quot;)))">
+                                <pfx19:SMSText>
+                                    <xsl:value-of select="SMS_TEXT"/>
+                                </pfx19:SMSText>
+                            </xsl:if>
+                            <xsl:if test="not((MSISDN/@xsi:nil=(&quot;true&quot;)) or (MSISDN/@xsi:nil=(&quot;1&quot;)))">
+                                <pfx19:From>
+                                    <xsl:value-of select="MSISDN"/>
+                                </pfx19:From>
+                            </xsl:if>
+                            <xsl:if test="not((PREF_LANGUAGE/@xsi:nil=(&quot;true&quot;)) or (PREF_LANGUAGE/@xsi:nil=(&quot;1&quot;)))">
+                                <pfx19:Language>
+                                    <xsl:value-of select="PREF_LANGUAGE"/>
+                                </pfx19:Language>
+                            </xsl:if>
+                            <xsl:if test="not((NOTIFICATION_NO/@xsi:nil=(&quot;true&quot;)) or (NOTIFICATION_NO/@xsi:nil=(&quot;1&quot;)))">
+                                <pfx19:To>
+                                    <xsl:value-of select="NOTIFICATION_NO"/>
+                                </pfx19:To>
+                            </xsl:if>
+                            <pfx19:Channel>
+                                <xsl:value-of select="&quot;TIBCO&quot;"/>
+                            </pfx19:Channel>
+                            <xsl:if test="not((CONTRACT_ID/@xsi:nil=(&quot;true&quot;)) or (CONTRACT_ID/@xsi:nil=(&quot;1&quot;)))">
+                                <pfx19:ContractId>
+                                    <xsl:value-of select="CONTRACT_ID"/>
+                                </pfx19:ContractId>
+                            </xsl:if>
+                        </pfx19:Cbio2sendsms>
+                    </xsl:for-each>
+                </pfx19:ListOfCbio2sendsms>
+            </pfx19:SiebelMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group (2)">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>771</pd:x>
+        <pd:y>58</pd:y>
+        <pd:width>352</pd:width>
+        <pd:height>143</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$Parse-XML/Resultsets/ResultSet1/Record1[SERVICE_CFSS_ID=$GetEOMItemCode/FetchExpiredOfferDetails/Record/ItemCode]</pd:over>
+            <pd:iterationElementSlot>MSISDNList</pd:iterationElementSlot>
+            <pd:indexSlot>itr</pd:indexSlot>
+            <pd:outSlot>AccOMRequest</pd:outSlot>
+            <pd:activityOutputName>PrepareOMRequest</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>PrepareOMRequest</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>SendOrderEOM</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>PrepareOMRequest</pd:from>
+            <pd:to>SendOrderEOM</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="SendOrderEOM">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>1032</pd:x>
+            <pd:y>122</pd:y>
+            <config>
+                <processName>/CommonProcesses/HelperProcesses/Common_EAI_EMSSender.process</processName>
+                <spawn>false</spawn>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <MessageBody>
+                        <xsl:value-of select="tib:render-xml($PrepareOMRequest/pfx11:orderList)"/>
+                    </MessageBody>
+                    <TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </TransactionID>
+                    <EMS_DestinationQueue>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/Services/Common/ExpiredOfferRemoval/OMOrderExpirationQueue"/>
+                    </EMS_DestinationQueue>
+                    <TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </TransactionDomain>
+                    <TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns9:ProcessContext/ProcessId))"/>
+                    </TransactionType>
+                    <ReplyToEngineID>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/EngineID"/>
+                    </ReplyToEngineID>
+                    <ReplyToDeployment>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/Deployment"/>
+                    </ReplyToDeployment>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="PrepareOMRequest">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>853</pd:x>
+            <pd:y>125</pd:y>
+            <config>
+                <element ref="pfx11:orderList"/>
+            </config>
+            <pd:inputBindings>
+                <pfx11:orderList>
+                    <pfx11:orderRequest>
+                        <pfx11:subscriptionList>
+                            <pfx11:subscriptionInfo>
+                                <pfx11:subscriberId>
+                                    <xsl:value-of select="$MSISDNList/Record1/SUBSCRIBER_NO"/>
+                                </pfx11:subscriberId>
+                                <pfx11:billingContractId>
+                                    <xsl:value-of select="$MSISDNList/Record1/CONTRACT_ID"/>
+                                </pfx11:billingContractId>
+                                <pfx11:market>
+                                    <xsl:value-of select="$MSISDNList/Record1/MARKET_CD"/>
+                                </pfx11:market>
+                                <pfx11:subMarket>
+                                    <xsl:value-of select="$MSISDNList/Record1/SUBMARKET_CD"/>
+                                </pfx11:subMarket>
+                                <pfx11:msisdn>
+                                    <xsl:value-of select="$MSISDNList/Record1/MSISDN"/>
+                                </pfx11:msisdn>
+                                <pfx11:imsi>
+                                    <xsl:value-of select="$MSISDNList/Record1/IMSI"/>
+                                </pfx11:imsi>
+                                <pfx11:dnID>
+                                    <xsl:value-of select="$MSISDNList/Record1/DN_ID"/>
+                                </pfx11:dnID>
+                                <xsl:if test="$MSISDNList/Record1/ICCID">
+                                    <pfx11:simNumber>
+                                        <xsl:value-of select="$MSISDNList/Record1/ICCID"/>
+                                    </pfx11:simNumber>
+                                </xsl:if>
+                                <pfx11:productList>
+                                    <pfx11:product>
+                                        <pfx11:lineID>
+                                            <xsl:value-of select="''"/>
+                                        </pfx11:lineID>
+                                        <pfx11:productType>
+                                            <xsl:value-of select="'LogicalResourceSpec'"/>
+                                        </pfx11:productType>
+                                        <pfx11:productCode>
+                                            <xsl:value-of select="'LRS_MSISDN'"/>
+                                        </pfx11:productCode>
+                                        <pfx11:parentProductCode>
+                                            <xsl:value-of select="$MSISDNList/Record1/ECM_PROMOTION_ID"/>
+                                        </pfx11:parentProductCode>
+                                        <pfx11:action>
+                                            <xsl:value-of select="'NOCHANGE'"/>
+                                        </pfx11:action>
+                                        <pfx11:productAttributeList>
+                                            <pfx11:productAttribute>
+                                                <pfx11:name>
+                                                    <xsl:value-of select="'SP_MSISDN'"/>
+                                                </pfx11:name>
+                                                <pfx11:value>
+                                                    <xsl:value-of select="$MSISDNList/Record1/MSISDN"/>
+                                                </pfx11:value>
+                                            </pfx11:productAttribute>
+                                        </pfx11:productAttributeList>
+                                    </pfx11:product>
+                                    <pfx11:product>
+                                        <pfx11:lineID>
+                                            <xsl:value-of select="''"/>
+                                        </pfx11:lineID>
+                                        <pfx11:productType>
+                                            <xsl:value-of select="'PhysicalResourceSpec'"/>
+                                        </pfx11:productType>
+                                        <pfx11:productCode>
+                                            <xsl:value-of select="'PRS_SIM'"/>
+                                        </pfx11:productCode>
+                                        <pfx11:parentProductCode>
+                                            <xsl:value-of select="$MSISDNList/Record1/ECM_PROMOTION_ID"/>
+                                        </pfx11:parentProductCode>
+                                        <pfx11:action>
+                                            <xsl:value-of select="'NOCHANGE'"/>
+                                        </pfx11:action>
+                                        <pfx11:productAttributeList>
+                                            <pfx11:productAttribute>
+                                                <pfx11:name>
+                                                    <xsl:value-of select="'SP_IMSI'"/>
+                                                </pfx11:name>
+                                                <pfx11:value>
+                                                    <xsl:value-of select="$MSISDNList/Record1/IMSI"/>
+                                                </pfx11:value>
+                                            </pfx11:productAttribute>
+                                            <pfx11:productAttribute>
+                                                <pfx11:name>
+                                                    <xsl:value-of select="'SP_ICCID'"/>
+                                                </pfx11:name>
+                                                <pfx11:value>
+                                                    <xsl:value-of select="$MSISDNList/Record1/ICCID"/>
+                                                </pfx11:value>
+                                            </pfx11:productAttribute>
+                                        </pfx11:productAttributeList>
+                                    </pfx11:product>
+                                    <pfx11:product>
+                                        <pfx11:lineID>
+                                            <xsl:value-of select="''"/>
+                                        </pfx11:lineID>
+                                        <pfx11:productType>
+                                            <xsl:value-of select="'ProductOffering'"/>
+                                        </pfx11:productType>
+                                        <pfx11:productCode>
+                                            <xsl:value-of select="$MSISDNList/Record1/ECM_PROMOTION_ID"/>
+                                        </pfx11:productCode>
+                                        <pfx11:parentProductCode>
+                                            <xsl:value-of select="''"/>
+                                        </pfx11:parentProductCode>
+                                        <pfx11:action>
+                                            <xsl:value-of select="'NOCHANGE'"/>
+                                        </pfx11:action>
+                                    </pfx11:product>
+                                    <pfx11:product>
+                                        <pfx11:lineID>
+                                            <xsl:value-of select="''"/>
+                                        </pfx11:lineID>
+                                        <pfx11:productType>
+                                            <xsl:value-of select="'ProductSpecification'"/>
+                                        </pfx11:productType>
+                                        <pfx11:productCode>
+                                            <xsl:value-of select="$MSISDNList/Record1/PACKAGE_ID"/>
+                                        </pfx11:productCode>
+                                        <pfx11:parentProductCode>
+                                            <xsl:value-of select="$MSISDNList/Record1/ECM_PROMOTION_ID"/>
+                                        </pfx11:parentProductCode>
+                                        <pfx11:action>
+                                            <xsl:value-of select="'NOCHANGE'"/>
+                                        </pfx11:action>
+                                    </pfx11:product>
+                                    <pfx11:product>
+                                        <pfx11:lineID>
+                                            <xsl:value-of select="''"/>
+                                        </pfx11:lineID>
+                                        <pfx11:productType>
+                                            <xsl:value-of select="'CustomerFacingServiceSpec'"/>
+                                        </pfx11:productType>
+                                        <pfx11:productCode>
+                                            <xsl:value-of select="$MSISDNList/Record1/SERVICE_CFSS_ID"/>
+                                        </pfx11:productCode>
+                                        <pfx11:parentProductCode>
+                                            <xsl:value-of select="$MSISDNList/Record1/PACKAGE_ID"/>
+                                        </pfx11:parentProductCode>
+                                        <pfx11:action>
+                                            <xsl:value-of select="if($MSISDNList/Record1/ACTION_CD='Delete') then 'DEL' else 'ADD'"/>
+                                        </pfx11:action>
+                                    </pfx11:product>
+                                </pfx11:productList>
+                                <pfx11:lineType>
+                                    <xsl:value-of select="'PREPAID'"/>
+                                </pfx11:lineType>
+                            </pfx11:subscriptionInfo>
+                        </pfx11:subscriptionList>
+                        <pfx11:customerInfo>
+                            <xsl:if test="$MSISDNList/Record1/CUSTOMER_ID">
+                                <pfx11:crmCustomerId>
+                                    <xsl:value-of select="$MSISDNList/Record1/CUSTOMER_ID"/>
+                                </pfx11:crmCustomerId>
+                            </xsl:if>
+                            <xsl:if test="$MSISDNList/Record1/CUSTOMER_TYPE">
+                                <pfx11:customerType>
+                                    <xsl:value-of select="$MSISDNList/Record1/CUSTOMER_TYPE"/>
+                                </pfx11:customerType>
+                            </xsl:if>
+                            <xsl:if test="not(($MSISDNList/Record1/PREF_LANGUAGE/@xsi:nil=(&quot;true&quot;)) or ($MSISDNList/Record1/PREF_LANGUAGE/@xsi:nil=(&quot;1&quot;)))">
+                                <pfx11:preferredLanguageCode>
+                                    <xsl:value-of select="$MSISDNList/Record1/PREF_LANGUAGE"/>
+                                </pfx11:preferredLanguageCode>
+                            </xsl:if>
+                            <pfx11:name>
+                                <xsl:value-of select="$MSISDNList/Record1/CUST_FIRSTNAME"/>
+                            </pfx11:name>
+                        </pfx11:customerInfo>
+                        <pfx11:orderHeader>
+                            <pfx11:orderType>
+                                <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/Services/Common/ExpiredOfferRemoval/OrderType"/>
+                            </pfx11:orderType>
+                            <pfx11:orderNumber>
+                                <xsl:value-of select="$Start/root/TransactionID"/>
+                            </pfx11:orderNumber>
+                            <pfx11:createdDate>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </pfx11:createdDate>
+                            <pfx11:requestedDate>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </pfx11:requestedDate>
+                            <pfx11:sourceSystem>
+                                <xsl:value-of select="$MSISDNList/Record1/SOURCE_SYSTEM"/>
+                            </pfx11:sourceSystem>
+                            <pfx11:orderSubType>
+                                <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/Services/Common/ExpiredOfferRemoval/OrderSubType"/>
+                            </pfx11:orderSubType>
+                            <pfx11:sourceOrderID>
+                                <xsl:value-of select="$Start/root/TransactionID"/>
+                            </pfx11:sourceOrderID>
+                            <pfx11:sourceCreatedBy>
+                                <xsl:value-of select="'TIBCO'"/>
+                            </pfx11:sourceCreatedBy>
+                            <pfx11:buID>
+                                <xsl:value-of select="'ZAINKWT'"/>
+                            </pfx11:buID>
+                            <pfx11:batchType>
+                                <xsl:value-of select="$MSISDNList/Record1/BATCH_FLG"/>
+                            </pfx11:batchType>
+                            <pfx11:channel>
+                                <xsl:value-of select="$MSISDNList/Record1/SOURCE_SYSTEM"/>
+                            </pfx11:channel>
+                            <pfx11:revision>
+                                <xsl:value-of select="'1'"/>
+                            </pfx11:revision>
+                            <pfx11:currencyCode>
+                                <xsl:value-of select="'KWD'"/>
+                            </pfx11:currencyCode>
+                        </pfx11:orderHeader>
+                    </pfx11:orderRequest>
+                </pfx11:orderList>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>2381</pd:x>
+        <pd:y>178</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <pfx12:LogRequest>
+                <pfx3:Header>
+                    <pfx3:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx3:ApplicationID>
+                    <pfx3:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/Services/Common/ExpiredOfferRemoval/ComponentName"/>
+                    </pfx3:ComponentName>
+                    <pfx3:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </pfx3:Hostname>
+                    <pfx3:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx3:Timestamp>
+                    <pfx3:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/CREATE_ORDER"/>
+                    </pfx3:TransactionDomain>
+                    <pfx3:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns9:ProcessContext/ProcessId))"/>
+                    </pfx3:TransactionType>
+                    <xsl:if test="$Start/root/TransactionID">
+                        <pfx3:TransactionID>
+                            <xsl:value-of select="$Start/root/TransactionID"/>
+                        </pfx3:TransactionID>
+                    </xsl:if>
+                    <pfx3:Filename>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/Deployment"/>
+                    </pfx3:Filename>
+                    <pfx3:Message>
+                        <xsl:value-of select="concat(&quot;Activity completed&quot;,&quot;&#xA;&quot;,' Accumulated order request sent to EOM :',&quot;&#xA;&quot;,tib:render-xml($AccOMRequest/AccumulatedOutput))"/>
+                    </pfx3:Message>
+                    <pfx3:Transaction>
+                        <xsl:value-of select="concat(&quot;Offer Details received from CRM :&quot;,&quot;&#xD;&#xA;&quot;,tib:render-xml($Parse-XML/Resultsets/ResultSet1),&quot;&#xA;&quot;,'--------------------------------',&quot;&#xA;&quot;,' Status update request sent to CRM queue :',&quot;&#xA;&quot;,tib:render-xml($PepareDataForCRM/pfx10:ListOfCbio2expiredcfssremovalio))"/>
+                    </pfx3:Transaction>
+                </pfx3:Header>
+                <xsl:if test="$Start/root/StartTimeStamp">
+                    <TimeDuration>
+                        <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                    </TimeDuration>
+                </xsl:if>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </pfx12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>GetEOMItemCode</pd:to>
+        <pd:xpathDescription>RecordExists</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>count($Parse-XML/Resultsets/ResultSet1/Record1)&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>PepareDataForCRM</pd:from>
+        <pd:to>SendRequestCRM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SendRequestCRM</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetEOMItemCode</pd:from>
+        <pd:to>Null-1</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null-1</pd:from>
+        <pd:to>PepareDataForCRM</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:xpathDescription>Success</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Call-CRM-SP/resultSet/outputSet/P_ERRORCODE_OUT='0'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>ErrorCRMQuery</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:xpathDescription>No record</pd:xpathDescription>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>Group (1)</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group (1)</pd:from>
+        <pd:to>UpdateError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group (1)</pd:from>
+        <pd:to>CreateSMSRequest</pd:to>
+        <pd:xpathDescription>SMSListExists</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>count($Parse-XML/Resultsets/ResultSet1/Record1[string-length(SMS_TEXT)&gt;0])&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CreateSMSRequest</pd:from>
+        <pd:to>SendSMSCade</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SendSMSCade</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>End</pd:to>
+        <pd:xpathDescription>NoRecord</pd:xpathDescription>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group (1)</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:xpathDescription>NoSMSList</pd:xpathDescription>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group (2)</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null-1</pd:from>
+        <pd:to>Group (2)</pd:to>
+        <pd:xpathDescription>CheckExpiredOffer</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>count($Parse-XML/Resultsets/ResultSet1/Record1[SERVICE_CFSS_ID=$GetEOMItemCode/FetchExpiredOfferDetails/Record/ItemCode])&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,303 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:tns="http://www.zain.com/ZESB/Services/PostpaidBalance"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:com="http://www.zain.com/ZESB/Types/Common"
+	xmlns:typ="http://www.zain.com/ZESB/Services/PostpaidBalance/Types"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Services/PostpaidBalance">
+	<wsdl:types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common"
+			targetNamespace="http://www.zain.com/ZESB/Types/Common"
+			elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string" />
+						<xs:element name="code" type="xs:string" />
+						<xs:element name="description" type="xs:string" />
+						<xs:element name="sourceSystem" type="xs:string" />
+						<xs:element name="extErrorCode" type="xs:string"
+							minOccurs="0" />
+						<xs:element name="detail" type="xs:string" minOccurs="0" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema targetNamespace="http://www.zain.com/ZESB/Services/PostpaidBalance/Types"
+			xmlns:typ="http://www.zain.com/ZESB/Services/PostpaidBalance/Types"
+			elementFormDefault="qualified">
+			<xs:complexType name="LargestDue">
+				<xs:sequence>
+					<xs:element name="Msisdn" type="xs:string" />
+					<xs:element name="Total" type="xs:decimal" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="LargestDuesList">
+				<xs:sequence>
+					<xs:element name="LargestDue" type="typ:LargestDue"
+						minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="Item">
+				<xs:sequence>
+					<xs:element name="Msisdn" type="xs:string" />
+					<xs:element name="BSType" type="xs:string" />
+					<xs:element name="BillingType" type="xs:string" />
+					<xs:element name="Status" type="xs:string" />
+					<xs:element name="Due" type="xs:decimal" />
+					<xs:element name="Paid" type="xs:decimal" />
+					<xs:element name="Curr" type="xs:decimal" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="BalanceInfoList">
+				<xs:sequence>
+					<xs:element name="Item" type="typ:Item" minOccurs="0"
+						maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:simpleType name="BalanceType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Paid" />
+					<xs:enumeration value="PastDue" />
+					<xs:enumeration value="Unbilled" />
+					<xs:enumeration value="Penalty" />
+					<xs:enumeration value="TerminatedNumbersDue" />
+				</xs:restriction>
+			</xs:simpleType>
+
+			<xs:simpleType name="LanguageType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="En" />
+					<xs:enumeration value="Ar" />
+				</xs:restriction>
+			</xs:simpleType>
+
+			<xs:complexType name="OutputSpecsType">
+				<xs:sequence>
+					<xs:element name="Balance" type="typ:BalanceType"
+						maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:complexType>
+
+
+
+			<xs:element name="getSubscriberBalanceInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Msisdn" type="xs:string" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getSubscriberBalanceOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PastDue" type="xs:decimal" />
+						<xs:element name="Unbilled" type="xs:decimal" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getSubscriberBalanceExtInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Msisdn" type="xs:string" />
+						<xs:element name="ContractId" type="xs:string"
+							minOccurs="0" />
+						<xs:element name="AsOfDate" type="xs:date" minOccurs="0" />
+						<xs:element name="Language" type="typ:LanguageType"
+							minOccurs="1" />
+						<xs:element name="OutputSpecs" type="typ:OutputSpecsType" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getSubscriberBalanceExtOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BSType" type="xs:string" />
+						<xs:element name="BillingType" type="xs:string" />
+						<xs:element name="Status" type="xs:string" />
+						<xs:element name="Balance" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:simpleContent>
+									<xs:extension base="xs:decimal">
+										<xs:attribute name="name" type="typ:BalanceType" />
+									</xs:extension>
+								</xs:simpleContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getSubscribersBalanceInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractId" type="xs:string" />
+						<xs:element name="AsOfDate" type="xs:date" minOccurs="0" />
+						<xs:element name="Language" type="typ:LanguageType"
+							minOccurs="1" />
+						<xs:element name="PageSize" type="xs:int" minOccurs="0" />
+						<xs:element name="PageNo" type="xs:int" minOccurs="0" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getSubscribersBalanceOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="BalanceInfoList" type="typ:BalanceInfoList" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getContractBalanceInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractId" type="xs:string" />
+						<xs:element name="AsOfDate" type="xs:date" minOccurs="0" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getContractBalanceOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="PastDue" type="xs:decimal" />
+						<xs:element name="Paid" type="xs:decimal" />
+						<xs:element name="Unbilled" type="xs:decimal" />
+						<xs:element name="Total" type="xs:decimal" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getLargestDuesInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractId" type="xs:string" />
+						<xs:element name="Limit" type="xs:int" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="getLargestDuesOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="LargestDuesList" type="typ:LargestDuesList" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="getSubscriberBalanceRequest">
+		<wsdl:part name="request" element="typ:getSubscriberBalanceInput" />
+	</wsdl:message>
+	<wsdl:message name="getSubscriberBalanceResponse">
+		<wsdl:part name="response" element="typ:getSubscriberBalanceOutput" />
+	</wsdl:message>
+	<wsdl:message name="getSubscriberBalanceExtRequest">
+		<wsdl:part name="request" element="typ:getSubscriberBalanceExtInput" />
+	</wsdl:message>
+	<wsdl:message name="getSubscriberBalanceExtResponse">
+		<wsdl:part name="request" element="typ:getSubscriberBalanceExtOutput" />
+	</wsdl:message>
+	<wsdl:message name="getSubscribersBalanceRequest">
+		<wsdl:part name="request" element="typ:getSubscribersBalanceInput" />
+	</wsdl:message>
+	<wsdl:message name="getSubscribersBalanceResponse">
+		<wsdl:part name="request" element="typ:getSubscribersBalanceOutput" />
+	</wsdl:message>
+	<wsdl:message name="getContractBalanceRequest">
+		<wsdl:part name="request" element="typ:getContractBalanceInput" />
+	</wsdl:message>
+	<wsdl:message name="getContractBalanceResponse">
+		<wsdl:part name="request" element="typ:getContractBalanceOutput" />
+	</wsdl:message>
+	<wsdl:message name="getLargestDuesRequest">
+		<wsdl:part name="request" element="typ:getLargestDuesInput" />
+	</wsdl:message>
+	<wsdl:message name="getLargestDuesResponse">
+		<wsdl:part name="request" element="typ:getLargestDuesOutput" />
+	</wsdl:message>
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType" />
+	</wsdl:message>
+	<wsdl:portType name="PostpaidBalancePort">
+		<wsdl:operation name="getSubscriberBalance">
+			<wsdl:input message="tns:getSubscriberBalanceRequest" />
+			<wsdl:output message="tns:getSubscriberBalanceResponse" />
+			<wsdl:fault name="fault" message="tns:faultMessage" />
+		</wsdl:operation>
+		<wsdl:operation name="getSubscriberBalanceExt">
+			<wsdl:input message="tns:getSubscriberBalanceExtRequest" />
+			<wsdl:output message="tns:getSubscriberBalanceExtResponse" />
+			<wsdl:fault name="fault" message="tns:faultMessage" />
+		</wsdl:operation>
+		<wsdl:operation name="getSubscribersBalance">
+			<wsdl:input message="tns:getSubscribersBalanceRequest" />
+			<wsdl:output message="tns:getSubscribersBalanceResponse" />
+			<wsdl:fault name="fault" message="tns:faultMessage" />
+		</wsdl:operation>
+		<wsdl:operation name="getContractBalance">
+			<wsdl:input message="tns:getContractBalanceRequest" />
+			<wsdl:output message="tns:getContractBalanceResponse" />
+			<wsdl:fault name="fault" message="tns:faultMessage" />
+		</wsdl:operation>
+		<wsdl:operation name="getLargestDues">
+			<wsdl:input message="tns:getLargestDuesRequest" />
+			<wsdl:output message="tns:getLargestDuesResponse" />
+			<wsdl:fault name="fault" message="tns:faultMessage" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="PostpaidBalanceBinding" type="tns:PostpaidBalancePort">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="getSubscriberBalance">
+			<soap:operation soapAction="getSubscriberBalance" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="getSubscriberBalanceExt">
+			<soap:operation soapAction="getSubscriberBalanceExt" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="fault" />
+		</wsdl:operation>
+		<wsdl:operation name="getSubscribersBalance">
+			<soap:operation soapAction="getSubscribersBalance" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="fault" />
+		</wsdl:operation>
+		<wsdl:operation name="getContractBalance">
+			<soap:operation soapAction="getContractBalance" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="fault" />
+		</wsdl:operation>
+		<wsdl:operation name="getLargestDues">
+			<soap:operation soapAction="getLargestDues" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="fault" />
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="PostpaidBalance">
+		<wsdl:port name="PostpaidBalancePort" binding="tns:PostpaidBalanceBinding">
+			<soap:address location="ZESB/GetPostpaidBalance" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

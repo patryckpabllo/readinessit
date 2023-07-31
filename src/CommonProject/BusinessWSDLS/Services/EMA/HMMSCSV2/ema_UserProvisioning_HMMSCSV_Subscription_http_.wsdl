@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--2004/2/19 ewuwang Update in EMA32 for notification 1)Replace the namespace 
+	part in soapAction with "CAI3G#" 2)add soap:headerfault in every operaton --><!--2004/3/31 ewuwang Update in EMA32 1)Update all the soap:headerfault to 
+	cai3g:HeaderFault and corresponding "part" --><!--2004/11/23 rdcdape Update in EMA4.0 1) Add "Search" operation definition. -->
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:cai3g="http://schemas.ericsson.com/cai3g1.2/"
+	xmlns:up="http://schemas.ericsson.com/ema/UserProvisioning/HMMSCSV/"
+	targetNamespace="http://schemas.ericsson.com/cai3g1.2/">
+	<types>
+
+
+		<xs:schema xmlns="http://schemas.ericsson.com/cai3g1.2/"
+			targetNamespace="http://schemas.ericsson.com/cai3g1.2/"
+			elementFormDefault="qualified" attributeFormDefault="unqualified">
+			<xs:import
+				namespace="http://schemas.ericsson.com/ema/UserProvisioning/HMMSCSV/"
+				schemaLocation="ema_UserProvisioning_HMMSCSV_wsdl_fixed.xsd" />
+			<xs:element name="Create">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MOType" type="xs:string"
+							fixed="Subscription@http://schemas.ericsson.com/ema/UserProvisioning/HMMSCSV/" />
+						<xs:element name="MOId" type="MOIdType" minOccurs="0" />
+						<xs:element name="MOAttributes" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="up:createSubscription" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CreateResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MOId" type="MOIdType" />
+
+
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Get">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MOType" type="xs:string"
+							fixed="Subscription@http://schemas.ericsson.com/ema/UserProvisioning/HMMSCSV/" />
+						<xs:element name="MOId" type="MOIdType" minOccurs="0" />
+
+
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MOId" type="MOIdType" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="MOAttributes" minOccurs="0">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="up:getResponseSubscription" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Set">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MOType" type="xs:string"
+							fixed="Subscription@http://schemas.ericsson.com/ema/UserProvisioning/HMMSCSV/" />
+						<xs:element name="MOId" type="MOIdType" />
+						<xs:element name="MOAttributes">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="up:setSubscription" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SetResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MOId" type="MOIdType" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="MOAttributes">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element ref="up:setResponseSubscription" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+
+
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Delete">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MOType" type="xs:string"
+							fixed="Subscription@http://schemas.ericsson.com/ema/UserProvisioning/HMMSCSV/" />
+						<xs:element name="MOId" type="MOIdType" />
+
+
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DeleteResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MOId" type="MOIdType" minOccurs="0" />
+
+
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+
+			<xs:complexType name="MOIdType">
+				<xs:sequence>
+
+					<xs:element ref="up:actionid" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="SessionIdFault" type="SessionIdFaultType" />
+			<xs:element name="SequenceIdFault" type="SequenceIdFaultType" />
+			<xs:element name="TransactionIdFault" type="TransactionIdFaultType" />
+			<xs:element name="SessionId" type="SessionIdType" />
+			<xs:element name="TransactionId" type="xs:string" />
+			<xs:element name="SequenceId" type="xs:unsignedLong" />
+			<xs:simpleType name="SessionIdType">
+				<xs:restriction base="xs:string">
+					<xs:pattern value="[\d\w]{1,}" />
+				</xs:restriction>
+			</xs:simpleType>
+
+
+			<xs:element name="Cai3gFault" type="Cai3gFaultType">
+			</xs:element>
+			<xs:complexType name="Cai3gFaultType">
+				<xs:sequence>
+					<xs:element name="faultcode" type="xs:integer" />
+					<xs:element name="faultreason">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="reasonText" type="xs:string"
+									maxOccurs="unbounded" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="faultrole" type="xs:string" />
+					<xs:element name="details" minOccurs="0">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:any namespace="##any" processContents="lax" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="HeaderFaultType">
+				<xs:sequence>
+					<xs:element name="faultactor" type="xs:string" />
+					<xs:element name="description" type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="SessionIdFaultType" final="restriction">
+				<xs:complexContent>
+					<xs:extension base="HeaderFaultType">
+						<xs:sequence>
+							<xs:element name="faultcode">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="Invalid SessionId" />
+										<xs:enumeration value="Session Timeout" />
+										<xs:enumeration value="SessionId Syntax Error" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:complexType name="SequenceIdFaultType" final="restriction">
+				<xs:complexContent>
+					<xs:extension base="HeaderFaultType">
+						<xs:sequence>
+							<xs:element name="faultcode">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="Invalid SequenceId" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:complexType name="TransactionIdFaultType" final="restriction">
+				<xs:complexContent>
+					<xs:extension base="HeaderFaultType">
+						<xs:sequence>
+							<xs:element name="faultcode">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:enumeration value="Invalid TransactionId" />
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+		</xs:schema>
+	</types>
+	<message name="Get">
+		<part name="Get" element="cai3g:Get" />
+		<part name="SessionId" element="cai3g:SessionId" />
+		<part name="TransactionId" element="cai3g:TransactionId" />
+		<part name="SequenceId" element="cai3g:SequenceId" />
+	</message>
+	<message name="GetResponse">
+		<part name="GetResponse" element="cai3g:GetResponse" />
+		<part name="SessionId" element="cai3g:SessionId" />
+		<part name="TransactionId" element="cai3g:TransactionId" />
+		<part name="SequenceId" element="cai3g:SequenceId" />
+	</message>
+	<message name="Cai3G12FaultException">
+		<part name="fault" element="cai3g:Cai3gFault" />
+	</message>
+	<message name="Set">
+		<part name="Set" element="cai3g:Set" />
+		<part name="SessionId" element="cai3g:SessionId" />
+		<part name="TransactionId" element="cai3g:TransactionId" />
+		<part name="SequenceId" element="cai3g:SequenceId" />
+	</message>
+	<message name="SetResponse">
+		<part name="SetResponse" element="cai3g:SetResponse" />
+		<part name="SessionId" element="cai3g:SessionId" />
+		<part name="TransactionId" element="cai3g:TransactionId" />
+		<part name="SequenceId" element="cai3g:SequenceId" />
+	</message>
+	<message name="Delete">
+		<part name="Delete" element="cai3g:Delete" />
+		<part name="SessionId" element="cai3g:SessionId" />
+		<part name="TransactionId" element="cai3g:TransactionId" />
+		<part name="SequenceId" element="cai3g:SequenceId" />
+	</message>
+	<message name="DeleteResponse">
+		<part name="DeleteResponse" element="cai3g:DeleteResponse" />
+		<part name="SessionId" element="cai3g:SessionId" />
+		<part name="TransactionId" element="cai3g:TransactionId" />
+		<part name="SequenceId" element="cai3g:SequenceId" />
+	</message>
+
+
+	<message name="Create">
+		<part name="Create" element="cai3g:Create" />
+		<part name="SessionId" element="cai3g:SessionId" />
+		<part name="TransactionId" element="cai3g:TransactionId" />
+		<part name="SequenceId" element="cai3g:SequenceId" />
+	</message>
+	<message name="CreateResponse">
+		<part name="CreateResponse" element="cai3g:CreateResponse" />
+		<part name="SessionId" element="cai3g:SessionId" />
+		<part name="TransactionId" element="cai3g:TransactionId" />
+		<part name="SequenceId" element="cai3g:SequenceId" />
+	</message>
+	<portType name="Provisioning">
+		<operation name="Create">
+			<input message="cai3g:Create" />
+			<output message="cai3g:CreateResponse" />
+			<fault name="Cai3G12FaultException" message="cai3g:Cai3G12FaultException" />
+		</operation>
+		<operation name="Delete">
+			<input message="cai3g:Delete" />
+			<output message="cai3g:DeleteResponse" />
+			<fault name="Cai3G12FaultException" message="cai3g:Cai3G12FaultException" />
+		</operation>
+		<operation name="Get">
+			<input message="cai3g:Get" />
+			<output message="cai3g:GetResponse" />
+			<fault name="Cai3G12FaultException" message="cai3g:Cai3G12FaultException" />
+		</operation>
+		<operation name="Set">
+			<input message="cai3g:Set" />
+			<output message="cai3g:SetResponse" />
+			<fault name="Cai3G12FaultException" message="cai3g:Cai3G12FaultException" />
+		</operation>
+
+	</portType>
+	<binding name="Provisioning" type="cai3g:Provisioning">
+		<soap:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<operation name="Create">
+			<soap:operation soapAction="CAI3G#Create" style="document" />
+			<input>
+				<soap:body use="literal" parts="Create" />
+				<soap:header message="cai3g:Create" part="SessionId"
+					use="literal" />
+				<soap:header message="cai3g:Create" part="TransactionId"
+					use="literal" />
+				<soap:header message="cai3g:Create" part="SequenceId"
+					use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" parts="CreateResponse" />
+				<soap:header message="cai3g:CreateResponse" part="SessionId"
+					use="literal" />
+				<soap:header message="cai3g:CreateResponse" part="TransactionId"
+					use="literal" />
+				<soap:header message="cai3g:CreateResponse" part="SequenceId"
+					use="literal" />
+			</output>
+			<fault name="Cai3G12FaultException">
+				<soap:fault name="Cai3G12FaultException" use="literal" />
+			</fault>
+		</operation>
+		<operation name="Delete">
+			<soap:operation soapAction="CAI3G#Delete" style="document" />
+			<input>
+				<soap:body use="literal" parts="Delete" />
+				<soap:header message="cai3g:Delete" part="SessionId"
+					use="literal" />
+				<soap:header message="cai3g:Delete" part="TransactionId"
+					use="literal" />
+				<soap:header message="cai3g:Delete" part="SequenceId"
+					use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" parts="DeleteResponse" />
+				<soap:header message="cai3g:DeleteResponse" part="SessionId"
+					use="literal" />
+				<soap:header message="cai3g:DeleteResponse" part="TransactionId"
+					use="literal" />
+				<soap:header message="cai3g:DeleteResponse" part="SequenceId"
+					use="literal" />
+			</output>
+			<fault name="Cai3G12FaultException">
+				<soap:fault name="Cai3G12FaultException" use="literal" />
+			</fault>
+		</operation>
+		<operation name="Get">
+			<soap:operation soapAction="CAI3G#Get" style="document" />
+			<input>
+				<soap:body use="literal" parts="Get" />
+				<soap:header message="cai3g:Get" part="SessionId" use="literal" />
+				<soap:header message="cai3g:Get" part="TransactionId"
+					use="literal" />
+				<soap:header message="cai3g:Get" part="SequenceId" use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" parts="GetResponse" />
+				<soap:header message="cai3g:GetResponse" part="SessionId"
+					use="literal" />
+				<soap:header message="cai3g:GetResponse" part="TransactionId"
+					use="literal" />
+				<soap:header message="cai3g:GetResponse" part="SequenceId"
+					use="literal" />
+			</output>
+			<fault name="Cai3G12FaultException">
+				<soap:fault name="Cai3G12FaultException" use="literal" />
+			</fault>
+		</operation>
+		<operation name="Set">
+			<soap:operation soapAction="CAI3G#Set" style="document" />
+			<input>
+				<soap:body use="literal" parts="Set" />
+				<soap:header message="cai3g:Set" part="SessionId" use="literal" />
+				<soap:header message="cai3g:Set" part="TransactionId"
+					use="literal" />
+				<soap:header message="cai3g:Set" part="SequenceId" use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" parts="SetResponse" />
+				<soap:header message="cai3g:SetResponse" part="SessionId"
+					use="literal" />
+				<soap:header message="cai3g:SetResponse" part="TransactionId"
+					use="literal" />
+				<soap:header message="cai3g:SetResponse" part="SequenceId"
+					use="literal" />
+			</output>
+			<fault name="Cai3G12FaultException">
+				<soap:fault name="Cai3G12FaultException" use="literal" />
+			</fault>
+		</operation>
+
+	</binding>
+	<service name="CAI3G">
+		<port name="Provisioning" binding="cai3g:Provisioning">
+			<soap:address location="http://anyema.anyprovisioningprovider.com/cai3g" />
+		</port>
+	</service>
+</definitions>

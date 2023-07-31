@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.zain.com/ZESB/Types/Common" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.zain.com/ZESB/Services/IncidentManagement/Types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pfx2="http://www.zain.com/ZESB/Services/IncidentManagement" xmlns:pfx="http://xmlns.example.com/1464510892248">
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/IncidentManagement" location="/Stub/ITSM_Local.wsdl"/>
+    <pd:name>Stub/Update_Stub.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>27</pd:startX>
+    <pd:startY>35</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>597</pd:endX>
+    <pd:endY>35</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://www.zain.com/ZESB/Services/IncidentManagement</pd:targetNamespace>
+    <pd:activity name="SOAPRequestReply">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>245</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <timeout>0</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx2:ITSM_Remedy</service>
+            <servicePort>IncidentManagementPortEndpoint</servicePort>
+            <operation>UpdateIncident</operation>
+            <soapAction>UpdateIncident</soapAction>
+            <sharedChannels>
+                <jmsChannel>
+                    <targetService/>
+                    <JMSPriority>4</JMSPriority>
+                    <JMSTimeToLive>0</JMSTimeToLive>
+                    <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                    <JMSMessageType>Text</JMSMessageType>
+                    <NamingURL>tibjmsnaming://10.96.100.3:8222</NamingURL>
+                    <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+                    <NamingPrincipal>admin</NamingPrincipal>
+                    <NamingCredential/>
+                    <ConnectionFactory>QueueConnectionFactory</ConnectionFactory>
+                    <JMSTo>CBIO.BSS.DOM_ESB.GW.INCIDENTMANAGEMENT.SVC.Q.EXT.REQ</JMSTo>
+                    <JMSUserName>admin</JMSUserName>
+                    <JMSPassword/>
+                    <SoapJmsW3cFlag>false</SoapJmsW3cFlag>
+                    <JMSNamingValidateSecurityContext>true</JMSNamingValidateSecurityContext>
+                </jmsChannel>
+            </sharedChannels>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <ns:UpdateIncidentRequest>
+                    <ns:Incident>
+                        <ns:AssignedTo/>
+                        <ns:Status>
+                            <xsl:value-of select="&quot;Assigned&quot;"/>
+                        </ns:Status>
+                        <ns:Summary>
+                            <xsl:value-of select="&quot;Update Testing ///07062016 ABCabc&quot;"/>
+                        </ns:Summary>
+                        <ns:Description>
+                            <xsl:value-of select="&quot;Ali Al-Bannay is Awsome ;D&quot;"/>
+                        </ns:Description>
+                        <ns:DirectContact/>
+                        <ns:IncidentID>
+                            <xsl:value-of select="&quot;INC36532&quot;"/>
+                        </ns:IncidentID>
+                        <ns:Params>
+                            <ns2:StringParam>
+                                <xsl:attribute name="name">
+                                    <xsl:value-of select="&quot;ZK_NOC_OutageReason&quot;"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="&quot;Power&quot;"/>
+                            </ns2:StringParam>
+                        </ns:Params>
+                    </ns:Incident>
+                </ns:UpdateIncidentRequest>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SOAPRequestReply</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

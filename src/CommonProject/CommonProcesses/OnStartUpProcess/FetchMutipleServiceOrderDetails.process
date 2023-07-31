@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/namespaces/tnt/plugins/file" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns4="http://www.zain.com/schemas/CommonProject/BusinessSchemas/Common/CRM/ListOfValues.xsd" xmlns:ns="http://www.zain.com/schemas/CommonProject/BusinessSchemas/Common/ListOfValues.xsd" xmlns:ns3="com/tibco/pe/commands" xmlns:ns0="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns5="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariable/Internal/ResponseCodes.xsd" xmlns:ns6="http://www.ericsson.com/ZainKW/CommonResources/SharedVariables/External/ListOfValues.xsd" xmlns:pfx="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns7="http://www.zain.com/ZESB/QUERY/ProductDetalis.xsd" xmlns:ns02="www.tibco.com/plugin/Sleep" xmlns:ns8="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariables/Internal/MultipleServiceOrder.xsd">
+    <pd:name>CommonProcesses/OnStartUpProcess/FetchMutipleServiceOrderDetails.process</pd:name>
+    <pd:startName>onStartup</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="onStartup">
+        <pd:type>com.tibco.pe.core.OnStartupEventSource</pd:type>
+        <pd:resourceType>ae.activities.onStartup</pd:resourceType>
+        <pd:x>57</pd:x>
+        <pd:y>142</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>687</pd:endX>
+    <pd:endY>149</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1329293454605</pd:targetNamespace>
+    <pd:activity name="MultipleServiceOrderMap">
+        <pd:type>com.tibco.pe.core.SetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.setSharedVariable</pd:resourceType>
+        <pd:x>573</pd:x>
+        <pd:y>150</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/MultipleServiceOrder.sharedvariable</variableConfig>
+            <showResult>true</showResult>
+        </config>
+        <pd:inputBindings>
+            <ns8:MultipleServiceOrder>
+                <xsl:for-each select="$FetchMultipleServiceOrderDetails/resultSet/Record">
+                    <ns8:MultipleOrder>
+                        <xsl:if test="TABS_EQUIP_ID">
+                            <ns8:TABS_EQUIP_ID>
+                                <xsl:value-of select="TABS_EQUIP_ID"/>
+                            </ns8:TABS_EQUIP_ID>
+                        </xsl:if>
+                        <xsl:if test="TABS_PCKG_ID">
+                            <ns8:TABS_PCKG_ID>
+                                <xsl:value-of select="TABS_PCKG_ID"/>
+                            </ns8:TABS_PCKG_ID>
+                        </xsl:if>
+                        <xsl:if test="CRM_PRODUCT_ID">
+                            <ns8:CRM_PRODUCT_ID>
+                                <xsl:value-of select="CRM_PRODUCT_ID"/>
+                            </ns8:CRM_PRODUCT_ID>
+                        </xsl:if>
+                        <xsl:if test="ATTRIBUTE_NAME">
+                            <ns8:ATTRIBUTE_NAME>
+                                <xsl:value-of select="ATTRIBUTE_NAME"/>
+                            </ns8:ATTRIBUTE_NAME>
+                        </xsl:if>
+                        <xsl:if test="ATTRIBUTE_VALUE">
+                            <ns8:ATTRIBUTE_VALUE>
+                                <xsl:value-of select="ATTRIBUTE_VALUE"/>
+                            </ns8:ATTRIBUTE_VALUE>
+                        </xsl:if>
+                        <xsl:if test="SERVICE_TYPE">
+                            <ns8:SERVICE_TYPE>
+                                <xsl:value-of select="SERVICE_TYPE"/>
+                            </ns8:SERVICE_TYPE>
+                        </xsl:if>
+                        <xsl:if test="CRM_PCKG_ID">
+                            <ns8:CRM_PCKG_ID>
+                                <xsl:value-of select="CRM_PCKG_ID"/>
+                            </ns8:CRM_PCKG_ID>
+                        </xsl:if>
+                        <xsl:if test="CRM_PROMO_ID">
+                            <ns8:CRM_PROMO_ID>
+                                <xsl:value-of select="CRM_PROMO_ID"/>
+                            </ns8:CRM_PROMO_ID>
+                        </xsl:if>
+                    </ns8:MultipleOrder>
+                </xsl:for-each>
+            </ns8:MultipleServiceOrder>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>187</pd:x>
+        <pd:y>322</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>321</pd:x>
+        <pd:y>321</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <pfx:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                </message>
+                <msgCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                </msgCode>
+            </pfx:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="EngineShutdownCommand">
+        <pd:type>com.tibco.pe.core.EngineCommandActivity</pd:type>
+        <pd:resourceType>ae.activities.enginecommand</pd:resourceType>
+        <pd:x>542</pd:x>
+        <pd:y>325</pd:y>
+        <config>
+            <command>Shutdown</command>
+        </config>
+        <pd:inputBindings>
+            <ns3:input>
+                <MaxDelayInSeconds>
+                    <xsl:value-of select="$_globalVariables/pfx2:GlobalVariables/CommonProcesses/OnStartUpProcess/EngineShutdownDelay_InSeconds"/>
+                </MaxDelayInSeconds>
+                <WaitForCheckpoints>
+                    <xsl:value-of select="true()"/>
+                </WaitForCheckpoints>
+            </ns3:input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>185</pd:x>
+        <pd:y>5</pd:y>
+        <pd:width>321</pd:width>
+        <pd:height>267</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>errorLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:indexSlot>err_cnt</pd:indexSlot>
+            <pd:errorCondition>$err_cnt&gt;=$_globalVariables/pfx2:GlobalVariables/CommonProcesses/ErrorHandling/Retry/MaxRetryCount</pd:errorCondition>
+            <pd:suspendAfterErrorRetry>false</pd:suspendAfterErrorRetry>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>FetchMultipleServiceOrderDetails</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchMultipleServiceOrderDetails</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchMultipleServiceOrderDetails</pd:from>
+            <pd:to>Sleep</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-65485</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Sleep</pd:from>
+            <pd:to>Generate Error</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="FetchMultipleServiceOrderDetails">
+            <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+            <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+            <pd:x>318</pd:x>
+            <pd:y>73</pd:y>
+            <config>
+                <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/LoginTimeout%%</timeout>
+                <commit>false</commit>
+                <maxRows>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/Maxrows%%</maxRows>
+                <emptyStrAsNil>false</emptyStrAsNil>
+                <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+                <statement>SELECT  TABS_EQUIP_ID , TABS_PCKG_ID ,CRM_PRODUCT_ID, ATTRIBUTE_NAME , ATTRIBUTE_VALUE , SERVICE_TYPE , CRM_PCKG_ID, CRM_PROMO_ID
+ from MULTIPLE_SERVICE_ORDER</statement>
+                <wizardData/>
+                <oraObjects/>
+                <oraTables/>
+                <QueryOutputCachedSchemaColumns>TABS_EQUIP_ID</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>TABS_PCKG_ID</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>CRM_PRODUCT_ID</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>ATTRIBUTE_NAME</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>ATTRIBUTE_VALUE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>SERVICE_TYPE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>CRM_PCKG_ID</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>CRM_PROMO_ID</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            </config>
+            <pd:inputBindings>
+                <jdbcQueryActivityInput/>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Sleep">
+            <pd:type>com.tibco.plugin.timer.SleepActivity</pd:type>
+            <pd:resourceType>ae.activities.sleep</pd:resourceType>
+            <pd:x>264</pd:x>
+            <pd:y>213</pd:y>
+            <config/>
+            <pd:inputBindings>
+                <ns02:SleepInputSchema>
+                    <IntervalInMillisec>
+                        <xsl:value-of select="$_globalVariables/pfx2:GlobalVariables/CommonProcesses/ErrorHandling/Retry/RetryInterval_millisec"/>
+                    </IntervalInMillisec>
+                </ns02:SleepInputSchema>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Generate Error">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>439</pd:x>
+            <pd:y>212</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns0:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/pfx2:GlobalVariables/CommonErrors/CRMTimeOutErrorDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_globalVariables/pfx2:GlobalVariables/CommonErrors/CRMTimeOutErrorCode"/>
+                    </messageCode>
+                </ns0:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MultipleServiceOrderMap</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>EngineShutdownCommand</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EngineShutdownCommand</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>onStartup</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>MultipleServiceOrderMap</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

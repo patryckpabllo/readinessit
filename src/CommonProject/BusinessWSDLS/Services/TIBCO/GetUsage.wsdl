@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:ns1="http://www.zain.com/ZESB/Types/Common" xmlns:tns="http://xmlns.example.com/1450342523179" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns0="http://www.zain.com/ZESB/Services/GetUsage/Types" xmlns:jms="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS" xmlns:soap1="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:jndi="http://www.tibco.com/namespaces/ws/2004/soap/apis/jndi" name="Untitled" targetNamespace="http://xmlns.example.com/1450342523179">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:import namespace="http://www.zain.com/ZESB/Services/GetUsage/Types"/>
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+                        <xs:element name="detail" type="xs:string" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Services/GetUsage/Types" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:import namespace="http://www.zain.com/ZESB/Types/Common"/>
+            <xs:simpleType name="Language">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Ar"/>
+                    <xs:enumeration value="En"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="MSISDN">
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="8"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="NonEmptyString">
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:complexType name="RatingBundle">
+                <xs:sequence>
+                    <xs:element name="Type" type="xs:string"/>
+                    <xs:element name="ServiceCode" type="xs:string"/>
+                    <xs:element name="Unit" type="xs:string"/>
+                    <xs:element name="Used" type="xs:decimal"/>
+                    <xs:element name="Threshold" type="xs:decimal"/>
+                    <xs:element name="Peak" type="xs:decimal"/>
+                    <xs:element name="OffPeak" type="xs:decimal"/>
+                    <xs:element name="OnNet" type="xs:decimal" minOccurs="0"/>
+                    <xs:element name="OffNet" type="xs:decimal" minOccurs="0"/>
+                    <xs:element name="StartDate" type="xs:dateTime"/>
+                    <xs:element name="EndDate" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="RatingInfo">
+                <xs:sequence>
+                    <xs:element name="Service" type="xs:string"/>
+                    <xs:element name="ChargingType" type="xs:string"/>
+                    <xs:element name="Destination" type="xs:string" minOccurs="0"/>
+                    <xs:element name="Product" type="xs:string"/>
+                    <xs:element name="Used">
+                        <xs:complexType>
+                            <xs:simpleContent>
+                                <xs:extension base="xs:decimal">
+                                    <xs:attribute name="off-net" type="xs:decimal"/>
+                                    <xs:attribute name="on-net" type="xs:decimal"/>
+                                    <xs:attribute name="unit" type="xs:string"/>
+                                </xs:extension>
+                            </xs:simpleContent>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Threshold" minOccurs="0">
+                        <xs:complexType>
+                            <xs:simpleContent>
+                                <xs:extension base="xs:decimal">
+                                    <xs:attribute name="unit" type="xs:string"/>
+                                </xs:extension>
+                            </xs:simpleContent>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="StartDate" type="xs:dateTime" minOccurs="0"/>
+                    <xs:element name="EndDate" type="xs:dateTime" minOccurs="0"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:simpleType name="UsageType">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Voice"/>
+                    <xs:enumeration value="Data"/>
+                    <xs:enumeration value="SMS"/>
+                    <xs:enumeration value="MMS"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="GetDataPoliciesInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="ns0:MSISDN"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDataPoliciesOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="IMSI" type="xs:string"/>
+                        <xs:element name="Service" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="ID" type="xs:string"/>
+                                    <xs:element name="Type" type="xs:string" minOccurs="0"/>
+                                    <xs:element name="BillingStartDate" type="xs:dateTime"/>
+                                    <xs:element name="BillingEndDate" type="xs:dateTime"/>
+                                    <xs:element name="Quota" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="ID" type="xs:string"/>
+                                                <xs:element name="Used" type="xs:long"/>
+                                                <xs:element name="Remaining" type="xs:long"/>
+                                                <xs:element name="Threshold" type="xs:long"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="DowngradeDate" type="xs:dateTime" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetRatingBundlesInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="ns0:MSISDN"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetRatingBundlesOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Bundle" type="ns0:RatingBundle" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetUsageInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="ns0:MSISDN"/>
+                        <xs:element name="Language" minOccurs="0">
+                            <xs:complexType>
+                                <xs:simpleContent>
+                                    <xs:extension base="ns0:Language"/>
+                                </xs:simpleContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="Filter" minOccurs="0">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="Type" type="ns0:UsageType" maxOccurs="unbounded"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetUsageOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="RatingInfo" type="ns0:RatingInfo" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="GetUsageService">
+        <wsdl:port name="GetUsagePortEndpoint" binding="tns:GetUsagePortEndpointBinding">
+            <soap:address location=""/>
+            <jms:connectionFactory>QueueConnectionFactory</jms:connectionFactory>
+            <jms:targetAddress destination="queue">CBIO.BSS.DOM_ESB.GW.QUERY.GET_USAGE.SVC.Q.EXT.REQ</jms:targetAddress>
+        </wsdl:port>
+        <wsdl:port name="GetUsagePortEndpointHTTP" binding="tns:GetUsagePortEndpointHTTPBinding">
+            <soap:address location="http://localhost:7073/ESB/SOAP/GetUsage"/>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="GetUsagePort">
+        <wsdl:operation name="GetDataPolicies">
+            <wsdl:input message="tns:GetDataPoliciesRequest"/>
+            <wsdl:output message="tns:GetDataPoliciesResponse"/>
+            <wsdl:fault name="fault" message="tns:FaultMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetRatingBundles">
+            <wsdl:input message="tns:GetRatingBundlesRequest"/>
+            <wsdl:output message="tns:GetRatingBundlesResponse"/>
+            <wsdl:fault name="fault" message="tns:FaultMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetUsage">
+            <wsdl:input message="tns:GetUsageRequest"/>
+            <wsdl:output message="tns:GetUsageResponse"/>
+            <wsdl:fault name="fault" message="tns:FaultMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="GetUsagePortEndpointBinding" type="tns:GetUsagePort">
+        <soap:binding style="document" transport="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS"/>
+        <jms:binding messageFormat="Text"/>
+        <wsdl:operation name="GetDataPolicies">
+            <soap:operation style="document" soapAction="GetDataPolicies"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetRatingBundles">
+            <soap:operation style="document" soapAction="GetRatingBundles"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetUsage">
+            <soap:operation style="document" soapAction="GetUsage"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="GetUsagePortEndpointHTTPBinding" type="tns:GetUsagePort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="GetDataPolicies">
+            <soap:operation style="document" soapAction="GetDataPolicies"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetRatingBundles">
+            <soap:operation style="document" soapAction="GetRatingBundles"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetUsage">
+            <soap:operation style="document" soapAction="GetUsage"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="GetDataPoliciesRequest">
+        <wsdl:part name="request" element="ns0:GetDataPoliciesInput"/>
+    </wsdl:message>
+    <wsdl:message name="GetDataPoliciesResponse">
+        <wsdl:part name="response" element="ns0:GetDataPoliciesOutput"/>
+    </wsdl:message>
+    <wsdl:message name="FaultMessage">
+        <wsdl:part name="fault" element="ns1:FaultType"/>
+    </wsdl:message>
+    <wsdl:message name="GetRatingBundlesRequest">
+        <wsdl:part name="request" element="ns0:GetRatingBundlesInput"/>
+    </wsdl:message>
+    <wsdl:message name="GetRatingBundlesResponse">
+        <wsdl:part name="response" element="ns0:GetRatingBundlesOutput"/>
+    </wsdl:message>
+    <wsdl:message name="GetUsageRequest">
+        <wsdl:part name="request" element="ns0:GetUsageInput"/>
+    </wsdl:message>
+    <wsdl:message name="GetUsageResponse">
+        <wsdl:part name="response" element="ns0:GetUsageOutput"/>
+    </wsdl:message>
+</wsdl:definitions>

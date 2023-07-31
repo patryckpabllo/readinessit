@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pfx5="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateReq.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/Schema.xsd" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:ns14="http://www.ericsson.com/CDM/telecom/Response" xmlns:ns9="http://www.ericsson.com/CDM/telecom/Header" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" xmlns:ns13="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateRes.xsd" xmlns:ns6="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" xmlns:ns7="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" xmlns:ns10="http://www.ericsson.com/CDM/telecom/Subscriber" xmlns:ns11="http://www.ericsson.com/CDM/telecom/SubscriberAssets" xmlns:ns8="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/Schema.xsd2" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns4="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerReq.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/BusinessSchemas/Services/Common/CLE/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileResponse.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/Schema.xsd" schemaLocation="/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateReq.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/AutoRenewalCancel/AutoRenewalFlagUpdateReq.xsd"/>
+    <pd:name>BusinessProcesses/Services/Common/EnableCancelAutoRenewal/Implementation/EnableCancelAutoRenewal.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>82</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Update/EnableCancelAutoRenewal/GW_Request_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>946</pd:endX>
+    <pd:endY>36</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442397282862</pd:targetNamespace>
+    <pd:activity name="Call_CRM_GetOffer">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>373</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/EnableCancelAutoRenewal/HelperProcess/CRM_GetOffer.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:copy-of select="$Parse-XML/pfx5:AutoRenewalFlagUpdateReq"/>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <StartTimeStamp>
+                    <xsl:value-of select="if(exists($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_OLM_AutoRenewalFlagSet">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>623</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/EnableCancelAutoRenewal/HelperProcess/OLM_SetAutoRenewalFlag.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx5:AutoRenewalFlagUpdateReq>
+                    <ns10:Subscriber>
+                        <ServiceNo>
+                            <xsl:value-of select="$Parse-XML/pfx5:AutoRenewalFlagUpdateReq/ns11:SubscriberAssets/ns11:Subscriber/ns11:ServiceNo"/>
+                        </ServiceNo>
+                    </ns10:Subscriber>
+                    <ns11:SubscriberAssets>
+                        <ns11:Subscriber>
+                            <ns11:ServiceNo>
+                                <xsl:value-of select="$Parse-XML/pfx5:AutoRenewalFlagUpdateReq/ns11:SubscriberAssets/ns11:Subscriber/ns11:ServiceNo"/>
+                            </ns11:ServiceNo>
+                        </ns11:Subscriber>
+                        <ns11:ListOfAssets>
+                            <ns11:Asset>
+                                <xsl:if test="$Call_OM_GetOffer/ns8:AutorenewalFlagUpdateRes/ns4:SubscriberAssets/ListOfAssets/Asset[1]/AssetID">
+                                    <ns11:AssetID>
+                                        <xsl:value-of select="$Call_OM_GetOffer/ns8:AutorenewalFlagUpdateRes/ns4:SubscriberAssets/ListOfAssets/Asset[1]/AssetID"/>
+                                    </ns11:AssetID>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx5:AutoRenewalFlagUpdateReq/ns11:SubscriberAssets/ns11:ListOfAssets/ns11:Asset[1]/ns11:AssetAutoRenewalFlag">
+                                    <ns11:AssetAutoRenewalFlag>
+                                        <xsl:value-of select="$Parse-XML/pfx5:AutoRenewalFlagUpdateReq/ns11:SubscriberAssets/ns11:ListOfAssets/ns11:Asset[1]/ns11:AssetAutoRenewalFlag"/>
+                                    </ns11:AssetAutoRenewalFlag>
+                                </xsl:if>
+                                <ListOfServices>
+                                    <ns11:Service>
+                                        <ns11:ServiceID>
+                                            <xsl:value-of select="''"/>
+                                        </ns11:ServiceID>
+                                    </ns11:Service>
+                                </ListOfServices>
+                            </ns11:Asset>
+                        </ns11:ListOfAssets>
+                    </ns11:SubscriberAssets>
+                </pfx5:AutoRenewalFlagUpdateReq>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <StartTimeStamp>
+                    <xsl:value-of select="if(exists($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_OM_GetOffer">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>490</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/EnableCancelAutoRenewal/HelperProcess/OM_GetOffer.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx5:AutoRenewalFlagUpdateReq>
+                    <xsl:copy-of select="$Parse-XML/pfx5:AutoRenewalFlagUpdateReq/ns9:BusinessMessageHeader"/>
+                    <xsl:copy-of select="$Parse-XML/pfx5:AutoRenewalFlagUpdateReq/ns10:Subscriber"/>
+                    <ns11:SubscriberAssets>
+                        <ns11:Subscriber>
+                            <ns11:ServiceNo>
+                                <xsl:value-of select="$Parse-XML/pfx5:AutoRenewalFlagUpdateReq/ns11:SubscriberAssets/ns11:Subscriber/ns11:ServiceNo"/>
+                            </ns11:ServiceNo>
+                        </ns11:Subscriber>
+                        <ns11:ListOfAssets>
+                            <ns11:Asset>
+                                <ns11:AssetID>
+                                    <xsl:value-of select="$Call_CRM_GetOffer/ns13:AutoRenewalFlagUpdateRes/ns14:Response/ResponseCode"/>
+                                </ns11:AssetID>
+                                <xsl:if test="$Parse-XML/pfx5:AutoRenewalFlagUpdateReq/ns11:SubscriberAssets/ns11:ListOfAssets/ns11:Asset[1]/ns11:AssetAutoRenewalFlag">
+                                    <ns11:AssetAutoRenewalFlag>
+                                        <xsl:value-of select="$Parse-XML/pfx5:AutoRenewalFlagUpdateReq/ns11:SubscriberAssets/ns11:ListOfAssets/ns11:Asset[1]/ns11:AssetAutoRenewalFlag"/>
+                                    </ns11:AssetAutoRenewalFlag>
+                                </xsl:if>
+                                <ListOfServices>
+                                    <ns11:Service>
+                                        <ns11:ServiceID>
+                                            <xsl:value-of select="''"/>
+                                        </ns11:ServiceID>
+                                    </ns11:Service>
+                                </ListOfServices>
+                            </ns11:Asset>
+                        </ns11:ListOfAssets>
+                    </ns11:SubscriberAssets>
+                </pfx5:AutoRenewalFlagUpdateReq>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <StartTimeStamp>
+                    <xsl:value-of select="if(exists($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>164</pd:x>
+        <pd:y>234</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="CLE_to_CDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>432</pd:x>
+        <pd:y>235</pd:y>
+        <config>
+            <element ref="ns5:ModifyCustomerRes"/>
+        </config>
+        <pd:inputBindings>
+            <ns5:ModifyCustomerRes>
+                <ns4:Response>
+                    <ResponseCode>
+                        <xsl:value-of select="$Catch/exceptiondata/pfx2:ExceptionRequest/ExceptionCode"/>
+                    </ResponseCode>
+                    <xsl:if test="$Catch/exceptiondata/pfx2:ExceptionRequest/StackTrace">
+                        <ResponseDescription>
+                            <xsl:value-of select="$Catch/exceptiondata/pfx2:ExceptionRequest/StackTrace"/>
+                        </ResponseDescription>
+                    </xsl:if>
+                </ns4:Response>
+            </ns5:ModifyCustomerRes>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>296</pd:x>
+        <pd:y>233</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:coercions>
+            <pd:coercion xpath="$Catch/exceptiondata/*" element="pfx2:ExceptionRequest"/>
+        </pd:coercions>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="exists($Catch/exceptiondata/pfx2:ExceptionRequest/StackTrace)">
+                    <xsl:copy-of select="$Catch/exceptiondata/pfx2:ExceptionRequest"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <pfx2:ExceptionRequest>
+                        <ns22:Header>
+                            <ns22:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ns22:ApplicationID>
+                            <ns22:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                            </ns22:ComponentName>
+                            <ns22:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </ns22:Hostname>
+                            <ns22:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </ns22:Timestamp>
+                            <ns22:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                            </ns22:TransactionDomain>
+                            <ns22:TransactionType>
+                                <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                            </ns22:TransactionType>
+                            <ns22:TransactionID>
+                                <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                            </ns22:TransactionID>
+                        </ns22:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/MiscErrorCode"/>
+                        </ExceptionCode>
+                    </pfx2:ExceptionRequest>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>736</pd:x>
+        <pd:y>235</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="current-dateTime()"/>
+                </TimeDuration>
+                <xsl:if test="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError">
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                    </Category>
+                </xsl:if>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSReceiverError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>84</pd:x>
+        <pd:y>140</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>607</pd:x>
+        <pd:y>358</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns6:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                </message>
+                <xsl:if test="$_error/ns2:ErrorReport/MsgCode">
+                    <msgCode>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                    </msgCode>
+                </xsl:if>
+            </ns6:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>182</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/EnableCancelAutoRenewal/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Message>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/Body"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>719</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Message>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/Body"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>270</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx5:AutoRenewalFlagUpdateReq"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParsingError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>273</pd:x>
+        <pd:y>142</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply to JMS Message">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>833</pd:x>
+        <pd:y>43</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInput>
+                <OtherProperties>
+                    <TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TransactionID>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID">
+                        <ReplyToEngineID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID"/>
+                        </ReplyToEngineID>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName">
+                        <ReplyToDeploymentName>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName"/>
+                        </ReplyToDeploymentName>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                        <StartTimeStamp>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </StartTimeStamp>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/CorrelationId">
+                        <CorrelationId>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/CorrelationId"/>
+                        </CorrelationId>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionDetails">
+                        <TransactionDetails>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionDetails"/>
+                        </TransactionDetails>
+                    </xsl:if>
+                </OtherProperties>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($Call_OLM_AutoRenewalFlagSet/ns8:AutorenewalFlagUpdateRes)"/>
+                </Body>
+            </ns3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SendErrorReplyToJMS">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>599</pd:x>
+        <pd:y>235</pd:y>
+        <config>
+            <processName>/CommonProcesses/HelperProcesses/Common_EAI_EMSSender.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <MessageBody>
+                    <xsl:value-of select="tib:render-xml($CLE_to_CDM/ns5:ModifyCustomerRes)"/>
+                </MessageBody>
+                <TransactionID>
+                    <xsl:value-of select="$ErrorHandler/pfx2:ExceptionRequest/ns22:Header/ns22:TransactionID"/>
+                </TransactionID>
+                <EMS_DestinationQueue>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/JMSHeaders/ns3:JMSReplyTo"/>
+                </EMS_DestinationQueue>
+                <TransactionDomain>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                </TransactionDomain>
+                <TransactionType>
+                    <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                </TransactionType>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID">
+                    <ReplyToEngineID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID"/>
+                    </ReplyToEngineID>
+                </xsl:if>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName">
+                    <ReplyToDeployment>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName"/>
+                    </ReplyToDeployment>
+                </xsl:if>
+                <StartTimeStamp>
+                    <xsl:value-of select="if(exists($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Call_CRM_GetOffer</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply to JMS Message</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>JMSReceiverError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>ParsingError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>Reply to JMS Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>CLE_to_CDM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_to_CDM</pd:from>
+        <pd:to>SendErrorReplyToJMS</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SendErrorReplyToJMS</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_to_CDM</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SendErrorReplyToJMS</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_CRM_GetOffer</pd:from>
+        <pd:to>Call_OM_GetOffer</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_OM_GetOffer</pd:from>
+        <pd:to>Call_OLM_AutoRenewalFlagSet</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_OLM_AutoRenewalFlagSet</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

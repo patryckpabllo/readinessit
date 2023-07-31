@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2012 rel. 2 sp1 (x64) (http://www.altova.com) by Abdulaziz Alfoudari (Zain) -->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.zain.com/ZESB/Services/HRMS" xmlns:typ="http://www.zain.com/ZESB/Services/HRMS/Types" xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Services/HRMS">
+	<wsdl:types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema targetNamespace="http://www.zain.com/ZESB/Services/HRMS/Types" elementFormDefault="qualified">
+			<xs:complexType name="Delegation">
+				<xs:sequence>
+					<xs:element name="FromUser" type="xs:string"/>
+					<xs:element name="ToUser" type="xs:string"/>
+					<xs:element name="StartDate" type="xs:dateTime"/>
+					<xs:element name="EndDate" type="xs:dateTime" minOccurs="0"/>
+					<xs:element name="Type" type="xs:string" minOccurs="0"/>
+					<xs:element name="Description" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="DelegationList">
+				<xs:sequence>
+					<xs:element name="Delegation" type="typ:Delegation" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="GetDelegationsInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="OrgUnit" type="xs:string" nillable="false"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetDelegationsOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="DelegationList" type="typ:DelegationList"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="GetDelegationsRequest">
+		<wsdl:part name="request" element="typ:GetDelegationsInput"/>
+	</wsdl:message>
+	<wsdl:message name="GetDelegationsResponse">
+		<wsdl:part name="response" element="typ:GetDelegationsOutput"/>
+	</wsdl:message>
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType"/>
+	</wsdl:message>
+	<wsdl:portType name="HRMSPort">
+		<wsdl:operation name="GetDelegations">
+			<wsdl:input message="tns:GetDelegationsRequest"/>
+			<wsdl:output message="tns:GetDelegationsResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="HRMSBinding" type="tns:HRMSPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="GetDelegations">
+			<soap:operation soapAction="GetDelegations"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="HRMS">
+		<wsdl:port name="HRMSPort" binding="tns:HRMSBinding">
+			<soap:address location="Adress"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

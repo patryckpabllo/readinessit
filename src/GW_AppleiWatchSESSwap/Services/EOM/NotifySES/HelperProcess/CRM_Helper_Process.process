@@ -1,0 +1,846 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pfx6="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EntitleServer/EOM_NotifySES.xsd" xmlns:pfx7="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EntitleServer/EOM_NotifyUserDataReq.xsd" xmlns:pfx2="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESCleanUp/esimSubscriptionCleanUpReqSchema.xsd" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:pfx3="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESLockUnlock/esimSubscriptionLockUnlockReqSchema.xsd" xmlns:pfx4="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESChangeSim/updatePairedPrimaryDeviceImsiReqSchema.xsd" xmlns:pfx5="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESCommonError/SESCommonErrorSchema.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://schemas.tibco.com/bw/plugins/http/5.0/cio" xmlns:ns3="pfx7" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns6="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions" xmlns:ns5="http://schemas.tibco.com/bw/plugins/http/5.0/httpExceptions" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd">
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESCleanUp/esimSubscriptionCleanUpReqSchema.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/AppleiWatchSESCleanUp/esimSubscriptionCleanUpReqSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESLockUnlock/esimSubscriptionLockUnlockReqSchema.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/AppleiWatchSESLockUnlock/esimSubscriptionLockUnlockReqSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESChangeSim/updatePairedPrimaryDeviceImsiReqSchema.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/AppleiWatchSESChangeSim/updatePairedPrimaryDeviceImsiReqSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESCommonError/SESCommonErrorSchema.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/AppleiWatchSESCommonError/SESCommonErrorSchema.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EntitleServer/EOM_NotifySES.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/NotifySES/EOM_NotifySES.xsd"/>
+    <pd:name>Services/EOM/NotifySES/HelperProcess/CRM_Helper_Process.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx6:NotifyUserDataReq"/>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                    <xsd:element name="SourceSystem" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="Operation" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>163</pd:startX>
+    <pd:startY>140</pd:startY>
+    <pd:returnBindings>
+        <xsl:copy-of select="$EOMResponseMap/root"/>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:choice>
+                    <xsd:element ref="pfx6:NotifyUserDataRes"/>
+                    <xsd:element ref="pfx6:ErrorResponse"/>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>1094</pd:endX>
+    <pd:endY>138</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1595424018088</pd:targetNamespace>
+    <pd:activity name="Log_In">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>243</pd:x>
+        <pd:y>140</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/EOM/NotifySES/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/UPDATE"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:MAIN_USER/pfx6:IMSI"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>934</pd:x>
+        <pd:y>141</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/EOM/NotifySES/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/UPDATE"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($SESMapper/root)"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="if(string-length($_error_SES_CallBack_Request/ActivityErrors/ns5:HttpServerException/ns4:httpMessage/binaryContent)>0)&#xA;then&#xA;concat(&quot;SES_Callback-->&quot;,&quot;&#xA;&quot;,$SES_CallBack_Request/RequestActivityOutput,&quot;&#xA;&quot;,&#xA;&quot;EOM-Response-Mapping-->&quot;,&quot;&#xA;&quot;,$EOMResponseMap/root,&quot;&#xA;&quot;,&#xA;&quot;If Error,then-->&quot;,&quot;&#xA;&quot;,$_error_SES_CallBack_Request/ActivityErrors,&quot;&#xA;&quot;,$_error/ns1:ErrorReport,&#xA;&quot;Error String -->&quot;, tib:base64-to-string($_error_SES_CallBack_Request/ActivityErrors/ns5:HttpServerException/ns4:httpMessage/binaryContent))&#xA;else if(string-length($_error_SES_CallBack_Request/ActivityErrors/ns5:HttpClientException/ns4:httpMessage/binaryContent)>0)&#xA;then&#xA;concat(&quot;SES_Callback-->&quot;,&quot;&#xA;&quot;,$SES_CallBack_Request/RequestActivityOutput,&quot;&#xA;&quot;,&#xA;&quot;EOM-Response-Mapping-->&quot;,&quot;&#xA;&quot;,$EOMResponseMap/root,&quot;&#xA;&quot;,&#xA;&quot;If Error,then-->&quot;,&quot;&#xA;&quot;,$_error_SES_CallBack_Request/ActivityErrors,&quot;&#xA;&quot;,$_error/ns1:ErrorReport,&#xA;&quot;Error String -->&quot;,  tib:base64-to-string($_error_SES_CallBack_Request/ActivityErrors/ns5:HttpClientException/ns4:httpMessage/binaryContent))&#xA;else&#xA;concat(&quot;SES_Callback-->&quot;,&quot;&#xA;&quot;,$SES_CallBack_Request/RequestActivityOutput,&quot;&#xA;&quot;,&#xA;&quot;EOM-Response-Mapping-->&quot;,&quot;&#xA;&quot;,$EOMResponseMap/root,&quot;&#xA;&quot;,&#xA;&quot;If Error,then-->&quot;,&quot;&#xA;&quot;,$_error_SES_CallBack_Request/ActivityErrors,&quot;&#xA;&quot;,$_error/ns1:ErrorReport)"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CleanUpMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>374</pd:x>
+        <pd:y>59</pd:y>
+        <config>
+            <element ref="pfx2:root"/>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="$Start/root/Operation='TRDELETE'{-- in primary tags standalone device information to sent to SES in case of tremblant--}">
+                    <root>
+                        <eid>
+                            <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:EID"/>
+                        </eid>
+                        <primaryImsi>
+                            <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:IMSI"/>
+                        </primaryImsi>
+                        <primaryMsisdn>
+                            <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:MSISDN"/>
+                        </primaryMsisdn>
+                        <iccid>
+                            <xsl:value-of select="substring($Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:ICCID, 1, $_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/callBackSES/iccid_length)"/>
+                        </iccid>
+                    </root>
+                </xsl:when>
+                <xsl:when test="$Start/root/Operation='DELETE'&#xA;and&#xA;($Start/root/pfx6:NotifyUserDataReq/pfx6:NameValuePairs/pfx6:NameValuePair[pfx6:Name='CHANNEL_NAME']/pfx6:Value=$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/EOM/NotifySES/DunningSourceSystem&#xA;or&#xA;$Start/root/pfx6:NotifyUserDataReq/pfx6:NameValuePairs/pfx6:NameValuePair[pfx6:Name='CHANNEL_NAME']/pfx6:Value=$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/EOM/NotifySES/PortOutSourceSystem){-- This condition to cater if termination of secondary MSISDN request coming from iXCollection/Dunningin then primary tags standalone device information to sent to SES--}">
+                    <root>
+                        <eid>
+                            <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:EID"/>
+                        </eid>
+                        <primaryImsi>
+                            <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:IMSI"/>
+                        </primaryImsi>
+                        <primaryMsisdn>
+                            <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:MSISDN"/>
+                        </primaryMsisdn>
+                        <iccid>
+                            <xsl:value-of select="substring($Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:ICCID, 1, $_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/callBackSES/iccid_length)"/>
+                        </iccid>
+                    </root>
+                </xsl:when>
+                <xsl:otherwise>
+                    <root>
+                        <eid>
+                            <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:EID"/>
+                        </eid>
+                        <primaryImsi>
+                            <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:MAIN_USER/pfx6:IMSI"/>
+                        </primaryImsi>
+                        <primaryMsisdn>
+                            <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:MAIN_USER/pfx6:MSISDN"/>
+                        </primaryMsisdn>
+                        <iccid>
+                            <xsl:value-of select="substring($Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:ICCID, 1, $_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/callBackSES/iccid_length)"/>
+                        </iccid>
+                        <secondaryImsi>
+                            <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:IMSI"/>
+                        </secondaryImsi>
+                        <secondaryMsisdn>
+                            <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:MSISDN"/>
+                        </secondaryMsisdn>
+                    </root>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LockUnlockMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>374</pd:x>
+        <pd:y>140</pd:y>
+        <config>
+            <element ref="pfx3:root"/>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <eid>
+                    <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:EID"/>
+                </eid>
+                <primaryImsi>
+                    <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:MAIN_USER/pfx6:IMSI"/>
+                </primaryImsi>
+                <iccid>
+                    <xsl:value-of select="substring($Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS[1]/pfx6:ICCID, 1, $_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/callBackSES/iccid_length)"/>
+                </iccid>
+                <xsl:choose>
+                    <xsl:when test="$Start/root/pfx6:NotifyUserDataReq/pfx6:TRADE_TYPE=&quot;2&quot; and $Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS/pfx6:STATUS=&quot;2&quot;">
+                        <action>
+                            <xsl:value-of select="&quot;lock&quot;"/>
+                        </action>
+                    </xsl:when>
+                    <xsl:when test="$Start/root/pfx6:NotifyUserDataReq/pfx6:TRADE_TYPE=&quot;2&quot; and $Start/root/pfx6:NotifyUserDataReq/pfx6:ATTACH_USERS/pfx6:STATUS=&quot;1&quot;">
+                        <action>
+                            <xsl:value-of select="&quot;unlock&quot;"/>
+                        </action>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <action>
+                            <xsl:value-of select="&quot;&quot;"/>
+                        </action>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ChangeSimMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>374</pd:x>
+        <pd:y>226</pd:y>
+        <config>
+            <element ref="pfx4:root"/>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <oldImsi>
+                    <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:NameValuePairs/pfx6:NameValuePair[pfx6:Name=&quot;oldImsi&quot;]/pfx6:Value"/>
+                </oldImsi>
+                <newImsi>
+                    <xsl:value-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:MAIN_USER/pfx6:IMSI"/>
+                </newImsi>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SES_CallBack_Request">
+        <pd:type>com.tibco.plugin.http.client.HttpRequestActivity</pd:type>
+        <pd:resourceType>httppalette.httpRequest</pd:resourceType>
+        <pd:x>648</pd:x>
+        <pd:y>140</pd:y>
+        <config>
+            <inputOutputVersion>5.3.0</inputOutputVersion>
+            <newMimeSupport>true</newMimeSupport>
+            <authScheme>BASIC</authScheme>
+            <requireBasicAuth>true</requireBasicAuth>
+            <basicHttpAuthIdentity>/Services/SESEntServer/Resources/Identity/SES_Identity.id</basicHttpAuthIdentity>
+            <InputHeaders>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Accept" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Charset" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Encoding" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </InputHeaders>
+            <OutputHeaders>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Allow" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Length" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Encoding" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Date" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </OutputHeaders>
+        </config>
+        <pd:inputBindings>
+            <RequestActivityInput>
+                <Host>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/callBackSES/host"/>
+                </Host>
+                <Port>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/callBackSES/port_CRM"/>
+                </Port>
+                <Method>
+                    <xsl:value-of select="$SESMapper/root/Method"/>
+                </Method>
+                <RequestURI>
+                    <xsl:value-of select="$SESMapper/root/RequestURI"/>
+                </RequestURI>
+                <PostData>
+                    <xsl:value-of select="$SESMapper/root/PostData"/>
+                </PostData>
+                <Timeout>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/callBackSES/HTTP_Timeout"/>
+                </Timeout>
+                <Headers>
+                    <Content-Type>
+                        <xsl:value-of select="&quot;application/json&quot;"/>
+                    </Content-Type>
+                </Headers>
+                <DynamicHeaders/>
+            </RequestActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="XML_JSON">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>499</pd:x>
+        <pd:y>225</pd:y>
+        <config>
+            <fileName>CRM_Helper_ProcessXML_JSON</fileName>
+            <packageName>Services.EOM.NotifySES.HelperProcess.CRM_Helper_Process</packageName>
+            <fullsource>package Services.EOM.NotifySES.HelperProcess.CRM_Helper_Process;
+import java.util.*;
+import java.io.*;
+import org.json.JSONObject;
+import org.json.XML;
+
+public class CRM_Helper_ProcessXML_JSON{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String jsonIn = "";
+	protected String xmlIn = "";
+	protected String xmlOut = "";
+	protected String jsonOut = "";
+	public String getjsonIn() {
+		return jsonIn;
+	}
+	public void setjsonIn(String val) {
+		jsonIn = val;
+	}
+	public String getxmlIn() {
+		return xmlIn;
+	}
+	public void setxmlIn(String val) {
+		xmlIn = val;
+	}
+	public String getxmlOut() {
+		return xmlOut;
+	}
+	public void setxmlOut(String val) {
+		xmlOut = val;
+	}
+	public String getjsonOut() {
+		return jsonOut;
+	}
+	public void setjsonOut(String val) {
+		jsonOut = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public CRM_Helper_ProcessXML_JSON() {
+	}
+	public void invoke() throws Exception {
+	String xmlOt="";
+	String jsonOt="";
+	if(getjsonIn()!=null &amp; getjsonIn()!="")
+	{
+		JSONObject jObj = new JSONObject(getjsonIn());
+		xmlOt=XML.toString(jObj);
+		setxmlOut(xmlOt);
+	}
+
+	if(getxmlIn()!=null &amp; getxmlIn()!="")
+	{
+		System.out.println("XML to JSON***********************************");
+		JSONObject jObj1 = XML.toJSONObject(getxmlIn());
+		
+		setjsonOut((jObj1.toString()).replaceAll("(?&lt;=: ?)(?![ \" \\{\\[])(.+?)(?=,|})", "\"$1\""));
+	}
+/* Available Variables: DO NOT MODIFY
+	In  : String jsonIn
+	In  : String xmlIn
+	Out : String xmlOut
+	Out : String jsonOut
+* Available Variables: DO NOT MODIFY *****/
+
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>jsonIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>xmlIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>xmlOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>jsonOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>CRM_Helper_ProcessXML_JSON</name>
+                    <byteCode>yv66vgAAADMAXAkAFgAzCQAWADQJABYANQkAFgA2CgAXADcIADgKABYAOQcAOgoACAA7CgA8AD0KABYAPgoAFgA/CQBAAEEIAEIKAEMARAoAPABFCgAIAEYIAEcIAEgKAEkASgoAFgBLBwBMBwBNAQAGanNvbkluAQASTGphdmEvbGFuZy9TdHJpbmc7AQAFeG1sSW4BAAZ4bWxPdXQBAAdqc29uT3V0AQAJZ2V0anNvbkluAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAJc2V0anNvbkluAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAIZ2V0eG1sSW4BAAhzZXR4bWxJbgEACWdldHhtbE91dAEACXNldHhtbE91dAEACmdldGpzb25PdXQBAApzZXRqc29uT3V0AQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQANU3RhY2tNYXBUYWJsZQcATgcATAEACkV4Y2VwdGlvbnMHAE8BAApTb3VyY2VGaWxlAQAfQ1JNX0hlbHBlcl9Qcm9jZXNzWE1MX0pTT04uamF2YQwAGAAZDAAaABkMABsAGQwAHAAZDAApACoBAAAMAB0AHgEAE29yZy9qc29uL0pTT05PYmplY3QMACkAIgcAUAwAUQBSDAAmACIMACMAHgcAUwwAVABVAQAuWE1MIHRvIEpTT04qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKgcAVgwAVwAiDABYAFkMAFEAHgEAISg/PD06ID8pKD8hWyAiIFx7XFtdKSguKz8pKD89LHx9KQEABCIkMSIHAE4MAFoAWwwAKAAiAQBSU2VydmljZXMvRU9NL05vdGlmeVNFUy9IZWxwZXJQcm9jZXNzL0NSTV9IZWxwZXJfUHJvY2Vzcy9DUk1fSGVscGVyX1Byb2Nlc3NYTUxfSlNPTgEAEGphdmEvbGFuZy9PYmplY3QBABBqYXZhL2xhbmcvU3RyaW5nAQATamF2YS9sYW5nL0V4Y2VwdGlvbgEADG9yZy9qc29uL1hNTAEACHRvU3RyaW5nAQAmKExqYXZhL2xhbmcvT2JqZWN0OylMamF2YS9sYW5nL1N0cmluZzsBABBqYXZhL2xhbmcvU3lzdGVtAQADb3V0AQAVTGphdmEvaW8vUHJpbnRTdHJlYW07AQATamF2YS9pby9QcmludFN0cmVhbQEAB3ByaW50bG4BAAx0b0pTT05PYmplY3QBACkoTGphdmEvbGFuZy9TdHJpbmc7KUxvcmcvanNvbi9KU09OT2JqZWN0OwEACnJlcGxhY2VBbGwBADgoTGphdmEvbGFuZy9TdHJpbmc7TGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvU3RyaW5nOwAhABYAFwAAAAQABAAYABkAAAAEABoAGQAAAAQAGwAZAAAABAAcABkAAAAKAAEAHQAeAAEAHwAAAB0AAQABAAAABSq0AAGwAAAAAQAgAAAABgABAAAADgABACEAIgABAB8AAAAiAAIAAgAAAAYqK7UAAbEAAAABACAAAAAKAAIAAAARAAUAEgABACMAHgABAB8AAAAdAAEAAQAAAAUqtAACsAAAAAEAIAAAAAYAAQAAABQAAQAkACIAAQAfAAAAIgACAAIAAAAGKiu1AAKxAAAAAQAgAAAACgACAAAAFwAFABgAAQAlAB4AAQAfAAAAHQABAAEAAAAFKrQAA7AAAAABACAAAAAGAAEAAAAaAAEAJgAiAAEAHwAAACIAAgACAAAABiortQADsQAAAAEAIAAAAAoAAgAAAB0ABQAeAAEAJwAeAAEAHwAAAB0AAQABAAAABSq0AASwAAAAAQAgAAAABgABAAAAIAABACgAIgABAB8AAAAiAAIAAgAAAAYqK7UABLEAAAABACAAAAAKAAIAAAAjAAUAJAABACkAKgABAB8AAABJAAIAAQAAAB0qtwAFKhIGtQABKhIGtQACKhIGtQADKhIGtQAEsQAAAAEAIAAAABoABgAAACYABAAJAAoACgAQAAsAFgAMABwAJwABACsAKgACAB8AAAD4AAQABAAAAHgSBkwSBk0qtgAHxgAHBKcABAMqtgAHEgalAAcEpwAEA36ZABm7AAhZKrYAB7cACU4tuAAKTCortgALKrYADMYABwSnAAQDKrYADBIGpQAHBKcABAN+mQAisgANEg62AA8qtgAMuAAQTiottgAREhISE7YAFLYAFbEAAAACACAAAAAuAAsAAAApAAMAKgAGACsAJAAtADAALgA1AC8AOgAyAFgANABgADUAaAA3AHcAQAAsAAAAOgAK/QARBwAtBwAtQAFMAf8AAAADBwAuBwAtBwAtAAIBARkKQAFMAf8AAAADBwAuBwAtBwAtAAIBASIALwAAAAQAAQAwAAEAMQAAAAIAMg==</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xmlIn>
+                    <xsl:value-of select="substring-before(substring-after((tib:render-xml($ChangeSimMapper/root)), &quot;&lt;root>&quot;), &quot;&lt;/root>&quot;)"/>
+                </xmlIn>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="EOMResponseMap">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>804</pd:x>
+        <pd:y>140</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:choice>
+                            <xsd:element ref="pfx6:NotifyUserDataRes"/>
+                            <xsd:element ref="pfx6:ErrorResponse"/>
+                        </xsd:choice>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx6:NotifyUserDataRes>
+                    <xsl:copy-of select="$Start/root/pfx6:NotifyUserDataReq/pfx6:OrderHeader"/>
+                    <xsl:choose>
+                        <xsl:when test="$SES_CallBack_Request/RequestActivityOutput/statusLine/statusCode=200">
+                            <pfx6:ResponseCode>
+                                <xsl:value-of select="0"/>
+                            </pfx6:ResponseCode>
+                            <pfx6:ResponseMessage>
+                                <xsl:value-of select="&quot;SUCCESS&quot;"/>
+                            </pfx6:ResponseMessage>
+                            <pfx6:ErrorResponse>
+                                <pfx6:Error_SourceErrCode>
+                                    <xsl:value-of select="0"/>
+                                </pfx6:Error_SourceErrCode>
+                                <pfx6:Error_SourceErrDesc>
+                                    <xsl:value-of select="&quot;SUCCESS&quot;"/>
+                                </pfx6:Error_SourceErrDesc>
+                            </pfx6:ErrorResponse>
+                        </xsl:when>
+                        <xsl:when test="$ParseSESError/root/errorCode">
+                            <pfx6:ResponseCode>
+                                <xsl:value-of select="$ParseSESError/root/errorCode"/>
+                            </pfx6:ResponseCode>
+                            <pfx6:ResponseMessage>
+                                <xsl:value-of select="$ParseSESError/root/errorMsg"/>
+                            </pfx6:ResponseMessage>
+                            <pfx6:ErrorResponse>
+                                <pfx6:Error_SourceSystem>
+                                    <xsl:value-of select="&quot;SES&quot;"/>
+                                </pfx6:Error_SourceSystem>
+                                <pfx6:Error_SourceErrCode>
+                                    <xsl:value-of select="$ParseSESError/root/errorCode"/>
+                                </pfx6:Error_SourceErrCode>
+                                <pfx6:Error_SourceErrDesc>
+                                    <xsl:value-of select="$ParseSESError/root/errorMsg"/>
+                                </pfx6:Error_SourceErrDesc>
+                            </pfx6:ErrorResponse>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <pfx6:ResponseCode>
+                                <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                            </pfx6:ResponseCode>
+                            <pfx6:ResponseMessage>
+                                <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                            </pfx6:ResponseMessage>
+                            <pfx6:ErrorResponse>
+                                <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                                    <pfx6:Error_SourceErrCode>
+                                        <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                                    </pfx6:Error_SourceErrCode>
+                                </xsl:if>
+                                <xsl:if test="$_error/ns1:ErrorReport/Msg">
+                                    <pfx6:Error_SourceErrDesc>
+                                        <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                                    </pfx6:Error_SourceErrDesc>
+                                </xsl:if>
+                            </pfx6:ErrorResponse>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </pfx6:NotifyUserDataRes>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SESMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>499</pd:x>
+        <pd:y>138</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Method" type="xsd:string"/>
+                            <xsd:element name="RequestURI" type="xsd:string"/>
+                            <xsd:element name="PostData" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:choose>
+                    <xsl:when test="string-length($XML_JSON/javaCodeActivityOutput/jsonOut) >0">
+                        <Method>
+                            <xsl:value-of select="&quot;POST&quot;"/>
+                        </Method>
+                    </xsl:when>
+                    <xsl:when test="string-length($CleanUpMapper/root) >0">
+                        <Method>
+                            <xsl:value-of select="&quot;DELETE&quot;"/>
+                        </Method>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <Method>
+                            <xsl:value-of select="&quot;PUT&quot;"/>
+                        </Method>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:choose>
+                    <xsl:when test="string-length($CleanUpMapper/root) >0">
+                        <xsl:choose>
+                            <xsl:when test="$Start/root/Operation=&quot;TERMINATE&quot;">
+                                <RequestURI>
+                                    <xsl:value-of select="concat($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/esimSubscriptionCleanUp/RequestURI ,&#xA;&quot;?primaryImsi=&quot;,$CleanUpMapper/root/primaryImsi,&quot;&amp;&quot;,&#xA;&quot;primaryMsisdn=&quot;,$CleanUpMapper/root/primaryMsisdn)"/>
+                                </RequestURI>
+                            </xsl:when>
+                            <xsl:when test="$Start/root/Operation=&quot;TRDELETE&quot;">
+                                <RequestURI>
+                                    <xsl:value-of select="concat($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/esimSubscriptionCleanUp/RequestURI ,&#xA;&quot;?eid=&quot;,$CleanUpMapper/root/eid,&quot;&amp;&quot;,&#xA;&quot;primaryImsi=&quot;,$CleanUpMapper/root/primaryImsi,&quot;&amp;&quot;,&#xA;&quot;primaryMsisdn=&quot;,$CleanUpMapper/root/primaryMsisdn,&quot;&amp;&quot;,&#xA;&quot;iccid=&quot;,$CleanUpMapper/root/iccid)"/>
+                                </RequestURI>
+                            </xsl:when>
+                            <xsl:when test="$Start/root/Operation='DELETE'&#xA;and&#xA;($Start/root/pfx6:NotifyUserDataReq/pfx6:NameValuePairs/pfx6:NameValuePair[pfx6:Name='CHANNEL_NAME']/pfx6:Value=$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/EOM/NotifySES/DunningSourceSystem&#xA;or&#xA;$Start/root/pfx6:NotifyUserDataReq/pfx6:NameValuePairs/pfx6:NameValuePair[pfx6:Name='CHANNEL_NAME']/pfx6:Value=$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/EOM/NotifySES/PortOutSourceSystem)">
+                                <RequestURI>
+                                    <xsl:value-of select="concat($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/esimSubscriptionCleanUp/RequestURI ,&#xA;&quot;?eid=&quot;,$CleanUpMapper/root/eid,&quot;&amp;&quot;,&#xA;&quot;primaryImsi=&quot;,$CleanUpMapper/root/primaryImsi,&quot;&amp;&quot;,&#xA;&quot;primaryMsisdn=&quot;,$CleanUpMapper/root/primaryMsisdn,&quot;&amp;&quot;,&#xA;&quot;iccid=&quot;,$CleanUpMapper/root/iccid)"/>
+                                </RequestURI>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <RequestURI>
+                                    <xsl:value-of select="concat($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/esimSubscriptionCleanUp/RequestURI ,&#xA;&quot;?eid=&quot;,$CleanUpMapper/root/eid,&quot;&amp;&quot;,&#xA;&quot;primaryImsi=&quot;,$CleanUpMapper/root/primaryImsi,&quot;&amp;&quot;,&#xA;&quot;primaryMsisdn=&quot;,$CleanUpMapper/root/primaryMsisdn,&quot;&amp;&quot;,&#xA;&quot;iccid=&quot;,$CleanUpMapper/root/iccid,&quot;&amp;&quot;,&#xA;&quot;secondaryImsi=&quot;,$CleanUpMapper/root/secondaryImsi,&quot;&amp;&quot;,&#xA;&quot;secondaryMsisdn=&quot;,$CleanUpMapper/root/secondaryMsisdn)"/>
+                                </RequestURI>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:when test="string-length($ChangeSimMapper/root) >0">
+                        <RequestURI>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/updatePairedPrimaryDeviceImsi/RequestURI"/>
+                        </RequestURI>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <RequestURI>
+                            <xsl:value-of select="concat($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/esimSubscriptionLockUnlock/RequestURI ,&#xA; &quot;?eid=&quot;,$LockUnlockMapper/root/eid,&quot;&amp;&quot;,&#xA;&quot;iccid=&quot;,$LockUnlockMapper/root/iccid,&quot;&amp;&quot;,&#xA;&quot;action=&quot;,$LockUnlockMapper/root/action,&quot;&amp;&quot;,&#xA;&quot;networkProvisioningMode=0&quot;)"/>
+                        </RequestURI>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <PostData>
+                    <xsl:value-of select="$XML_JSON/javaCodeActivityOutput/jsonOut"/>
+                </PostData>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SESErr">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>801</pd:x>
+        <pd:y>318</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>582</pd:x>
+        <pd:y>210</pd:y>
+        <pd:width>144</pd:width>
+        <pd:height>121</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>ifThenElse</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>ParseSESError</pd:to>
+            <pd:xpathDescription>4XX</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>string-length(tib:trim($_error_SES_CallBack_Request/ActivityErrors/ns5:HttpClientException/ns4:httpMessage/binaryContent))&gt;0
+or
+string-length(tib:trim($_error_SES_CallBack_Request/ActivityErrors/ns5:HttpServerException/ns4:httpMessage/binaryContent))&gt;0</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ParseSESError</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="ParseSESError">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>651</pd:x>
+            <pd:y>275</pd:y>
+            <config>
+                <processName>/Services/EOM/NotifySES/HelperProcess/ParseSESError.process</processName>
+            </config>
+            <pd:inputBindings>
+                <xsl:choose>
+                    <xsl:when test="string-length(tib:trim($_error_SES_CallBack_Request/ActivityErrors/ns5:HttpClientException/ns4:httpMessage/binaryContent))>0">
+                        <root>
+                            <ErrString>
+                                <xsl:value-of select="tib:base64-to-string($_error_SES_CallBack_Request/ActivityErrors/ns5:HttpClientException/ns4:httpMessage/binaryContent)"/>
+                            </ErrString>
+                        </root>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <root>
+                            <ErrString>
+                                <xsl:value-of select="tib:base64-to-string($_error_SES_CallBack_Request/ActivityErrors/ns5:HttpServerException/ns4:httpMessage/binaryContent)"/>
+                            </ErrString>
+                        </root>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>378</pd:x>
+        <pd:y>330</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx7:ActivityInput>
+                <message>
+                    <xsl:value-of select="&quot;Validation Error,Mandatory fields missing.&quot;"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="&quot;TIB-VAL-ERR&quot;"/>
+                </messageCode>
+            </pfx7:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log_In</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_In</pd:from>
+        <pd:to>CleanUpMapper</pd:to>
+        <pd:xpathDescription>CleanUp</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/Operation=("DELETE","TERMINATE","TRDELETE")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_In</pd:from>
+        <pd:to>LockUnlockMapper</pd:to>
+        <pd:xpathDescription>LockUnlock</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/Operation="LOCK/UNLOCK"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_In</pd:from>
+        <pd:to>ChangeSimMapper</pd:to>
+        <pd:xpathDescription>ChangeSim</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/Operation="CHANGESIM"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_In</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:xpathDescription>Error</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CleanUpMapper</pd:from>
+        <pd:to>SESMapper</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LockUnlockMapper</pd:from>
+        <pd:to>SESMapper</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ChangeSimMapper</pd:from>
+        <pd:to>XML_JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>XML_JSON</pd:from>
+        <pd:to>SESMapper</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SES_CallBack_Request</pd:from>
+        <pd:to>EOMResponseMap</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Out</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EOMResponseMap</pd:from>
+        <pd:to>Log_Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SESMapper</pd:from>
+        <pd:to>SES_CallBack_Request</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SESErr</pd:from>
+        <pd:to>EOMResponseMap</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-26368</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SES_CallBack_Request</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>SESErr</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-26368</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>EOMResponseMap</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

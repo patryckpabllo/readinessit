@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:ns2="http://www.zain.com/ZESB/Services/CustomerComplaint/Types" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.zain.com/ZESB/Services/DeviceManagement/Types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.siebel.com/xml/MOZ1%20Account%20Creation%20Req" xmlns:pfx2="http://www.zain.com/ZESB/Services/CustomerComplaint" xmlns:pfx="http://xmlns.example.com/1479033329165">
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/CustomerComplaint/Types" schemaLocation="/BusinessWSDLS/Services/WSDLS/Remedy/CustomerComplaint_v1.1.wsdl"/>
+    <wsdl:import namespace="http://xmlns.example.com/1479033329165" location="/tester/DeviceManagement_Updated.wsdl"/>
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/CustomerComplaint" location="/BusinessWSDLS/Services/WSDLS/Remedy/CustomerComplaint_v1.1.wsdl"/>
+    <pd:name>CommonProcesses/Utilities/EpochDateTimeToHumanDateTime.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="EpochDateTime" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>147</pd:startX>
+    <pd:startY>71</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <HumanDateTime>
+                <xsl:value-of select="concat(tib:right(tib:left( $EpochToHuman/javaCodeActivityOutput/out_var_1,10),4),'-',tib:left( $EpochToHuman/javaCodeActivityOutput/out_var_1,2),'-',tib:right(tib:left( $EpochToHuman/javaCodeActivityOutput/out_var_1,5),2),'T',tib:right( $EpochToHuman/javaCodeActivityOutput/out_var_1,8))"/>
+            </HumanDateTime>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="HumanDateTime" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>519</pd:endX>
+    <pd:endY>72</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1481101685282</pd:targetNamespace>
+    <pd:activity name="EpochToHuman">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>313</pd:x>
+        <pd:y>70</pd:y>
+        <config>
+            <fileName>EpochDateTimeToHumanDateTimeEpochToHuman</fileName>
+            <packageName>CommonProcesses.Utilities.EpochDateTimeToHumanDateTime</packageName>
+            <fullsource>package CommonProcesses.Utilities.EpochDateTimeToHumanDateTime;
+import java.util.*;
+import java.io.*;
+public class EpochDateTimeToHumanDateTimeEpochToHuman{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected long in_var_1 = 0;
+	protected String out_var_1 = "";
+	public long getin_var_1() {
+		return in_var_1;
+	}
+	public void setin_var_1(long val) {
+		in_var_1 = val;
+	}
+	public String getout_var_1() {
+		return out_var_1;
+	}
+	public void setout_var_1(String val) {
+		out_var_1 = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public EpochDateTimeToHumanDateTimeEpochToHuman() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : long in_var_1
+	Out : String out_var_1
+* Available Variables: DO NOT MODIFY *****/
+String date = new java.text.SimpleDateFormat("MM/dd/yyyy HH:mm:ss").format(new java.util.Date (getin_var_1()*1000));
+setout_var_1(date);
+
+}
+}
+</fullsource>
+            <outputData>
+                <row>
+                    <fieldName>out_var_1</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>in_var_1</fieldName>
+                    <fieldType>long</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>EpochDateTimeToHumanDateTimeEpochToHuman</name>
+                    <byteCode>yv66vgAAADMANwkADwAmCQAPACcKABAAKAgAKQcAKggAKwoABQAsBwAtCgAPAC4FAAAAAAAAA+gKAAgALwoABQAwCgAPADEHADIHADMBAAhpbl92YXJfMQEAAUoBAAlvdXRfdmFyXzEBABJMamF2YS9sYW5nL1N0cmluZzsBAAtnZXRpbl92YXJfMQEAAygpSgEABENvZGUBAA9MaW5lTnVtYmVyVGFibGUBAAtzZXRpbl92YXJfMQEABChKKVYBAAxnZXRvdXRfdmFyXzEBABQoKUxqYXZhL2xhbmcvU3RyaW5nOwEADHNldG91dF92YXJfMQEAFShMamF2YS9sYW5nL1N0cmluZzspVgEABjxpbml0PgEAAygpVgEABmludm9rZQEACkV4Y2VwdGlvbnMHADQBAApTb3VyY2VGaWxlAQAtRXBvY2hEYXRlVGltZVRvSHVtYW5EYXRlVGltZUVwb2NoVG9IdW1hbi5qYXZhDAARABIMABMAFAwAHwAgAQAAAQAaamF2YS90ZXh0L1NpbXBsZURhdGVGb3JtYXQBABNNTS9kZC95eXl5IEhIOm1tOnNzDAAfAB4BAA5qYXZhL3V0aWwvRGF0ZQwAFQAWDAAfABoMADUANgwAHQAeAQBfQ29tbW9uUHJvY2Vzc2VzL1V0aWxpdGllcy9FcG9jaERhdGVUaW1lVG9IdW1hbkRhdGVUaW1lL0Vwb2NoRGF0ZVRpbWVUb0h1bWFuRGF0ZVRpbWVFcG9jaFRvSHVtYW4BABBqYXZhL2xhbmcvT2JqZWN0AQATamF2YS9sYW5nL0V4Y2VwdGlvbgEABmZvcm1hdAEAJChMamF2YS91dGlsL0RhdGU7KUxqYXZhL2xhbmcvU3RyaW5nOwAhAA8AEAAAAAIABAARABIAAAAEABMAFAAAAAYAAQAVABYAAQAXAAAAHQACAAEAAAAFKrQAAa0AAAABABgAAAAGAAEAAAAJAAEAGQAaAAEAFwAAACIAAwADAAAABioftQABsQAAAAEAGAAAAAoAAgAAAAwABQANAAEAGwAcAAEAFwAAAB0AAQABAAAABSq0AAKwAAAAAQAYAAAABgABAAAADwABAB0AHgABABcAAAAiAAIAAgAAAAYqK7UAArEAAAABABgAAAAKAAIAAAASAAUAEwABAB8AIAABABcAAAA0AAMAAQAAABAqtwADKgm1AAEqEgS1AAKxAAAAAQAYAAAAEgAEAAAAFQAEAAYACQAHAA8AFgABACEAIAACABcAAABCAAcAAgAAACK7AAVZEga3AAe7AAhZKrYACRQACmm3AAy2AA1MKiu2AA6xAAAAAQAYAAAADgADAAAAHAAcAB0AIQAfACIAAAAEAAEAIwABACQAAAACACU=</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <in_var_1>
+                    <xsl:value-of select="$Start/root/EpochDateTime"/>
+                </in_var_1>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>EpochToHuman</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>EpochToHuman</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

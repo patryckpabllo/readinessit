@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.zain.com/ZESB/Services/Inventory/QueryStoreResponse.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlPfx="http://xmlns.example.com/1443506317373" xmlns:pfx2="http://www.tibco.com/schemas/GW/BusinessProcesses/Services/ERP/BusinessSchemas/InventoryManagement/Fault/Schema.xsd" xmlns:pfx="http://www.zain.com/ZESB/Services/Inventory/QueryStoreRequest.xsd">
+    <wsdl:import namespace="http://xmlns.example.com/1443506317373" location="/BusinessProcesses/Services/ERP/BusinessWSDL/InventoryManagement.wsdl"/>
+    <pd:name>BusinessProcesses/Services/ERP/BusinessProcess/QueryStore.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="wsdlPfx:QueryStoreRequest"/>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="wsdlPfx:QueryStoreResponse"/>
+    <pd:endX>450</pd:endX>
+    <pd:endY>65</pd:endY>
+    <pd:errorSchemas>
+        <fault wsMsgRef="wsdlPfx:Fault"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1443513412974</pd:targetNamespace>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>419</pd:x>
+        <pd:y>172</pd:y>
+        <config>
+            <faultName>fault</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="'Please send storeid greater than lenght 5 for success response'"/>
+                </message>
+                <data>
+                    <wsdlPfx:Fault>
+                        <fault>
+                            <pfx2:FaultMessage>
+                                <pfx2:type>
+                                    <xsl:value-of select="''"/>
+                                </pfx2:type>
+                                <pfx2:code>
+                                    <xsl:value-of select="'9999'"/>
+                                </pfx2:code>
+                                <pfx2:description>
+                                    <xsl:value-of select="''"/>
+                                </pfx2:description>
+                            </pfx2:FaultMessage>
+                        </fault>
+                    </wsdlPfx:Fault>
+                </data>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>string-length($Start/wsdlPfx:QueryStoreRequest/QueryStoreReq/pfx:QueryStoreRequest/pfx:StoreID)&gt;5</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pfx2="http://www.zain.com/ZESB/Services/Payment" xmlns:pfx="http://www.zain.com/ZESB/Services/Payment/Types">
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.zain.com/ZESB/Services/Payment/Types" schemaLocation="/BusinessWSDLS/Services/WSDLS/Payment/payment.wsdl"/>
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/Payment" location="/BusinessWSDLS/Services/WSDLS/Payment/payment.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/Payment/HelperProcess/Payment_Query_Tibco.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="pfx2:QueryStatusRequest"/>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <pfx:QueryStatusOutput>
+            <pfx:TransactionStatus>
+                <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/REQUEST_STATUS"/>
+            </pfx:TransactionStatus>
+            <xsl:if test="$JDBC-Query/resultSet/Record[1]/RECEIPTNO">
+                <pfx:ReceiptNumber>
+                    <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/RECEIPTNO"/>
+                </pfx:ReceiptNumber>
+            </xsl:if>
+            <pfx:Authorization>
+                <xsl:if test="$JDBC-Query/resultSet/Record[1]/MERCHANT_ID">
+                    <pfx:MerchantId>
+                        <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/MERCHANT_ID"/>
+                    </pfx:MerchantId>
+                </xsl:if>
+                <xsl:if test="$JDBC-Query/resultSet/Record[1]/AMOUNT">
+                    <pfx:Amount>
+                        <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/AMOUNT"/>
+                    </pfx:Amount>
+                </xsl:if>
+                <xsl:if test="$JDBC-Query/resultSet/Record[1]/TRANS_REF">
+                    <pfx:TransactionReference>
+                        <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/TRANS_REF"/>
+                    </pfx:TransactionReference>
+                </xsl:if>
+                <xsl:if test="$JDBC-Query/resultSet/Record[1]/SHOP_TRANS_REF">
+                    <pfx:ShoppingTransactionReference>
+                        <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/SHOP_TRANS_REF"/>
+                    </pfx:ShoppingTransactionReference>
+                </xsl:if>
+                <xsl:if test="$JDBC-Query/resultSet/Record[1]/CARD_TYPE">
+                    <pfx:CardType>
+                        <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/CARD_TYPE"/>
+                    </pfx:CardType>
+                </xsl:if>
+                <xsl:if test="$JDBC-Query/resultSet/Record[1]/ORDERINFO">
+                    <pfx:OrderInfo>
+                        <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/ORDERINFO"/>
+                    </pfx:OrderInfo>
+                </xsl:if>
+                <xsl:if test="$JDBC-Query/resultSet/Record[1]/AUTH_STATUS">
+                    <pfx:AuthorizationStatus>
+                        <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/AUTH_STATUS"/>
+                    </pfx:AuthorizationStatus>
+                </xsl:if>
+                <xsl:if test="$JDBC-Query/resultSet/Record[1]/AUTH_RECEIPT">
+                    <pfx:ReceiptNumber>
+                        <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/AUTH_RECEIPT"/>
+                    </pfx:ReceiptNumber>
+                </xsl:if>
+                <xsl:if test="$JDBC-Query/resultSet/Record[1]/AUTH_NUMBER">
+                    <pfx:AuthorizationID>
+                        <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/AUTH_NUMBER"/>
+                    </pfx:AuthorizationID>
+                </xsl:if>
+                <xsl:if test="$JDBC-Query/resultSet/Record[1]/AUTH_RESP_CODE">
+                    <pfx:AcquirerResponseCode>
+                        <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/AUTH_RESP_CODE"/>
+                    </pfx:AcquirerResponseCode>
+                </xsl:if>
+                <xsl:if test="$JDBC-Query/resultSet/Record[1]/SETMENT_DATE">
+                    <pfx:SettlementDate>
+                        <xsl:value-of select="$JDBC-Query/resultSet/Record[1]/SETMENT_DATE"/>
+                    </pfx:SettlementDate>
+                </xsl:if>
+            </pfx:Authorization>
+        </pfx:QueryStatusOutput>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:QueryStatusOutput"/>
+    <pd:endX>593</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1526371518538</pd:targetNamespace>
+    <pd:activity name="JDBC Query">
+        <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+        <pd:x>382</pd:x>
+        <pd:y>64</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <commit>false</commit>
+            <maxRows>0</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>SELECT  REQUEST_STATUS, RECEIPTNO, MERCHANT_ID, AMOUNT, TRANS_REF,  SHOP_TRANS_REF, CARD_TYPE,   ORDERINFO,  AUTH_STATUS,   AUTH_RECEIPT,  AUTH_NUMBER,  AUTH_RESP_CODE, SETMENT_DATE from PAYMENT_RECORDS where USERNAME = ? and TRANS_REF = ?</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>USERNAME</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>TRANS_REF</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+            <oraObjects/>
+            <oraTables/>
+            <QueryOutputCachedSchemaColumns>REQUEST_STATUS</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>RECEIPTNO</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>MERCHANT_ID</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>AMOUNT</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>TRANS_REF</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SHOP_TRANS_REF</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>CARD_TYPE</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>ORDERINFO</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>AUTH_STATUS</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>AUTH_RECEIPT</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>AUTH_NUMBER</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>AUTH_RESP_CODE</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SETMENT_DATE</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+        </config>
+        <pd:inputBindings>
+            <jdbcQueryActivityInput>
+                <USERNAME>
+                    <xsl:value-of select="$Start/pfx2:QueryStatusRequest/request/pfx:QueryStatusInput/pfx:UserName"/>
+                </USERNAME>
+                <TRANS_REF>
+                    <xsl:value-of select="$Start/pfx2:QueryStatusRequest/request/pfx:QueryStatusInput/pfx:TransactionReference"/>
+                </TRANS_REF>
+            </jdbcQueryActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>384</pd:x>
+        <pd:y>187</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>JDBC Query</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JDBC Query</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JDBC Query</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

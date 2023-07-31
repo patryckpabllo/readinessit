@@ -1,0 +1,198 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/SalesOrder" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:typ="http://www.zain.com/ZESB/Services/SalesOrder/Types" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Services/SalesOrder">
+	<wsdl:types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema targetNamespace="http://www.zain.com/ZESB/Services/SalesOrder/Types" xmlns:typ="http://www.zain.com/ZESB/Services/SalesOrder/Types" elementFormDefault="qualified">
+			<xs:complexType name="NotificationMedia">
+				<xs:sequence>
+					<xs:element name="Media" type="xs:string"/>
+					<xs:element name="Address" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="OrderLine">
+				<xs:sequence>
+					<xs:element name="ItemCode" type="xs:string"/>
+					<xs:element name="Amount" type="xs:decimal"/>
+					<xs:element name="Quantity" type="xs:int"/>
+					<xs:element name="Serial" type="xs:string" minOccurs="0"/>
+					<xs:element name="ItemType">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="Recharge"/>
+								<xs:enumeration value="VOMS"/>
+								<xs:enumeration value="Validity"/>
+								<xs:enumeration value="Device"/>
+								<xs:enumeration value="Service"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:element>
+					<xs:element name="Params" type="typ:Params" minOccurs="0"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="CardInfo">
+				<xs:sequence>
+					<xs:element name="CardType" minOccurs="0" type="xs:string"/>
+					<xs:element name="HolderName" type="xs:string" minOccurs="0"/>
+					<xs:element name="MerchantId" type="xs:string"/>
+					<xs:element name="MerchantPassword" type="xs:string"/>
+					<xs:element name="TerminalId" type="xs:string"/>
+					<xs:element name="AuthCode" type="xs:string" minOccurs="0"/>
+					<xs:element name="CardNumber" type="xs:string"/>
+					<xs:element name="ExpiryDate" type="xs:string"/>
+					<xs:element name="CVV" type="xs:string" minOccurs="0"/>
+					<xs:element name="IssuingBank" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="SalesOrderInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractId" type="xs:string" minOccurs="0"/>
+						<xs:element name="Msisdn" type="xs:string"/>
+						<xs:element name="Amount" type="xs:decimal"/>
+						<xs:element name="UserName" type="xs:string" minOccurs="0"/>
+						<xs:element name="PaymentMethod" type="xs:string"/>
+						<xs:element name="TransactionReference" type="xs:string"/>
+						<xs:element name="AuthorizeCredit" type="xs:string"/>
+						<xs:element name="OrderLines" type="typ:OrderLine" minOccurs="1" maxOccurs="unbounded"/>
+						<xs:element name="CardDetails" type="typ:CardInfo" minOccurs="0"/>
+						<xs:element name="CustomerName" type="xs:string" minOccurs="0"/>
+						<xs:element name="NotificationMedia" type="typ:NotificationMedia" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element name="Notes" type="xs:string" minOccurs="0"/>
+						<xs:element name="Params" type="typ:Params" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="Authorization">
+				<xs:sequence>
+					<xs:element name="MerchantId" type="xs:string" minOccurs="0"/>
+					<xs:element name="Amount" type="xs:decimal" minOccurs="0"/>
+					<xs:element name="TransactionReference" type="xs:string" minOccurs="0"/>
+					<xs:element name="ShoppingTransactionReference" type="xs:string" minOccurs="0"/>
+					<xs:element name="CardType" type="xs:string" minOccurs="0"/>
+					<xs:element name="OrderInfo" type="xs:string" minOccurs="0"/>
+					<xs:element name="AuthorizationStatus" type="xs:string" minOccurs="0"/>
+					<xs:element name="ReceiptNumber" type="xs:string" minOccurs="0"/>
+					<xs:element name="AuthorizationID" type="xs:string" minOccurs="0"/>
+					<xs:element name="AcquirerResponseCode" type="xs:string" minOccurs="0"/>
+					<xs:element name="SettlmentDate" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="SalesOrderOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RequestStatus" type="xs:string"/>
+						<xs:element name="ReceiptNumber" type="xs:string" minOccurs="0"/>
+						<xs:element name="Authorization" type="typ:Authorization"/>
+						<xs:element name="Params" type="typ:Params" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="Param">
+				<xs:sequence>
+					<xs:element name="Name" type="xs:string"/>
+					<xs:element name="Value" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="Params">
+				<xs:sequence>
+					<xs:element name="Param" type="typ:Param" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:simpleType name="MessageType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Successful"/>
+					<xs:enumeration value="PartiallySuccessful"/>
+					<xs:enumeration value="Failed"/>
+					<xs:enumeration value="NotFound"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="QueryStatusInput">
+				<xs:complexType>
+					<xs:sequence>
+					    <xs:element name="UserName" type="xs:string"/>
+						<xs:element name="TransactionReference" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="QueryStatusOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="TransactionStatus" type="typ:MessageType"/>
+						<xs:element name="ReceiptNumber" type="xs:string" minOccurs="0"/>
+						<xs:element name="Authorization" type="typ:Authorization" minOccurs="0"/>
+						<xs:element name="Params" type="typ:Params" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="SalesOrderRequest">
+		<wsdl:part name="request" element="typ:SalesOrderInput"/>
+	</wsdl:message>
+	<wsdl:message name="SalesOrderResponse">
+		<wsdl:part name="response" element="typ:SalesOrderOutput"/>
+	</wsdl:message>
+	<wsdl:message name="QueryStatusRequest">
+		<wsdl:part name="request" element="typ:QueryStatusInput"/>
+	</wsdl:message>
+	<wsdl:message name="QueryStatusResponse">
+		<wsdl:part name="response" element="typ:QueryStatusOutput"/>
+	</wsdl:message>
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType"/>
+	</wsdl:message>
+	<wsdl:portType name="SalesOrderPort">
+		<wsdl:operation name="SalesOrder">
+			<wsdl:input message="tns:SalesOrderRequest"/>
+			<wsdl:output message="tns:SalesOrderResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="QueryStatus">
+			<wsdl:input message="tns:QueryStatusRequest"/>
+			<wsdl:output message="tns:QueryStatusResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="SalesOrderBinding" type="tns:SalesOrderPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="SalesOrder">
+			<soap:operation soapAction="SalesOrder"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="QueryStatus">
+			<soap:operation soapAction="QueryStatus"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="SalesOrder">
+		<wsdl:port name="SalesOrderPort" binding="tns:SalesOrderBinding"/>
+	</wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://xmlns.oracle.com/apps/inv/soaprovider/plsql/xx_inv_int_ws_pkg/reserve_stock/" xmlns:pfx="http://xmlns.oracle.com/apps/inv/soaprovider/plsql/xx_inv_int_ws_pkg/">
+    <xsd:import namespace="http://xmlns.oracle.com/apps/inv/soaprovider/plsql/xx_inv_int_ws_pkg/reserve_stock/" schemaLocation="/BusinessWSDLS/Services/InventoryMgmt/ERP_Pos.wsdl"/>
+    <wsdl:import namespace="http://xmlns.oracle.com/apps/inv/soaprovider/plsql/xx_inv_int_ws_pkg/" location="/BusinessWSDLS/Services/InventoryMgmt/xx_inv_int_ws_pkg_v1.wsdl"/>
+    <pd:name>BusinessProcesses/Services_Rest/Test/Process Definition.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx2:InputParameters"/>
+    <pd:startX>152</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>557</pd:endX>
+    <pd:endY>70</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1461229012273</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>290</pd:x>
+        <pd:y>5</pd:y>
+        <pd:width>126</pd:width>
+        <pd:height>140</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$Start/hello</pd:over>
+            <pd:iterationElementSlot>Cur-Line</pd:iterationElementSlot>
+            <pd:indexSlot>i</pd:indexSlot>
+            <pd:outSlot>rec</pd:outSlot>
+            <pd:activityOutputName>Map Data</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Map Data</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Map Data</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Map Data">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>343</pd:x>
+            <pd:y>68</pd:y>
+            <config>
+                <element>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="group" minOccurs="0" maxOccurs="unbounded">
+                                    <xsd:complexType>
+                                        <xsd:sequence>
+                                            <xsd:element name="param1" type="xsd:string"/>
+                                            <xsd:element name="param2" type="xsd:string"/>
+                                            <xsd:element name="param4" type="xsd:string"/>
+                                            <xsd:element name="param3" type="xsd:string"/>
+                                        </xsd:sequence>
+                                    </xsd:complexType>
+                                </xsd:element>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </element>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <group>
+                        <param1>
+                            <xsl:value-of select="tib:tokenize($Start/root,&quot;|&quot;)[1]"/>
+                        </param1>
+                        <param2>
+                            <xsl:value-of select="tib:tokenize($Start/root,&quot;|&quot;)[2]"/>
+                        </param2>
+                        <param4>
+                            <xsl:value-of select="tib:tokenize($Start/root,&quot;|&quot;)[3]"/>
+                        </param4>
+                        <param3>
+                            <xsl:value-of select="tib:tokenize($Start/root,&quot;|&quot;)[4]"/>
+                        </param3>
+                    </group>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

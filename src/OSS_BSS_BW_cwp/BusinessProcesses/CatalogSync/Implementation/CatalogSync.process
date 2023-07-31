@@ -1,0 +1,838 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns4="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns="http://www.tibco.com/pe/EngineTypes" xmlns:ns3="http://www.siebel.com/xml/SWIProductIntegrationIO" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://siebel.com/asi/V0" xmlns:pfx3="http://www.ericsson.com/obslab/interface/TIBCOCatalogSync" xmlns:pfx2="http://www.tibco.com/schemas/OSS_BSS_BW_CATALOG/BusinessProcesses/CatalogSync/Resources/Schema/Schema.xsd" xmlns:pfx="http://www.ptsi.pt/catExt2">
+    <xsd:import namespace="http://www.tibco.com/schemas/OSS_BSS_BW_CATALOG/BusinessProcesses/CatalogSync/Resources/Schema/Schema.xsd" schemaLocation="/BusinessProcesses/CatalogSync/Resources/Schema/CatalagSync.xsd"/>
+    <xsd:import namespace="http://siebel.com/asi/V0" schemaLocation="/SharedResources/WSDL/SWIProductImport.WSDL.wsdl"/>
+    <wsdl:import namespace="http://siebel.com/asi/V0" location="/SharedResources/WSDL/ProdImport.WSDL.wsdl"/>
+    <wsdl:import namespace="http://www.ptsi.pt/catExt2"/>
+    <wsdl:import namespace="http://www.ericsson.com/obslab/interface/TIBCOCatalogSync" location="/BusinessProcesses/CatalogSync/Resources/WSDL/TIBCOCatalogSync.wsdl"/>
+    <pd:name>BusinessProcesses/CatalogSync/Implementation/CatalogSync.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="pfx3:TIBCOCatalogSyncRequst"/>
+    <pd:startX>63</pd:startX>
+    <pd:startY>45</pd:startY>
+    <pd:returnBindings>
+        <pfx3:TIBCOCatalogSyncResponse>
+            <Output>
+                <pfx2:catalogSyncResponse>
+                    <xsl:copy-of select="$response/pfx2:catalogSyncResponse/pfx2:response"/>
+                </pfx2:catalogSyncResponse>
+            </Output>
+        </pfx3:TIBCOCatalogSyncResponse>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="pfx3:TIBCOCatalogSyncResponse"/>
+    <pd:endX>980</pd:endX>
+    <pd:endY>46</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables>
+        <response ref="pfx2:catalogSyncResponse"/>
+    </pd:processVariables>
+    <pd:targetNamespace>http://xmlns.example.com/1441875316122</pd:targetNamespace>
+    <pd:activity name="AssignNoUpdate">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>662</pd:x>
+        <pd:y>248</pd:y>
+        <config>
+            <variableName>response</variableName>
+        </config>
+        <pd:inputBindings>
+            <pfx2:catalogSyncResponse>
+                <pfx2:response>
+                    <pfx2:Result>
+                        <xsl:value-of select="'OK'"/>
+                    </pfx2:Result>
+                    <pfx2:Description>
+                        <xsl:value-of select="'No product for Update'"/>
+                    </pfx2:Description>
+                </pfx2:response>
+            </pfx2:catalogSyncResponse>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="AssignUpdate">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>731</pd:x>
+        <pd:y>43</pd:y>
+        <config>
+            <variableName>response</variableName>
+        </config>
+        <pd:inputBindings>
+            <pfx2:catalogSyncResponse>
+                <pfx2:response>
+                    <pfx2:Result>
+                        <xsl:value-of select="'OK'"/>
+                    </pfx2:Result>
+                    <pfx2:Description>
+                        <xsl:value-of select="'Acquired'"/>
+                    </pfx2:Description>
+                    <xsl:if test="$Start/pfx3:TIBCOCatalogSyncRequst/Input/pfx2:exportCatalogRequest/pfx2:corelletionId">
+                        <pfx2:corelletionId>
+                            <xsl:value-of select="$Start/pfx3:TIBCOCatalogSyncRequst/Input/pfx2:exportCatalogRequest/pfx2:corelletionId"/>
+                        </pfx2:corelletionId>
+                    </xsl:if>
+                </pfx2:response>
+            </pfx2:catalogSyncResponse>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>62</pd:x>
+        <pd:y>177</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="InputLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>193</pd:x>
+        <pd:y>46</pd:y>
+        <config>
+            <processName>/SharedResources/CommonProcesses/writeToLog.process</processName>
+        </config>
+        <pd:inputBindings>
+            <msgBody>
+                <xsl:value-of select="concat('input da EOC Log: ', tib:render-xml($Start/pfx3:TIBCOCatalogSyncRequst))"/>
+            </msgBody>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSCatalogvsCRM">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>613</pd:x>
+        <pd:y>44</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%Queues/CRMCatalog%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/SharedResources/Connection/JMS/JMS Connection.sharedjmscon</ConnectionReference>
+            <InDataxsdString ref="pfx4:SWIProductImportUpsert_Input"/>
+        </config>
+        <pd:inputBindings>
+            <ns4:ActivityInput>
+                <Body>
+                    <xsl:copy-of select="$Map-isSyncEnabled/pfx4:SWIProductImportUpsert_Input"/>
+                </Body>
+            </ns4:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogError">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>220</pd:x>
+        <pd:y>177</pd:y>
+        <config>
+            <processName>/SharedResources/CommonProcesses/writeToLog.process</processName>
+        </config>
+        <pd:inputBindings>
+            <msgBody>
+                <xsl:value-of select="tib:render-xml($Catch/exceptiondata)"/>
+            </msgBody>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map isSyncEnabled">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>373</pd:x>
+        <pd:y>46</pd:y>
+        <config>
+            <element ref="pfx4:SWIProductImportUpsert_Input"/>
+        </config>
+        <pd:inputBindings>
+            <pfx4:SWIProductImportUpsert_Input>
+                <ns3:ListOfProductImport>
+                    <ns3:ProductIntegration>
+                        <ns3:ListOfProductDefinition>
+                            <xsl:for-each select="$Start/pfx3:TIBCOCatalogSyncRequst/Input/pfx2:exportCatalogRequest/pfx2:subscriptionList/pfx2:offersList/pfx2:product">
+                                <xsl:if test="current()/pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='isSyncEnabled' and pfx2:value = '1']">
+                                    <ns3:ProductDefinition>
+                                        <xsl:attribute name="operation">
+                                            <xsl:value-of select="'Upsert'"/>
+                                        </xsl:attribute>
+                                        <xsl:choose>
+                                            <xsl:when test="pfx2:status = 'ACT' or pfx2:status = 'DEF'">
+                                                <ns3:ActiveFlag>
+                                                    <xsl:value-of select="'Y'"/>
+                                                </ns3:ActiveFlag>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <ns3:ActiveFlag>
+                                                    <xsl:value-of select="'N'"/>
+                                                </ns3:ActiveFlag>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <ns3:AutoExplodeFlag>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:AutoExplodeFlag>
+                                        <xsl:if test="pfx2:itemDescription">
+                                            <ns3:Description>
+                                                <xsl:value-of select="pfx2:itemDescription"/>
+                                            </ns3:Description>
+                                        </xsl:if>
+                                        <xsl:if test="string-length(pfx2:endDate)>0">
+                                            <ns3:EffectiveEndTime>
+                                                <xsl:value-of select="tib:format-dateTime('MM/dd/yyyy HH:mm:ss', translate(if (contains(current()/pfx2:endDate,'.')) then substring-before(current()/pfx2:endDate,'.') else current()/pfx2:endDate, ' ','T'))"/>
+                                            </ns3:EffectiveEndTime>
+                                        </xsl:if>
+                                        <xsl:if test="string-length(pfx2:startDate)>0">
+                                            <ns3:EffectiveStartTime>
+                                                <xsl:value-of select="tib:format-dateTime('MM/dd/yyyy HH:mm:ss', translate(if (contains(current()/pfx2:startDate,'.')) then substring-before(current()/pfx2:startDate,'.') else current()/pfx2:startDate, ' ','T'))"/>
+                                            </ns3:EffectiveStartTime>
+                                        </xsl:if>
+                                        <ns3:InclusiveEligibilityFlag>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:InclusiveEligibilityFlag>
+                                        <xsl:choose>
+                                            <xsl:when test="pfx2:isOrderable= 'true'">
+                                                <xsl:if test="pfx2:isOrderable">
+                                                    <ns3:OrderableFlag>
+                                                        <xsl:value-of select="'Y'"/>
+                                                    </ns3:OrderableFlag>
+                                                </xsl:if>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:if test="pfx2:isOrderable">
+                                                    <ns3:OrderableFlag>
+                                                        <xsl:value-of select="'N'"/>
+                                                    </ns3:OrderableFlag>
+                                                </xsl:if>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_EQUIPID']/pfx2:value">
+                                            <ns3:PartNumber>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_EQUIPID']/pfx2:value"/>
+                                            </ns3:PartNumber>
+                                        </xsl:if>
+                                        <xsl:if test="string-length(current()/pfx2:productAttributeList/pfx2:productAttribute[pfx2:name=&quot;SP_PRICETYPE&quot;]/pfx2:value ) > 0">
+                                            <xsl:choose>
+                                                <xsl:when test="current()/pfx2:productAttributeList/pfx2:productAttribute[pfx2:name=&quot;SP_PRICETYPE&quot;]/pfx2:value = 'O'">
+                                                    <ns3:PriceType>
+                                                        <xsl:value-of select="'One-Time'"/>
+                                                    </ns3:PriceType>
+                                                </xsl:when>
+                                                <xsl:when test="current()/pfx2:productAttributeList/pfx2:productAttribute[pfx2:name=&quot;SP_PRICETYPE&quot;]/pfx2:value = 'M'">
+                                                    <ns3:PriceType>
+                                                        <xsl:value-of select="'Recurring'"/>
+                                                    </ns3:PriceType>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <ns3:PriceType>
+                                                        <xsl:value-of select="''"/>
+                                                    </ns3:PriceType>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productName">
+                                            <ns3:ProductName>
+                                                <xsl:value-of select="pfx2:productName"/>
+                                            </ns3:ProductName>
+                                        </xsl:if>
+                                        <ns3:ProductType>
+                                            <xsl:value-of select="if(pfx2:productType = 'CustomerFacingServiceSpec')&#xA;then&#xA;&quot;Service&quot;&#xA;else if(pfx2:productType = ' ProductSpecification')&#xA;then&#xA;&quot;Product&quot;&#xA;else if(pfx2:productType = ' ProductOffering')&#xA;then&#xA;&quot;Promotion&quot;&#xA;else&#xA;&quot;&quot;"/>
+                                        </ns3:ProductType>
+                                        <ns3:ReleaseFlag>
+                                            <xsl:value-of select="&quot;Y&quot;"/>
+                                        </ns3:ReleaseFlag>
+                                        <ns3:Serialized>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_SERIALIZED']/pfx2:value"/>
+                                        </ns3:Serialized>
+                                        <xsl:choose>
+                                            <xsl:when test="pfx2:status = 'ACT'">
+                                                <ns3:Status>
+                                                    <xsl:value-of select="'Active'"/>
+                                                </ns3:Status>
+                                            </xsl:when>
+                                            <xsl:when test="pfx2:status='DEF'">
+                                                <ns3:Status>
+                                                    <xsl:value-of select="'Pending'"/>
+                                                </ns3:Status>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <ns3:Status>
+                                                    <xsl:value-of select="''"/>
+                                                </ns3:Status>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <ns3:TrackAsAssetFlag>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_ASSETABLE']/pfx2:value"/>
+                                        </ns3:TrackAsAssetFlag>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_TYPECODE']/pfx2:value">
+                                            <ns3:Type>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_TYPECODE']/pfx2:value"/>
+                                            </ns3:Type>
+                                        </xsl:if>
+                                        <ns3:GlobalProductIdentifier>
+                                            <xsl:value-of select="pfx2:productCode"/>
+                                        </ns3:GlobalProductIdentifier>
+                                        <ns3:PricingCommitType>
+                                            <xsl:value-of select="'Committed'"/>
+                                        </ns3:PricingCommitType>
+                                        <ns3:DynamicDiscountMethod>
+                                            <xsl:value-of select="'Percentage'"/>
+                                        </ns3:DynamicDiscountMethod>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_EQUIP_CLASS']/pfx2:value">
+                                            <ns3:CBiO2EquipClass>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_EQUIP_CLASS']/pfx2:value"/>
+                                            </ns3:CBiO2EquipClass>
+                                        </xsl:if>
+                                        <ns3:ProductTypeCode>
+                                            <xsl:value-of select="&quot;Product&quot;"/>
+                                        </ns3:ProductTypeCode>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_BUSINESS_LINE']/pfx2:value">
+                                            <ns3:PaymentType>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_BUSINESS_LINE']/pfx2:value"/>
+                                            </ns3:PaymentType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PROJECT']/pfx2:value">
+                                            <ns3:CDAProject>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PROJECT']/pfx2:value"/>
+                                            </ns3:CDAProject>
+                                        </xsl:if>
+                                        <ns3:PrePickCD>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:PrePickCD>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CFSS_TYPE']/pfx2:value">
+                                            <ns3:CBiO2OfferType>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CFSS_TYPE']/pfx2:value"/>
+                                            </ns3:CBiO2OfferType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CFSS_SUBTYPE']/pfx2:value">
+                                            <ns3:CBiO2SubType>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CFSS_SUBTYPE']/pfx2:value"/>
+                                            </ns3:CBiO2SubType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PREPAIDCHARGE']/pfx2:value">
+                                            <ns3:CBiO2PrepaidCharge>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PREPAIDCHARGE']/pfx2:value"/>
+                                            </ns3:CBiO2PrepaidCharge>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_VALIDITY']/pfx2:value">
+                                            <ns3:CBiO2Frequency>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_VALIDITY']/pfx2:value"/>
+                                            </ns3:CBiO2Frequency>
+                                        </xsl:if>
+                                        <ns3:CBiO2RenewalFlag>
+                                            <xsl:value-of select="if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_RENEWAL_FLAG']/pfx2:value = '1')&#xA;then &#xA;&quot;Y&quot;&#xA;else if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_RENEWAL_FLAG']/pfx2:value = '0')&#xA;then&#xA;&quot;N&quot;&#xA;else&#xA;&quot;&quot;"/>
+                                        </ns3:CBiO2RenewalFlag>
+                                        <ns3:CBiO2DataSharing>
+                                            <xsl:value-of select="if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_DATASHARINGFLAG']/pfx2:value = '1')&#xA;then &#xA;&quot;Y&quot;&#xA;else if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_DATASHARINGFLAG']/pfx2:value = '0')&#xA;then&#xA;&quot;N&quot;&#xA;else&#xA;&quot;&quot;"/>
+                                        </ns3:CBiO2DataSharing>
+                                        <ns3:CBiO2HalaFlag>
+                                            <xsl:value-of select="if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PREACTIVE']/pfx2:value = '1')&#xA;then &#xA;&quot;Y&quot;&#xA;else if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PREACTIVE']/pfx2:value = '0')&#xA;then&#xA;&quot;N&quot;&#xA;else&#xA;&quot;&quot;"/>
+                                        </ns3:CBiO2HalaFlag>
+                                        <ns3:CBiO2DataGifting>
+                                            <xsl:value-of select="if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_GIFTING_ALLOWED']/pfx2:value = '1')&#xA;then &#xA;&quot;Y&quot;&#xA;else if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_GIFTING_ALLOWED']/pfx2:value = '0')&#xA;then&#xA;&quot;N&quot;&#xA;else&#xA;&quot;&quot;"/>
+                                        </ns3:CBiO2DataGifting>
+                                        <ns3:CBiO2BillCode>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_BILLCODE']/pfx2:value"/>
+                                        </ns3:CBiO2BillCode>
+                                        <ns3:CBiO2GiftVolume>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_VOLUME']/pfx2:value"/>
+                                        </ns3:CBiO2GiftVolume>
+                                        <ns3:CBiO2SyncFlag>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_SYNCORCHESTRATED']/pfx2:value"/>
+                                        </ns3:CBiO2SyncFlag>
+                                        <ns3:CBiO2SMSNotification>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_NOTIFICATION']/pfx2:value"/>
+                                        </ns3:CBiO2SMSNotification>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_GIFT_RECEIVER_TYPE']/pfx2:value">
+                                            <ns3:CBiO2GiftReceiverType>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_GIFT_RECEIVER_TYPE']/pfx2:value"/>
+                                            </ns3:CBiO2GiftReceiverType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_FREEMSISDN']/pfx2:value">
+                                            <ns3:CBiO2FreeMSISDNFlag>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_FREEMSISDN']/pfx2:value"/>
+                                            </ns3:CBiO2FreeMSISDNFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CAPACITY']/pfx2:value">
+                                            <ns3:Build>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CAPACITY']/pfx2:value"/>
+                                            </ns3:Build>
+                                        </xsl:if>
+                                        <ns3:CBiO2TemplateId>
+                                            <xsl:value-of select="&quot;&quot;"/>
+                                        </ns3:CBiO2TemplateId>
+                                        <ns3:CBiO2VoluntaryTerminationNtAllowed>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:CBiO2VoluntaryTerminationNtAllowed>
+                                        <ns3:CBiO2NumberChangeNtAllowed>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:CBiO2NumberChangeNtAllowed>
+                                        <ns3:CBiO2PreToPostNtAllowed>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:CBiO2PreToPostNtAllowed>
+                                        <ns3:CBiO2TransferOwnershipNtAllowed>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:CBiO2TransferOwnershipNtAllowed>
+                                        <ns3:Occurrence>
+                                            <xsl:value-of select="1"/>
+                                        </ns3:Occurrence>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_UOM']/pfx2:value">
+                                            <ns3:CBiO2GiftUOM>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_UOM']/pfx2:value"/>
+                                            </ns3:CBiO2GiftUOM>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRINTINDICATOR']/pfx2:value">
+                                            <ns3:CBiO2PrintableFlag>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRINTINDICATOR']/pfx2:value"/>
+                                            </ns3:CBiO2PrintableFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_ADVANCE_FLAG']/pfx2:value">
+                                            <ns3:CBiO2AdvanceRCPaymentFlag>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_ADVANCE_FLAG']/pfx2:value"/>
+                                            </ns3:CBiO2AdvanceRCPaymentFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRORATE_FLAG']/pfx2:value">
+                                            <ns3:CBiO2ProratedPaymentFlag>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRORATE_FLAG']/pfx2:value"/>
+                                            </ns3:CBiO2ProratedPaymentFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_CATEGORY']/pfx2:value">
+                                            <ns3:CBiO2ProductCategoryTabs>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_CATEGORY']/pfx2:value"/>
+                                            </ns3:CBiO2ProductCategoryTabs>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_ARABIC_NAME']/pfx2:value">
+                                            <ns3:CBiO2ProductArabicName>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_ARABIC_NAME']/pfx2:value"/>
+                                            </ns3:CBiO2ProductArabicName>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_SUBCATEGORY']/pfx2:value">
+                                            <ns3:CBiO2ProductSubCategoryTabs>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_SUBCATEGORY']/pfx2:value"/>
+                                            </ns3:CBiO2ProductSubCategoryTabs>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_THRESHOLD']/pfx2:value">
+                                            <ns3:CBiO2ProductThreshold>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_THRESHOLD']/pfx2:value"/>
+                                            </ns3:CBiO2ProductThreshold>
+                                        </xsl:if>
+                                    </ns3:ProductDefinition>
+                                </xsl:if>
+                            </xsl:for-each>
+                            <xsl:for-each select="$Start/pfx3:TIBCOCatalogSyncRequst/Input/pfx2:exportCatalogRequest/pfx2:subscriptionList/pfx2:offersList/pfx2:product/pfx2:productChildList/pfx2:productChild">
+                                <xsl:if test="current()/pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='isSyncEnabled' and pfx2:value = '1']">
+                                    <ns3:ProductDefinition>
+                                        <xsl:attribute name="operation">
+                                            <xsl:value-of select="'Upsert'"/>
+                                        </xsl:attribute>
+                                        <xsl:choose>
+                                            <xsl:when test="pfx2:status = 'ACT' or pfx2:status = 'DEF'">
+                                                <ns3:ActiveFlag>
+                                                    <xsl:value-of select="'Y'"/>
+                                                </ns3:ActiveFlag>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <ns3:ActiveFlag>
+                                                    <xsl:value-of select="'N'"/>
+                                                </ns3:ActiveFlag>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <ns3:AutoExplodeFlag>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:AutoExplodeFlag>
+                                        <xsl:if test="pfx2:itemDescription">
+                                            <ns3:Description>
+                                                <xsl:value-of select="pfx2:itemDescription"/>
+                                            </ns3:Description>
+                                        </xsl:if>
+                                        <xsl:if test="string-length(pfx2:endDate)>0">
+                                            <ns3:EffectiveEndTime>
+                                                <xsl:value-of select="tib:format-dateTime('MM/dd/yyyy HH:mm:ss', translate(if (contains(current()/pfx2:endDate,'.')) then substring-before(current()/pfx2:endDate,'.') else current()/pfx2:endDate, ' ','T'))"/>
+                                            </ns3:EffectiveEndTime>
+                                        </xsl:if>
+                                        <xsl:if test="string-length(pfx2:startDate)>0">
+                                            <ns3:EffectiveStartTime>
+                                                <xsl:value-of select="tib:format-dateTime('MM/dd/yyyy HH:mm:ss', translate(if (contains(current()/pfx2:startDate,'.')) then substring-before(current()/pfx2:startDate,'.') else current()/pfx2:startDate, ' ','T'))"/>
+                                            </ns3:EffectiveStartTime>
+                                        </xsl:if>
+                                        <ns3:InclusiveEligibilityFlag>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:InclusiveEligibilityFlag>
+                                        <xsl:choose>
+                                            <xsl:when test="pfx2:isOrderable= 'true'">
+                                                <xsl:if test="pfx2:isOrderable">
+                                                    <ns3:OrderableFlag>
+                                                        <xsl:value-of select="'Y'"/>
+                                                    </ns3:OrderableFlag>
+                                                </xsl:if>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:if test="pfx2:isOrderable">
+                                                    <ns3:OrderableFlag>
+                                                        <xsl:value-of select="'N'"/>
+                                                    </ns3:OrderableFlag>
+                                                </xsl:if>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_EQUIPID']/pfx2:value">
+                                            <ns3:PartNumber>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_EQUIPID']/pfx2:value"/>
+                                            </ns3:PartNumber>
+                                        </xsl:if>
+                                        <xsl:if test="string-length(current()/pfx2:productAttributeList/pfx2:productAttribute[pfx2:name=&quot;SP_PRICETYPE&quot;]/pfx2:value ) > 0">
+                                            <xsl:choose>
+                                                <xsl:when test="current()/pfx2:productAttributeList/pfx2:productAttribute[pfx2:name=&quot;SP_PRICETYPE&quot;]/pfx2:value = 'O'">
+                                                    <ns3:PriceType>
+                                                        <xsl:value-of select="'One-Time'"/>
+                                                    </ns3:PriceType>
+                                                </xsl:when>
+                                                <xsl:when test="current()/pfx2:productAttributeList/pfx2:productAttribute[pfx2:name=&quot;SP_PRICETYPE&quot;]/pfx2:value = 'M'">
+                                                    <ns3:PriceType>
+                                                        <xsl:value-of select="'Recurring'"/>
+                                                    </ns3:PriceType>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <ns3:PriceType>
+                                                        <xsl:value-of select="''"/>
+                                                    </ns3:PriceType>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productName">
+                                            <ns3:ProductName>
+                                                <xsl:value-of select="pfx2:productName"/>
+                                            </ns3:ProductName>
+                                        </xsl:if>
+                                        <ns3:ProductType>
+                                            <xsl:value-of select="if(pfx2:productType = 'CustomerFacingServiceSpec')&#xA;then&#xA;&quot;Service&quot;&#xA;else if(pfx2:productType = ' ProductSpecification')&#xA;then&#xA;&quot;Product&quot;&#xA;else if(pfx2:productType = ' ProductOffering')&#xA;then&#xA;&quot;Promotion&quot;&#xA;else&#xA;&quot;&quot;"/>
+                                        </ns3:ProductType>
+                                        <ns3:ReleaseFlag>
+                                            <xsl:value-of select="&quot;Y&quot;"/>
+                                        </ns3:ReleaseFlag>
+                                        <ns3:Serialized>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_SERIALIZED']/pfx2:value"/>
+                                        </ns3:Serialized>
+                                        <xsl:choose>
+                                            <xsl:when test="pfx2:status = 'ACT'">
+                                                <ns3:Status>
+                                                    <xsl:value-of select="'Active'"/>
+                                                </ns3:Status>
+                                            </xsl:when>
+                                            <xsl:when test="pfx2:status='DEF'">
+                                                <ns3:Status>
+                                                    <xsl:value-of select="'Pending'"/>
+                                                </ns3:Status>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <ns3:Status>
+                                                    <xsl:value-of select="''"/>
+                                                </ns3:Status>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <ns3:TrackAsAssetFlag>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_ASSETABLE']/pfx2:value"/>
+                                        </ns3:TrackAsAssetFlag>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_TYPECODE']/pfx2:value">
+                                            <ns3:Type>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_TYPECODE']/pfx2:value"/>
+                                            </ns3:Type>
+                                        </xsl:if>
+                                        <ns3:GlobalProductIdentifier>
+                                            <xsl:value-of select="../../pfx2:productCode"/>
+                                        </ns3:GlobalProductIdentifier>
+                                        <ns3:PricingCommitType>
+                                            <xsl:value-of select="'Committed'"/>
+                                        </ns3:PricingCommitType>
+                                        <ns3:DynamicDiscountMethod>
+                                            <xsl:value-of select="'Percentage'"/>
+                                        </ns3:DynamicDiscountMethod>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_EQUIP_CLASS']/pfx2:value">
+                                            <ns3:CBiO2EquipClass>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_EQUIP_CLASS']/pfx2:value"/>
+                                            </ns3:CBiO2EquipClass>
+                                        </xsl:if>
+                                        <ns3:ProductTypeCode>
+                                            <xsl:value-of select="&quot;Product&quot;"/>
+                                        </ns3:ProductTypeCode>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_BUSINESS_LINE']/pfx2:value">
+                                            <ns3:PaymentType>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_BUSINESS_LINE']/pfx2:value"/>
+                                            </ns3:PaymentType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PROJECT']/pfx2:value">
+                                            <ns3:CDAProject>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PROJECT']/pfx2:value"/>
+                                            </ns3:CDAProject>
+                                        </xsl:if>
+                                        <ns3:PrePickCD>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:PrePickCD>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CFSS_TYPE']/pfx2:value">
+                                            <ns3:CBiO2OfferType>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CFSS_TYPE']/pfx2:value"/>
+                                            </ns3:CBiO2OfferType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CFSS_SUBTYPE']/pfx2:value">
+                                            <ns3:CBiO2SubType>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CFSS_SUBTYPE']/pfx2:value"/>
+                                            </ns3:CBiO2SubType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PREPAIDCHARGE']/pfx2:value">
+                                            <ns3:CBiO2PrepaidCharge>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PREPAIDCHARGE']/pfx2:value"/>
+                                            </ns3:CBiO2PrepaidCharge>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_VALIDITY']/pfx2:value">
+                                            <ns3:CBiO2Frequency>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_VALIDITY']/pfx2:value"/>
+                                            </ns3:CBiO2Frequency>
+                                        </xsl:if>
+                                        <ns3:CBiO2RenewalFlag>
+                                            <xsl:value-of select="if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_RENEWAL_FLAG']/pfx2:value = '1')&#xA;then &#xA;&quot;false&quot;&#xA;else if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_RENEWAL_FLAG']/pfx2:value = '0')&#xA;then&#xA;&quot;true&quot;&#xA;else&#xA;&quot;&quot;"/>
+                                        </ns3:CBiO2RenewalFlag>
+                                        <ns3:CBiO2DataSharing>
+                                            <xsl:value-of select="if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_DATASHARINGFLAG']/pfx2:value = '1')&#xA;then &#xA;&quot;false&quot;&#xA;else if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_DATASHARINGFLAG']/pfx2:value = '0')&#xA;then&#xA;&quot;true&quot;&#xA;else&#xA;&quot;&quot;"/>
+                                        </ns3:CBiO2DataSharing>
+                                        <ns3:CBiO2HalaFlag>
+                                            <xsl:value-of select="if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PREACTIVE']/pfx2:value = '1')&#xA;then &#xA;&quot;false&quot;&#xA;else if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PREACTIVE']/pfx2:value = '0')&#xA;then&#xA;&quot;true&quot;&#xA;else&#xA;&quot;&quot;"/>
+                                        </ns3:CBiO2HalaFlag>
+                                        <ns3:CBiO2DataGifting>
+                                            <xsl:value-of select="if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_GIFTING_ALLOWED']/pfx2:value = '1')&#xA;then &#xA;&quot;false&quot;&#xA;else if(pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_GIFTING_ALLOWED']/pfx2:value = '0')&#xA;then&#xA;&quot;true&quot;&#xA;else&#xA;&quot;&quot;"/>
+                                        </ns3:CBiO2DataGifting>
+                                        <ns3:CBiO2BillCode>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_BILLCODE']/pfx2:value"/>
+                                        </ns3:CBiO2BillCode>
+                                        <ns3:CBiO2GiftVolume>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_VOLUME']/pfx2:value"/>
+                                        </ns3:CBiO2GiftVolume>
+                                        <ns3:CBiO2SyncFlag>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_SYNCORCHESTRATED']/pfx2:value"/>
+                                        </ns3:CBiO2SyncFlag>
+                                        <ns3:CBiO2SMSNotification>
+                                            <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_NOTIFICATION']/pfx2:value"/>
+                                        </ns3:CBiO2SMSNotification>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_GIFT_RECEIVER_TYPE']/pfx2:value">
+                                            <ns3:CBiO2GiftReceiverType>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_GIFT_RECEIVER_TYPE']/pfx2:value"/>
+                                            </ns3:CBiO2GiftReceiverType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_FREEMSISDN']/pfx2:value">
+                                            <ns3:CBiO2FreeMSISDNFlag>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_FREEMSISDN']/pfx2:value"/>
+                                            </ns3:CBiO2FreeMSISDNFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CAPACITY']/pfx2:value">
+                                            <ns3:Build>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_CAPACITY']/pfx2:value"/>
+                                            </ns3:Build>
+                                        </xsl:if>
+                                        <ns3:CBiO2TemplateId>
+                                            <xsl:value-of select="&quot;&quot;"/>
+                                        </ns3:CBiO2TemplateId>
+                                        <ns3:CBiO2VoluntaryTerminationNtAllowed>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:CBiO2VoluntaryTerminationNtAllowed>
+                                        <ns3:CBiO2NumberChangeNtAllowed>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:CBiO2NumberChangeNtAllowed>
+                                        <ns3:CBiO2PreToPostNtAllowed>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:CBiO2PreToPostNtAllowed>
+                                        <ns3:CBiO2TransferOwnershipNtAllowed>
+                                            <xsl:value-of select="&quot;N&quot;"/>
+                                        </ns3:CBiO2TransferOwnershipNtAllowed>
+                                        <ns3:Occurrence>
+                                            <xsl:value-of select="1"/>
+                                        </ns3:Occurrence>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_UOM']/pfx2:value">
+                                            <ns3:CBiO2GiftUOM>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_UOM']/pfx2:value"/>
+                                            </ns3:CBiO2GiftUOM>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRINTINDICATOR']/pfx2:value">
+                                            <ns3:CBiO2PrintableFlag>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRINTINDICATOR']/pfx2:value"/>
+                                            </ns3:CBiO2PrintableFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_ADVANCE_FLAG']/pfx2:value">
+                                            <ns3:CBiO2AdvanceRCPaymentFlag>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_ADVANCE_FLAG']/pfx2:value"/>
+                                            </ns3:CBiO2AdvanceRCPaymentFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRORATE_FLAG']/pfx2:value">
+                                            <ns3:CBiO2ProratedPaymentFlag>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRORATE_FLAG']/pfx2:value"/>
+                                            </ns3:CBiO2ProratedPaymentFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_CATEGORY']/pfx2:value">
+                                            <ns3:CBiO2ProductCategoryTabs>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_CATEGORY']/pfx2:value"/>
+                                            </ns3:CBiO2ProductCategoryTabs>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_ARABIC_NAME']/pfx2:value">
+                                            <ns3:CBiO2ProductArabicName>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_ARABIC_NAME']/pfx2:value"/>
+                                            </ns3:CBiO2ProductArabicName>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_SUBCATEGORY']/pfx2:value">
+                                            <ns3:CBiO2ProductSubCategoryTabs>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_SUBCATEGORY']/pfx2:value"/>
+                                            </ns3:CBiO2ProductSubCategoryTabs>
+                                        </xsl:if>
+                                        <xsl:if test="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_THRESHOLD']/pfx2:value">
+                                            <ns3:CBiO2ProductThreshold>
+                                                <xsl:value-of select="pfx2:productAttributeList/pfx2:productAttribute[pfx2:name='SP_PRODUCT_THRESHOLD']/pfx2:value"/>
+                                            </ns3:CBiO2ProductThreshold>
+                                        </xsl:if>
+                                    </ns3:ProductDefinition>
+                                </xsl:if>
+                            </xsl:for-each>
+                        </ns3:ListOfProductDefinition>
+                    </ns3:ProductIntegration>
+                </ns3:ListOfProductImport>
+            </pfx4:SWIProductImportUpsert_Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="OutputLog_NoUpdate">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>802</pd:x>
+        <pd:y>168</pd:y>
+        <config>
+            <processName>/SharedResources/CommonProcesses/writeToLog.process</processName>
+        </config>
+        <pd:inputBindings>
+            <msgBody>
+                <xsl:value-of select="concat('Output CatalogSync NoUpdate:',tib:render-xml($response/pfx2:catalogSyncResponse))"/>
+            </msgBody>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="OutputLog_Update">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>851</pd:x>
+        <pd:y>43</pd:y>
+        <config>
+            <processName>/SharedResources/CommonProcesses/writeToLog.process</processName>
+        </config>
+        <pd:inputBindings>
+            <msgBody>
+                <xsl:value-of select="concat('Output CatalogSync Update:',tib:render-xml($response/pfx2:catalogSyncResponse))"/>
+            </msgBody>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>347</pd:x>
+        <pd:y>177</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="writeToLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>491</pd:x>
+        <pd:y>45</pd:y>
+        <config>
+            <processName>/SharedResources/CommonProcesses/writeToLog.process</processName>
+        </config>
+        <pd:inputBindings>
+            <msgBody>
+                <xsl:value-of select="concat('Log Input CRM:', tib:render-xml($Map-isSyncEnabled/pfx4:SWIProductImportUpsert_Input))"/>
+            </msgBody>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>LogError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>InputLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMSCatalogvsCRM</pd:from>
+        <pd:to>AssignUpdate</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map isSyncEnabled</pd:from>
+        <pd:to>AssignNoUpdate</pd:to>
+        <pd:xpathDescription>NoUpdate</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>count ($Map-isSyncEnabled/pfx4:SWIProductImportUpsert_Input/ns3:ListOfProductImport/ns3:ProductIntegration/ns3:ListOfProductDefinition/ns3:ProductDefinition)&lt;1</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>InputLog</pd:from>
+        <pd:to>Map isSyncEnabled</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogError</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map isSyncEnabled</pd:from>
+        <pd:to>writeToLog</pd:to>
+        <pd:xpathDescription>Update</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>AssignUpdate</pd:from>
+        <pd:to>OutputLog_Update</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>AssignNoUpdate</pd:from>
+        <pd:to>OutputLog_NoUpdate</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>OutputLog_Update</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>OutputLog_NoUpdate</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>writeToLog</pd:from>
+        <pd:to>JMSCatalogvsCRM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

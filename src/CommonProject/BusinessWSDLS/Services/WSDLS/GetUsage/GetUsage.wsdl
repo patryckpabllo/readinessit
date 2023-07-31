@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2012 rel. 2 sp1 (x64) (http://www.altova.com) by Abdulaziz Alfoudari (Zain) -->
+<wsdl:definitions xmlns:ns2="http://www.zain.com/ZESB/Services/GetUsage/Types" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns1="http://www.zain.com/ZESB/Types/Common" xmlns:ns="http://www.zain.com/ZESB/Services/GetUsage" xmlns:tns="http://www.zain.com/ZESB/Services/GetUsage" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://www.zain.com/ZESB/Services/GetUsage">
+    <wsdl:types>
+        <xsi:schema xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:tns="http://www.zain.com/ZESB/Services/GetUsage" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsi="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+            <xsi:element name="FaultType">
+                <xsi:complexType>
+                    <xsi:sequence>
+                        <xsi:element name="type" type="xs:string"/>
+                        <xsi:element name="code" type="xs:string"/>
+                        <xsi:element name="description" type="xs:string"/>
+                        <xsi:element name="sourceSystem" type="xs:string"/>
+                        <xsi:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+                        <xsi:element name="detail" type="xs:string" minOccurs="0"/>
+                    </xsi:sequence>
+                </xsi:complexType>
+            </xsi:element>
+        </xsi:schema>
+        <xsi:schema xmlns:ns="http://www.zain.com/ZESB/Services/GetUsage/Types" xmlns:tns="http://www.zain.com/ZESB/Services/GetUsage/Types" xmlns:xsi="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Services/GetUsage/Types" elementFormDefault="qualified">
+            <xsi:simpleType name="MSISDN">
+                <xsi:restriction base="xs:string">
+                    <xsi:minLength value="8"/>
+                </xsi:restriction>
+            </xsi:simpleType>
+            <xsi:simpleType name="NonEmptyString">
+                <xsi:restriction base="xs:string">
+                    <xsi:minLength value="1"/>
+                </xsi:restriction>
+            </xsi:simpleType>
+            <xsi:simpleType name="UsageType">
+                <xsi:restriction base="xs:string">
+                    <xsi:enumeration value="Voice"/>
+                    <xsi:enumeration value="Data"/>
+                    <xsi:enumeration value="SMS"/>
+                    <xsi:enumeration value="MMS"/>
+                </xsi:restriction>
+            </xsi:simpleType>
+            <xsi:simpleType name="Language">
+                <xsi:restriction base="xs:string">
+                    <xsi:enumeration value="Ar"/>
+                    <xsi:enumeration value="En"/>
+                </xsi:restriction>
+            </xsi:simpleType>
+            <xsi:complexType name="RatingInfo">
+                <xsi:sequence>
+                    <xsi:element name="Service" type="xs:string"/>
+                    <xsi:element name="ChargingType" type="xs:string"/>
+                    <xsi:element name="Destination" type="xs:string" minOccurs="0"/>
+                    <xsi:element name="Product" type="xs:string"/>
+                    <xsi:element name="Used">
+                        <xsi:complexType>
+                            <xsi:simpleContent>
+                                <xsi:extension base="xs:decimal">
+                                    <xsi:attribute name="unit" type="xs:string"/>
+                                    <xsi:attribute name="on-net" type="xs:decimal"/>
+                                    <xsi:attribute name="off-net" type="xs:decimal"/>
+                                </xsi:extension>
+                            </xsi:simpleContent>
+                        </xsi:complexType>
+                    </xsi:element>
+                    <xsi:element name="Threshold" minOccurs="0">
+                        <xsi:complexType>
+                            <xsi:simpleContent>
+                                <xsi:extension base="xs:decimal">
+                                    <xsi:attribute name="unit" type="xs:string"/>
+                                </xsi:extension>
+                            </xsi:simpleContent>
+                        </xsi:complexType>
+                    </xsi:element>
+                    <xsi:element name="StartDate" type="xs:dateTime" minOccurs="0"/>
+                    <xsi:element name="EndDate" type="xs:dateTime" minOccurs="0"/>
+                </xsi:sequence>
+            </xsi:complexType>
+            <xsi:complexType name="RatingBundle">
+                <xsi:sequence>
+                    <xsi:element name="Type" type="xs:string"/>
+                    <xsi:element name="ServiceCode" type="xs:string"/>
+                    <xsi:element name="Unit" type="xs:string"/>
+                    <xsi:element name="Used" type="xs:decimal"/>
+                    <xsi:element name="Threshold" type="xs:decimal"/>
+                    <xsi:element name="Peak" type="xs:decimal"/>
+                    <xsi:element name="OffPeak" type="xs:decimal"/>
+                    <xsi:element name="OnNet" type="xs:decimal" minOccurs="0"/>
+                    <xsi:element name="OffNet" type="xs:decimal" minOccurs="0"/>
+                    <xsi:element name="StartDate" type="xs:dateTime"/>
+                    <xsi:element name="EndDate" type="xs:dateTime"/>
+                </xsi:sequence>
+            </xsi:complexType>
+            <xsi:element name="GetUsageInput">
+                <xsi:complexType>
+                    <xsi:sequence>
+                        <xsi:element name="MSISDN" type="tns:MSISDN"/>
+                        <xsi:element name="Language" minOccurs="0">
+                            <xsi:complexType>
+                                <xsi:simpleContent>
+                                    <xsi:extension base="tns:Language"/>
+                                </xsi:simpleContent>
+                            </xsi:complexType>
+                        </xsi:element>
+                        <xsi:element name="Filter" minOccurs="0">
+                            <xsi:complexType>
+                                <xsi:sequence>
+                                    <xsi:element name="Type" type="tns:UsageType" maxOccurs="unbounded"/>
+                                </xsi:sequence>
+                            </xsi:complexType>
+                        </xsi:element>
+                    </xsi:sequence>
+                </xsi:complexType>
+            </xsi:element>
+            <xsi:element name="GetUsageOutput">
+                <xsi:complexType>
+                    <xsi:sequence>
+                        <xsi:element name="RatingInfo" type="tns:RatingInfo" maxOccurs="unbounded"/>
+                    </xsi:sequence>
+                </xsi:complexType>
+            </xsi:element>
+            <xsi:element name="GetRatingBundlesInput">
+                <xsi:complexType>
+                    <xsi:sequence>
+                        <xsi:element name="MSISDN" type="tns:MSISDN"/>
+                    </xsi:sequence>
+                </xsi:complexType>
+            </xsi:element>
+            <xsi:element name="GetRatingBundlesOutput">
+                <xsi:complexType>
+                    <xsi:sequence>
+                        <xsi:element name="Bundle" type="tns:RatingBundle" maxOccurs="unbounded"/>
+                    </xsi:sequence>
+                </xsi:complexType>
+            </xsi:element>
+            <xsi:element name="GetDataPoliciesInput">
+                <xsi:complexType>
+                    <xsi:sequence>
+                        <xsi:element name="MSISDN" type="tns:MSISDN"/>
+                    </xsi:sequence>
+                </xsi:complexType>
+            </xsi:element>
+            <xsi:element name="GetDataPoliciesOutput">
+                <xsi:complexType>
+                    <xsi:sequence>
+                        <xsi:element name="IMSI" type="xs:string"/>
+                        <xsi:element name="Service" maxOccurs="unbounded">
+                            <xsi:complexType>
+                                <xsi:sequence>
+                                    <xsi:element name="ID" type="xs:string"/>
+                                    <xsi:element name="Type" type="xsi:string" minOccurs="0"/>
+                                    <xsi:element name="BillingStartDate" type="xs:dateTime"/>
+                                    <xsi:element name="BillingEndDate" type="xs:dateTime"/>
+                                    <xsi:element name="Quota" maxOccurs="unbounded">
+                                        <xsi:complexType>
+                                            <xsi:sequence>
+                                                <xsi:element name="ID" type="xs:string"/>
+                                                <xsi:element name="Used" type="xs:long"/>
+                                                <xsi:element name="Remaining" type="xs:long"/>
+                                                <xsi:element name="Threshold" type="xs:long"/>
+                                            </xsi:sequence>
+                                        </xsi:complexType>
+                                    </xsi:element>
+                                </xsi:sequence>
+                            </xsi:complexType>
+                        </xsi:element>
+                        <xsi:element name="DowngradeDate" type="xs:dateTime" minOccurs="0"/>
+                    </xsi:sequence>
+                </xsi:complexType>
+            </xsi:element>
+        </xsi:schema>
+    </wsdl:types>
+    <wsdl:message name="GetUsageRequest">
+        <wsdl:part name="request" element="ns2:GetUsageInput"/>
+    </wsdl:message>
+    <wsdl:message name="GetUsageResponse">
+        <wsdl:part name="response" element="ns2:GetUsageOutput"/>
+    </wsdl:message>
+    <wsdl:message name="FaultMessage">
+        <wsdl:part name="fault" element="ns1:FaultType"/>
+    </wsdl:message>
+    <wsdl:message name="GetRatingBundlesRequest">
+        <wsdl:part name="request" element="ns2:GetRatingBundlesInput"/>
+    </wsdl:message>
+    <wsdl:message name="GetRatingBundlesResponse">
+        <wsdl:part name="response" element="ns2:GetRatingBundlesOutput"/>
+    </wsdl:message>
+    <wsdl:message name="GetDataPoliciesRequest">
+        <wsdl:part name="request" element="ns2:GetDataPoliciesInput"/>
+    </wsdl:message>
+    <wsdl:message name="GetDataPoliciesResponse">
+        <wsdl:part name="response" element="ns2:GetDataPoliciesOutput"/>
+    </wsdl:message>
+    <wsdl:portType name="GetUsagePort">
+        <wsdl:operation name="GetUsage">
+            <wsdl:input message="tns:GetUsageRequest"/>
+            <wsdl:output message="tns:GetUsageResponse"/>
+            <wsdl:fault name="fault" message="tns:FaultMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetRatingBundles">
+            <wsdl:input message="tns:GetRatingBundlesRequest"/>
+            <wsdl:output message="tns:GetRatingBundlesResponse"/>
+            <wsdl:fault name="fault" message="tns:FaultMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetDataPolicies">
+            <wsdl:input message="tns:GetDataPoliciesRequest"/>
+            <wsdl:output message="tns:GetDataPoliciesResponse"/>
+            <wsdl:fault name="fault" message="tns:FaultMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="GetUsageBinding" type="tns:GetUsagePort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="GetUsage">
+            <soap:operation soapAction="GetUsage"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetRatingBundles">
+            <soap:operation soapAction="GetRatingBundles"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetDataPolicies">
+            <soap:operation soapAction="GetDataPolicies"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="GetUsage">
+        <wsdl:port name="GetUsagePort" binding="tns:GetUsageBinding">
+            <soap:address location="URL"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

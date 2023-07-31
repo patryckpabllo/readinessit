@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://orm.zain.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns0="http://orm.zain.com/types/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" name="ServiceOrder" targetNamespace="http://orm.zain.com/">
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://orm.zain.com/types/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" elementFormDefault="qualified" targetNamespace="http://orm.zain.com/types/">
+            <complexType name="Session">
+                <sequence>
+                    <element name="username" nillable="true" type="string"/>
+                    <element name="password" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="ParamList">
+                <sequence>
+                    <element maxOccurs="unbounded" minOccurs="0" name="param" nillable="true" type="tns:Param"/>
+                </sequence>
+            </complexType>
+            <complexType name="Param">
+                <sequence>
+                    <element name="name" nillable="true" type="string"/>
+                    <element name="value" nillable="true" type="string"/>
+                </sequence>
+            </complexType>
+            <simpleType name="OrderType">
+                <restriction base="string">
+                    <enumeration value="Subscribe"/>
+                    <enumeration value="Unsubscribe"/>
+                </restriction>
+            </simpleType>
+            <complexType name="OrderElement">
+                <sequence>
+                    <element name="orderType" nillable="false" type="tns:OrderType"/>
+                    <element name="serviceCode" nillable="false" type="string"/>
+                    <element minOccurs="0" name="serialNumber" nillable="false" type="string"/>
+                    <element name="paramList" nillable="true" type="tns:ParamList"/>
+                </sequence>
+            </complexType>
+            <complexType name="OrderList">
+                <sequence>
+                    <element maxOccurs="unbounded" minOccurs="1" name="order" nillable="true" type="tns:OrderElement"/>
+                </sequence>
+            </complexType>
+            <element name="processOrderElement">
+                <complexType>
+                    <sequence>
+                        <element name="session" nillable="true" type="tns:Session"/>
+                        <element name="orderType" nillable="true" type="string"/>
+                        <element name="msisdn" nillable="true" type="string"/>
+                        <element name="serviceCode" nillable="true" type="string"/>
+                        <element name="paramList" nillable="true" type="tns:ParamList"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="processOrderResponseElement">
+                <complexType>
+                    <sequence>
+                        <element name="result" nillable="true" type="tns:ProcessOrderResponse"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="processOrderListElement">
+                <complexType>
+                    <sequence>
+                        <element name="session" nillable="true" type="tns:Session"/>
+                        <element name="msisdn" nillable="true" type="string"/>
+                        <element name="orderList" nillable="true" type="tns:OrderList"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="processOrderListExtElement">
+                <complexType>
+                    <sequence>
+                        <element name="session" nillable="true" type="tns:Session"/>
+                        <element name="msisdn" nillable="true" type="string"/>
+                        <element name="paramList" nillable="true" type="tns:ParamList"/>
+                        <element name="orderList" nillable="true" type="tns:OrderList"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="processOrderResponseListElement">
+                <complexType>
+                    <sequence>
+                        <element name="result" nillable="true" type="tns:ProcessOrderResponse"/>
+                    </sequence>
+                </complexType>
+            </element>
+            <complexType name="ProcessOrderResponse">
+                <sequence>
+                    <element name="resultCode" type="int"/>
+                    <element name="paramList" nillable="true" type="tns:ParamList"/>
+                </sequence>
+            </complexType>
+        </schema>
+    </types>
+    <message name="ServiceOrderPortType_processOrder">
+        <part element="tns0:processOrderElement" name="parameters"/>
+    </message>
+    <message name="ServiceOrderPortType_processOrderListExt">
+        <part name="parameters" element="tns0:processOrderListExtElement"/>
+    </message>
+    <message name="ServiceOrderPortType_processOrderResponse">
+        <part element="tns0:processOrderResponseElement" name="parameters"/>
+    </message>
+    <message name="ServiceOrderPortType_processOrderList">
+        <part element="tns0:processOrderListElement" name="parameters"/>
+    </message>
+    <message name="ServiceOrderPortType_processOrderListResponse">
+        <part element="tns0:processOrderResponseListElement" name="parameters"/>
+    </message>
+    <portType name="ServiceOrder">
+        <operation name="processOrder">
+            <input message="tns:ServiceOrderPortType_processOrder"/>
+            <output message="tns:ServiceOrderPortType_processOrderResponse"/>
+        </operation>
+        <operation name="processOrderList">
+            <input message="tns:ServiceOrderPortType_processOrderList"/>
+            <output message="tns:ServiceOrderPortType_processOrderListResponse"/>
+        </operation>
+        <operation name="ProcessOrderListExt">
+            <input message="tns:ServiceOrderPortType_processOrderListExt"/>
+            <output message="tns:ServiceOrderPortType_processOrderListResponse"/>
+        </operation>
+    </portType>
+    <binding name="ServiceOrderSoapHttp" type="tns:ServiceOrder">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="processOrder">
+            <soap:operation soapAction="http://orm.zain.com//processOrder"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="processOrderList">
+            <soap:operation soapAction="http://orm.zain.com//processOrderList"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="ProcessOrderListExt">
+            <soap:operation soapAction="http://orm.zain.com//ProcessOrderListExt"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    <service name="ServiceOrder">
+        <port binding="tns:ServiceOrderSoapHttp" name="ServiceOrderSoapHttpPort">
+            <soap:address location="http://falcon8:7780/ServiceOrder/ServiceOrderSoapHttpPort"/>
+        </port>
+    </service>
+</definitions>

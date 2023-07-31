@@ -1,0 +1,1269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:pfx5="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://orm.zain.com/types/" xmlns:pfx3="http://orm.zain.com/" xmlns:pfx2="http://www.zain.com/ZESB/Services/AccountManager" xmlns:pfx6="http://www.ericsson.com/Mozaic/BusinessSchemas/SOAP/XSDs/Fault.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns9="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderRes.xsd" xmlns:format="java://MSISDNFormatter" xmlns:ns12="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariable/Internal/ResponseCodes.xsd" xmlns:ns5="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:ns13="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns6="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns10="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:pfx="http://siebel.com/CustomUI" xmlns:ns7="http://www.siebel.com/xml/CBiO2%20Order%20Provisioning%20Req%20IO" xmlns:ns11="http://www.zain.com/ZESB/QUERY/ProductDetalis.xsd" xmlns:ns8="http://siebel.com/ExternalOrderCreate" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns4="http://www.tibco.com/pe/EngineTypes" xmlns:ns3="http://www.zain.com/ZESB/Services/AccountManager/Types" xmlns:ns0="http://www.tibco.com/schemas/ESI/BusinessProcesses/Services/CRM/Provisioning/ExternalOrderSubmission/Implementation/Schema.xsd3" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.ericsson.com/Mozaic/BusinessSchemas/SOAP/XSDs/Fault.xsd" schemaLocation="/BusinessSchemas/Services/Common/SOAP/Fault.xsd"/>
+    <xsd:import namespace="http://orm.zain.com/types/" schemaLocation="/BusinessWSDLS/Services/WSDLS/ServiceOrder/ServiceOrderSoapHttpPort.wsdl"/>
+    <wsdl:import namespace="http://siebel.com/CustomUI" location="/BusinessProcesses/Services/CRM/Query/GetKAMQuery/Implementation/QueryCustomerKAM.wsdl"/>
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/AccountManager" location="/BusinessWSDLS/Services/WSDLS/AccountManager/AccountManagerInbound.wsdl"/>
+    <wsdl:import namespace="http://orm.zain.com/" location="/BusinessWSDLS/Services/WSDLS/ServiceOrder/ServiceOrderSoapHttpPort.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/ExternalChannelOrderSubmission/Implementation/ExternalChannelOrderSubmission.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="pfx3:ServiceOrderPortType_processOrder"/>
+    <pd:startX>76</pd:startX>
+    <pd:startY>54</pd:startY>
+    <pd:returnBindings>
+        <pfx3:ServiceOrderPortType_processOrderResponse>
+            <parameters>
+                <xsl:copy-of select="$MapFinalResponse/pfx4:processOrderResponseElement"/>
+            </parameters>
+        </pfx3:ServiceOrderPortType_processOrderResponse>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="pfx3:ServiceOrderPortType_processOrderResponse"/>
+    <pd:endX>1742</pd:endX>
+    <pd:endY>217</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1446890830708</pd:targetNamespace>
+    <pd:group name="ExternalChannelOrderSubmission">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>258</pd:x>
+        <pd:y>18</pd:y>
+        <pd:width>983</pd:width>
+        <pd:height>397</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>simpleGroup</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>FetchSOType</pd:to>
+            <pd:lineType>Multiple Bends</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogOut</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Curved</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_HideBalance</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>One Bend</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_SubscriberUpdate</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>One Bend</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetTransactionID</pd:from>
+            <pd:to>Login</pd:to>
+            <pd:xpathDescription>ValidOrderType</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType='SUBSCRIBE' or 
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType='UNSUBSCRIBE' or
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType='MODIFY' or
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType='ADDFUTURE' or
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType='CANCELFUTURE'</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Login</pd:from>
+            <pd:to>FetchProductId</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_ExtternalOrderCreate</pd:from>
+            <pd:to>LogOut</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_ExtternalOrderCreate</pd:from>
+            <pd:to>Generate-Error-for Order Creation</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-52429</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchSOType</pd:from>
+            <pd:to>GetTransactionID</pd:to>
+            <pd:xpathDescription>ValidUser</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:session/pfx4:username=$FetchSOType/SOTypeMapping/Record[SOType=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/SOType]/UserName</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchSOType</pd:from>
+            <pd:to>Generate-Error-for-UserValidation</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-52429</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchProductId</pd:from>
+            <pd:to>ESI_ManageOffer</pd:to>
+            <pd:xpathDescription>OrdType=Modify</pd:xpathDescription>
+            <pd:lineType>Multiple Bends</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/OrderType/MODIFY</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchProductId</pd:from>
+            <pd:to>ESI_ExtternalOrderCreate</pd:to>
+            <pd:xpathDescription>Otherwise</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>{--the values are hardcoded as in assumption that values will not change as per CRM--}
+(($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='N_PK35KD' or
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='N_PK40KD' or
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='NPK5KD'  or
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='N_PK15KD' or
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='N_PK10KD' or
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='N_PK25KD' or
+(string-length($FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode]/ns11:ProductID)&gt;0 
+and 
+($FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode]/ns11:POSFlag='N'  
+or not
+(exists($FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode]/ns11:POSFlag)))) )
+and
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType!=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/OrderType/MODIFY)
+or
+contains($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode,$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/FlexiOrder/FlexiOrderEquipIDType)</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_ManageOffer</pd:from>
+            <pd:to>LogOut</pd:to>
+            <pd:lineType>Multiple Bends</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Login</pd:from>
+            <pd:to>ESI_SubscriberUpdate</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/FlagEquipId/BDOCC or
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/FlagEquipId/NOCAMP or
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/FlagEquipId/NOZCAMP or
+$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/FlagEquipId/UTOWN</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchProductId</pd:from>
+            <pd:to>Generate Error For Invalid ProductId</pd:to>
+            <pd:xpathDescription>Failure to Fetch Product</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-52429</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetTransactionID</pd:from>
+            <pd:to>Generate-Error-for-UserValidation-1</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-52429</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Login</pd:from>
+            <pd:to>ESI_HideBalance</pd:to>
+            <pd:xpathDescription>HideBalance</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/HideBal_SrvCode</pd:xpath>
+        </pd:transition>
+        <pd:activity name="GetTransactionID">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>504</pd:x>
+            <pd:y>93</pd:y>
+            <config>
+                <processName>/CommonProcesses/Utilities/GUID.process</processName>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="Login">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>630</pd:x>
+            <pd:y>93</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            </config>
+            <pd:inputBindings>
+                <ns:LogRequest>
+                    <ns2:Header>
+                        <ns2:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns2:ApplicationID>
+                        <ns2:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/ComponentName"/>
+                        </ns2:ComponentName>
+                        <ns2:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns2:Hostname>
+                        <ns2:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns2:Timestamp>
+                        <ns2:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                        </ns2:TransactionDomain>
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                        <xsl:if test="not(($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn/@xsi:nil=(&quot;true&quot;)) or ($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn/@xsi:nil=(&quot;1&quot;)))">
+                            <ns2:InterfaceID>
+                                <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn"/>
+                            </ns2:InterfaceID>
+                        </xsl:if>
+                        <ns2:Filename>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                        </ns2:Filename>
+                        <ns2:Message>
+                            <xsl:value-of select="tib:render-xml($Start/pfx3:ServiceOrderPortType_processOrder)"/>
+                        </ns2:Message>
+                        <ns2:Transaction>
+                            <xsl:value-of select="tib:render-xml($Start/pfx3:ServiceOrderPortType_processOrder)"/>
+                        </ns2:Transaction>
+                    </ns2:Header>
+                    <xsl:choose>
+                        <xsl:when test="string-length(tib:trim($GetTransactionID/GUID/StartTimeStamp))>0">
+                            <TimeDuration>
+                                <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                            </TimeDuration>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <TimeDuration>
+                                <xsl:value-of select="tib:timestamp()"/>
+                            </TimeDuration>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_RECV"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="LogOut">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>1157</pd:x>
+            <pd:y>97</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            </config>
+            <pd:inputBindings>
+                <ns:LogRequest>
+                    <ns2:Header>
+                        <ns2:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns2:ApplicationID>
+                        <ns2:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/ComponentName"/>
+                        </ns2:ComponentName>
+                        <ns2:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns2:Hostname>
+                        <ns2:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns2:Timestamp>
+                        <ns2:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                        </ns2:TransactionDomain>
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                        <xsl:if test="not(($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn/@xsi:nil=(&quot;true&quot;)) or ($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn/@xsi:nil=(&quot;1&quot;)))">
+                            <ns2:InterfaceID>
+                                <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn"/>
+                            </ns2:InterfaceID>
+                        </xsl:if>
+                        <ns2:Filename>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                        </ns2:Filename>
+                        <ns2:Message>
+                            <xsl:value-of select="if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes) then tib:render-xml($ESI_ExtternalOrderCreate/ns9:CreateOrderRes) else&#xA;tib:render-xml($ESI_ManageOffer/pfx4:processOrderResponseElement)"/>
+                        </ns2:Message>
+                    </ns2:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ESI_ExtternalOrderCreate">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>966</pd:x>
+            <pd:y>97</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/ExternalChannelOrderSubmission/HelperProcess/ESI_Call_ExternalOrder.process</processName>
+                <processNameXPath>if (contains($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode,$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/FlexiOrder/FlexiOrderEquipIDType))
+then
+"/BusinessProcesses/Services/Common/ExternalChannelOrderSubmission/HelperProcess/FlexOffersHelperProc/ESI_Call_ExternalFlexiOrder.process"
+else
+"/BusinessProcesses/Services/Common/ExternalChannelOrderSubmission/HelperProcess/ESI_Call_ExternalOrder.process"</processNameXPath>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <pfx4:processOrderElement>
+                        <xsl:copy-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:session"/>
+                        <pfx4:orderType>
+                            <xsl:copy-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType/@xsi:nil"/>
+                            <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType"/>
+                        </pfx4:orderType>
+                        <pfx4:msisdn>
+                            <xsl:value-of select="format:FormatMSISDN($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn, $_globalVariables/ns1:GlobalVariables/MSISDNBaseLength)"/>
+                        </pfx4:msisdn>
+                        <xsl:variable name="var" select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode"/>
+                        <pfx4:serviceCode>
+                            <xsl:value-of select="{--the values are hardcoded as in assumption that values will not change as per CRM--}&#xA;if($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='N_PK35KD') &#xA;then&#xA;$FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=&quot;N_VC35&quot;]/ns11:ProductID&#xA;&#xA;else if($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='N_PK40KD')&#xA;then&#xA;$FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=&quot;N_VC40&quot;]/ns11:ProductID&#xA;else if ($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='NPK5KD') &#xA;then&#xA;$FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=&quot;NVC5&quot;]/ns11:ProductID&#xA;else if ($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='N_PK15KD') &#xA;then&#xA;$FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=&quot;N_VC15&quot;]/ns11:ProductID&#xA;else if ($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='N_PK10KD') &#xA;then&#xA;$FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=&quot;N_VC10&quot;]/ns11:ProductID&#xA;else if ($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode='N_PK25KD')&#xA;then&#xA;$FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=&quot;N_VC25&quot;]/ns11:ProductID&#xA;else&#xA;$FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=$var and (ns11:POSFlag='N' or not(exists(ns11:POSFlag)))]/ns11:ProductID"/>
+                        </pfx4:serviceCode>
+                        <pfx4:paramList>
+                            <xsl:copy-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:paramList/pfx4:param"/>
+                            <pfx4:param>
+                                <pfx4:name>
+                                    <xsl:value-of select="'CFSSID'"/>
+                                </pfx4:name>
+                                <xsl:variable name="var2" select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode"/>
+                                <pfx4:value>
+                                    <xsl:value-of select="$FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=$var2]/ns11:CFSSID"/>
+                                </pfx4:value>
+                            </pfx4:param>
+                            <pfx4:param>
+                                <pfx4:name>
+                                    <xsl:value-of select="'EquipID'"/>
+                                </pfx4:name>
+                                <pfx4:value>
+                                    <xsl:copy-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode/@xsi:nil"/>
+                                    <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode"/>
+                                </pfx4:value>
+                            </pfx4:param>
+                            <pfx4:param>
+                                <pfx4:name>
+                                    <xsl:value-of select="'BillingType'"/>
+                                </pfx4:name>
+                                <xsl:variable name="var3" select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode"/>
+                                <pfx4:value>
+                                    <xsl:value-of select="$FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=$var3]/ns11:BillingType"/>
+                                </pfx4:value>
+                            </pfx4:param>
+                        </pfx4:paramList>
+                    </pfx4:processOrderElement>
+                    <TransactionID>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionID>
+                    <SourceSystem>
+                        <xsl:value-of select="'CRM'"/>
+                    </SourceSystem>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                    <xsl:if test="not(($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode/@xsi:nil=(&quot;true&quot;)) or ($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode/@xsi:nil=(&quot;1&quot;)))">
+                        <FlexOfferFolioName>
+                            <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode"/>
+                        </FlexOfferFolioName>
+                    </xsl:if>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Generate-Error-for Order Creation">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>907</pd:x>
+            <pd:y>229</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns6:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_error_ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorDescription"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_error_ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode"/>
+                    </messageCode>
+                </ns6:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="FetchSOType">
+            <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+            <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+            <pd:x>369</pd:x>
+            <pd:y>95</pd:y>
+            <config>
+                <variableConfig>/CommonResources/SharedVariables/Internal/SOTypeMapping.sharedvariable</variableConfig>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="Generate-Error-for-UserValidation">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>319</pd:x>
+            <pd:y>247</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns6:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/SubscriberOrder/UserPermisionErrorDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/SubscriberOrder/UserPermissionErrorCode"/>
+                    </messageCode>
+                </ns6:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="FetchProductId">
+            <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+            <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+            <pd:x>761</pd:x>
+            <pd:y>96</pd:y>
+            <config>
+                <variableConfig>/CommonResources/SharedVariables/External/ProductDetails.sharedvariable</variableConfig>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="ESI_ManageOffer">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>955</pd:x>
+            <pd:y>289</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/ExternalChannelOrderSubmission/HelperProcess/ESI_Call_AutoRenew.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <pfx4:processOrderElement>
+                        <xsl:copy-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:session"/>
+                        <pfx4:orderType>
+                            <xsl:copy-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType/@xsi:nil"/>
+                            <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType"/>
+                        </pfx4:orderType>
+                        <pfx4:msisdn>
+                            <xsl:value-of select="format:FormatMSISDN($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn, $_globalVariables/ns1:GlobalVariables/MSISDNBaseLength)"/>
+                        </pfx4:msisdn>
+                        <xsl:variable name="var" select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode"/>
+                        <pfx4:serviceCode>
+                            <xsl:value-of select="$FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=$var]/ns11:CFSSID"/>
+                        </pfx4:serviceCode>
+                        <xsl:copy-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:paramList"/>
+                    </pfx4:processOrderElement>
+                    <TransactionID>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionID>
+                    <SourceSystem>
+                        <xsl:value-of select="'CRM'"/>
+                    </SourceSystem>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                    <ECMId>
+                        <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode"/>
+                    </ECMId>
+                    <xsl:variable name="var2" select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode"/>
+                    <ProductId>
+                        <xsl:value-of select="$FetchProductId/ns11:ProductDetalis/ns11:Products/ns11:Product[ns11:ServiceCode=$var2]/ns11:ProductID"/>
+                    </ProductId>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ESI_SubscriberUpdate">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>630</pd:x>
+            <pd:y>319</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/ExternalChannelOrderSubmission/HelperProcess/ESI_Call_SubscriberUpdate.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <xsl:copy-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement"/>
+                    <TransactionID>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionID>
+                    <SourceSystem>
+                        <xsl:value-of select="'CRM'"/>
+                    </SourceSystem>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                    <ProductId>
+                        <xsl:value-of select="''"/>
+                    </ProductId>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Generate Error For Invalid ProductId">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>702</pd:x>
+            <pd:y>243</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns6:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/InvalidProductIdDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/InvalidProductIdCode"/>
+                    </messageCode>
+                </ns6:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Generate-Error-for-UserValidation-1">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>453</pd:x>
+            <pd:y>245</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns6:ActivityInput>
+                    <message>
+                        <xsl:value-of select="'Invalid OrderType. OrderType should be either SUBSCRIBE or UNSUBSCRIBE'"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="'99'"/>
+                    </messageCode>
+                </ns6:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ESI_HideBalance">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>484</pd:x>
+            <pd:y>355</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/ExternalChannelOrderSubmission/HelperProcess/ESI_Call_HideBalance.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <pfx:CBiO2HideBalanceUpdateWS_Input>
+                        <pfx:HIDE_BLNC_FLG>
+                            <xsl:value-of select="if($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType='SUBSCRIBE')&#xA;then&#xA;'Y'&#xA;else&#xA;'N'"/>
+                        </pfx:HIDE_BLNC_FLG>
+                        <pfx:MSISDN>
+                            <xsl:value-of select="format:FormatMSISDN($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn,$_globalVariables/ns1:GlobalVariables/MSISDNBaseLength)"/>
+                        </pfx:MSISDN>
+                    </pfx:CBiO2HideBalanceUpdateWS_Input>
+                    <TransactionID>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionID>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>492</pd:x>
+        <pd:y>500</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$ErrorHandler/ns5:ExceptionRequest/ns2:Header/ns2:ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <xsl:if test="$ErrorHandler/ns5:ExceptionRequest/ns2:Header/ns2:ComponentName">
+                        <ns2:ComponentName>
+                            <xsl:value-of select="$ErrorHandler/ns5:ExceptionRequest/ns2:Header/ns2:ComponentName"/>
+                        </ns2:ComponentName>
+                    </xsl:if>
+                    <xsl:if test="$ErrorHandler/ns5:ExceptionRequest/ns2:Header/ns2:Hostname">
+                        <ns2:Hostname>
+                            <xsl:value-of select="$ErrorHandler/ns5:ExceptionRequest/ns2:Header/ns2:Hostname"/>
+                        </ns2:Hostname>
+                    </xsl:if>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <xsl:if test="$ErrorHandler/ns5:ExceptionRequest/ns2:Header/ns2:TransactionDomain">
+                        <ns2:TransactionDomain>
+                            <xsl:value-of select="$ErrorHandler/ns5:ExceptionRequest/ns2:Header/ns2:TransactionDomain"/>
+                        </ns2:TransactionDomain>
+                    </xsl:if>
+                    <xsl:if test="$ErrorHandler/ns5:ExceptionRequest/ns2:Header/ns2:TransactionType">
+                        <ns2:TransactionType>
+                            <xsl:value-of select="$ErrorHandler/ns5:ExceptionRequest/ns2:Header/ns2:TransactionType"/>
+                        </ns2:TransactionType>
+                    </xsl:if>
+                    <xsl:if test="$ErrorHandler/ns5:ExceptionRequest/ns2:Header/ns2:TransactionID">
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$ErrorHandler/ns5:ExceptionRequest/ns2:Header/ns2:TransactionID"/>
+                        </ns2:TransactionID>
+                    </xsl:if>
+                    <xsl:if test="not(($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode/@xsi:nil=(&quot;true&quot;)) or ($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode/@xsi:nil=(&quot;1&quot;)))">
+                        <ns2:InterfaceID>
+                            <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode"/>
+                        </ns2:InterfaceID>
+                    </xsl:if>
+                    <xsl:if test="$ErrorHandler/ns5:ExceptionRequest/StackTrace">
+                        <ns2:Message>
+                            <xsl:value-of select="$ErrorHandler/ns5:ExceptionRequest/StackTrace"/>
+                        </ns2:Message>
+                    </xsl:if>
+                    <ns2:Transaction>
+                        <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:session/pfx4:username"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <xsl:choose>
+                    <xsl:when test="string-length(tib:trim($GetTransactionID/GUID/StartTimeStamp))>0">
+                        <xsl:if test="$GetTransactionID/GUID/StartTimeStamp">
+                            <TimeDuration>
+                                <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                            </TimeDuration>
+                        </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <TimeDuration>
+                            <xsl:value-of select="tib:timestamp()"/>
+                        </TimeDuration>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>77</pd:x>
+        <pd:y>498</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                <xsl:when test="exists($_error_ESI_ExtternalOrderCreate)&#xA;and&#xA;string-length($_error_ESI_ExtternalOrderCreate)>0">
+                    <ns5:ExceptionRequest>
+                        <ns2:Header>
+                            <ns2:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ns2:ApplicationID>
+                            <ns2:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/ExternalChannel/Provisioning/ExternalChannelOrder/ComponentName"/>
+                            </ns2:ComponentName>
+                            <ns2:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </ns2:Hostname>
+                            <ns2:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </ns2:Timestamp>
+                            <ns2:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                            </ns2:TransactionDomain>
+                            <ns2:TransactionType>
+                                <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                            </ns2:TransactionType>
+                            <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                                <ns2:TransactionID>
+                                    <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                                </ns2:TransactionID>
+                            </xsl:if>
+                        </ns2:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="$_error/ns4:ErrorReport/MsgCode"/>
+                        </ExceptionCode>
+                        <StackTrace>
+                            <xsl:value-of select="$_error/ns4:ErrorReport/Msg"/>
+                        </StackTrace>
+                    </ns5:ExceptionRequest>
+                </xsl:when>
+                <xsl:otherwise>
+                    <ns5:ExceptionRequest>
+                        <ns2:Header>
+                            <ns2:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ns2:ApplicationID>
+                            <ns2:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/ExternalChannel/Provisioning/ExternalChannelOrder/ComponentName"/>
+                            </ns2:ComponentName>
+                            <ns2:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </ns2:Hostname>
+                            <ns2:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </ns2:Timestamp>
+                            <ns2:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                            </ns2:TransactionDomain>
+                            <ns2:TransactionType>
+                                <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                            </ns2:TransactionType>
+                            <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                                <ns2:TransactionID>
+                                    <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                                </ns2:TransactionID>
+                            </xsl:if>
+                        </ns2:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="9999"/>
+                        </ExceptionCode>
+                        <StackTrace>
+                            <xsl:value-of select="'Input data invalid'"/>
+                        </StackTrace>
+                    </ns5:ExceptionRequest>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>293</pd:x>
+        <pd:y>498</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <pfx5:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns4:ErrorReport/StackTrace"/>
+                </message>
+                <xsl:if test="$_error/ns4:ErrorReport/MsgCode">
+                    <msgCode>
+                        <xsl:value-of select="$_error/ns4:ErrorReport/MsgCode"/>
+                    </msgCode>
+                </xsl:if>
+            </pfx5:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetJMSContext">
+        <pd:type>com.tibco.ae.tools.palettes.servicepalette.GetContextActivity</pd:type>
+        <pd:resourceType>service.activity.getContext</pd:resourceType>
+        <pd:x>171</pd:x>
+        <pd:y>52</pd:y>
+        <config>
+            <variableConfig>/BusinessSchemas/Services/Common/JMSSchema/InputContext.contextResource</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="PopulateErorResponse">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>772</pd:x>
+        <pd:y>500</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/ErrorResponseMapFromEOM.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <SourceSystem>
+                    <xsl:value-of select="if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorAddDesc2='CRM') then 'CRM' else 'TIBCO'"/>
+                </SourceSystem>
+                <xsl:choose>
+                    <xsl:when test="exists($_error)">
+                        <ResponseCode>
+                            <xsl:value-of select="$_error/ns4:ErrorReport/MsgCode"/>
+                        </ResponseCode>
+                    </xsl:when>
+                    <xsl:when test="exists($ESI_ExtternalOrderCreate/ns9:CreateOrderRes) and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode!=0">
+                        <ResponseCode>
+                            <xsl:value-of select="$ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode"/>
+                        </ResponseCode>
+                    </xsl:when>
+                    <xsl:when test="exists($ESI_ManageOffer/pfx4:processOrderResponseElement) and $ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode!=0">
+                        <ResponseCode>
+                            <xsl:value-of select="$ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode"/>
+                        </ResponseCode>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <ResponseCode>
+                            <xsl:value-of select="$ErrorHandler/ns5:ExceptionRequest/ExceptionCode"/>
+                        </ResponseCode>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:choose>
+                    <xsl:when test="exists($_error)">
+                        <ResponseDescription>
+                            <xsl:value-of select="$_error/ns4:ErrorReport/Msg"/>
+                        </ResponseDescription>
+                    </xsl:when>
+                    <xsl:when test="exists($ESI_ExtternalOrderCreate/ns9:CreateOrderRes) and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode!=0">
+                        <ResponseDescription>
+                            <xsl:value-of select="$ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorDescription"/>
+                        </ResponseDescription>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <ResponseDescription>
+                            <xsl:value-of select="$ErrorHandler/ns5:ExceptionRequest/StackTrace"/>
+                        </ResponseDescription>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Error REsponse">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1160</pd:x>
+        <pd:y>498</pd:y>
+        <config>
+            <element ref="pfx4:processOrderResponseElement"/>
+        </config>
+        <pd:inputBindings>
+            <pfx4:processOrderResponseElement>
+                <pfx4:result>
+                    <pfx4:resultCode>
+                        <xsl:value-of select="if(contains($PopulateErorResponse/root/ErrorSourceErrDesc,'after 5 minutes')) then&#xA;'979'&#xA;else if(contains($PopulateErorResponse/root/ErrorSourceErrDesc,'DEPENDENCY ERROR')) then&#xA;'61047' &#xA;else if(contains($PopulateErorResponse/root/ErrorSourceErrDesc,'SERVICE IS ALREADY ACTIVE') or contains($PopulateErorResponse/root/ErrorSourceErrDesc,'Service already exists')) then&#xA;'103' &#xA;else if(contains($PopulateErorResponse/root/ErrorSourceErrDesc,'INVALID SWAP RULE')) then&#xA;'114' else&#xA;100"/>
+                    </pfx4:resultCode>
+                    <pfx4:paramList>
+                        <pfx4:param>
+                            <pfx4:name>
+                                <xsl:value-of select="'ResultText'"/>
+                            </pfx4:name>
+                            <pfx4:value>
+                                <xsl:choose>
+                                    <xsl:when test="exists(if(contains($PopulateErorResponse/root/ErrorSourceErrDesc,'INVALID SWAP RULE')) then&#xA;'YOU HAVE SIMILAR SERVICE SWAP RULE ' else&#xA;$PopulateErorResponse/root/ErrorSourceErrDesc)">
+                                        <xsl:value-of select="if(contains($PopulateErorResponse/root/ErrorSourceErrDesc,'INVALID SWAP RULE')) then&#xA;'YOU HAVE SIMILAR SERVICE SWAP RULE ' else&#xA;$PopulateErorResponse/root/ErrorSourceErrDesc"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </pfx4:value>
+                        </pfx4:param>
+                        <pfx4:param>
+                            <pfx4:name>
+                                <xsl:value-of select="'ResultTextAr'"/>
+                            </pfx4:name>
+                            <pfx4:value>
+                                <xsl:choose>
+                                    <xsl:when test="exists(if(contains($PopulateErorResponse/root/ErrorSourceErrDesc,'INVALID SWAP RULE')) then&#xA;'YOU HAVE SIMILAR SERVICE SWAP RULE ' else&#xA;$PopulateErorResponse/root/ErrorSourceErrDesc)">
+                                        <xsl:value-of select="if(contains($PopulateErorResponse/root/ErrorSourceErrDesc,'INVALID SWAP RULE')) then&#xA;'YOU HAVE SIMILAR SERVICE SWAP RULE ' else&#xA;$PopulateErorResponse/root/ErrorSourceErrDesc"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </pfx4:value>
+                        </pfx4:param>
+                    </pfx4:paramList>
+                </pfx4:result>
+            </pfx4:processOrderResponseElement>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut-FinalResponse">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1509</pd:x>
+        <pd:y>221</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </ns2:TransactionID>
+                    <xsl:if xmlns:xsl="http://www.w3.org/1999/XSL/Transform" test="not(($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn/@xsi:nil=(&quot;true&quot;)) or ($Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn/@xsi:nil=(&quot;1&quot;)))">
+                        <ns2:InterfaceID>
+                            <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn"/>
+                        </ns2:InterfaceID>
+                    </xsl:if>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($MapFinalResponse/pfx4:processOrderResponseElement)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="if(exists($GetTransactionID/GUID/StartTimeStamp)) then $GetTransactionID/GUID/StartTimeStamp else&#xA;tib:timestamp()"/>
+                </TimeDuration>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="MapFinalResponse">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1385</pd:x>
+        <pd:y>221</pd:y>
+        <config>
+            <element ref="pfx4:processOrderResponseElement"/>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="exists($MapErrors/pfx4:processOrderResponseElement)">
+                    <xsl:copy-of select="$MapErrors/pfx4:processOrderResponseElement"/>
+                </xsl:when>
+                <xsl:when test="exists($ESI_SubscriberUpdate/pfx4:processOrderResponseElement)">
+                    <xsl:copy-of select="$ESI_SubscriberUpdate/pfx4:processOrderResponseElement"/>
+                </xsl:when>
+                <xsl:when test="exists($ESI_HideBalance/pfx4:processOrderResponseElement)">
+                    <xsl:copy-of select="$ESI_HideBalance/pfx4:processOrderResponseElement"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <pfx4:processOrderResponseElement>
+                        <pfx4:result>
+                            <pfx4:resultCode>
+                                <xsl:value-of select="if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorDescription='Insufficient Balance')&#xA; then '105'&#xA; else if(string-length($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode)>0 and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode!='0') then&#xA;'100' else if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorAddDesc1='Async' and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode='0') then&#xA;0 else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorAddDesc1='Multiple' and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode='0') then&#xA;0 else&#xA;if (string-length($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:ZainIdentifiers/ns10:orderId[ns10:systemName='cwOrderId']/ns10:value)>0) then&#xA;0 else &#xA;if($ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode='0') then 0 else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode='0') then 0 else&#xA;100"/>
+                            </pfx4:resultCode>
+                            <pfx4:paramList>
+                                <pfx4:param>
+                                    <pfx4:name>
+                                        <xsl:value-of select="'ResultText'"/>
+                                    </pfx4:name>
+                                    <pfx4:value>
+                                        <xsl:choose>
+                                            <xsl:when test="exists(if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorAddDesc1='Async' and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode=0) then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/EnglishSuccessDesc else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorAddDesc1='Async' and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode!=0) then $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorDescription else&#xA;if($ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode=0) then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/EnglishSuccessDesc else&#xA;if(string-length($ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode)>0) then $ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:paramList/pfx4:param[pfx4:name='ResultText']/pfx4:value else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:Response/ResponseDescription='Pending') then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/EnglishSuccessDesc else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:Response/ResponseDescription='Complete') then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/EnglishSuccessDesc else&#xA;&#xA;$ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorDescription)">
+                                                <xsl:value-of select="if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorAddDesc1='Async' and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode=0) then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/EnglishSuccessDesc else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorAddDesc1='Async' and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode!=0) then $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorDescription else&#xA;if($ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode=0) then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/EnglishSuccessDesc else&#xA;if(string-length($ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode)>0) then $ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:paramList/pfx4:param[pfx4:name='ResultText']/pfx4:value else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:Response/ResponseDescription='Pending') then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/EnglishSuccessDesc else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:Response/ResponseDescription='Complete') then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/EnglishSuccessDesc else&#xA;&#xA;$ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorDescription"/>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </pfx4:value>
+                                </pfx4:param>
+                                <xsl:if test="$ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:Response/ResponseDescription='Pending' or &#xA;$ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:Response/ResponseDescription='Complete'  or&#xA;1=1 or&#xA;$ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode=0 or&#xA;$ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode=0">
+                                    <pfx4:param>
+                                        <pfx4:name>
+                                            <xsl:value-of select="'ResultTextAr'"/>
+                                        </pfx4:name>
+                                        <pfx4:value>
+                                            <xsl:choose>
+                                                <xsl:when test="exists(if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorAddDesc1='Async' and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode=0) then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/ArabicSuccessDesc else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorAddDesc1='Async' and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode!=0) then $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorDescription else&#xA;if($ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode=0) then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/ArabicSuccessDesc else&#xA;if(string-length($ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode)>0) then $ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:paramList/pfx4:param[pfx4:name='ResultText']/pfx4:value else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:Response/ResponseDescription='Pending') then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/ArabicSuccessDesc else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:Response/ResponseDescription='Complete') then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/ArabicSuccessDesc else&#xA;&#xA;$ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorDescription)">
+                                                    <xsl:value-of select="if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorAddDesc1='Async' and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode=0) then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/ArabicSuccessDesc else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorAddDesc1='Async' and $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode!=0) then $ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorDescription else&#xA;if($ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode=0) then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/ArabicSuccessDesc else&#xA;if(string-length($ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode)>0) then $ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:paramList/pfx4:param[pfx4:name='ResultText']/pfx4:value else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:Response/ResponseDescription='Pending') then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/ArabicSuccessDesc else&#xA;if($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:Response/ResponseDescription='Complete') then $_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/Status/ArabicSuccessDesc else&#xA;&#xA;$ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorDescription"/>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </pfx4:value>
+                                    </pfx4:param>
+                                </xsl:if>
+                            </pfx4:paramList>
+                        </pfx4:result>
+                    </pfx4:processOrderResponseElement>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ResponseCodes">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>170</pd:x>
+        <pd:y>225</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/ResponseCodes.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="MapErrors">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1384</pd:x>
+        <pd:y>496</pd:y>
+        <config>
+            <element ref="pfx4:processOrderResponseElement"/>
+        </config>
+        <pd:inputBindings>
+            <pfx4:processOrderResponseElement>
+                <pfx4:result>
+                    <pfx4:resultCode>
+                        <xsl:value-of select="if(string-length($ResponseCodes/ns12:ResCodeVar/ns12:paramGroup[contains(TABS_DESC,$PopulateErorResponse/root/ErrorSourceErrDesc)]/COMMON_CODE)>0)&#xA;then&#xA;$ResponseCodes/ns12:ResCodeVar/ns12:paramGroup[contains(TABS_DESC,$PopulateErorResponse/root/ErrorSourceErrDesc)]/COMMON_CODE&#xA;else&#xA;$Map-Error-REsponse/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode"/>
+                    </pfx4:resultCode>
+                    <pfx4:paramList>
+                        <pfx4:param>
+                            <pfx4:name>
+                                <xsl:value-of select="'ResultText'"/>
+                            </pfx4:name>
+                            <pfx4:value>
+                                <xsl:value-of select="if(string-length($ResponseCodes/ns12:ResCodeVar/ns12:paramGroup[contains(TABS_DESC,$PopulateErorResponse/root/ErrorSourceErrDesc)]/COMMON_CODE)>0)&#xA;then&#xA;$ResponseCodes/ns12:ResCodeVar/ns12:paramGroup[contains(TABS_DESC,$PopulateErorResponse/root/ErrorSourceErrDesc)]/COMMON_DESC&#xA;else&#xA;$Map-Error-REsponse/pfx4:processOrderResponseElement/pfx4:result/pfx4:paramList/pfx4:param[pfx4:name='ResultText']/pfx4:value"/>
+                            </pfx4:value>
+                        </pfx4:param>
+                        <pfx4:param>
+                            <pfx4:name>
+                                <xsl:value-of select="'ResultTextAr'"/>
+                            </pfx4:name>
+                            <pfx4:value>
+                                <xsl:value-of select="if(string-length($ResponseCodes/ns12:ResCodeVar/ns12:paramGroup[contains(TABS_DESC,$PopulateErorResponse/root/ErrorSourceErrDesc)]/COMMON_CODE)>0)&#xA;then&#xA;$ResponseCodes/ns12:ResCodeVar/ns12:paramGroup[contains(TABS_DESC,$PopulateErorResponse/root/ErrorSourceErrDesc)]/COMMON_DESC&#xA;else&#xA;$Map-Error-REsponse/pfx4:processOrderResponseElement/pfx4:result/pfx4:paramList/pfx4:param[pfx4:name='ResultText']/pfx4:value"/>
+                            </pfx4:value>
+                        </pfx4:param>
+                    </pfx4:paramList>
+                </pfx4:result>
+            </pfx4:processOrderResponseElement>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>1631</pd:x>
+        <pd:y>337</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Common/ExternalChannel/ServiceCode_RecordsLog%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <InDataxsdString>
+                <xsd:element name="ServiceOrderRecords">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Username" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="MSISDN" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ServiceCode" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="OrderType" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ResultCode" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ResultDescription" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="TransactionId" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </InDataxsdString>
+        </config>
+        <pd:inputBindings>
+            <ns13:ActivityInput>
+                <Body>
+                    <ServiceOrderRecords>
+                        <Username>
+                            <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:session/pfx4:username"/>
+                        </Username>
+                        <MSISDN>
+                            <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:msisdn"/>
+                        </MSISDN>
+                        <ServiceCode>
+                            <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:serviceCode"/>
+                        </ServiceCode>
+                        <OrderType>
+                            <xsl:value-of select="$Start/pfx3:ServiceOrderPortType_processOrder/parameters/pfx4:processOrderElement/pfx4:orderType"/>
+                        </OrderType>
+                        <ResultCode>
+                            <xsl:value-of select="$MapFinalResponse/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode"/>
+                        </ResultCode>
+                        <ResultDescription>
+                            <xsl:value-of select="$MapFinalResponse/pfx4:processOrderResponseElement/pfx4:result/pfx4:paramList/pfx4:param[pfx4:name='ResultText']/pfx4:value"/>
+                        </ResultDescription>
+                        <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                            <TransactionId>
+                                <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                            </TransactionId>
+                        </xsl:if>
+                    </ServiceOrderRecords>
+                </Body>
+            </ns13:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>1629</pd:x>
+        <pd:y>220</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetJMSContext</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ExternalChannelOrderSubmission</pd:from>
+        <pd:to>MapFinalResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns9:errorCode=0 or string-length($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:Response/ResponseCode)&gt;0 or
+string-length($ESI_ExtternalOrderCreate/ns9:CreateOrderRes/ns10:ZainIdentifiers/ns10:orderId[ns10:systemName='cwOrderId']/ns10:value)&gt;0 or
+exists($ESI_ManageOffer/pfx4:processOrderResponseElement/pfx4:result/pfx4:resultCode) or
+exists($ESI_SubscriberUpdate/pfx4:processOrderResponseElement) or
+exists($ESI_HideBalance/pfx4:processOrderResponseElement)</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>PopulateErorResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ExternalChannelOrderSubmission</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ExternalChannelOrderSubmission</pd:from>
+        <pd:to>PopulateErorResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetJMSContext</pd:from>
+        <pd:to>ResponseCodes</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>PopulateErorResponse</pd:from>
+        <pd:to>Map Error REsponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Error REsponse</pd:from>
+        <pd:to>MapErrors</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut-FinalResponse</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapFinalResponse</pd:from>
+        <pd:to>LogOut-FinalResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ResponseCodes</pd:from>
+        <pd:to>ExternalChannelOrderSubmission</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapErrors</pd:from>
+        <pd:to>MapFinalResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut-FinalResponse</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:xpathDescription>Not Required</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>string-length($ResponseCodes/ns12:ResCodeVar/ns12:paramGroup[COMMON_CODE='N']/COMMON_DESC)&gt;0</pd:xpath>
+    </pd:transition>
+</pd:ProcessDefinition>

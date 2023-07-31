@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:format="java://MSISDNFormatter" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pfx="http://www.zain.com/ZESB/Services/UpsertCustomer/Types" xmlns:ns2="http://www.siebel.com/xml/CBiO2%20Auth%20Contact%20Update%20IO" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.zain.com/ZESB/Types/Common" xmlns:ns4="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariables/Internal/ESBLOV.xsd" xmlns:ns3="http://www.tibco.com/pe/EngineTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx4="http://www.siebel.com/xml/CBiO2CorpCustomerCreationReq" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://siebel.com/CustomUI" xmlns:pfx2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://siebel.com/CustomUI" schemaLocation="/BusinessWSDLS/Services/CRM/UpdateCorpCustContact.wsdl"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/UpsertCustomer/Types" schemaLocation="/BusinessWSDLS/Services/WSDLS/UpsertCustomer/UpsertCustomerInbound.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/UpsertCustomer/HelperProcess/ESI_CRM_AddUpdCorpAuthorizeDetails.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:ManageContactInput"/>
+                    <xsd:element name="TransactionId" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                    <xsd:element name="SourceSystem" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>89</pd:startX>
+    <pd:startY>136</pd:startY>
+    <pd:returnBindings>
+        <pfx:GeneralOutput>
+            <pfx:Result>
+                <xsl:value-of select="if($ParseResponseCORP/pfx3:UpdateCorpCustContact_Output/pfx3:ErrorSourceErrCode='0')&#xA;then 'Success'&#xA;else 'Error'"/>
+            </pfx:Result>
+        </pfx:GeneralOutput>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:GeneralOutput"/>
+    <pd:endX>1210</pd:endX>
+    <pd:endY>141</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1562915394492</pd:targetNamespace>
+    <pd:activity name="MapCorpCust">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>342</pd:x>
+        <pd:y>139</pd:y>
+        <config>
+            <element ref="pfx3:UpdateCorpCustContact_Input"/>
+        </config>
+        <pd:inputBindings>
+            <pfx3:UpdateCorpCustContact_Input>
+                <ns2:listOfCbio2AuthContactUpdateIo>
+                    <ns2:account>
+                        <ns2:customerSequenceNumber>
+                            <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:ContractID"/>
+                        </ns2:customerSequenceNumber>
+                        <ns2:listOfcontact>
+                            <ns2:contact>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:ContactId">
+                                    <ns2:authorizedPersonId>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:ContactId"/>
+                                    </ns2:authorizedPersonId>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:AuthorizationLevel">
+                                    <ns2:authorizationLevel>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:AuthorizationLevel"/>
+                                    </ns2:authorizationLevel>
+                                </xsl:if>
+                                <ns2:salesChannel>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/UpsertCustomer/UpdateContract/SalesChannel"/>
+                                </ns2:salesChannel>
+                                <ns2:createdByUser>
+                                    <xsl:value-of select="$Start/root/SourceSystem"/>
+                                </ns2:createdByUser>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:FirstName">
+                                    <ns2:firstNameEng>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:FirstName"/>
+                                    </ns2:firstNameEng>
+                                </xsl:if>
+                                <xsl:if test="string-length($Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:IdExpirationDate)>0">
+                                    <ns2:IDExpiryDate>
+                                        <xsl:value-of select="tib:format-date('MM/dd/yyyy',$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:IdExpirationDate)"/>
+                                    </ns2:IDExpiryDate>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:IdNumber">
+                                    <ns2:IDNumber>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:IdNumber"/>
+                                    </ns2:IDNumber>
+                                </xsl:if>
+                                <xsl:if test="$GetESBLOVVariable/root/ns4:ESBLOV/ns4:Record[ns4:TRANSTYPE='ID_Type' and ns4:TRANSKEY=&#xA;$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:IdType]/ns4:TRANSVALUE">
+                                    <ns2:IDType>
+                                        <xsl:value-of select="$GetESBLOVVariable/root/ns4:ESBLOV/ns4:Record[ns4:TRANSTYPE='ID_Type' and ns4:TRANSKEY=&#xA;$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:IdType]/ns4:TRANSVALUE"/>
+                                    </ns2:IDType>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:LastName">
+                                    <ns2:lastNameEng>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:LastName"/>
+                                    </ns2:lastNameEng>
+                                </xsl:if>
+                                <ns2:Priority>
+                                    <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Priority"/>
+                                </ns2:Priority>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:SecondName">
+                                    <ns2:secondNameEng>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:SecondName"/>
+                                    </ns2:secondNameEng>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ThirdName">
+                                    <ns2:thirdNameEng>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ThirdName"/>
+                                    </ns2:thirdNameEng>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ArabicTitle">
+                                    <ns2:arabicTitle>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ArabicTitle"/>
+                                    </ns2:arabicTitle>
+                                </xsl:if>
+                                <xsl:if test="string-length($Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails/pfx:Contact/pfx:PhoneContact[pfx:Type='Mobile']/pfx:Number)>0">
+                                    <ns2:mobilePhone>
+                                        <xsl:value-of select="format:FormatMSISDN($Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails/pfx:Contact/pfx:PhoneContact[pfx:Type='Mobile']/pfx:Number,$_globalVariables/ns:GlobalVariables/MSISDNBaseLength)"/>
+                                    </ns2:mobilePhone>
+                                </xsl:if>
+                                <xsl:if test="string-length($Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:DateOfBirth)>0">
+                                    <ns2:dateofBirth>
+                                        <xsl:value-of select="tib:format-date('MM/dd/yyyy',$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:DateOfBirth)"/>
+                                    </ns2:dateofBirth>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Contact[1]/pfx:eMailAddress">
+                                    <ns2:emailAddress>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Contact[1]/pfx:eMailAddress"/>
+                                    </ns2:emailAddress>
+                                </xsl:if>
+                                <xsl:if test="string-length($Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails/pfx:Contact/pfx:PhoneContact[pfx:Type='Fax']/pfx:Number)>0">
+                                    <ns2:faxPhone>
+                                        <xsl:value-of select="format:FormatMSISDN($Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails/pfx:Contact/pfx:PhoneContact[pfx:Type='Fax']/pfx:Number,$_globalVariables/ns:GlobalVariables/MSISDNBaseLength)"/>
+                                    </ns2:faxPhone>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ArabicFirstName">
+                                    <ns2:arabicFirstName>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ArabicFirstName"/>
+                                    </ns2:arabicFirstName>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ArabicLastName">
+                                    <ns2:arabicLastName>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ArabicLastName"/>
+                                    </ns2:arabicLastName>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:Sex">
+                                    <ns2:Gender>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:Sex"/>
+                                    </ns2:Gender>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:Title">
+                                    <ns2:englishTitle>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:Title"/>
+                                    </ns2:englishTitle>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ArabicThirdName">
+                                    <ns2:arabicThirdName>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ArabicThirdName"/>
+                                    </ns2:arabicThirdName>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:MaritalStatus">
+                                    <ns2:maritalStatus>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Information/pfx:MaritalStatus"/>
+                                    </ns2:maritalStatus>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ArabicSecondName">
+                                    <ns2:arabicSecondName>
+                                        <xsl:value-of select="$Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:Identity/pfx:Name/pfx:ArabicSecondName"/>
+                                    </ns2:arabicSecondName>
+                                </xsl:if>
+                                <xsl:if test="string-length($Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails/pfx:Contact/pfx:PhoneContact[pfx:Type='Work']/pfx:Number)>0">
+                                    <ns2:workPhone>
+                                        <xsl:value-of select="format:FormatMSISDN($Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails/pfx:Contact/pfx:PhoneContact[pfx:Type='Work']/pfx:Number,$_globalVariables/ns:GlobalVariables/MSISDNBaseLength)"/>
+                                    </ns2:workPhone>
+                                </xsl:if>
+                            </ns2:contact>
+                        </ns2:listOfcontact>
+                    </ns2:account>
+                </ns2:listOfCbio2AuthContactUpdateIo>
+                <pfx3:Action>
+                    <xsl:value-of select="if(string-length($Start/root/pfx:ManageContactInput/pfx:Contacts/pfx:ContactDetails[1]/pfx:ContactId)>0)&#xA;then 'Update'&#xA;else 'New'"/>
+                </pfx3:Action>
+            </pfx3:UpdateCorpCustContact_Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogCorpCustInput">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>465</pd:x>
+        <pd:y>139</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/UpsertCustomer/ServiceName/UpdateContract"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionId"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($MapCorpCust/pfx3:UpdateCorpCustContact_Input)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="EMSSendReceiveCORP">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>623</pd:x>
+        <pd:y>140</pd:y>
+        <config>
+            <processName>/CommonProcesses/HelperProcesses/Common_EAI_EMSSendReceive.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <MessageBody>
+                    <xsl:value-of select="tib:render-xml($MapCorpCust/pfx3:UpdateCorpCustContact_Input)"/>
+                </MessageBody>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionId"/>
+                </TransactionID>
+                <EMS_DestinationQueue>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/UpsertCustomer/ManageContract/ESI_Q_UpdCorpAuthorizeDetails"/>
+                </EMS_DestinationQueue>
+                <TransactionDomain>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                </TransactionDomain>
+                <TransactionType>
+                    <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                </TransactionType>
+                <ReplyToEngineID>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/EngineID"/>
+                </ReplyToEngineID>
+                <ReplyToDeployment>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                </ReplyToDeployment>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+                <RequestTimeOut>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/UpsertCustomer/ManageContract/JMSTimeout"/>
+                </RequestTimeOut>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseResponseCORP">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>797</pd:x>
+        <pd:y>138</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx3:UpdateCorpCustContact_Output"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$EMSSendReceiveCORP/ResponseData"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_CorpCustResponse">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>991</pd:x>
+        <pd:y>138</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/UpsertCustomer/ServiceName/ManageContract"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionId"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($ParseResponseCORP/pfx3:UpdateCorpCustContact_Output)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParsingError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>878</pd:x>
+        <pd:y>241</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns3:ErrorReport/Msg"/>
+                </message>
+                <xsl:if test="$_error/ns3:ErrorReport/MsgCode">
+                    <messageCode>
+                        <xsl:value-of select="$_error/ns3:ErrorReport/MsgCode"/>
+                    </messageCode>
+                </xsl:if>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ESIError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>747</pd:x>
+        <pd:y>250</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$ParseResponseCORP/pfx3:UpdateCorpCustContact_Output/pfx3:ErrorSourceErrDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="concat($ParseResponseCORP/pfx3:UpdateCorpCustContact_Output/pfx3:ErrorSourceSystem,'|',$ParseResponseCORP/pfx3:UpdateCorpCustContact_Output/pfx3:ErrorSourceErrCode)"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetESBLOVVariable">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>211</pd:x>
+        <pd:y>139</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/ESBLOV.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetESBLOVVariable</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapCorpCust</pd:from>
+        <pd:to>LogCorpCustInput</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogCorpCustInput</pd:from>
+        <pd:to>EMSSendReceiveCORP</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EMSSendReceiveCORP</pd:from>
+        <pd:to>ParseResponseCORP</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseResponseCORP</pd:from>
+        <pd:to>Log_CorpCustResponse</pd:to>
+        <pd:xpathDescription>Success</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$ParseResponseCORP/pfx3:UpdateCorpCustContact_Output/pfx3:ErrorSourceErrCode='0'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CorpCustResponse</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseResponseCORP</pd:from>
+        <pd:to>ParsingError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52480</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseResponseCORP</pd:from>
+        <pd:to>ESIError</pd:to>
+        <pd:xpathDescription>ESI Error</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetESBLOVVariable</pd:from>
+        <pd:to>MapCorpCust</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

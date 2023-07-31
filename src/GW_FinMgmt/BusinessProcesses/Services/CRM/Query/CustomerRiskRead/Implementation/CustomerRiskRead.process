@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns4="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/CustomerRiskRead.xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlPfx="http://xmlns.example.com/1494840129551" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns13="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd">
+    <wsdl:import namespace="http://xmlns.example.com/1494840129551" location="/BusinessWSDLS/Services/TIBCO/CustomerRiskRead.wsdl"/>
+    <pd:name>BusinessProcesses/Services/CRM/Query/CustomerRiskRead/Implementation/CustomerRiskRead.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="wsdlPfx:CustomerRiskReadInput"/>
+    <pd:startX>76</pd:startX>
+    <pd:startY>82</pd:startY>
+    <pd:returnBindings>
+        <wsdlPfx:CustomerRiskReadOutput>
+            <Output>
+                <xsl:choose>
+                    <xsl:when test="string-length($ESI_Call_CustRiskRead/root/ns3:CustomerRiskReadResponse/ns3:CustomerId)>0">
+                        <xsl:copy-of select="$ESI_Call_CustRiskRead/root/ns3:CustomerRiskReadResponse"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <ns3:CustomerRiskReadResponse>
+                            <xsl:if test="$Start/wsdlPfx:CustomerRiskReadInput/Input/ns3:CustomerRiskReadRequest/ns3:CustomerId">
+                                <ns3:CustomerId>
+                                    <xsl:value-of select="$Start/wsdlPfx:CustomerRiskReadInput/Input/ns3:CustomerRiskReadRequest/ns3:CustomerId"/>
+                                </ns3:CustomerId>
+                            </xsl:if>
+                            <xsl:choose>
+                                <xsl:when test="string-length($ESI_Call_CustRiskRead/root/ns3:CustomerRiskReadResponse/ns4:ErrorResponse/ns4:Error_SourceErrCode)>0">
+                                    <xsl:copy-of select="$ESI_Call_CustRiskRead/root/ns3:CustomerRiskReadResponse/ns4:ErrorResponse"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <ns4:ErrorResponse>
+                                        <ns4:Error_SourceSystem>
+                                            <xsl:value-of select="'TIBCO'"/>
+                                        </ns4:Error_SourceSystem>
+                                        <ns4:Error_SourceErrCode>
+                                            <xsl:value-of select="$ErrorHandler/ns13:ExceptionRequest/ExceptionCode"/>
+                                        </ns4:Error_SourceErrCode>
+                                        <xsl:if test="$ErrorHandler/ns13:ExceptionRequest/StackTrace">
+                                            <ns4:Error_SourceErrDesc>
+                                                <xsl:value-of select="$ErrorHandler/ns13:ExceptionRequest/StackTrace"/>
+                                            </ns4:Error_SourceErrDesc>
+                                        </xsl:if>
+                                    </ns4:ErrorResponse>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </ns3:CustomerRiskReadResponse>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </Output>
+        </wsdlPfx:CustomerRiskReadOutput>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="wsdlPfx:CustomerRiskReadOutput"/>
+    <pd:endX>936</pd:endX>
+    <pd:endY>82</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1494936499344</pd:targetNamespace>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>545</pd:x>
+        <pd:y>202</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>699</pd:x>
+        <pd:y>202</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:ExceptionRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/CRM/Query/CustomerRiskRead/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                </ns2:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+                <StackTrace>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </StackTrace>
+            </ns13:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>846</pd:x>
+        <pd:y>202</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/CRM/Query/CustomerRiskRead/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                    </xsl:if>
+                    <xsl:if test="$Start/wsdlPfx:CustomerRiskReadInput/Input/ns3:CustomerRiskReadRequest/ns3:CustomerId">
+                        <ns2:InterfaceID>
+                            <xsl:value-of select="$Start/wsdlPfx:CustomerRiskReadInput/Input/ns3:CustomerRiskReadRequest/ns3:CustomerId"/>
+                        </ns2:InterfaceID>
+                    </xsl:if>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($ErrorHandler/ns13:ExceptionRequest)"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="tib:render-xml($_error/ns1:ErrorReport)"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ESI_Call_CustRiskRead">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>570</pd:x>
+        <pd:y>82</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/CRM/Query/CustomerRiskRead/HelperProcess/ESI_Call_CustomerRiskRead.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:copy-of select="$Start/wsdlPfx:CustomerRiskReadInput/Input/ns3:CustomerRiskReadRequest"/>
+                <TransactionId>
+                    <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                </TransactionId>
+                <StartTimeStamp>
+                    <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetTransactionID">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>218</pd:x>
+        <pd:y>82</pd:y>
+        <config>
+            <processName>/CommonProcesses/Utilities/GUID.process</processName>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>375</pd:x>
+        <pd:y>82</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/CRM/Query/CustomerRiskRead/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </ns2:TransactionID>
+                    <xsl:if test="$Start/wsdlPfx:CustomerRiskReadInput/Input/ns3:CustomerRiskReadRequest/ns3:CustomerId">
+                        <ns2:InterfaceID>
+                            <xsl:value-of select="$Start/wsdlPfx:CustomerRiskReadInput/Input/ns3:CustomerRiskReadRequest/ns3:CustomerId"/>
+                        </ns2:InterfaceID>
+                    </xsl:if>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/wsdlPfx:CustomerRiskReadInput/Input/ns3:CustomerRiskReadRequest)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>780</pd:x>
+        <pd:y>82</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/CRM/Query/CustomerRiskRead/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </ns2:TransactionID>
+                    <xsl:if test="$Start/wsdlPfx:CustomerRiskReadInput/Input/ns3:CustomerRiskReadRequest/ns3:CustomerId">
+                        <ns2:InterfaceID>
+                            <xsl:value-of select="$Start/wsdlPfx:CustomerRiskReadInput/Input/ns3:CustomerRiskReadRequest/ns3:CustomerId"/>
+                        </ns2:InterfaceID>
+                    </xsl:if>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($ESI_Call_CustRiskRead/root/ns3:CustomerRiskReadResponse)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetTransactionID</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetTransactionID</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>ESI_Call_CustRiskRead</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ESI_Call_CustRiskRead</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

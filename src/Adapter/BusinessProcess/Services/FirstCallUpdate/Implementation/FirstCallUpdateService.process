@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/DeployedVarsType" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns1="http://www.tibco.com/xmlns/ae2xsd/2002/05/ae/FileAdapter/wire/FileAdapterConfiguration" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns4="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:ns3="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/FirstCallUpdateRequest.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/FirstCallUpdateRequest.xsd" schemaLocation="/BusinessSchemas/Services/Modification/FirstCallUpdate/FirstCallUpdateRequest.xsd"/>
+    <pd:name>BusinessProcess/Services/FirstCallUpdate/Implementation/FirstCallUpdateService.process</pd:name>
+    <pd:startName>Adapter Subscriber</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="Adapter Subscriber">
+        <pd:type>com.tibco.plugin.ae.AESubscriberActivity</pd:type>
+        <pd:resourceType>ae.aepalette.aeSubscription</pd:resourceType>
+        <pd:x>157</pd:x>
+        <pd:y>68</pd:y>
+        <config>
+            <ae.aepalette.sharedProperties.transportChoice>default</ae.aepalette.sharedProperties.transportChoice>
+            <ae.aepalette.sharedProperties.useRequestReply>false</ae.aepalette.sharedProperties.useRequestReply>
+            <ae.aepalette.sharedProperties.adapterService>/BusinessProcess/Services/FirstCallUpdate/FileAdapterConfiguration.adfiles#adapterService.FirstCallUpdateService</ae.aepalette.sharedProperties.adapterService>
+            <tpPluginEndpointName>FirstCallUpdateServiceEndPoint</tpPluginEndpointName>
+            <ae.aepalette.sharedProperties.transportType>jmsQueue</ae.aepalette.sharedProperties.transportType>
+            <ae.aepalette.sharedProperties.jmsTopicSessionTopic>%%Domain%%.%%Deployment%%.FileAdapter.FileAdapterConfiguration.FirstCallUpdateService</ae.aepalette.sharedProperties.jmsTopicSessionTopic>
+            <ae.aepalette.sharedProperties.jmsTopicSessionConnectionFactory>TopicConnectionFactory</ae.aepalette.sharedProperties.jmsTopicSessionConnectionFactory>
+            <ae.aepalette.sharedProperties.jmsSessionUsername>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Username%%</ae.aepalette.sharedProperties.jmsSessionUsername>
+            <ae.aepalette.sharedProperties.jmsSessionProviderURL>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUrl%%</ae.aepalette.sharedProperties.jmsSessionProviderURL>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <ae.aepalette.sharedProperties.isAutoConfirm>true</ae.aepalette.sharedProperties.isAutoConfirm>
+            <ae.aepalette.sharedProperties.jmsQueueSessionQueue>%%Domain%%.%%Deployment%%.FileAdapter.FileAdapterConfiguration.FirstCallUpdateService</ae.aepalette.sharedProperties.jmsQueueSessionQueue>
+            <ae.aepalette.sharedProperties.jmsQueueSessionConnectionFactory>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/QueueConnectionFactory%%</ae.aepalette.sharedProperties.jmsQueueSessionConnectionFactory>
+            <ae.aepalette.sharedProperties.jmsSessionPassword>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Password%%</ae.aepalette.sharedProperties.jmsSessionPassword>
+            <ae.aepalette.sharedProperties.outputMeta>
+                <aeMeta>/AESchemas/ae/FileAdapter/wire/FileAdapterConfiguration.aeschema#class.DelimitedFileRecord</aeMeta>
+            </ae.aepalette.sharedProperties.outputMeta>
+            <ae.aepalette.sharedProperties.autoGenClientID>true</ae.aepalette.sharedProperties.autoGenClientID>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>805</pd:endX>
+    <pd:endY>68</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442432986712</pd:targetNamespace>
+    <pd:activity name="GUId">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>287</pd:x>
+        <pd:y>68</pd:y>
+        <config>
+            <processName>/CommonProcesses/Utilities/GUID.process</processName>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>619</pd:x>
+        <pd:y>68</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/FirstCallUpdate/Request_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <InDataxsdString ref="pfx:FirstCallUpdateRequest"/>
+        </config>
+        <pd:inputBindings>
+            <ns4:ActivityInput>
+                <OtherProperties>
+                    <TransactionID>
+                        <xsl:value-of select="$GUId/GUID/TransactionID"/>
+                    </TransactionID>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GUId/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                    <CorrelationId>
+                        <xsl:value-of select="$GUId/GUID/TransactionID"/>
+                    </CorrelationId>
+                </OtherProperties>
+                <Body>
+                    <xsl:copy-of select="$NativeToCDM/pfx:FirstCallUpdateRequest"/>
+                </Body>
+            </ns4:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="NativeToCDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>431</pd:x>
+        <pd:y>67</pd:y>
+        <config>
+            <element ref="pfx:FirstCallUpdateRequest"/>
+        </config>
+        <pd:inputBindings>
+            <pfx:FirstCallUpdateRequest>
+                <ns:BusinessMessageHeader>
+                    <Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </Timestamp>
+                    <ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ApplicationID>
+                    <ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/FirstCallUpdate/ComponentName"/>
+                    </ComponentName>
+                    <Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </Hostname>
+                    <TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/NOTIFICATION"/>
+                    </TransactionDomain>
+                    <TransactionID>
+                        <xsl:value-of select="$GUId/GUID/TransactionID"/>
+                    </TransactionID>
+                </ns:BusinessMessageHeader>
+                <ns:MSISDN>
+                    <xsl:value-of select="$Adapter-Subscriber/ProcessStarterOutput/body/ns1:DelimitedFileRecord/MSISDN"/>
+                </ns:MSISDN>
+                <pfx:Date>
+                    <xsl:value-of select="concat(&#xA;tib:right(tib:left($Adapter-Subscriber/ProcessStarterOutput/body/ns1:DelimitedFileRecord/FirstCallDate,6),2),&#xA;'/',&#xA;tib:right(tib:left($Adapter-Subscriber/ProcessStarterOutput/body/ns1:DelimitedFileRecord/FirstCallDate, 8),2),&#xA;'/',&#xA;tib:left($Adapter-Subscriber/ProcessStarterOutput/body/ns1:DelimitedFileRecord/FirstCallDate,4),&#xA;' ',&#xA;tib:right(tib:left($Adapter-Subscriber/ProcessStarterOutput/body/ns1:DelimitedFileRecord/FirstCallDate,10),2),&#xA;':',&#xA;tib:right(tib:left($Adapter-Subscriber/ProcessStarterOutput/body/ns1:DelimitedFileRecord/FirstCallDate,12),2),&#xA;':',&#xA;tib:right(tib:left($Adapter-Subscriber/ProcessStarterOutput/body/ns1:DelimitedFileRecord/FirstCallDate, 14),2))"/>
+                </pfx:Date>
+            </pfx:FirstCallUpdateRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>407</pd:x>
+        <pd:y>169</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>633</pd:x>
+        <pd:y>167</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInput>
+                <message>
+                    <xsl:value-of select="tib:render-xml($Catch/exceptiondata)"/>
+                </message>
+            </ns3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Adapter Subscriber</pd:from>
+        <pd:to>GUId</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>NativeToCDM</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GUId</pd:from>
+        <pd:to>NativeToCDM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

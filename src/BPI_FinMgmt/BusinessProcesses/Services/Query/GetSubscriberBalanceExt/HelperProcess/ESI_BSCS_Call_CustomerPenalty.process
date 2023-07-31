@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:pfx11="http://siebel.com/CustomUI" xmlns:pfx10="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:pfx5="http://ericsson.com/services/ws_CMI_5/paymentprofileread" xmlns:pfx4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" xmlns:pfx2="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" xmlns:pfx9="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetPrepaidBalanceRequest.xsd" xmlns:pfx8="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/BalanceQuery.xsd" xmlns:pfx7="http://xmlns.zain.com/BSS/ESB/CDM/GetChargeHistory" xmlns:pfx6="http://ericsson.com/services/ws_CMI_4/financialtransactionwrite" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns5="http://www.siebel.com/xml/CBiO2%20Commitment%20Query%20IO" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns13="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://xmlns.zain.com/BSS/ESB/CDM/Base" xmlns:ns3="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileResponse.xsd"/>
+    <xsd:import namespace="http://ericsson.com/services/ws_CMI_5/paymentprofileread" schemaLocation="/BusinessWSDLS/Services/BSCS/PaymentProfileRead/PaymentProfileReadService.wsdl"/>
+    <xsd:import namespace="http://ericsson.com/services/ws_CMI_4/financialtransactionwrite" schemaLocation="/BusinessWSDLS/Services/BSCS/FinancialTransactionWrite/FinancialTransactionWriteService_wsdl.wsdl"/>
+    <xsd:import namespace="http://xmlns.zain.com/BSS/ESB/CDM/GetChargeHistory" schemaLocation="/BusinessSchemas/Services/Applications/CRM/Query/GetChargeHistory/GetChargeHistory.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetPrepaidBalanceRequest.xsd" schemaLocation="/BusinessSchemas/Services/Query/GetPrepaidBalance/GetPrepaidBalanceRquest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/BalanceQuery.xsd" schemaLocation="/BusinessSchemas/Services/Query/BalanceQuery/BalanceQuery.xsd"/>
+    <xsd:import namespace="http://siebel.com/CustomUI" schemaLocation="/BusinessWSDLS/Services/CRM/CBiO2CommitmentQueryWorkflow.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Query/GetSubscriberBalanceExt/HelperProcess/ESI_BSCS_Call_CustomerPenalty.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx8:BalanceRequest"/>
+                    <xsd:element name="TrackingId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>27</pd:startX>
+    <pd:startY>176</pd:startY>
+    <pd:returnBindings>
+        <xsl:copy-of select="$MapBalance/pfx8:BalanceResponse"/>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx8:BalanceResponse"/>
+    <pd:endX>1019</pd:endX>
+    <pd:endY>143</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442397719743</pd:targetNamespace>
+    <pd:activity name="Common_EAI_EMSSender_WithRetry">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>359</pd:x>
+        <pd:y>173</pd:y>
+        <config>
+            <processName>/CommonProcesses/HelperProcesses/Common_EAI_EMSSendReceive.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:choose>
+                    <xsl:when test="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Query/GetSubscriberBalanceExt/QueryPenaltyFrom=&quot;CRM&quot;">
+                        <MessageBody>
+                            <xsl:value-of select="tib:render-xml($MapCRMRequest/pfx11:QueryCommitmentService_Input)"/>
+                        </MessageBody>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <MessageBody>
+                            <xsl:value-of select="tib:render-xml($Start/root/pfx8:BalanceRequest)"/>
+                        </MessageBody>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TrackingId"/>
+                </TransactionID>
+                <xsl:choose>
+                    <xsl:when test="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Query/GetSubscriberBalanceExt/QueryPenaltyFrom=&quot;CRM&quot;">
+                        <EMS_DestinationQueue>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Query/GetSubscriberBalanceExt/ESI_CRM_PenaltyQueue"/>
+                        </EMS_DestinationQueue>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <EMS_DestinationQueue>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Query/GetSubscriberBalanceExt/ESI_CustomerPenalty"/>
+                        </EMS_DestinationQueue>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <TransactionDomain>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                </TransactionDomain>
+                <TransactionType>
+                    <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                </TransactionType>
+                <ReplyToEngineID>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/EngineID"/>
+                </ReplyToEngineID>
+                <ReplyToDeployment>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                </ReplyToDeployment>
+                <xsl:if test="$Start/root/StartTimeStamp">
+                    <StartTimeStamp>
+                        <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </xsl:if>
+                <RequestTimeOut>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Query/GetSubscriberBalanceExt/TimeoutPenaltyQuery"/>
+                </RequestTimeOut>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_CDM_Request">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>120</pd:x>
+        <pd:y>54</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Query/GetSubscriberBalanceExt/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/pfx8:BalanceRequest/pfx8:CustomerId"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx8:BalanceRequest)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_CDM_Response">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>778</pd:x>
+        <pd:y>56</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Query/GetSubscriberBalanceExt/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/pfx8:BalanceRequest/pfx8:CustomerId"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="$Common_EAI_EMSSender_WithRetry/ResponseData"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="tib:render-xml($ParseResponse/pfx8:BalanceResponse)"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseResponse">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>484</pd:x>
+        <pd:y>58</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx8:BalanceResponse"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Common_EAI_EMSSender_WithRetry/ResponseData"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>778</pd:x>
+        <pd:y>217</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns13:ActivityInput>
+                <message>
+                    <xsl:value-of select="$ParseResponse/pfx8:BalanceResponse/pfx10:ErrorResponse/pfx10:Error_SourceErrDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$ParseResponse/pfx8:BalanceResponse/pfx10:ErrorResponse/pfx10:Error_SourceErrCode"/>
+                </messageCode>
+            </ns13:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseResponseCRMResponse">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>507</pd:x>
+        <pd:y>172</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx11:QueryCommitmentService_Output"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Common_EAI_EMSSender_WithRetry/ResponseData"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="MapBalance">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>898</pd:x>
+        <pd:y>144</pd:y>
+        <config>
+            <element ref="pfx8:BalanceResponse"/>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="string-length(tib:trim($ParseResponse/pfx8:BalanceResponse))>0">
+                    <xsl:copy-of select="$ParseResponse/pfx8:BalanceResponse"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <pfx8:BalanceResponse>
+                        <pfx8:ResultSet>
+                            <pfx8:Record>
+                                <xsl:if test="$Start/root/pfx8:BalanceRequest/pfx8:MSISDN">
+                                    <pfx8:MSISDN>
+                                        <xsl:value-of select="$Start/root/pfx8:BalanceRequest/pfx8:MSISDN"/>
+                                    </pfx8:MSISDN>
+                                </xsl:if>
+                                <pfx8:PenaltyAmnt>
+                                    <xsl:value-of select="sum($ParseResponseCRMResponse/pfx11:QueryCommitmentService_Output/ns5:ListOfCbio2CommitmentQueryIo/ns5:ServiceAgreement/ns5:ListOfCbio2LineItem/ns5:Cbio2LineItem/ns5:CBiO2PenaltyAmount)+$ParseResponseCRMResponse/pfx11:QueryCommitmentService_Output/pfx11:Dvic_Gft_Pnlty_Per_Line"/>
+                                </pfx8:PenaltyAmnt>
+                            </pfx8:Record>
+                        </pfx8:ResultSet>
+                    </pfx8:BalanceResponse>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>177</pd:x>
+        <pd:y>177</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="MapCRMRequest">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>264</pd:x>
+        <pd:y>72</pd:y>
+        <config>
+            <element ref="pfx11:QueryCommitmentService_Input"/>
+        </config>
+        <pd:inputBindings>
+            <pfx11:QueryCommitmentService_Input>
+                <pfx11:User_Name>
+                    <xsl:value-of select="$Start/root/pfx8:BalanceRequest/pfx8:PageSize"/>
+                </pfx11:User_Name>
+                <pfx11:MSISDN>
+                    <xsl:value-of select="$Start/root/pfx8:BalanceRequest/pfx8:MSISDN"/>
+                </pfx11:MSISDN>
+            </pfx11:QueryCommitmentService_Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log_CDM_Request</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Update/PaymentTransaction/log_flag='true'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CDM_Request</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Common_EAI_EMSSender_WithRetry</pd:from>
+        <pd:to>ParseResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CDM_Response</pd:from>
+        <pd:to>MapBalance</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseResponse</pd:from>
+        <pd:to>Log_CDM_Response</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Update/PaymentTransaction/log_flag='true'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseResponse</pd:from>
+        <pd:to>MapBalance</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseResponse</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$ParseResponse/pfx8:BalanceResponse/pfx10:ErrorResponse/pfx10:Error_SourceErrCode!=1</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Common_EAI_EMSSender_WithRetry</pd:from>
+        <pd:to>ParseResponseCRMResponse</pd:to>
+        <pd:xpathDescription>CRM</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Query/GetSubscriberBalanceExt/QueryPenaltyFrom="CRM"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseResponseCRMResponse</pd:from>
+        <pd:to>Log_CDM_Response</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseResponseCRMResponse</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:xpathDescription>err</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$ParseResponseCRMResponse/pfx11:QueryCommitmentService_Output/pfx11:ErrorSourceErrCode!=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapBalance</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>MapCRMRequest</pd:to>
+        <pd:xpathDescription>CRMCall</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Query/GetSubscriberBalanceExt/QueryPenaltyFrom="CRM"
+and
+string-length($Start/root/pfx8:BalanceRequest/pfx8:MSISDN)&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapCRMRequest</pd:from>
+        <pd:to>Common_EAI_EMSSender_WithRetry</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>Common_EAI_EMSSender_WithRetry</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:label>
+        <pd:name>Label</pd:name>
+        <pd:description>A Branch is being added in order to pull the data from CRM instead of BSCS.
+On Commitment related fix in GetPostpaidBalance -&gt; GetSubscriberBalanceExt</pd:description>
+        <pd:x>482</pd:x>
+        <pd:y>11</pd:y>
+        <pd:width>435</pd:width>
+        <pd:height>33</pd:height>
+        <pd:fontColor>-16777216</pd:fontColor>
+        <pd:color>-10027213</pd:color>
+        <pd:type>solid</pd:type>
+        <pd:thickness>0</pd:thickness>
+        <pd:fade>true</pd:fade>
+    </pd:label>
+</pd:ProcessDefinition>

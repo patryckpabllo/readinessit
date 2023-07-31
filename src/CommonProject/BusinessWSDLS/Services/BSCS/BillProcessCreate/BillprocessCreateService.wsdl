@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch0="http://lhsgroup.com/lhsws/money" xmlns:sch1="http://lhsgroup.com/lhsws/svlany" xmlns:sch2="http://ericsson.com/services/ws_CIL_5/sessionchange" xmlns:sch3="http://ericsson.com/services/ws_CIL_5/billprocesscreate" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ericsson.com/services/ws_CIL_5" targetNamespace="http://ericsson.com/services/ws_CIL_5">
+  <wsdl:types>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lhsws="http://lhsgroup.com/lhsws/money" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://lhsgroup.com/lhsws/money"><xs:complexType name="money"><xs:sequence><xs:element name="amount" type="xs:double"/><xs:element name="currency" type="xs:string"/></xs:sequence></xs:complexType></xs:schema>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lhsws="http://lhsgroup.com/lhsws/svlany" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://lhsgroup.com/lhsws/svlany"><xs:complexType name="svlany"><xs:sequence><xs:element name="content" type="xs:string"/></xs:sequence></xs:complexType></xs:schema>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsi="http://ericsson.com/services/ws_CIL_5/sessionchange" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CIL_5/sessionchange"><xs:complexType name="valuesListpartRequest"><xs:all><xs:element name="key" type="xs:string"><xs:annotation><xs:documentation>
+													<![CDATA[<p> Name of the value that shall be changed. See release dependent documentation for supported keys</p>]]>
+											</xs:documentation></xs:annotation></xs:element><xs:element name="value" type="xs:string"><xs:annotation><xs:documentation>
+													<![CDATA[<p>New value for a named value.</p>]]>
+											</xs:documentation></xs:annotation></xs:element></xs:all></xs:complexType><xs:complexType name="valuesRequest"><xs:sequence><xs:element maxOccurs="unbounded" name="item" type="wsi:valuesListpartRequest"/></xs:sequence></xs:complexType><xs:complexType name="sessionChangeRequest"><xs:all><xs:annotation><xs:documentation>
+						<![CDATA[<p>
+						
+						</p>]]>
+				</xs:documentation></xs:annotation><xs:element minOccurs="0" name="values" type="wsi:valuesRequest"/></xs:all></xs:complexType></xs:schema>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:sessionchange="http://ericsson.com/services/ws_CIL_5/sessionchange" xmlns:wsi="http://ericsson.com/services/ws_CIL_5/billprocesscreate" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CIL_5/billprocesscreate"><xs:import namespace="http://ericsson.com/services/ws_CIL_5/sessionchange"/><xs:element name="billprocessCreateRequest" type="wsi:billprocessCreateRequest"/><xs:element name="billprocessCreateResponse" type="wsi:billprocessCreateResponse"/><xs:complexType name="resultListListpartResponse"><xs:all><xs:element minOccurs="0" name="csId" type="xs:long"><xs:annotation><xs:documentation>
+													<![CDATA[<p>Customers private key</p>]]>
+											</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="csIdPub" type="xs:string"><xs:annotation><xs:documentation>
+													<![CDATA[<p>Customers public key</p>]]>
+											</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="coId" type="xs:long"><xs:annotation><xs:documentation>
+													<![CDATA[<p>	Private key of contract processed in CDS request or a
+													CRP request.
+													Remains empty for sub types 'D', 'I' and 'B'.</p>]]>
+											</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="coIdPub" type="xs:string"><xs:annotation><xs:documentation>
+													<![CDATA[<p>Public key of contract processed in CDS request or a
+													CRP request.
+													Remains empty for sub types 'D', 'I' and 'B'.</p>]]>
+											</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="response" type="xs:string"><xs:annotation><xs:documentation>
+													<![CDATA[<p>
+													
+													A status message that indicates the success or
+													failure of a request creation (per customer/contract).
+													</p>]]>
+											</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="success" type="xs:boolean"><xs:annotation><xs:documentation>
+													<![CDATA[<p>
+													If 'true' customer/contract is part of new request. If false or
+													ommitted the customer/contract is NOT part of the new request.
+													</p>]]>
+											</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="alternateBillingRequestNumber" type="xs:long"><xs:annotation><xs:documentation>
+													<![CDATA[<p>
+													Billing Request Number of the concurrently existing bill request for the customer.
+													This argument is not filled for CDS requests.
+													</p>]]>
+											</xs:documentation></xs:annotation></xs:element></xs:all></xs:complexType><xs:complexType name="resultListResponse"><xs:sequence><xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="wsi:resultListListpartResponse"/></xs:sequence></xs:complexType><xs:complexType name="billprocessCreateResponse"><xs:all><xs:element minOccurs="0" name="billingRequestNumber" type="xs:long"><xs:annotation><xs:documentation>
+							<![CDATA[<p>
+							A unique request number for a newly created request (of all kinds).
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="status" type="xs:long"><xs:annotation><xs:documentation>
+							<![CDATA[<p> A status code that indicates,
+							whether the request was already (asynchronously)
+							processed or not.
+							0:	Request successfully finished.
+							1:	Request not found.
+							2:	Request processing not yet started.
+							3:	Request restarted.
+							4:	Request in work (or terminated).
+							5:	Request stopped.
+							6:	Request finished incomplete.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="statusShortDescr" type="xs:string"><xs:annotation><xs:documentation>
+							<![CDATA[<p> A short description corresponding to the
+							status.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="resultList" type="wsi:resultListResponse"/></xs:all></xs:complexType><xs:complexType name="contractKeyCollectionListpartRequest"><xs:all><xs:element minOccurs="0" name="coId" type="xs:long"><xs:annotation><xs:documentation>
+													<![CDATA[<p>Contract's private key</p>]]>
+											</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="coIdPub" type="xs:string"><xs:annotation><xs:documentation>
+													<![CDATA[<p>Contract's public key</p>]]>
+											</xs:documentation></xs:annotation></xs:element></xs:all></xs:complexType><xs:complexType name="contractKeyCollectionRequest"><xs:sequence><xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="wsi:contractKeyCollectionListpartRequest"/></xs:sequence></xs:complexType><xs:complexType name="customerKeyCollectionListpartRequest"><xs:all><xs:element minOccurs="0" name="csId" type="xs:long"><xs:annotation><xs:documentation>
+													<![CDATA[<p>Customers private key</p>]]>
+											</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="csIdPub" type="xs:string"><xs:annotation><xs:documentation>
+													<![CDATA[<p>Customers public key</p>]]>
+											</xs:documentation></xs:annotation></xs:element></xs:all></xs:complexType><xs:complexType name="customerKeyCollectionRequest"><xs:sequence><xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="wsi:customerKeyCollectionListpartRequest"/></xs:sequence></xs:complexType><xs:complexType name="inputAttributes"><xs:all><xs:element name="requestType" type="xs:string"><xs:annotation><xs:documentation>
+							<![CDATA[<p> Specifies a billing ('B') or a CDS ('C') request.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element name="requestSubType" type="xs:string"><xs:annotation><xs:documentation>
+							<![CDATA[<p> (Used for IM/OD/BC).
+							request run mode:
+							I="Immediate request",
+							D="On demand request",
+							B="Bill Cycle request"
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="customerKeyCollection" type="wsi:customerKeyCollectionRequest"/><xs:element minOccurs="0" name="contractKeyCollection" type="wsi:contractKeyCollectionRequest"/><xs:element minOccurs="0" name="contractTypeId" type="xs:long"><xs:annotation><xs:documentation>
+							<![CDATA[<p>Contract type. Only considered for BP collection reports (CRP) requests.</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="billCycle" type="xs:string"><xs:annotation><xs:documentation>
+							<![CDATA[<p> (Used for BC). A public bill cycle key.
+							Mandatory, if request sub type is 'B'.</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="periodStartDate" type="xs:dateTime"><xs:annotation><xs:documentation>
+							<![CDATA[<p> (Used for IM/OD/BC).
+							Used for type CDS: start date of period for which CDS has to be created.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="periodEndDate" type="xs:dateTime"><xs:annotation><xs:documentation>
+							<![CDATA[<p> (Used for IM/OD/BC).
+							End date and time of the billing period. For OD and BC, the time
+							is truncated. If the time part is zero for mode IM, then implicitly
+							the mode is changed to OD in the Billing Server.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="information" type="xs:boolean"><xs:annotation><xs:documentation>
+							<![CDATA[<p> (Used for IM/OD/BC).
+							If 'true' a bill information run is performed for
+							the specified bill run.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="simulation" type="xs:boolean"><xs:annotation><xs:documentation>
+							<![CDATA[<p> (Used for IM/OD/BC).
+							If 'true' the bill run will only be
+							simulated. For CDS requests, the
+							simulation flag has the following
+							meaning: If set to false, the
+							resulting document will be mailed to
+							the customer, otherwise it will only be
+							made available for online display.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="referenceDate" type="xs:dateTime"><xs:annotation><xs:documentation>
+							<![CDATA[<p> (Used for IM/OD/BC).
+							If provided, this date will be printed on billing
+							documents.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="postingPeriod" type="xs:string"><xs:annotation><xs:documentation>
+							<![CDATA[<p> (Used for IM/OD/BC).
+							Year(Y) and month (M), format MUST be YYYYMM.
+							Used by Accounting. The period where billed charges
+							are posted to.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="acknowledgement" type="xs:boolean"><xs:annotation><xs:documentation>
+							<![CDATA[<p> (Used for IM/OD/BC).
+							If 'true', each customer in the list
+							can acknowledge the receipt of
+							his (invoice) document after retrieval with another
+							command. If configured, the acknowledgment will suppress
+							the print-out of the bill documents. If true, no large
+							account member must be part of the customer list.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="collectInd" type="xs:boolean"><xs:annotation><xs:documentation>
+							<![CDATA[<p>
+							Is only considered for bill requests and if
+							REQUEST_TYPE=B and REQUEST_SUB_TYPE=D.
+							If set to true, then the customers of the list are stored
+							in a collection table (collection phase) to be used in
+							a (bill) request sometimes later (request creation phase),
+							i.e. the (bill) request creation is postponed.
+							A concurrency check is NOT perfomed in 'collection' phase.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="ignoreBuInd" type="xs:boolean"><xs:annotation><xs:documentation>
+							<![CDATA[<p>
+							Is only considered for bill requests and if
+							REQUEST_TYPE=B and REQUEST_SUB_TYPE=D or I.
+							If set, the user-session business unit is not
+							considered. The set of business units the
+							user is permitted for is still considered.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="allBusinessUnits" type="xs:boolean"><xs:annotation><xs:documentation>
+							<![CDATA[<p>
+							This flag is only considered for CRP (Business Partner Collection Reports).
+							Depending on this flag all BUs or only the current BU is used.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="disableInvoiceForwarding" type="xs:boolean"><xs:annotation><xs:documentation>
+							<![CDATA[<p>
+							Indicates if invoices shall be always generated
+							independent of small invoice amounts configuration.
+							</p>]]>
+					</xs:documentation></xs:annotation></xs:element></xs:all></xs:complexType><xs:complexType name="billprocessCreateRequest"><xs:all><xs:element minOccurs="0" name="inputAttributes" type="wsi:inputAttributes"/><xs:element minOccurs="0" name="sessionChangeRequest" type="sessionchange:sessionChangeRequest"/></xs:all></xs:complexType></xs:schema>
+  </wsdl:types>
+  <wsdl:message name="billprocessCreateRequest">
+    <wsdl:part element="sch3:billprocessCreateRequest" name="billprocessCreateRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="billprocessCreateResponse">
+    <wsdl:part element="sch3:billprocessCreateResponse" name="billprocessCreateResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="BillprocessCreateService">
+    <wsdl:operation name="billprocessCreate">
+      <wsdl:input message="tns:billprocessCreateRequest" name="billprocessCreateRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:billprocessCreateResponse" name="billprocessCreateResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BillprocessCreateServiceSoap11" type="tns:BillprocessCreateService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="billprocessCreate">
+      <soap:operation soapAction="billprocessCreate"/>
+      <wsdl:input name="billprocessCreateRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="billprocessCreateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="BillprocessCreateService">
+    <wsdl:port binding="tns:BillprocessCreateServiceSoap11" name="BillprocessCreateServiceSoap11">
+      <soap:address location="http://10.103.23.91:20103/wsi/services/ws_CIL_5_BillprocessCreateService.wsdl"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

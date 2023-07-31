@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EntitleServer/EOM_NotifySES.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EntitleServer/EOM_NotifySES.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/NotifySES/EOM_NotifySES.xsd"/>
+    <pd:name>Test/NotifyParseRequest.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="request" type="xsd:string"/>
+    </pd:startType>
+    <pd:startX>170</pd:startX>
+    <pd:startY>106</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>470</pd:endX>
+    <pd:endY>106</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1596194664660</pd:targetNamespace>
+    <pd:activity name="XML_JSON">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>313</pd:x>
+        <pd:y>106</pd:y>
+        <config>
+            <fileName>NotifyParseRequestXML_JSON</fileName>
+            <packageName>Test.NotifyParseRequest</packageName>
+            <fullsource>package Test.NotifyParseRequest;
+import java.util.*;
+import java.io.*;
+import org.json.JSONObject;
+import org.json.XML;
+import org.json.JSONArray;
+
+public class NotifyParseRequestXML_JSON{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String jsonIn = "";
+	protected String xmlIn = "";
+	protected String xmlOut = "";
+	protected String jsonOut = "";
+	public String getjsonIn() {
+		return jsonIn;
+	}
+	public void setjsonIn(String val) {
+		jsonIn = val;
+	}
+	public String getxmlIn() {
+		return xmlIn;
+	}
+	public void setxmlIn(String val) {
+		xmlIn = val;
+	}
+	public String getxmlOut() {
+		return xmlOut;
+	}
+	public void setxmlOut(String val) {
+		xmlOut = val;
+	}
+	public String getjsonOut() {
+		return jsonOut;
+	}
+	public void setjsonOut(String val) {
+		jsonOut = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public NotifyParseRequestXML_JSON() {
+	}
+	public void invoke() throws Exception {
+	String xmlOt="";
+	String jsonOt="";
+	if(getjsonIn()!=null &amp; getjsonIn()!="")
+	{
+		JSONObject jObj = new JSONObject(getjsonIn());
+		xmlOt=XML.toString(jObj);
+		setxmlOut(xmlOt);
+	}
+
+	if(getxmlIn()!=null &amp; getxmlIn()!="")
+	{
+		
+		JSONObject jObj1 = XML.toJSONObject(getxmlIn());
+    try{
+                   if(jObj1.getJSONArray("plans-list").length()&gt;0){
+     	        	//jObj1.getJSONArray("plans-list").remove(0);
+                        JSONArray Jr1 =jObj1.getJSONArray("plans-list");
+                                   Jr1.remove(0);
+                        //////////
+                        JSONObject jsonObject = Jr1.optJSONObject(0);
+                        JSONArray jsonArray1 = jsonObject.getJSONArray("plan-group-options");
+                        jsonArray1.remove(0);}
+                        ///////////
+	setjsonOut((jObj1.toString()));
+       }
+catch(Exception e){
+setjsonOut((jObj1.toString()));
+                  }
+	}
+/* Available Variables: DO NOT MODIFY
+	In  : String jsonIn
+	In  : String xmlIn
+	Out : String xmlOut
+	Out : String jsonOut
+* Available Variables: DO NOT MODIFY *****/
+
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>jsonIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>xmlIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>xmlOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>jsonOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>NotifyParseRequestXML_JSON</name>
+                    <byteCode>yv66vgAAADQAXgkAFwA1CQAXADYJABcANwkAFwA4CgAYADkIADoKABcAOwcAPAoACAA9CgA+AD8KABcAQAoAFwBBCgA+AEIIAEMKAAgARAoARQBGCgBFAEcKAEUASAgASQoACABKCgAXAEsHAEwHAE0HAE4BAAZqc29uSW4BABJMamF2YS9sYW5nL1N0cmluZzsBAAV4bWxJbgEABnhtbE91dAEAB2pzb25PdXQBAAlnZXRqc29uSW4BABQoKUxqYXZhL2xhbmcvU3RyaW5nOwEABENvZGUBAA9MaW5lTnVtYmVyVGFibGUBAAlzZXRqc29uSW4BABUoTGphdmEvbGFuZy9TdHJpbmc7KVYBAAhnZXR4bWxJbgEACHNldHhtbEluAQAJZ2V0eG1sT3V0AQAJc2V0eG1sT3V0AQAKZ2V0anNvbk91dAEACnNldGpzb25PdXQBAAY8aW5pdD4BAAMoKVYBAAZpbnZva2UBAA1TdGFja01hcFRhYmxlBwBPBwBNBwA8BwBMAQAKRXhjZXB0aW9ucwEAClNvdXJjZUZpbGUBAB9Ob3RpZnlQYXJzZVJlcXVlc3RYTUxfSlNPTi5qYXZhDAAZABoMABsAGgwAHAAaDAAdABoMACoAKwEAAAwAHgAfAQATb3JnL2pzb24vSlNPTk9iamVjdAwAKgAjBwBQDABRAFIMACcAIwwAJAAfDABTAFQBAApwbGFucy1saXN0DABVAFYHAFcMAFgAWQwAWgBbDABcAF0BABJwbGFuLWdyb3VwLW9wdGlvbnMMAFEAHwwAKQAjAQATamF2YS9sYW5nL0V4Y2VwdGlvbgEAMlRlc3QvTm90aWZ5UGFyc2VSZXF1ZXN0L05vdGlmeVBhcnNlUmVxdWVzdFhNTF9KU09OAQAQamF2YS9sYW5nL09iamVjdAEAEGphdmEvbGFuZy9TdHJpbmcBAAxvcmcvanNvbi9YTUwBAAh0b1N0cmluZwEAJihMamF2YS9sYW5nL09iamVjdDspTGphdmEvbGFuZy9TdHJpbmc7AQAMdG9KU09OT2JqZWN0AQApKExqYXZhL2xhbmcvU3RyaW5nOylMb3JnL2pzb24vSlNPTk9iamVjdDsBAAxnZXRKU09OQXJyYXkBACgoTGphdmEvbGFuZy9TdHJpbmc7KUxvcmcvanNvbi9KU09OQXJyYXk7AQASb3JnL2pzb24vSlNPTkFycmF5AQAGbGVuZ3RoAQADKClJAQAGcmVtb3ZlAQAVKEkpTGphdmEvbGFuZy9PYmplY3Q7AQANb3B0SlNPTk9iamVjdAEAGChJKUxvcmcvanNvbi9KU09OT2JqZWN0OwAhABcAGAAAAAQABAAZABoAAAAEABsAGgAAAAQAHAAaAAAABAAdABoAAAAKAAEAHgAfAAEAIAAAAB0AAQABAAAABSq0AAGwAAAAAQAhAAAABgABAAAADwABACIAIwABACAAAAAiAAIAAgAAAAYqK7UAAbEAAAABACEAAAAKAAIAAAASAAUAEwABACQAHwABACAAAAAdAAEAAQAAAAUqtAACsAAAAAEAIQAAAAYAAQAAABUAAQAlACMAAQAgAAAAIgACAAIAAAAGKiu1AAKxAAAAAQAhAAAACgACAAAAGAAFABkAAQAmAB8AAQAgAAAAHQABAAEAAAAFKrQAA7AAAAABACEAAAAGAAEAAAAbAAEAJwAjAAEAIAAAACIAAgACAAAABiortQADsQAAAAEAIQAAAAoAAgAAAB4ABQAfAAEAKAAfAAEAIAAAAB0AAQABAAAABSq0AASwAAAAAQAhAAAABgABAAAAIQABACkAIwABACAAAAAiAAIAAgAAAAYqK7UABLEAAAABACEAAAAKAAIAAAAkAAUAJQABACoAKwABACAAAABJAAIAAQAAAB0qtwAFKhIGtQABKhIGtQACKhIGtQADKhIGtQAEsQAAAAEAIQAAABoABgAAACcABAAKAAoACwAQAAwAFgANABwAKAABACwAKwACACAAAAFdAAMABwAAAKkSBkwSBk0qtgAHxgAHBKcABAMqtgAHEgalAAcEpwAEA36ZABm7AAhZKrYAB7cACU4tuAAKTCortgALKrYADMYABwSnAAQDKrYADBIGpQAHBKcABAN+mQBTKrYADLgADU4tEg62AA+2ABCeACotEg62AA86BBkEA7YAEVcZBAO2ABI6BRkFEhO2AA86BhkGA7YAEVcqLbYAFLYAFacADToEKi22ABS2ABWxAAEAYACbAJ4AFgACACEAAABOABMAAAAqAAMAKwAGACwAJAAuADAALwA1ADAAOgAzAFgANgBgADgAbAA6AHQAOwB7AD0AgwA+AIwAPwCTAEEAmwBFAJ4AQwCgAEQAqABOAC0AAABGAAz9ABEHAC4HAC5AAUwB/wAAAAMHAC8HAC4HAC4AAgEBGQpAAUwB/wAAAAMHAC8HAC4HAC4AAgEB/AA+BwAwSgcAMfoACQAyAAAABAABABYAAQAzAAAAAgA0</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xmlIn>
+                    <xsl:value-of select="substring-before(substring-after((('&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;root>&#xA;&#x9;&lt;plans-list>&#xA;&#x9;&#x9;&lt;plan-group-options>&#xA;&#x9;&#x9;&#x9;&lt;plan-id>1-2DI8RGH&lt;/plan-id>&#xA;&#x9;&#x9;&#x9;&lt;plan-label>Apple Tremblant Plan1&lt;/plan-label>&#xA;&#x9;&#x9;&#x9;&lt;plan-currency>KWD&lt;/plan-currency>&#xA;&#x9;&#x9;&#x9;&lt;plan-value>100&lt;/plan-value>&#xA;&#x9;&#x9;&lt;/plan-group-options>&#xA;&#x9;&#x9;&lt;plan-group-options>&#xA;&#x9;&#x9;&#x9;&lt;plan-id>1-2DI8RGH&lt;/plan-id>&#xA;&#x9;&#x9;&#x9;&lt;plan-label>Apple Tremblant Plan1&lt;/plan-label>&#xA;&#x9;&#x9;&#x9;&lt;plan-currency>KWD&lt;/plan-currency>&#xA;&#x9;&#x9;&#x9;&lt;plan-value>100&lt;/plan-value>&#xA;&#x9;&#x9;&lt;/plan-group-options>&#xA;&#x9;&#x9;&lt;plan-group-options>&#xA;&#x9;&#x9;&#x9;&lt;plan-id>1-2DI8RGH2222222&lt;/plan-id>&#xA;&#x9;&#x9;&#x9;&lt;plan-label>Apple Tremblant Plan1&lt;/plan-label>&#xA;&#x9;&#x9;&#x9;&lt;plan-currency>KWD&lt;/plan-currency>&#xA;&#x9;&#x9;&#x9;&lt;plan-value>100&lt;/plan-value>&#xA;&#x9;&#x9;&lt;/plan-group-options>&#xA;&#x9;&lt;/plans-list>&#xA;&#x9;&lt;plans-list>&#xA;&#x9;&lt;plan-group-options>&#xA;&#x9;&#x9;&#x9;&lt;plan-id>1-2DI8RGH&lt;/plan-id>&#xA;&#x9;&#x9;&#x9;&lt;plan-label>Apple Tremblant Plan1&lt;/plan-label>&#xA;&#x9;&#x9;&#x9;&lt;plan-currency>KWD&lt;/plan-currency>&#xA;&#x9;&#x9;&#x9;&lt;plan-value>100&lt;/plan-value>&#xA;&#x9;&#x9;&lt;/plan-group-options>&#xA;&#x9;&#x9;&lt;plan-group-options>&#xA;&#x9;&#x9;&#x9;&lt;plan-id>1-2DI8RGH&lt;/plan-id>&#xA;&#x9;&#x9;&#x9;&lt;plan-label>Apple Tremblant Plan1&lt;/plan-label>&#xA;&#x9;&#x9;&#x9;&lt;plan-currency>KWD&lt;/plan-currency>&#xA;&#x9;&#x9;&#x9;&lt;plan-value>100&lt;/plan-value>&#xA;&#x9;&#x9;&lt;/plan-group-options>&#xA;&#x9;&#x9;&lt;plan-group-options>&#xA;&#x9;&#x9;&#x9;&lt;plan-id>1-2DI8RGH22222222222222&lt;/plan-id>&#xA;&#x9;&#x9;&#x9;&lt;plan-label>Apple Tremblant Plan1&lt;/plan-label>&#xA;&#x9;&#x9;&#x9;&lt;plan-currency>KWD&lt;/plan-currency>&#xA;&#x9;&#x9;&#x9;&lt;plan-value>100&lt;/plan-value>&#xA;&#x9;&#x9;&lt;/plan-group-options>&#xA;&#x9;&lt;/plans-list>&#xA;&lt;/root>')), &quot;&lt;root>&quot;), &quot;&lt;/root>&quot;)"/>
+                </xmlIn>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>XML_JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>XML_JSON</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

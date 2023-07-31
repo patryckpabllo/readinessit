@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/ExtraDeviceEligibility" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:typ="http://www.zain.com/ZESB/Services/ExtraDeviceEligibility/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://www.zain.com/ZESB/Services/ExtraDeviceEligibility">
+    <wsdl:types>
+        <xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/ExtraDeviceEligibility/Types">
+            <xs:complexType name="ParamType">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Name" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Value" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ExtraDeviceEligibilityInfoInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="0" name="MSISDN" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="PackageType" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="PackageSubType" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="Params" type="typ:ParamType"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ExtraDeviceEligibilityInfoOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="0" name="MSISDN" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="SubscriberStatus" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="CustomerNum" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="PromotionName" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="PromotionPartNum" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="PackageAllowedLimit" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="PackageUsedLimit" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="PackageAvailableLimit" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="PackageSubTypeAllowedQuantity" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="PackageSubTypeUsed" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="PackageSubTypeAvailableQuantity" type="xs:string"/>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="Params" type="typ:ParamType"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="ExtraDeviceEligibilityInfoRequest">
+        <wsdl:part element="typ:ExtraDeviceEligibilityInfoInput" name="ExtraDeviceEligibilityInfoRequest"/>
+    </wsdl:message>
+    <wsdl:message name="ExtraDeviceEligibilityInfoResponse">
+        <wsdl:part element="typ:ExtraDeviceEligibilityInfoOutput" name="ExtraDeviceEligibilityInfoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part element="com:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:portType name="ExtraDeviceEligibilityPort">
+        <wsdl:operation name="ExtraDeviceEligibilityInfo">
+            <wsdl:input message="tns:ExtraDeviceEligibilityInfoRequest"/>
+            <wsdl:output message="tns:ExtraDeviceEligibilityInfoResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ExtraDeviceEligibilityBinding" type="tns:ExtraDeviceEligibilityPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="ExtraDeviceEligibilityInfo">
+            <soap:operation soapAction="ExtraDeviceEligibilityInfo"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ExtraDeviceEligibility">
+        <wsdl:port binding="tns:ExtraDeviceEligibilityBinding" name="ExtraDeviceEligibilityPort">
+            <soap:address location="ZESB/ExtraDeviceEligibility"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

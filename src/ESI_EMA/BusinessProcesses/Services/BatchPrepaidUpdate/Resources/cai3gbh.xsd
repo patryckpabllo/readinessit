@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by Ericsson (Ericsson Commnunication Software Research and Development (Shanghai) Co., Ltd.) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:element name="CAI3GBH">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="config">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="url" type="xs:anyURI"/>
+							<xs:element name="ns" type="xs:anyURI"/>
+							<xs:element name="user">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:pattern value="[a-zA-Z][a-zA-Z0-9_]*"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="passwd" type="xs:string"/>
+							<xs:element name="notify" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="address" type="xs:anyURI"/>
+										<xs:element name="message" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="resume" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:pattern value="[Y,y][E,e][S,s]|[N,n][O,o]"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="session" minOccurs="0">
+								<xs:simpleType>
+									<xs:restriction base="xs:unsignedByte">
+										<xs:minInclusive value="1"/>
+										<xs:maxInclusive value="120"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="rules" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="responseOK" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="code" type="xs:string" fixed="0"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="responseRetry" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="code">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:pattern value="[0-9|?*]*"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="pauseSeconds">
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedShort">
+													<xs:minInclusive value="1"/>
+													<xs:maxInclusive value="3600"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="times">
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedByte">
+													<xs:minInclusive value="1"/>
+													<xs:maxInclusive value="10"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="quit" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="code">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:pattern value="[0-9|?*]*"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Request">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Command" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Operation">
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:enumeration value="Create"/>
+													<xs:enumeration value="Get"/>
+													<xs:enumeration value="Set"/>
+													<xs:enumeration value="Delete"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Ranges" minOccurs="0">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="variable" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="name">
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:pattern value="[a-zA-Z][a-zA-Z0-9]*"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="start">
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:pattern value="[0-9]{1,18}"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="stop">
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:pattern value="[0-9]{1,18}"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="Parameters">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Param" maxOccurs="5">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute name="name" use="required">
+																		<xs:simpleType>
+																			<xs:restriction base="xs:string">
+																				<xs:enumeration value="TransactionId"/>
+																				<xs:enumeration value="MOId"/>
+																				<xs:enumeration value="MOType"/>
+																				<xs:enumeration value="MOAttributes"/>
+																				<xs:enumeration value="extension"/>
+																			</xs:restriction>
+																		</xs:simpleType>
+																	</xs:attribute>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+											<xs:key name="ParaKeyName">
+												<xs:selector xpath="Param"/>
+												<xs:field xpath="@name"/>
+											</xs:key>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

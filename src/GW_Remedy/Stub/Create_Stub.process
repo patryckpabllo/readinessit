@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.zain.com/ZESB/Types/Common" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.zain.com/ZESB/Services/IncidentManagement/Types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pfx2="http://www.zain.com/ZESB/Services/IncidentManagement" xmlns:pfx="http://xmlns.example.com/1464510892248">
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/IncidentManagement" location="/Stub/ITSM_Local.wsdl"/>
+    <pd:name>Stub/Create_Stub.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>27</pd:startX>
+    <pd:startY>35</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>597</pd:endX>
+    <pd:endY>35</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://www.zain.com/ZESB/Services/IncidentManagement</pd:targetNamespace>
+    <pd:activity name="SOAPRequestReply">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>263</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <timeout>0</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx2:ITSM_Remedy</service>
+            <servicePort>IncidentManagementPortEndpoint</servicePort>
+            <operation>CreateIncident</operation>
+            <soapAction>CreateIncident</soapAction>
+            <sharedChannels>
+                <jmsChannel>
+                    <targetService/>
+                    <JMSPriority>4</JMSPriority>
+                    <JMSTimeToLive>0</JMSTimeToLive>
+                    <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                    <JMSMessageType>Text</JMSMessageType>
+                    <NamingURL>tibjmsnaming://10.96.100.3:8222</NamingURL>
+                    <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+                    <NamingPrincipal>admin</NamingPrincipal>
+                    <NamingCredential/>
+                    <ConnectionFactory>QueueConnectionFactory</ConnectionFactory>
+                    <JMSTo>CBIO.BSS.DOM_ESB.GW.INCIDENTMANAGEMENT.SVC.Q.EXT.REQ</JMSTo>
+                    <JMSUserName>admin</JMSUserName>
+                    <JMSPassword/>
+                    <SoapJmsW3cFlag>false</SoapJmsW3cFlag>
+                    <JMSNamingValidateSecurityContext>true</JMSNamingValidateSecurityContext>
+                </jmsChannel>
+            </sharedChannels>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <ns:CreateIncidentRequest>
+                    <ns:Incident>
+                        <ns:Customer>
+                            <ns:First>
+                                <xsl:value-of select="&quot;Fawaz&quot;"/>
+                            </ns:First>
+                            <ns:Last>
+                                <xsl:value-of select="&quot;Alshaiji&quot;"/>
+                            </ns:Last>
+                        </ns:Customer>
+                        <ns:AssignedTo>
+                            <ns:Company>
+                                <xsl:value-of select="&quot;Technology&quot;"/>
+                            </ns:Company>
+                            <ns:Organization>
+                                <xsl:value-of select="&quot;INO&quot;"/>
+                            </ns:Organization>
+                            <ns:Group>
+                                <xsl:value-of select="&quot;Core Networks&quot;"/>
+                            </ns:Group>
+                        </ns:AssignedTo>
+                        <ns:Categorization>
+                            <ns:Category>
+                                <xsl:attribute name="Tier">
+                                    <xsl:value-of select="1"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="&quot;Sharepoint Requests&quot;"/>
+                            </ns:Category>
+                            <ns:Category>
+                                <xsl:attribute name="Tier">
+                                    <xsl:value-of select="2"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="&quot;ES Support&quot;"/>
+                            </ns:Category>
+                            <ns:Category>
+                                <xsl:attribute name="Tier">
+                                    <xsl:value-of select="3"/>
+                                </xsl:attribute>
+                                <xsl:value-of select="&quot;Enterprise Solutions request&quot;"/>
+                            </ns:Category>
+                        </ns:Categorization>
+                        <ns:Status>
+                            <xsl:value-of select="&quot;New&quot;"/>
+                        </ns:Status>
+                        <ns:Summary>
+                            <xsl:value-of select="&quot;Enterprise Solutions WLA/Core&quot;"/>
+                        </ns:Summary>
+                        <ns:Description>
+                            <xsl:value-of select="&quot;http://services.kw.zain.com/EC/_layouts/15/FormServer.aspx?XmlLocation=/EC/Enterprise%20connectivity%20requests/EC-15.xml&amp;ClientInstalled=true&amp;DefaultItemOpen=1&quot;"/>
+                        </ns:Description>
+                        <ns:Impact>
+                            <xsl:value-of select="&quot;Minor&quot;"/>
+                        </ns:Impact>
+                        <ns:Urgency>
+                            <xsl:value-of select="&quot;Low&quot;"/>
+                        </ns:Urgency>
+                        <ns:ServiceType>
+                            <xsl:value-of select="&quot;UserRequest&quot;"/>
+                        </ns:ServiceType>
+                        <ns:ReportedSource>
+                            <xsl:value-of select="&quot;Web&quot;"/>
+                        </ns:ReportedSource>
+                        <ns:DirectContact/>
+                    </ns:Incident>
+                </ns:CreateIncidentRequest>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SOAPRequestReply</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

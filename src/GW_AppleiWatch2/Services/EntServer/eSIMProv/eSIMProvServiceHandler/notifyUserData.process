@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.huawei.com/CDM/ES/">
+    <wsdl:import namespace="http://www.huawei.com/CDM/ES/" location="/Resources/WSDL/EntitleServer/soap.wsdl"/>
+    <pd:name>Services/EntServer/eSIMProv/eSIMProvServiceHandler/notifyUserData.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="pfx:notifyUserDataIn"/>
+    <pd:startX>151</pd:startX>
+    <pd:startY>71</pd:startY>
+    <pd:returnBindings>
+        <pfx:notifyUserDataOut>
+            <parameters>
+                <xsl:for-each select="$NotifyUserDataFinal/pfx:notifyUserDataResponse">
+                    <pfx:notifyUserDataResponse>
+                        <pfx:RESULT_CODE>
+                            <xsl:value-of select="pfx:RESULT_CODE"/>
+                        </pfx:RESULT_CODE>
+                        <pfx:RESULT_DESC>
+                            <xsl:value-of select="pfx:RESULT_DESC"/>
+                        </pfx:RESULT_DESC>
+                    </pfx:notifyUserDataResponse>
+                </xsl:for-each>
+            </parameters>
+        </pfx:notifyUserDataOut>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="pfx:notifyUserDataOut"/>
+    <pd:endX>674</pd:endX>
+    <pd:endY>71</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1547977084109</pd:targetNamespace>
+    <pd:activity name="GUID">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>296</pd:x>
+        <pd:y>71</pd:y>
+        <config>
+            <processName>/CommonProcesses/Utilities/GUID.process</processName>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="NotifyUserDataFinal">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>427</pd:x>
+        <pd:y>71</pd:y>
+        <config>
+            <processName>/Services/EntServer/eSIMProv/ComHelpProc/NotifyUserData.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:for-each select="$Start/pfx:notifyUserDataIn/parameters/pfx:notifyUserDataRequest">
+                    <pfx:notifyUserDataRequest>
+                        <pfx:SERVICE>
+                            <xsl:value-of select="pfx:SERVICE"/>
+                        </pfx:SERVICE>
+                        <pfx:TRADE_TYPE>
+                            <xsl:value-of select="pfx:TRADE_TYPE"/>
+                        </pfx:TRADE_TYPE>
+                        <xsl:for-each select="pfx:MAIN_USER">
+                            <pfx:MAIN_USER>
+                                <pfx:MSISDN>
+                                    <xsl:value-of select="pfx:MSISDN"/>
+                                </pfx:MSISDN>
+                                <pfx:IMSI>
+                                    <xsl:value-of select="pfx:IMSI"/>
+                                </pfx:IMSI>
+                                <xsl:if test="pfx:ICCID">
+                                    <pfx:ICCID>
+                                        <xsl:value-of select="pfx:ICCID"/>
+                                    </pfx:ICCID>
+                                </xsl:if>
+                                <xsl:if test="pfx:IMPI">
+                                    <pfx:IMPI>
+                                        <xsl:value-of select="pfx:IMPI"/>
+                                    </pfx:IMPI>
+                                </xsl:if>
+                                <xsl:if test="pfx:IMPU">
+                                    <pfx:IMPU>
+                                        <xsl:value-of select="pfx:IMPU"/>
+                                    </pfx:IMPU>
+                                </xsl:if>
+                            </pfx:MAIN_USER>
+                        </xsl:for-each>
+                        <xsl:for-each select="pfx:ATTACH_USERS">
+                            <pfx:ATTACH_USERS>
+                                <pfx:MSISDN>
+                                    <xsl:value-of select="pfx:MSISDN"/>
+                                </pfx:MSISDN>
+                                <pfx:IMSI>
+                                    <xsl:value-of select="pfx:IMSI"/>
+                                </pfx:IMSI>
+                                <pfx:ICCID>
+                                    <xsl:value-of select="pfx:ICCID"/>
+                                </pfx:ICCID>
+                                <pfx:STATUS>
+                                    <xsl:value-of select="pfx:STATUS"/>
+                                </pfx:STATUS>
+                                <pfx:EID>
+                                    <xsl:value-of select="pfx:EID"/>
+                                </pfx:EID>
+                                <xsl:if test="pfx:TEMINAL_TYPE">
+                                    <pfx:TEMINAL_TYPE>
+                                        <xsl:value-of select="pfx:TEMINAL_TYPE"/>
+                                    </pfx:TEMINAL_TYPE>
+                                </xsl:if>
+                                <xsl:if test="pfx:IMPI">
+                                    <pfx:IMPI>
+                                        <xsl:value-of select="pfx:IMPI"/>
+                                    </pfx:IMPI>
+                                </xsl:if>
+                                <xsl:if test="pfx:IMPU">
+                                    <pfx:IMPU>
+                                        <xsl:value-of select="pfx:IMPU"/>
+                                    </pfx:IMPU>
+                                </xsl:if>
+                            </pfx:ATTACH_USERS>
+                        </xsl:for-each>
+                    </pfx:notifyUserDataRequest>
+                </xsl:for-each>
+                <TransactionID>
+                    <xsl:value-of select="$GUID/GUID/TransactionID"/>
+                </TransactionID>
+                <StartTimestamp>
+                    <xsl:value-of select="$GUID/GUID/StartTimeStamp"/>
+                </StartTimestamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GUID</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>NotifyUserDataFinal</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GUID</pd:from>
+        <pd:to>NotifyUserDataFinal</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

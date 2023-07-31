@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:ns1="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/ExecuteRecharge" xmlns:ns0="http://www.zain.com/ZESB/Services/ExecuteRecharge/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ExecuteRecharge" targetNamespace="http://www.zain.com/ZESB/Services/ExecuteRecharge">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:import namespace="http://www.zain.com/ZESB/Services/ExecuteRecharge/Types"/>
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="RequestHeader">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="conversationID" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/ExecuteRecharge/Types">
+            <xs:import namespace="http://www.zain.com/ZESB/Types/Common"/>
+            <xs:complexType name="RechargedAccounts">
+                <xs:sequence>
+                    <xs:element name="AccountName" type="xs:string"/>
+                    <xs:element name="RechargeAmount" type="xs:decimal"/>
+                    <xs:element name="NewBalance" type="xs:decimal"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="RechargeByVoucherInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Msisdn" type="xs:string"/>
+                        <xs:element name="HRN" type="xs:string"/>
+                        <xs:element name="Purpose" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="RechargeByVoucherOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" name="RechargedAccounts" type="ns0:RechargedAccounts"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="RechargeInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Msisdn" type="xs:string"/>
+                        <xs:element name="Amount" type="xs:decimal"/>
+                        <xs:element name="UserId" type="xs:string"/>
+                        <xs:element minOccurs="0" name="Role" type="xs:short"/>
+                        <xs:element name="TransactionId" type="xs:string"/>
+                        <xs:element name="MerchantId" type="xs:string"/>
+                        <xs:element name="ProductId" type="xs:string"/>
+                        <xs:element name="Purpose" type="xs:string"/>
+                        <xs:element name="AccountId" type="xs:long"/>
+                        <xs:element name="AccountType" type="xs:short"/>
+                        <xs:element name="FrontendId" type="xs:string"/>
+                        <xs:element name="ExpiryMode" type="xs:byte"/>
+                        <xs:element name="ExpiryValue" type="xs:long"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="RechargeOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="TransactionId" nillable="true" type="xs:string"/>
+                        <xs:element name="ExecutionStatus" nillable="true" type="xs:short"/>
+                        <xs:element name="TransparentData" nillable="true" type="xs:string"/>
+                        <xs:element name="NewBalance" nillable="true" type="xs:decimal"/>
+                        <xs:element name="OldExpiryDate" type="xs:dateTime"/>
+                        <xs:element name="NewExpiryDate" type="xs:dateTime"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="RechargeByVoucherRequest">
+        <wsdl:part element="ns0:RechargeByVoucherInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="RechargeByVoucherResponse">
+        <wsdl:part element="ns0:RechargeByVoucherOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part element="ns1:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:message name="ExecuteRechargeRequest">
+        <wsdl:part element="ns0:RechargeInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="ExecuteRechargeResponse">
+        <wsdl:part element="ns0:RechargeOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="requestMessageHeader">
+        <wsdl:part element="ns1:RequestHeader" name="header"/>
+    </wsdl:message>
+    <wsdl:portType name="ExecuteRechargePort">
+        <wsdl:operation name="RechargeByVoucher">
+            <wsdl:input message="tns:RechargeByVoucherRequest"/>
+            <wsdl:output message="tns:RechargeByVoucherResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="ExecuteRecharge">
+            <wsdl:input message="tns:ExecuteRechargeRequest"/>
+            <wsdl:output message="tns:ExecuteRechargeResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ExecuteRechargePort" type="tns:ExecuteRechargePort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="RechargeByVoucher">
+            <wsdl:documentation/>
+            <soap:operation soapAction="RechargeByVoucher" style="document"/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+                <soap:header message="tns:requestMessageHeader" part="header" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="ExecuteRecharge">
+            <wsdl:documentation/>
+            <soap:operation soapAction="ExecuteRecharge" style="document"/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+                <soap:header message="tns:requestMessageHeader" part="header" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ExecuteRecharge">
+        <wsdl:port binding="tns:ExecuteRechargePort" name="ExecuteRechargePort">
+            <soap:address location="http://10.96.11.37:7071/ESB/SOAP/ExecuteRecharge"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

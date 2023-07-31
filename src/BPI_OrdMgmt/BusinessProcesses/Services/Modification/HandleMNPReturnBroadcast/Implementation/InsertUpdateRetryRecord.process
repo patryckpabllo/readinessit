@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Transaction/SalesTransaction.xsd" xmlns:ns2="http://www.tibco.com/pe/DeployedVarsType" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://xmlns.zain.com/BSS/ESB/CDM/ReturnBroadcast.xsd" xmlns:pfx2="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Transaction/SalesTransaction.xsd" schemaLocation="/BusinessSchemas/Services/Transaction/SalesTransaction/SalesTransaction.xsd"/>
+    <pd:name>BusinessProcesses/Services/Modification/HandleMNPReturnBroadcast/Implementation/InsertUpdateRetryRecord.process</pd:name>
+    <pd:startName>ReceiveRetReCords</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="ReceiveRetReCords">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>61</pd:x>
+        <pd:y>99</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Modification/HandleMNPRetrunBroadcast/RetryQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <OutDataxsdString ref="pfx3:ReturnBroadcastReq"/>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>742</pd:endX>
+    <pd:endY>70</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1478932089381</pd:targetNamespace>
+    <pd:activity name="InsertRetryRec">
+        <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+        <pd:x>477</pd:x>
+        <pd:y>34</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/QueryTimeout%%</timeout>
+            <commit>false</commit>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>Insert into T_ESB_RETRY_RECORDS (TRANSACTIONID,MAXRETRYCOUNT,CURRENTRETRYCOUNT,NEXTRETRYTIMESTAMP,PAYLOAD,RETRYSTEP,RETRYCOMPONENTNAME,RETRYFLAG,RETRYLISTNERQUEUE,RETRYSTATUS,RETRYERRORDESCRIPTION) values (?,?,?,?,?,?,?,?,?,?,?)</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>TRANSACTIONID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>MAXRETRYCOUNT</parameterName>
+                    <dataType>INTEGER</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>CURRENTRETRYCOUNT</parameterName>
+                    <dataType>INTEGER</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>NEXTRETRYTIMESTAMP</parameterName>
+                    <dataType>TIMESTAMP</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>PAYLOAD</parameterName>
+                    <dataType>CLOB</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>RETRYSTEP</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>RETRYCOMPONENTNAME</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>RETRYFLAG</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>RETRYLISTNERQUEUE</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>RETRYSTATUS</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>RETRYERRORDESCRIPTION</parameterName>
+                    <dataType>CLOB</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+        </config>
+        <pd:inputBindings>
+            <jdbcUpdateActivityInput>
+                <TRANSACTIONID>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:TransactionID)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:TransactionID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </TRANSACTIONID>
+                <MAXRETRYCOUNT>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:MaxRetryCount)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:MaxRetryCount"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </MAXRETRYCOUNT>
+                <CURRENTRETRYCOUNT>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:CurrentRetryCount)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:CurrentRetryCount"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </CURRENTRETRYCOUNT>
+                <NEXTRETRYTIMESTAMP>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:extRetryTimeStamp)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:extRetryTimeStamp"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </NEXTRETRYTIMESTAMP>
+                <PAYLOAD>
+                    <xsl:choose>
+                        <xsl:when test="exists(tib:render-xml($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq))">
+                            <xsl:value-of select="tib:render-xml($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq)"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </PAYLOAD>
+                <RETRYSTEP>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryStep)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryStep"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </RETRYSTEP>
+                <RETRYCOMPONENTNAME>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryComponentName)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryComponentName"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </RETRYCOMPONENTNAME>
+                <RETRYFLAG>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryFlag)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryFlag"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </RETRYFLAG>
+                <RETRYLISTNERQUEUE>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryListnerQueue)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryListnerQueue"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </RETRYLISTNERQUEUE>
+                <RETRYSTATUS>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryStatus)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryStatus"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </RETRYSTATUS>
+                <RETRYERRORDESCRIPTION>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryErrorDescription)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryErrorDescription"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </RETRYERRORDESCRIPTION>
+            </jdbcUpdateActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="UpdateRetryRec">
+        <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+        <pd:x>470</pd:x>
+        <pd:y>188</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/QueryTimeout%%</timeout>
+            <commit>false</commit>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>update T_ESB_RETRY_RECORDS set 
+CURRENTRETRYCOUNT= ?,
+NEXTRETRYTIMESTAMP =?,
+RETRYSTEP=?,
+RETRYFLAG=?,
+RETRYSTATUS=?,
+Payload =?,
+RETRYERRORDESCRIPTION =?
+where 
+TRANSACTIONID = ?</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>CURRENTRETRYCOUNT</parameterName>
+                    <dataType>INTEGER</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>NEXTRETRYTIMESTAMP</parameterName>
+                    <dataType>TIMESTAMP</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>RETRYSTEP</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>RETRYFLAG</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>RETRYSTATUS</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>PAYLOAD</parameterName>
+                    <dataType>CLOB</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>RETRYERRORDESCRIPTION</parameterName>
+                    <dataType>CLOB</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>TRANSACTIONID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+        </config>
+        <pd:inputBindings>
+            <jdbcUpdateActivityInput>
+                <CURRENTRETRYCOUNT>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:CurrentRetryCount)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:CurrentRetryCount"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </CURRENTRETRYCOUNT>
+                <NEXTRETRYTIMESTAMP>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:extRetryTimeStamp)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:extRetryTimeStamp"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </NEXTRETRYTIMESTAMP>
+                <RETRYSTEP>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryStep)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryStep"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </RETRYSTEP>
+                <RETRYFLAG>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryFlag)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryFlag"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </RETRYFLAG>
+                <RETRYSTATUS>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryStatus)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryStatus"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </RETRYSTATUS>
+                <PAYLOAD>
+                    <xsl:choose>
+                        <xsl:when test="exists(tib:render-xml($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq))">
+                            <xsl:value-of select="tib:render-xml($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq)"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </PAYLOAD>
+                <RETRYERRORDESCRIPTION>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryErrorDescription)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:RetryErrorDescription"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </RETRYERRORDESCRIPTION>
+                <TRANSACTIONID>
+                    <xsl:choose>
+                        <xsl:when test="exists($ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:TransactionID)">
+                            <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:TransactionID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </TRANSACTIONID>
+            </jdbcUpdateActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>345</pd:x>
+        <pd:y>321</pd:y>
+        <config>
+            <role>User</role>
+            <suppressHeader>false</suppressHeader>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="concat(&quot;Error in Retry Record Insertion or update -- &quot;,tib:render-xml($_error))"/>
+                </message>
+                <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                    <msgCode>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                    </msgCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>205</pd:x>
+        <pd:y>320</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>478</pd:x>
+        <pd:y>324</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:ExceptionRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Modification/HandleMNPRetrunBroadcast/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/UPDATE"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:CorrelationID>
+                        <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:list[1]/pfx3:MSISDN"/>
+                    </ns22:CorrelationID>
+                    <ns22:InterfaceID>
+                        <xsl:value-of select="$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:list[1]/pfx3:MSISDN"/>
+                    </ns22:InterfaceID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($ReceiveRetReCords/pfx2:ActivityOutput/Body)"/>
+                    </ns22:Message>
+                    <ns22:Transaction>
+                        <xsl:value-of select="tib:render-xml($_error/ns1:ErrorReport)"/>
+                    </ns22:Transaction>
+                </ns22:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+                <StackTrace>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                </StackTrace>
+            </ns12:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>ReceiveRetReCords</pd:from>
+        <pd:to>InsertRetryRec</pd:to>
+        <pd:xpathDescription>Insert</pd:xpathDescription>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$ReceiveRetReCords/pfx2:ActivityOutput/Body/pfx3:ReturnBroadcastReq/pfx3:RetryDetails/pfx3:CurrentRetryCount=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReceiveRetReCords</pd:from>
+        <pd:to>UpdateRetryRec</pd:to>
+        <pd:xpathDescription>Update</pd:xpathDescription>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>InsertRetryRec</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>UpdateRetryRec</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

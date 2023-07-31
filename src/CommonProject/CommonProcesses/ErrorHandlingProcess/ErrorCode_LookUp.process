@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariable/Internal/ResponseCodes_Ph2.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.tibco.com/schemas/Drop3BW/Error/Schema.xsd">
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariable/Internal/ResponseCodes_Ph2.xsd" schemaLocation="/CommonResources/SharedVariables/Internal/ResponseCodes_Ph2.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/Drop3BW/Error/Schema.xsd"/>
+    <pd:name>CommonProcesses/ErrorHandlingProcess/ErrorCode_LookUp.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="MsgCode" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="Msg" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="TargetSystem" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <xsl:variable name="var" select="$Start/root/TargetSystem "/>
+            <xsl:variable name="var2" select="$Start/root/MsgCode"/>
+            <xsl:for-each select="$GetEOCResCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$var and ns:SOURCEERRORCODE=$var2][1]">
+                <errorGroup>
+                    <xsl:if test="ns:SOURCESYSTEM">
+                        <SOURCESYSTEM>
+                            <xsl:value-of select="ns:SOURCESYSTEM"/>
+                        </SOURCESYSTEM>
+                    </xsl:if>
+                    <xsl:if test="ns:SOURCEERRORCODE">
+                        <SOURCEERRORCODE>
+                            <xsl:value-of select="ns:SOURCEERRORCODE"/>
+                        </SOURCEERRORCODE>
+                    </xsl:if>
+                    <xsl:if test="ns:SOURCEERRORDESC">
+                        <SOURCEERRORDESC>
+                            <xsl:value-of select="ns:SOURCEERRORDESC"/>
+                        </SOURCEERRORDESC>
+                    </xsl:if>
+                    <xsl:if test="ns:ERRORTYPE">
+                        <ERRORTYPE>
+                            <xsl:value-of select="ns:ERRORTYPE"/>
+                        </ERRORTYPE>
+                    </xsl:if>
+                    <xsl:if test="ns:SEVERITY">
+                        <SEVERITY>
+                            <xsl:value-of select="ns:SEVERITY"/>
+                        </SEVERITY>
+                    </xsl:if>
+                    <xsl:choose>
+                        <xsl:when test="exists(current()/ns:RETRYFLAG)&#xA;and&#xA;string-length(current()/ns:RETRYFLAG)>0">
+                            <xsl:if test="current()/ns:RETRYFLAG">
+                                <RETRYFLAG>
+                                    <xsl:value-of select="current()/ns:RETRYFLAG"/>
+                                </RETRYFLAG>
+                            </xsl:if>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <RETRYFLAG>
+                                <xsl:value-of select="0"/>
+                            </RETRYFLAG>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:if test="if (string-length(ns:USERERRORCODE)>0)&#xA;then&#xA;ns:USERERRORCODE&#xA;else&#xA;$GetEOCResCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE=$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/DefaultCode]/ns:USERERRORCODE">
+                        <USERERRORCODE>
+                            <xsl:value-of select="if (string-length(ns:USERERRORCODE)>0)&#xA;then&#xA;ns:USERERRORCODE&#xA;else&#xA;$GetEOCResCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORCODE=$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/DefaultCode]/ns:USERERRORCODE"/>
+                        </USERERRORCODE>
+                    </xsl:if>
+                    <xsl:if test="if (string-length(ns:USERERRORDESC)>0)&#xA;then&#xA;ns:USERERRORDESC&#xA;else&#xA;$GetEOCResCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORDESC=$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/DefaultMessage]/ns:USERERRORDESC">
+                        <USERERRORDESC>
+                            <xsl:value-of select="if (string-length(ns:USERERRORDESC)>0)&#xA;then&#xA;ns:USERERRORDESC&#xA;else&#xA;$GetEOCResCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCEERRORDESC=$_globalVariables/ns1:GlobalVariables/CommonProcesses/ErrorHandling/ErrorCode_LookUp/DefaultMessage]/ns:USERERRORDESC"/>
+                        </USERERRORDESC>
+                    </xsl:if>
+                </errorGroup>
+            </xsl:for-each>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="errorGroup" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="SOURCESYSTEM" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="SOURCEERRORCODE" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="SOURCEERRORDESC" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="ERRORTYPE" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="SEVERITY" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="RETRYFLAG" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="USERERRORCODE" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="USERERRORDESC" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>541</pd:endX>
+    <pd:endY>63</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1464174596490</pd:targetNamespace>
+    <pd:activity name="GetEOCResCodes">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>284</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/ResponseCodes_Ph2.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetEOCResCodes</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetEOCResCodes</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

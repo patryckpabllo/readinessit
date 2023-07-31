@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://xmlns.zain.com/BSS/ESB/CDM/Base" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://siebel.com/CustomUI" xmlns:pfx="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Query/CustomerAssetQueryInbound.xsd">
+    <pd:name>BusinessProcesses/Services/Update/NPManageDataUdase/HelperProcess/AssetQueryCall.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:queryAssetRequest"/>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <CFSS_ID>
+                <xsl:value-of select="$Map-Data/pfx:queryAssetResponse/pfx:ListOfCbio2QueryAssetIo/pfx:Account[1]/pfx:ListOfAssetMgmtAsset/pfx:AssetMgmtAsset[1]/pfx:CBiO2ProdGlobalIdentifier"/>
+            </CFSS_ID>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="CFSS_ID" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="Error" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>747</pd:endX>
+    <pd:endY>68</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1511009687701</pd:targetNamespace>
+    <pd:activity name="JMS Queue Requestor">
+        <pd:type>com.tibco.plugin.jms.JMSQueueRequestReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueRequestReplyActivity</pd:resourceType>
+        <pd:x>427</pd:x>
+        <pd:y>73</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/CRM/AssetQuery/Request_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns2:ActivityInput>
+                <OtherProperties>
+                    <xsl:if test="$MapAssetRequest/pfx:queryAssetRequest/ns:Header/ns:ExternalTransactionID">
+                        <TransactionID>
+                            <xsl:value-of select="$MapAssetRequest/pfx:queryAssetRequest/ns:Header/ns:ExternalTransactionID"/>
+                        </TransactionID>
+                    </xsl:if>
+                    <StartTimeStamp>
+                        <xsl:value-of select="tib:timestamp()"/>
+                    </StartTimeStamp>
+                </OtherProperties>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($MapAssetRequest/pfx:queryAssetRequest)"/>
+                </Body>
+            </ns2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="MapAssetRequest">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>292</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <element ref="pfx:queryAssetRequest"/>
+        </config>
+        <pd:inputBindings>
+            <pfx:queryAssetRequest>
+                <xsl:copy-of select="$Start/pfx:queryAssetRequest/ns:Header"/>
+                <pfx:OperationType>
+                    <xsl:value-of select="&quot;QueryAsset&quot;"/>
+                </pfx:OperationType>
+                <xsl:if test="$Start/pfx:queryAssetRequest/pfx:MSISDN">
+                    <pfx:MSISDN>
+                        <xsl:value-of select="$Start/pfx:queryAssetRequest/pfx:MSISDN"/>
+                    </pfx:MSISDN>
+                </xsl:if>
+                <pfx:CustomerId>
+                    <xsl:value-of select="&quot;&quot;"/>
+                </pfx:CustomerId>
+            </pfx:queryAssetRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>531</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx:queryAssetResponse"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JMS-Queue-Requestor/ns2:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>639</pd:x>
+        <pd:y>67</pd:y>
+        <config>
+            <element ref="pfx:queryAssetResponse"/>
+        </config>
+        <pd:inputBindings>
+            <pfx:queryAssetResponse>
+                <pfx:ListOfCbio2QueryAssetIo>
+                    <pfx:Account>
+                        <pfx:ListOfAssetMgmtAsset>
+                            <xsl:for-each select="$Parse-XML/pfx:queryAssetResponse/pfx:ListOfCbio2QueryAssetIo/pfx:Account/pfx:ListOfAssetMgmtAsset/pfx:AssetMgmtAsset">
+                                <xsl:if test="current()/pfx:assetFlexField4='Y'">
+                                    <pfx:AssetMgmtAsset>
+                                        <xsl:if test="pfx:AdjustedListPrice">
+                                            <pfx:AdjustedListPrice>
+                                                <xsl:value-of select="pfx:AdjustedListPrice"/>
+                                            </pfx:AdjustedListPrice>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:AssetDescription">
+                                            <pfx:AssetDescription>
+                                                <xsl:value-of select="pfx:AssetDescription"/>
+                                            </pfx:AssetDescription>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:AssetId">
+                                            <pfx:AssetId>
+                                                <xsl:value-of select="pfx:AssetId"/>
+                                            </pfx:AssetId>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:AssetNumber">
+                                            <pfx:AssetNumber>
+                                                <xsl:value-of select="pfx:AssetNumber"/>
+                                            </pfx:AssetNumber>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:BasePrice">
+                                            <pfx:BasePrice>
+                                                <xsl:value-of select="pfx:BasePrice"/>
+                                            </pfx:BasePrice>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:BillingProfileId">
+                                            <pfx:BillingProfileId>
+                                                <xsl:value-of select="pfx:BillingProfileId"/>
+                                            </pfx:BillingProfileId>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:BillingProfileName">
+                                            <pfx:BillingProfileName>
+                                                <xsl:value-of select="pfx:BillingProfileName"/>
+                                            </pfx:BillingProfileName>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBIO2InstallmentAmount">
+                                            <pfx:CBIO2InstallmentAmount>
+                                                <xsl:value-of select="pfx:CBIO2InstallmentAmount"/>
+                                            </pfx:CBIO2InstallmentAmount>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ContractEndDt">
+                                            <pfx:CBiO2ContractEndDt>
+                                                <xsl:value-of select="pfx:CBiO2ContractEndDt"/>
+                                            </pfx:CBiO2ContractEndDt>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ContractPeriod">
+                                            <pfx:CBiO2ContractPeriod>
+                                                <xsl:value-of select="pfx:CBiO2ContractPeriod"/>
+                                            </pfx:CBiO2ContractPeriod>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ContractStartDate">
+                                            <pfx:CBiO2ContractStartDate>
+                                                <xsl:value-of select="pfx:CBiO2ContractStartDate"/>
+                                            </pfx:CBiO2ContractStartDate>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2CreatedBy">
+                                            <pfx:CBiO2CreatedBy>
+                                                <xsl:value-of select="pfx:CBiO2CreatedBy"/>
+                                            </pfx:CBiO2CreatedBy>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2CreatedDate">
+                                            <pfx:CBiO2CreatedDate>
+                                                <xsl:value-of select="pfx:CBiO2CreatedDate"/>
+                                            </pfx:CBiO2CreatedDate>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2DNId">
+                                            <pfx:CBiO2DNId>
+                                                <xsl:value-of select="pfx:CBiO2DNId"/>
+                                            </pfx:CBiO2DNId>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2DefCreditLimit2">
+                                            <pfx:CBiO2DefCreditLimit2>
+                                                <xsl:value-of select="pfx:CBiO2DefCreditLimit2"/>
+                                            </pfx:CBiO2DefCreditLimit2>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2FLEXCommitmentDiscountAmt">
+                                            <pfx:CBiO2FLEXCommitmentDiscountAmt>
+                                                <xsl:value-of select="pfx:CBiO2FLEXCommitmentDiscountAmt"/>
+                                            </pfx:CBiO2FLEXCommitmentDiscountAmt>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2FLEXCommitmentFlag">
+                                            <pfx:CBiO2FLEXCommitmentFlag>
+                                                <xsl:value-of select="pfx:CBiO2FLEXCommitmentFlag"/>
+                                            </pfx:CBiO2FLEXCommitmentFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2FLEXCommitmentPeriod">
+                                            <pfx:CBiO2FLEXCommitmentPeriod>
+                                                <xsl:value-of select="pfx:CBiO2FLEXCommitmentPeriod"/>
+                                            </pfx:CBiO2FLEXCommitmentPeriod>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2FLEXCommitmentPlan2">
+                                            <pfx:CBiO2FLEXCommitmentPlan2>
+                                                <xsl:value-of select="pfx:CBiO2FLEXCommitmentPlan2"/>
+                                            </pfx:CBiO2FLEXCommitmentPlan2>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2FLEXCommitmentPlanId">
+                                            <pfx:CBiO2FLEXCommitmentPlanId>
+                                                <xsl:value-of select="pfx:CBiO2FLEXCommitmentPlanId"/>
+                                            </pfx:CBiO2FLEXCommitmentPlanId>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2IMSI">
+                                            <pfx:CBiO2IMSI>
+                                                <xsl:value-of select="pfx:CBiO2IMSI"/>
+                                            </pfx:CBiO2IMSI>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2InstallmentEndDate">
+                                            <pfx:CBiO2InstallmentEndDate>
+                                                <xsl:value-of select="pfx:CBiO2InstallmentEndDate"/>
+                                            </pfx:CBiO2InstallmentEndDate>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2InstallmentFlag">
+                                            <pfx:CBiO2InstallmentFlag>
+                                                <xsl:value-of select="pfx:CBiO2InstallmentFlag"/>
+                                            </pfx:CBiO2InstallmentFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2InstallmentPeriod">
+                                            <pfx:CBiO2InstallmentPeriod>
+                                                <xsl:value-of select="pfx:CBiO2InstallmentPeriod"/>
+                                            </pfx:CBiO2InstallmentPeriod>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2InstallmentStartDate">
+                                            <pfx:CBiO2InstallmentStartDate>
+                                                <xsl:value-of select="pfx:CBiO2InstallmentStartDate"/>
+                                            </pfx:CBiO2InstallmentStartDate>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2InventoryFlag">
+                                            <pfx:CBiO2InventoryFlag>
+                                                <xsl:value-of select="pfx:CBiO2InventoryFlag"/>
+                                            </pfx:CBiO2InventoryFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2InventorySerialNumber">
+                                            <pfx:CBiO2InventorySerialNumber>
+                                                <xsl:value-of select="pfx:CBiO2InventorySerialNumber"/>
+                                            </pfx:CBiO2InventorySerialNumber>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2MSISDNCategory">
+                                            <pfx:CBiO2MSISDNCategory>
+                                                <xsl:value-of select="pfx:CBiO2MSISDNCategory"/>
+                                            </pfx:CBiO2MSISDNCategory>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2NoOfAdvRCBillCycle">
+                                            <pfx:CBiO2NoOfAdvRCBillCycle>
+                                                <xsl:value-of select="pfx:CBiO2NoOfAdvRCBillCycle"/>
+                                            </pfx:CBiO2NoOfAdvRCBillCycle>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2OfferSubType">
+                                            <pfx:CBiO2OfferSubType>
+                                                <xsl:value-of select="pfx:CBiO2OfferSubType"/>
+                                            </pfx:CBiO2OfferSubType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2OfferType">
+                                            <pfx:CBiO2OfferType>
+                                                <xsl:value-of select="pfx:CBiO2OfferType"/>
+                                            </pfx:CBiO2OfferType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2OldContract">
+                                            <pfx:CBiO2OldContract>
+                                                <xsl:value-of select="pfx:CBiO2OldContract"/>
+                                            </pfx:CBiO2OldContract>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2OldIMSI">
+                                            <pfx:CBiO2OldIMSI>
+                                                <xsl:value-of select="pfx:CBiO2OldIMSI"/>
+                                            </pfx:CBiO2OldIMSI>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2OpenCaseseStore">
+                                            <pfx:CBiO2OpenCaseseStore>
+                                                <xsl:value-of select="pfx:CBiO2OpenCaseseStore"/>
+                                            </pfx:CBiO2OpenCaseseStore>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ProsumerBase">
+                                            <pfx:CBiO2ProsumerBase>
+                                                <xsl:value-of select="pfx:CBiO2ProsumerBase"/>
+                                            </pfx:CBiO2ProsumerBase>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ReferredBy">
+                                            <pfx:CBiO2ReferredBy>
+                                                <xsl:value-of select="pfx:CBiO2ReferredBy"/>
+                                            </pfx:CBiO2ReferredBy>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2SIMCategory">
+                                            <pfx:CBiO2SIMCategory>
+                                                <xsl:value-of select="pfx:CBiO2SIMCategory"/>
+                                            </pfx:CBiO2SIMCategory>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2SIMResId">
+                                            <pfx:CBiO2SIMResId>
+                                                <xsl:value-of select="pfx:CBiO2SIMResId"/>
+                                            </pfx:CBiO2SIMResId>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2SIMType">
+                                            <pfx:CBiO2SIMType>
+                                                <xsl:value-of select="pfx:CBiO2SIMType"/>
+                                            </pfx:CBiO2SIMType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2StatusChangeDate">
+                                            <pfx:CBiO2StatusChangeDate>
+                                                <xsl:value-of select="pfx:CBiO2StatusChangeDate"/>
+                                            </pfx:CBiO2StatusChangeDate>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2SubType">
+                                            <pfx:CBiO2SubType>
+                                                <xsl:value-of select="pfx:CBiO2SubType"/>
+                                            </pfx:CBiO2SubType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2UpfrontPaymentAmount">
+                                            <pfx:CBiO2UpfrontPaymentAmount>
+                                                <xsl:value-of select="pfx:CBiO2UpfrontPaymentAmount"/>
+                                            </pfx:CBiO2UpfrontPaymentAmount>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2UpfrontPaymentFlag">
+                                            <pfx:CBiO2UpfrontPaymentFlag>
+                                                <xsl:value-of select="pfx:CBiO2UpfrontPaymentFlag"/>
+                                            </pfx:CBiO2UpfrontPaymentFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2VPNCUGId">
+                                            <pfx:CBiO2VPNCUGId>
+                                                <xsl:value-of select="pfx:CBiO2VPNCUGId"/>
+                                            </pfx:CBiO2VPNCUGId>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2VPNPref">
+                                            <pfx:CBiO2VPNPref>
+                                                <xsl:value-of select="pfx:CBiO2VPNPref"/>
+                                            </pfx:CBiO2VPNPref>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:EffectiveEndDate">
+                                            <pfx:EffectiveEndDate>
+                                                <xsl:value-of select="pfx:EffectiveEndDate"/>
+                                            </pfx:EffectiveEndDate>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:IntegrationId">
+                                            <pfx:IntegrationId>
+                                                <xsl:value-of select="pfx:IntegrationId"/>
+                                            </pfx:IntegrationId>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:OwnerAccount">
+                                            <pfx:OwnerAccount>
+                                                <xsl:value-of select="pfx:OwnerAccount"/>
+                                            </pfx:OwnerAccount>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:OwnerAccountId">
+                                            <pfx:OwnerAccountId>
+                                                <xsl:value-of select="pfx:OwnerAccountId"/>
+                                            </pfx:OwnerAccountId>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:ParentAssetId">
+                                            <pfx:ParentAssetId>
+                                                <xsl:value-of select="pfx:ParentAssetId"/>
+                                            </pfx:ParentAssetId>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:ProdType">
+                                            <pfx:ProdType>
+                                                <xsl:value-of select="pfx:ProdType"/>
+                                            </pfx:ProdType>
+                                        </xsl:if>
+                                        <pfx:ProductName>
+                                            <xsl:value-of select="pfx:ProductName"/>
+                                        </pfx:ProductName>
+                                        <xsl:if test="pfx:ProductPartNumber">
+                                            <pfx:ProductPartNumber>
+                                                <xsl:value-of select="pfx:ProductPartNumber"/>
+                                            </pfx:ProductPartNumber>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:ProductType">
+                                            <pfx:ProductType>
+                                                <xsl:value-of select="pfx:ProductType"/>
+                                            </pfx:ProductType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:Quantity2">
+                                            <pfx:Quantity2>
+                                                <xsl:value-of select="pfx:Quantity2"/>
+                                            </pfx:Quantity2>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:RootAssetId">
+                                            <pfx:RootAssetId>
+                                                <xsl:value-of select="pfx:RootAssetId"/>
+                                            </pfx:RootAssetId>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:RootAssetNumber">
+                                            <pfx:RootAssetNumber>
+                                                <xsl:value-of select="pfx:RootAssetNumber"/>
+                                            </pfx:RootAssetNumber>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:SerialNumber">
+                                            <pfx:SerialNumber>
+                                                <xsl:value-of select="pfx:SerialNumber"/>
+                                            </pfx:SerialNumber>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:StartDate">
+                                            <pfx:StartDate>
+                                                <xsl:value-of select="pfx:StartDate"/>
+                                            </pfx:StartDate>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:Status">
+                                            <pfx:Status>
+                                                <xsl:value-of select="pfx:Status"/>
+                                            </pfx:Status>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2AutoRenewableFlag">
+                                            <pfx:CBiO2AutoRenewableFlag>
+                                                <xsl:value-of select="pfx:CBiO2AutoRenewableFlag"/>
+                                            </pfx:CBiO2AutoRenewableFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2AutoRenewalDate">
+                                            <pfx:CBiO2AutoRenewalDate>
+                                                <xsl:value-of select="pfx:CBiO2AutoRenewalDate"/>
+                                            </pfx:CBiO2AutoRenewalDate>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2AutoRenewalFlag">
+                                            <pfx:CBiO2AutoRenewalFlag>
+                                                <xsl:value-of select="pfx:CBiO2AutoRenewalFlag"/>
+                                            </pfx:CBiO2AutoRenewalFlag>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ParentProdGlobalIdentifier">
+                                            <pfx:CBiO2ParentProdGlobalIdentifier>
+                                                <xsl:value-of select="pfx:CBiO2ParentProdGlobalIdentifier"/>
+                                            </pfx:CBiO2ParentProdGlobalIdentifier>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ProdGlobalIdentifier">
+                                            <pfx:CBiO2ProdGlobalIdentifier>
+                                                <xsl:value-of select="pfx:CBiO2ProdGlobalIdentifier"/>
+                                            </pfx:CBiO2ProdGlobalIdentifier>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2PromotionGlobalIdentifier">
+                                            <pfx:CBiO2PromotionGlobalIdentifier>
+                                                <xsl:value-of select="pfx:CBiO2PromotionGlobalIdentifier"/>
+                                            </pfx:CBiO2PromotionGlobalIdentifier>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2VPNShortCode">
+                                            <pfx:CBiO2VPNShortCode>
+                                                <xsl:value-of select="pfx:CBiO2VPNShortCode"/>
+                                            </pfx:CBiO2VPNShortCode>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2SIMNumber">
+                                            <pfx:CBiO2SIMNumber>
+                                                <xsl:value-of select="pfx:CBiO2SIMNumber"/>
+                                            </pfx:CBiO2SIMNumber>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ICCID">
+                                            <pfx:CBiO2ICCID>
+                                                <xsl:value-of select="pfx:CBiO2ICCID"/>
+                                            </pfx:CBiO2ICCID>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2PIN1">
+                                            <pfx:CBiO2PIN1>
+                                                <xsl:value-of select="pfx:CBiO2PIN1"/>
+                                            </pfx:CBiO2PIN1>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2PUK1">
+                                            <pfx:CBiO2PUK1>
+                                                <xsl:value-of select="pfx:CBiO2PUK1"/>
+                                            </pfx:CBiO2PUK1>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2PUK2">
+                                            <pfx:CBiO2PUK2>
+                                                <xsl:value-of select="pfx:CBiO2PUK2"/>
+                                            </pfx:CBiO2PUK2>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:assetFlexField1">
+                                            <pfx:assetFlexField1>
+                                                <xsl:value-of select="pfx:assetFlexField1"/>
+                                            </pfx:assetFlexField1>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:assetFlexField2">
+                                            <pfx:assetFlexField2>
+                                                <xsl:value-of select="pfx:assetFlexField2"/>
+                                            </pfx:assetFlexField2>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:assetFlexField3">
+                                            <pfx:assetFlexField3>
+                                                <xsl:value-of select="pfx:assetFlexField3"/>
+                                            </pfx:assetFlexField3>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:assetFlexField4">
+                                            <pfx:assetFlexField4>
+                                                <xsl:value-of select="pfx:assetFlexField4"/>
+                                            </pfx:assetFlexField4>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:assetFlexField5">
+                                            <pfx:assetFlexField5>
+                                                <xsl:value-of select="pfx:assetFlexField5"/>
+                                            </pfx:assetFlexField5>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ProductArabicDisplayName">
+                                            <pfx:CBiO2ProductArabicDisplayName>
+                                                <xsl:value-of select="pfx:CBiO2ProductArabicDisplayName"/>
+                                            </pfx:CBiO2ProductArabicDisplayName>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ProductCategory">
+                                            <pfx:CBiO2ProductCategory>
+                                                <xsl:value-of select="pfx:CBiO2ProductCategory"/>
+                                            </pfx:CBiO2ProductCategory>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ProductSubCategory">
+                                            <pfx:CBiO2ProductSubCategory>
+                                                <xsl:value-of select="pfx:CBiO2ProductSubCategory"/>
+                                            </pfx:CBiO2ProductSubCategory>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2ProductClassification">
+                                            <pfx:CBiO2ProductClassification>
+                                                <xsl:value-of select="pfx:CBiO2ProductClassification"/>
+                                            </pfx:CBiO2ProductClassification>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:ProductID">
+                                            <pfx:ProductID>
+                                                <xsl:value-of select="pfx:ProductID"/>
+                                            </pfx:ProductID>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2GiftVolume">
+                                            <pfx:CBiO2GiftVolume>
+                                                <xsl:value-of select="pfx:CBiO2GiftVolume"/>
+                                            </pfx:CBiO2GiftVolume>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2GiftUOM">
+                                            <pfx:CBiO2GiftUOM>
+                                                <xsl:value-of select="pfx:CBiO2GiftUOM"/>
+                                            </pfx:CBiO2GiftUOM>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:PriceType">
+                                            <pfx:PriceType>
+                                                <xsl:value-of select="pfx:PriceType"/>
+                                            </pfx:PriceType>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:UnitofMeasure">
+                                            <pfx:UnitofMeasure>
+                                                <xsl:value-of select="pfx:UnitofMeasure"/>
+                                            </pfx:UnitofMeasure>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2CommitmentStartDate">
+                                            <pfx:CBiO2CommitmentStartDate>
+                                                <xsl:value-of select="pfx:CBiO2CommitmentStartDate"/>
+                                            </pfx:CBiO2CommitmentStartDate>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:CBiO2CommitmentEndDate">
+                                            <pfx:CBiO2CommitmentEndDate>
+                                                <xsl:value-of select="pfx:CBiO2CommitmentEndDate"/>
+                                            </pfx:CBiO2CommitmentEndDate>
+                                        </xsl:if>
+                                    </pfx:AssetMgmtAsset>
+                                </xsl:if>
+                            </xsl:for-each>
+                        </pfx:ListOfAssetMgmtAsset>
+                    </pfx:Account>
+                </pfx:ListOfCbio2QueryAssetIo>
+            </pfx:queryAssetResponse>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>MapAssetRequest</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Requestor</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapAssetRequest</pd:from>
+        <pd:to>JMS Queue Requestor</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

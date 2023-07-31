@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:pfx3="http://mastercard.zain.com/" xmlns:pfx2="http://www.zain.com/ZESB/Services/AuthorizeCredit/Types" xmlns:pfx="http://www.tibco.com/ns/no_namespace_schema_location/BusinessWSDLS/Services/WSDLS/AuthorizeCredit/Outbound-MasterCardWS.WSDL.wsdl">
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.tibco.com/ns/no_namespace_schema_location/BusinessWSDLS/Services/WSDLS/AuthorizeCredit/Outbound-MasterCardWS.WSDL.wsdl" schemaLocation="/BusinessWSDLS/Services/WSDLS/AuthorizeCredit/Outbound-MasterCardWS.WSDL.wsdl"/>
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.zain.com/ZESB/Services/AuthorizeCredit/Types" schemaLocation="/BusinessWSDLS/Services/WSDLS/AuthorizeCredit/AuthorizeCreditInbound.WSDL.wsdl"/>
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://mastercard.zain.com/" schemaLocation="/BusinessWSDLS/Services/WSDLS/AuthorizeCredit/MasterCardWS_schema1.xsd"/>
+    <pd:name>BusinessProcesses/Services/Common/Transaction/AuthorizationCredit/Process Definition.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>120</pd:x>
+        <pd:y>42</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Common/Transaction/AuthorizeCredit/GW_Request_AuthorizeCredit%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <OutDataxsdString ref="pfx3:secondPartyPayment"/>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>528</pd:endX>
+    <pd:endY>45</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1448884077640</pd:targetNamespace>
+    <pd:activity name="Reply to JMS Message">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>301</pd:x>
+        <pd:y>102</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <InDataxsdString ref="pfx3:secondPartyPaymentResponse"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:copy-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties"/>
+                <Body>
+                    <pfx3:secondPartyPaymentResponse>
+                        <return>
+                            <ResponseCode>
+                                <xsl:value-of select="&quot;0&quot;"/>
+                            </ResponseCode>
+                            <Message>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/AuthCredit_Stub_ResponseStatus"/>
+                            </Message>
+                            <xsl:if test="$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx3:secondPartyPayment/Merchant">
+                                <MerchantID>
+                                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx3:secondPartyPayment/Merchant"/>
+                                </MerchantID>
+                            </xsl:if>
+                            <xsl:if test="$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx3:secondPartyPayment/MerchTxnRef">
+                                <MerchTxnRef>
+                                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx3:secondPartyPayment/MerchTxnRef"/>
+                                </MerchTxnRef>
+                            </xsl:if>
+                            <Amount>
+                                <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx3:secondPartyPayment/Amount"/>
+                            </Amount>
+                            <ReceiptNo>
+                                <xsl:value-of select="&quot;12345&quot;"/>
+                            </ReceiptNo>
+                            <AuthorizeID>
+                                <xsl:value-of select="&quot;ABCD1234&quot;"/>
+                            </AuthorizeID>
+                            <TransactionNo>
+                                <xsl:value-of select="&quot;987654321&quot;"/>
+                            </TransactionNo>
+                            <CardType>
+                                <xsl:value-of select="&quot;MasterCard&quot;"/>
+                            </CardType>
+                        </return>
+                    </pfx3:secondPartyPaymentResponse>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>Reply to JMS Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply to JMS Message</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:ns1="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/ManageFnF" xmlns:ns0="http://www.zain.com/ZESB/Services/ManageFnF/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ManageFnFService" targetNamespace="http://www.zain.com/ZESB/Services/ManageFnF">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/ManageFnF/Types">
+            <xs:import namespace="http://www.zain.com/ZESB/Types/Common"/>
+            <xs:complexType name="FnFElement">
+                <xs:sequence>
+                    <xs:element name="Msisdn" type="xs:string"/>
+                    <xs:element name="Operation" type="ns0:Operation"/>
+                    <xs:element minOccurs="0" name="Chargeable" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:simpleType name="Operation">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Add"/>
+                    <xs:enumeration value="Delete"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="GetFnFNumbersInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Msisdn" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetFnFNumbersOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="FnFList">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Msisdn" type="xs:string"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="UpdateFee" type="xs:decimal"/>
+                        <xs:element minOccurs="0" name="FreeUpdateCount" type="xs:integer"/>
+                        <xs:element minOccurs="0" name="MaxNumbers" type="xs:integer"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UpdateFnFInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Msisdn" type="xs:string"/>
+                        <xs:element name="FnFElement" type="ns0:FnFElement"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UpdateFnFOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Status" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:import namespace="http://www.zain.com/ZESB/Services/ManageFnF/Types"/>
+            <xs:complexType name="FaultType">
+                <xs:sequence>
+                    <xs:element name="type" type="xs:string"/>
+                    <xs:element name="code" type="xs:string"/>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="sourceSystem" type="xs:string"/>
+                    <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                    <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="FaultType" type="ns1:FaultType"/>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="UpdateFnFRequest">
+        <wsdl:part element="ns0:UpdateFnFInput" name="input"/>
+    </wsdl:message>
+    <wsdl:message name="UpdateFnFResponse">
+        <wsdl:part element="ns0:UpdateFnFOutput" name="output"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part element="ns1:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:message name="GetFnFNumbersRequest">
+        <wsdl:part element="ns0:GetFnFNumbersInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="GetFnFNumbersResponse">
+        <wsdl:part element="ns0:GetFnFNumbersOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:portType name="ManageFnFPort">
+        <wsdl:operation name="UpdateFnF">
+            <wsdl:input message="tns:UpdateFnFRequest"/>
+            <wsdl:output message="tns:UpdateFnFResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault1"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetFnFNumbers">
+            <wsdl:input message="tns:GetFnFNumbersRequest"/>
+            <wsdl:output message="tns:GetFnFNumbersResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ManageFnFPort" type="tns:ManageFnFPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="UpdateFnF">
+            <wsdl:documentation/>
+            <soap:operation soapAction="UpdateFnF" style="document"/>
+            <wsdl:input>
+                <soap:body parts="input" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="output" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetFnFNumbers">
+            <wsdl:documentation/>
+            <soap:operation soapAction="GetFnFNumbers" style="document"/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+</wsdl:definitions>

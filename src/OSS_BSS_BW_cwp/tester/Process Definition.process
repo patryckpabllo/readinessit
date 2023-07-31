@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.siebel.com/xml/SWIProductIntegrationIO" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx="http://siebel.com/asi/V0">
+    <xsd:import namespace="http://siebel.com/asi/V0" schemaLocation="/SharedResources/WSDL/SWIProductImport.WSDL.wsdl"/>
+    <pd:name>tester/Process Definition.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="startDate" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>572</pd:endX>
+    <pd:endY>65</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1484161691918</pd:targetNamespace>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>277</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="pfx:SWIProductImportUpsert_Input"/>
+                            <xsd:element name="param1" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx:SWIProductImportUpsert_Input>
+                    <ns:ListOfProductImport>
+                        <ns:ProductIntegration>
+                            <ns:ListOfProductDefinition>
+                                <ns:ProductDefinition>
+                                    <ns:EffectiveEndTime>
+                                        <xsl:value-of select="concat('01','/',substring($Start/root/startDate, 9, 2),'/',substring($Start/root/startDate, 25, 4),' ',substring($Start/root/startDate, 12, 8))"/>
+                                    </ns:EffectiveEndTime>
+                                    <ns:PricingCommitType>
+                                        <xsl:value-of select="&quot;&quot;"/>
+                                    </ns:PricingCommitType>
+                                    <ns:DynamicDiscountMethod>
+                                        <xsl:value-of select="&quot;&quot;"/>
+                                    </ns:DynamicDiscountMethod>
+                                </ns:ProductDefinition>
+                            </ns:ListOfProductDefinition>
+                        </ns:ProductIntegration>
+                    </ns:ListOfProductImport>
+                </pfx:SWIProductImportUpsert_Input>
+                <param1>
+                    <xsl:value-of select="concat('01','/',substring($Start/root/startDate, 9, 2),'/',substring($Start/root/startDate, 25, 4),' ',substring($Start/root/startDate, 12, 8))"/>
+                </param1>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

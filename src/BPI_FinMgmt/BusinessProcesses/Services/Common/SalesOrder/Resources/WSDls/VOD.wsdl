@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:ns1="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://xmlns.example.com/1449662010182" xmlns:ns0="http://www.zain.com/ZESB/Services/Voucher/Types" xmlns:jms="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:jndi="http://www.tibco.com/namespaces/ws/2004/soap/apis/jndi" name="Untitled" targetNamespace="http://xmlns.example.com/1449662010182">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:import namespace="http://www.zain.com/ZESB/Services/Voucher/Types"/>
+            <xs:import namespace="http://www.zain.com/ZESB/Services/Voucher/Types"/>
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="RequestHeader">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="conversationID" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/Voucher/Types">
+            <xs:import namespace="http://www.zain.com/ZESB/Types/Common"/>
+            <xs:import namespace="http://www.zain.com/ZESB/Types/Common"/>
+            <xs:element name="GetVoucherInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Msisdn" type="xs:string"/>
+                        <xs:element minOccurs="0" name="Amount" type="xs:decimal"/>
+                        <xs:element minOccurs="0" name="RechargeCategoryId" type="xs:string"/>
+                        <xs:element name="SendSMS" type="xs:boolean"/>
+                        <xs:element name="Language" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetVoucherOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="PIN" type="xs:string"/>
+                        <xs:element name="SerialNumber" type="xs:string"/>
+                        <xs:element name="ExpiryDate" type="xs:dateTime"/>
+                        <xs:element name="State" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="VoucherOnDemand">
+        <wsdl:port binding="tns:VoucherPortEndpointBinding" name="VoucherPortEndpoint">
+            <soap:address location=""/>
+            <jms:connectionFactory>QueueConnectionFactory</jms:connectionFactory>
+            <jms:targetAddress destination="queue">queue.sample</jms:targetAddress>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="VoucherPort">
+        <wsdl:operation name="GetVoucher">
+            <wsdl:input message="tns:GetVoucherRequest"/>
+            <wsdl:output message="tns:GetVoucherResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="VoucherPortEndpointBinding" type="tns:VoucherPort">
+        <soap:binding style="document" transport="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS"/>
+        <jms:binding messageFormat="Text"/>
+        <wsdl:operation name="GetVoucher">
+            <soap:operation soapAction="GetVoucher" style="document"/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="GetVoucherRequest">
+        <wsdl:part element="ns0:GetVoucherInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="GetVoucherResponse">
+        <wsdl:part element="ns0:GetVoucherOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part element="ns1:FaultType" name="fault"/>
+    </wsdl:message>
+</wsdl:definitions>

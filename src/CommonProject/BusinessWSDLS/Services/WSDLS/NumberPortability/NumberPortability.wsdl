@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://www.zain.com/ZESB/Services/NumberPortability" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:WL5G3N4="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:WL5G3N3="http://www.zain.com/ZESB/Services/NumberPortability" xmlns:WL5G3N2="http://www.zain.com/ZESB/Types/Common" xmlns:WL5G3N0="http://schemas.xmlsoap.org/wsdl/" xmlns:WL5G3N1="http://www.zain.com/ZESB/Services/NumberPortability/Types">
+<wsp:Policy orawsp:provides="{http://docs.oasis-open.org/ns/opencsa/sca/200903}authentication, {http://docs.oasis-open.org/ns/opencsa/sca/200903}clientAuthentication, {http://docs.oasis-open.org/ns/opencsa/sca/200903}clientAuthentication.message, {http://schemas.oracle.com/ws/2006/01/policy}token.usernamePassword" wsu:Id="wss_username_token_service_policy" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:orawsp="http://schemas.oracle.com/ws/2006/01/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<sp:SupportingTokens xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+<wsp:Policy>
+<sp:UsernameToken sp:IncludeToken="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy/IncludeToken/AlwaysToRecipient">
+<wsp:Policy>
+<sp:WssUsernameToken10/>
+</wsp:Policy>
+</sp:UsernameToken>
+</wsp:Policy>
+</sp:SupportingTokens>
+</wsp:Policy>
+    <wsdl:types>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common" xmlns:WL5G3N1="http://www.zain.com/ZESB/Types/Common" xmlns:WL5G3N2="http://www.zain.com/ZESB/Services/NumberPortability/Types" xmlns:WL5G3N5="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zain.com/ZESB/Services/NumberPortability" xmlns:typ="http://www.zain.com/ZESB/Services/NumberPortability/Types" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/NumberPortability/Types" xmlns:WL5G3N1="http://www.zain.com/ZESB/Types/Common" xmlns:WL5G3N2="http://www.zain.com/ZESB/Services/NumberPortability/Types" xmlns:WL5G3N5="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zain.com/ZESB/Services/NumberPortability" xmlns:typ="http://www.zain.com/ZESB/Services/NumberPortability/Types" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:simpleType name="MnpPortingStatus">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="PortedIn"/>
+                    <xs:enumeration value="OwnPortedOut"/>
+                    <xs:enumeration value="ForeignPortedToForeign"/>
+                    <xs:enumeration value="OwnNotPortedOut"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="GetNumberInfoInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="1" name="Msisdn" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetNumberInfoOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="0" name="IMSI" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="1" name="PortingStatus" type="typ:MnpPortingStatus"/>
+                        <xs:element maxOccurs="1" minOccurs="1" name="RoutingLocation" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="LastModified" type="xs:dateTime"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="GetNumberInfoRequest">
+        <wsdl:part name="parameter" element="WL5G3N1:GetNumberInfoInput"/>
+    </wsdl:message>
+    <wsdl:message name="GetNumberInfoResponse">
+        <wsdl:part name="parameter" element="WL5G3N1:GetNumberInfoOutput"/>
+    </wsdl:message>
+    <wsdl:message name="FaultMessage">
+        <wsdl:part name="parameter" element="WL5G3N2:FaultType"/>
+    </wsdl:message>
+    <wsdl:portType name="NumberPortabilityPort">
+        <wsdl:operation name="GetNumberInfo">
+            <wsdl:input message="WL5G3N3:GetNumberInfoRequest"/>
+            <wsdl:output message="WL5G3N3:GetNumberInfoResponse"/>
+            <wsdl:fault name="fault" message="WL5G3N3:FaultMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="NumberPortabilityBinding" type="WL5G3N3:NumberPortabilityPort">
+        <WL5G3N4:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+      <wsp:PolicyReference URI="#wss_username_token_service_policy" wsdl:required="false" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"/>
+        <wsdl:operation name="GetNumberInfo">
+            <WL5G3N4:operation soapAction="GetNumberInfo"/>
+            <wsdl:input>
+                <WL5G3N4:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <WL5G3N4:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <WL5G3N4:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="NumberPortability">
+        <wsdl:port name="NumberPortabilityPort" binding="WL5G3N3:NumberPortabilityBinding">
+            <WL5G3N4:address location="http://soaosb1.kw.zain.com:8011/ZESB/NumberPortability"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

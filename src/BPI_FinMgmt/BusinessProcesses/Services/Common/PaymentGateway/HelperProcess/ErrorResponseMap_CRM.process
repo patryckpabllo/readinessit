@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariable/Internal/ResponseCodes_Ph2.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <pd:name>BusinessProcesses/Services/Common/PaymentManagement/HelperProcess/ErrorResponseMap_CRM.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="SourceSystem" type="xsd:string"/>
+                    <xsd:element name="ResponseCode" type="xsd:string"/>
+                    <xsd:element name="ResponseDescription" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>86</pd:startX>
+    <pd:startY>84</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <ErrorSourceSystem>
+                <xsl:value-of select="$Start/root/SourceSystem"/>
+            </ErrorSourceSystem>
+            <ErrorAdditionalDesc1>
+                <xsl:value-of select="''"/>
+            </ErrorAdditionalDesc1>
+            <ErrorAdditionalDesc2>
+                <xsl:value-of select="''"/>
+            </ErrorAdditionalDesc2>
+            <ErrorOccuranceTime>
+                <xsl:value-of select="tib:format-dateTime('MM/dd/yyyy HH:mm:ss', current-dateTime())"/>
+            </ErrorOccuranceTime>
+            <xsl:variable name="var" select="$Start/root/ResponseCode"/>
+            <ErrorSourceErrCode>
+                <xsl:value-of select="$Start/root/ResponseCode"/>
+            </ErrorSourceErrCode>
+            <ErrorSourceErrDesc>
+                <xsl:value-of select="$Start/root/ResponseDescription"/>
+            </ErrorSourceErrDesc>
+            <ErrorType>
+                <xsl:value-of select="if(exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:ERRORTYPE)) then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:ERRORTYPE else&#xA;1"/>
+            </ErrorType>
+            <ErrorUserErrCode>
+                <xsl:value-of select="if(exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:USERERRORCODE)) then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:USERERRORCODE else&#xA;$_globalVariables/ns1:GlobalVariables/CommonErrors/MiscErrorCode"/>
+            </ErrorUserErrCode>
+            <ErrorUserErrDesc>
+                <xsl:value-of select="if(exists($GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:USERERRORDESC)) then&#xA;$GetResponseCodes/ns:ResponseCodeVar/ns:paramgroup[ns:SOURCESYSTEM=$Start/root/SourceSystem and ns:SOURCEERRORCODE=$var]/ns:USERERRORDESC else&#xA;$_globalVariables/ns1:GlobalVariables/CommonErrors/MiscErrorCode"/>
+            </ErrorUserErrDesc>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="ErrorSourceSystem" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorAdditionalDesc1" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorAdditionalDesc2" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorOccuranceTime" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorSourceErrCode" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorSourceErrDesc" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorType" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorUserErrCode" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ErrorUserErrDesc" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>416</pd:endX>
+    <pd:endY>84</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1448686875156</pd:targetNamespace>
+    <pd:activity name="GetResponseCodes">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>231</pd:x>
+        <pd:y>94</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/ResponseCodes_Ph2.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetResponseCodes</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetResponseCodes</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

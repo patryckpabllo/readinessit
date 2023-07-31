@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx="http://www.tibco.com//BusinessSchemas/Services/Query/GetCallHistoryoutput.xsd">
+    <xsd:import namespace="http://www.tibco.com//BusinessSchemas/Services/Query/GetCallHistoryoutput.xsd" schemaLocation="/BusinessSchemas/Services/Query/GetCallHistory/GetCallHistoryOutput.xsd"/>
+    <pd:name>BusinessProcesses/Services/Query/CallHistory/FormatResult.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="Filter" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="Type" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element ref="pfx:GetCallHistoryOutput"/>
+                    <xsd:element name="PageNo" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="PageLimit" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>40</pd:startX>
+    <pd:startY>105</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <pfx:GetCallHistoryOutput>
+                <pfx:Records>
+                    <xsl:for-each select="$FinalRecord/AccumulatedOutput/root/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record">
+                        <pfx:Record>
+                            <xsl:if test="pfx:Aparty">
+                                <pfx:Aparty>
+                                    <xsl:value-of select="pfx:Aparty"/>
+                                </pfx:Aparty>
+                            </xsl:if>
+                            <xsl:if test="pfx:BParty">
+                                <pfx:BParty>
+                                    <xsl:value-of select="pfx:BParty"/>
+                                </pfx:BParty>
+                            </xsl:if>
+                            <xsl:if test="pfx:Duration">
+                                <pfx:Duration>
+                                    <xsl:value-of select="pfx:Duration"/>
+                                </pfx:Duration>
+                            </xsl:if>
+                            <xsl:if test="pfx:DateTime">
+                                <pfx:DateTime>
+                                    <xsl:value-of select="pfx:DateTime"/>
+                                </pfx:DateTime>
+                            </xsl:if>
+                            <xsl:if test="pfx:Amount">
+                                <pfx:Amount>
+                                    <xsl:value-of select="pfx:Amount"/>
+                                </pfx:Amount>
+                            </xsl:if>
+                            <xsl:choose>
+                                <xsl:when test="pfx:Category=&quot;SMSMT&quot;">
+                                    <pfx:Category>
+                                        <xsl:value-of select="&quot;SMS&quot;"/>
+                                    </pfx:Category>
+                                </xsl:when>
+                                <xsl:when test="pfx:Category=&quot;DATA&quot;">
+                                    <pfx:Category>
+                                        <xsl:value-of select="&quot;Data&quot;"/>
+                                    </pfx:Category>
+                                </xsl:when>
+                                <xsl:when test="pfx:Category=&quot;GSTM&quot;">
+                                    <pfx:Category>
+                                        <xsl:value-of select="&quot;Voice&quot;"/>
+                                    </pfx:Category>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:if test="pfx:Category">
+                                        <pfx:Category>
+                                            <xsl:value-of select="pfx:Category"/>
+                                        </pfx:Category>
+                                    </xsl:if>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <xsl:if test="pfx:Type">
+                                <pfx:Type>
+                                    <xsl:value-of select="pfx:Type"/>
+                                </pfx:Type>
+                            </xsl:if>
+                        </pfx:Record>
+                    </xsl:for-each>
+                </pfx:Records>
+            </pfx:GetCallHistoryOutput>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="Filter" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="Type" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element ref="pfx:GetCallHistoryOutput"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>1446</pd:endX>
+    <pd:endY>105</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables>
+        <ReducedRecord ref="pfx:GetCallHistoryOutput"/>
+    </pd:processVariables>
+    <pd:targetNamespace>http://xmlns.example.com/1464604961895</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>241</pd:x>
+        <pd:y>32</pd:y>
+        <pd:width>292</pd:width>
+        <pd:height>140</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>tib:tokenize($Start/root/Filter/Value,",")</pd:over>
+            <pd:iterationElementSlot>type</pd:iterationElementSlot>
+            <pd:indexSlot>i</pd:indexSlot>
+            <pd:outSlot>AllTypes</pd:outSlot>
+            <pd:activityOutputName>GetFilter</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>GetFilter</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetFilter</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="GetFilter">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>393</pd:x>
+            <pd:y>107</pd:y>
+            <config>
+                <element>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="Filter" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </element>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <xsl:if test="tib:tokenize($Start/root/Filter/Value,&quot;,&quot;)[$i]">
+                        <Filter>
+                            <xsl:value-of select="tib:tokenize($Start/root/Filter/Value,&quot;,&quot;)[$i]"/>
+                        </Filter>
+                    </xsl:if>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:group name="Group (1)">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>605</pd:x>
+        <pd:y>30</pd:y>
+        <pd:width>329</pd:width>
+        <pd:height>137</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$AllTypes/AccumulatedOutput/root/Filter</pd:over>
+            <pd:iterationElementSlot/>
+            <pd:indexSlot>Map</pd:indexSlot>
+            <pd:outSlot>FinalRecord</pd:outSlot>
+            <pd:activityOutputName>MapResponse</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>MapResponse</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Assign</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>MapResponse</pd:from>
+            <pd:to>Assign</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="MapResponse">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>701</pd:x>
+            <pd:y>104</pd:y>
+            <config>
+                <element>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element ref="pfx:GetCallHistoryOutput"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </element>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <pfx:GetCallHistoryOutput>
+                        <xsl:choose>
+                            <xsl:when test="$Start/root/Filter/Type='Only'">
+                                <xsl:variable name="Only" select="if ($AllTypes/AccumulatedOutput/root[$Map]/Filter =&quot;Voice&quot;)&#xA;then &quot;GSTM&quot;&#xA;else if  ($AllTypes/AccumulatedOutput/root[$Map]/Filter =&quot;Data&quot;)&#xA;then &quot;DATA&quot;&#xA;else if ($AllTypes/AccumulatedOutput/root[$Map]/Filter =&quot;SMS&quot;)&#xA;then &quot;SMSMT&quot;&#xA;else if ($AllTypes/AccumulatedOutput/root[$Map]/Filter =&quot;MMS&quot;)&#xA;then &quot;MMS&quot;&#xA;else $AllTypes/AccumulatedOutput/root[$Map]/Filter"/>
+                                <pfx:Records>
+                                    <xsl:for-each select="$Start/root/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record[pfx:Category=$Only]">
+                                        <pfx:Record>
+                                            <xsl:if test="pfx:Aparty">
+                                                <pfx:Aparty>
+                                                    <xsl:value-of select="pfx:Aparty"/>
+                                                </pfx:Aparty>
+                                            </xsl:if>
+                                            <xsl:if test="pfx:BParty">
+                                                <pfx:BParty>
+                                                    <xsl:value-of select="pfx:BParty"/>
+                                                </pfx:BParty>
+                                            </xsl:if>
+                                            <xsl:if test="pfx:Duration">
+                                                <pfx:Duration>
+                                                    <xsl:value-of select="pfx:Duration"/>
+                                                </pfx:Duration>
+                                            </xsl:if>
+                                            <xsl:if test="pfx:DateTime">
+                                                <pfx:DateTime>
+                                                    <xsl:value-of select="pfx:DateTime"/>
+                                                </pfx:DateTime>
+                                            </xsl:if>
+                                            <xsl:if test="pfx:Amount">
+                                                <pfx:Amount>
+                                                    <xsl:value-of select="pfx:Amount"/>
+                                                </pfx:Amount>
+                                            </xsl:if>
+                                            <pfx:Category>
+                                                <xsl:value-of select="pfx:Category"/>
+                                            </pfx:Category>
+                                            <xsl:if test="pfx:Type">
+                                                <pfx:Type>
+                                                    <xsl:value-of select="pfx:Type"/>
+                                                </pfx:Type>
+                                            </xsl:if>
+                                        </pfx:Record>
+                                    </xsl:for-each>
+                                </pfx:Records>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:variable name="Except" select="if ($AllTypes/AccumulatedOutput/root[$Map]/Filter =&quot;Voice&quot;)&#xA;then &quot;GSTM&quot;&#xA;else if  ($AllTypes/AccumulatedOutput/root[$Map]/Filter =&quot;Data&quot;)&#xA;then &quot;DATA&quot;&#xA;else if ($AllTypes/AccumulatedOutput/root[$Map]/Filter =&quot;SMS&quot;)&#xA;then &quot;SMSMT&quot;&#xA;else if ($AllTypes/AccumulatedOutput/root[$Map]/Filter =&quot;MMS&quot;)&#xA;then &quot;MMS&quot;&#xA;else $AllTypes/AccumulatedOutput/root[$Map]/Filter"/>
+                                <xsl:choose>
+                                    <xsl:when test="$Map=1">
+                                        <pfx:Records>
+                                            <xsl:for-each select="$Start/root/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record[pfx:Category!=$Except]">
+                                                <pfx:Record>
+                                                    <xsl:if test="pfx:Aparty">
+                                                        <pfx:Aparty>
+                                                            <xsl:value-of select="pfx:Aparty"/>
+                                                        </pfx:Aparty>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx:BParty">
+                                                        <pfx:BParty>
+                                                            <xsl:value-of select="pfx:BParty"/>
+                                                        </pfx:BParty>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx:Duration">
+                                                        <pfx:Duration>
+                                                            <xsl:value-of select="pfx:Duration"/>
+                                                        </pfx:Duration>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx:DateTime">
+                                                        <pfx:DateTime>
+                                                            <xsl:value-of select="pfx:DateTime"/>
+                                                        </pfx:DateTime>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx:Amount">
+                                                        <pfx:Amount>
+                                                            <xsl:value-of select="pfx:Amount"/>
+                                                        </pfx:Amount>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx:Category">
+                                                        <pfx:Category>
+                                                            <xsl:value-of select="pfx:Category"/>
+                                                        </pfx:Category>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx:Type">
+                                                        <pfx:Type>
+                                                            <xsl:value-of select="pfx:Type"/>
+                                                        </pfx:Type>
+                                                    </xsl:if>
+                                                </pfx:Record>
+                                            </xsl:for-each>
+                                        </pfx:Records>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <pfx:Records>
+                                            <xsl:variable name="var" select="$Map -1"/>
+                                            <xsl:for-each select="$ReducedRecord/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record[pfx:Category!=$Except]">
+                                                <pfx:Record>
+                                                    <xsl:if test="pfx:Aparty">
+                                                        <pfx:Aparty>
+                                                            <xsl:value-of select="pfx:Aparty"/>
+                                                        </pfx:Aparty>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx:BParty">
+                                                        <pfx:BParty>
+                                                            <xsl:value-of select="pfx:BParty"/>
+                                                        </pfx:BParty>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx:Duration">
+                                                        <pfx:Duration>
+                                                            <xsl:value-of select="pfx:Duration"/>
+                                                        </pfx:Duration>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx:DateTime">
+                                                        <pfx:DateTime>
+                                                            <xsl:value-of select="pfx:DateTime"/>
+                                                        </pfx:DateTime>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx:Amount">
+                                                        <pfx:Amount>
+                                                            <xsl:value-of select="pfx:Amount"/>
+                                                        </pfx:Amount>
+                                                    </xsl:if>
+                                                    <pfx:Category>
+                                                        <xsl:value-of select="pfx:Category"/>
+                                                    </pfx:Category>
+                                                    <xsl:if test="pfx:Type">
+                                                        <pfx:Type>
+                                                            <xsl:value-of select="pfx:Type"/>
+                                                        </pfx:Type>
+                                                    </xsl:if>
+                                                </pfx:Record>
+                                            </xsl:for-each>
+                                        </pfx:Records>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </pfx:GetCallHistoryOutput>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Assign">
+            <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+            <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+            <pd:x>810</pd:x>
+            <pd:y>102</pd:y>
+            <config>
+                <variableName>ReducedRecord</variableName>
+            </config>
+            <pd:inputBindings>
+                <pfx:GetCallHistoryOutput>
+                    <pfx:Records>
+                        <xsl:copy-of select="$MapResponse/root/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record"/>
+                    </pfx:Records>
+                </pfx:GetCallHistoryOutput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="MapResCallType">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1103</pd:x>
+        <pd:y>62</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="pfx:GetCallHistoryOutput"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx:GetCallHistoryOutput>
+                    <pfx:Records>
+                        <xsl:choose>
+                            <xsl:when test="$Start/root/Filter/Value='Local'">
+                                <xsl:for-each select="$Start/root/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record[pfx:Type=&quot;HOME&quot;]">
+                                    <pfx:Record>
+                                        <xsl:if test="pfx:Aparty">
+                                            <pfx:Aparty>
+                                                <xsl:value-of select="pfx:Aparty"/>
+                                            </pfx:Aparty>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:BParty">
+                                            <pfx:BParty>
+                                                <xsl:value-of select="pfx:BParty"/>
+                                            </pfx:BParty>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:Duration">
+                                            <pfx:Duration>
+                                                <xsl:value-of select="pfx:Duration"/>
+                                            </pfx:Duration>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:DateTime">
+                                            <pfx:DateTime>
+                                                <xsl:value-of select="pfx:DateTime"/>
+                                            </pfx:DateTime>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:Amount">
+                                            <pfx:Amount>
+                                                <xsl:value-of select="pfx:Amount"/>
+                                            </pfx:Amount>
+                                        </xsl:if>
+                                        <xsl:choose>
+                                            <xsl:when test="pfx:Category=&quot;SMSMT&quot;">
+                                                <pfx:Category>
+                                                    <xsl:value-of select="&quot;SMS&quot;"/>
+                                                </pfx:Category>
+                                            </xsl:when>
+                                            <xsl:when test="pfx:Category=&quot;DATA&quot;">
+                                                <pfx:Category>
+                                                    <xsl:value-of select="&quot;Data&quot;"/>
+                                                </pfx:Category>
+                                            </xsl:when>
+                                            <xsl:when test="pfx:Category=&quot;GSTM&quot;">
+                                                <pfx:Category>
+                                                    <xsl:value-of select="&quot;Voice&quot;"/>
+                                                </pfx:Category>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:if test="pfx:Category">
+                                                    <pfx:Category>
+                                                        <xsl:value-of select="pfx:Category"/>
+                                                    </pfx:Category>
+                                                </xsl:if>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <xsl:if test="pfx:Type">
+                                            <pfx:Type>
+                                                <xsl:value-of select="pfx:Type"/>
+                                            </pfx:Type>
+                                        </xsl:if>
+                                    </pfx:Record>
+                                </xsl:for-each>
+                            </xsl:when>
+                            <xsl:when test="contains($Start/root/Filter/Value,'Local')">
+                                <xsl:copy-of select="$FinalRecord/AccumulatedOutput/root/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record[pfx:Type=&quot;LOCAL&quot;]"/>
+                            </xsl:when>
+                            <xsl:when test="$Start/root/Filter/Value='Roaming'">
+                                <xsl:for-each select="$Start/root/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record[pfx:Type=&quot;VISITOR&quot;]">
+                                    <pfx:Record>
+                                        <xsl:if test="pfx:Aparty">
+                                            <pfx:Aparty>
+                                                <xsl:value-of select="pfx:Aparty"/>
+                                            </pfx:Aparty>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:BParty">
+                                            <pfx:BParty>
+                                                <xsl:value-of select="pfx:BParty"/>
+                                            </pfx:BParty>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:Duration">
+                                            <pfx:Duration>
+                                                <xsl:value-of select="pfx:Duration"/>
+                                            </pfx:Duration>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:DateTime">
+                                            <pfx:DateTime>
+                                                <xsl:value-of select="pfx:DateTime"/>
+                                            </pfx:DateTime>
+                                        </xsl:if>
+                                        <xsl:if test="pfx:Amount">
+                                            <pfx:Amount>
+                                                <xsl:value-of select="pfx:Amount"/>
+                                            </pfx:Amount>
+                                        </xsl:if>
+                                        <xsl:choose>
+                                            <xsl:when test="pfx:Category=&quot;SMSMT&quot;">
+                                                <pfx:Category>
+                                                    <xsl:value-of select="&quot;SMS&quot;"/>
+                                                </pfx:Category>
+                                            </xsl:when>
+                                            <xsl:when test="pfx:Category=&quot;DATA&quot;">
+                                                <pfx:Category>
+                                                    <xsl:value-of select="&quot;Data&quot;"/>
+                                                </pfx:Category>
+                                            </xsl:when>
+                                            <xsl:when test="pfx:Category=&quot;GSTM&quot;">
+                                                <pfx:Category>
+                                                    <xsl:value-of select="&quot;Voice&quot;"/>
+                                                </pfx:Category>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <xsl:if test="pfx:Category">
+                                                    <pfx:Category>
+                                                        <xsl:value-of select="pfx:Category"/>
+                                                    </pfx:Category>
+                                                </xsl:if>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                        <xsl:if test="pfx:Type">
+                                            <pfx:Type>
+                                                <xsl:value-of select="pfx:Type"/>
+                                            </pfx:Type>
+                                        </xsl:if>
+                                    </pfx:Record>
+                                </xsl:for-each>
+                            </xsl:when>
+                            <xsl:when test="contains($Start/root/Filter/Value,'Roaming')">
+                                <xsl:copy-of select="$FinalRecord/AccumulatedOutput/root/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record[pfx:Type=&quot;VISITOR&quot;]"/>
+                            </xsl:when>
+                        </xsl:choose>
+                    </pfx:Records>
+                </pfx:GetCallHistoryOutput>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="formattingErr">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>561</pd:x>
+        <pd:y>284</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </message>
+                <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                    <messageCode>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ApplyPaging">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1309</pd:x>
+        <pd:y>104</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Filter" minOccurs="0">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="Type" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Value" type="xsd:string" minOccurs="0"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element ref="pfx:GetCallHistoryOutput"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:variable name="StartRecord" select="if ($Start/root/PageNo =1)&#xA;then&#xA;0&#xA;else&#xA;($Start/root/PageNo * $Start/root/PageLimit) + 1"/>
+                <xsl:variable name="EndRecord" select="if($Start/root/PageNo=1)&#xA;then&#xA;$Start/root/PageLimit&#xA;else&#xA;( $Start/root/PageNo * $Start/root/PageLimit )"/>
+                <xsl:choose>
+                    <xsl:when test="$MapResCallType/root/pfx:GetCallHistoryOutput">
+                        <pfx:GetCallHistoryOutput>
+                            <pfx:Records>
+                                <xsl:copy-of select="$MapResCallType/root/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record[ position() > $StartRecord and position() &lt;= $EndRecord]"/>
+                            </pfx:Records>
+                        </pfx:GetCallHistoryOutput>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <pfx:GetCallHistoryOutput>
+                            <xsl:choose>
+                                <xsl:when test="$Start/root/Filter/Type='Only'">
+                                    <pfx:Records>
+                                        <xsl:copy-of select="$FinalRecord/AccumulatedOutput/root/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record[ position() > $StartRecord +1  and position() &lt;= $EndRecord]"/>
+                                    </pfx:Records>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <pfx:Records>
+                                        <xsl:copy-of select="$ReducedRecord/pfx:GetCallHistoryOutput/pfx:Records/pfx:Record[ position() > $StartRecord and position() &lt;= $EndRecord]"/>
+                                    </pfx:Records>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx:GetCallHistoryOutput>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>Group (1)</pd:to>
+        <pd:xpathDescription>Only</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group (1)</pd:from>
+        <pd:to>MapResCallType</pd:to>
+        <pd:xpathDescription>Local Or Roaming</pd:xpathDescription>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains($Start/root/Filter/Value, "Local")
+or
+contains($Start/root/Filter/Value, "Roaming")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ApplyPaging</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapResCallType</pd:from>
+        <pd:to>ApplyPaging</pd:to>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group (1)</pd:from>
+        <pd:to>ApplyPaging</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>formattingErr</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group (1)</pd:from>
+        <pd:to>formattingErr</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,87 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<wsdl:definitions targetNamespace = "http://www.zain.com/ZESB/Services/GetCostList" xmlns:com = "http://www.zain.com/ZESB/Types/Common" xmlns:soap = "http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns = "http://www.zain.com/ZESB/Services/GetCostList" xmlns:typ = "http://www.zain.com/ZESB/Services/GetCostList/Types" xmlns:wsdl = "http://schemas.xmlsoap.org/wsdl/" xmlns:xs = "http://www.w3.org/2001/XMLSchema">
+	<wsdl:types>
+		<xs:schema elementFormDefault = "qualified" targetNamespace = "http://www.zain.com/ZESB/Types/Common" xmlns:com = "http://www.zain.com/ZESB/Types/Common">
+			<xs:element name = "FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name = "type" type = "xs:string"/>
+						<xs:element name = "code" type = "xs:string"/>
+						<xs:element name = "description" type = "xs:string"/>
+						<xs:element name = "sourceSystem" type = "xs:string"/>
+						<xs:element minOccurs = "0" name = "extErrorCode" type = "xs:string"/>
+						<xs:element minOccurs = "0" name = "detail" type = "xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema elementFormDefault = "qualified" targetNamespace = "http://www.zain.com/ZESB/Services/GetCostList/Types">
+			<xs:complexType name = "ParamType">
+				<xs:sequence>
+					<xs:element minOccurs = "0" name = "Name" type = "xs:string"/>
+					<xs:element minOccurs = "0" name = "Value" type = "xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name = "CostList">
+				<xs:sequence>
+					<xs:element minOccurs = "0" name = "ProdName" type = "xs:string"/>
+					<xs:element minOccurs = "0" name = "PartNum" type = "xs:string"/>
+					<xs:element minOccurs = "0" name = "Cost" type = "xs:string"/>
+					<xs:element maxOccurs = "unbounded" minOccurs = "0" name = "Params" type = "typ:ParamType"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name = "GetCostListInfoInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs = "1" minOccurs = "0" name = "Operation" type = "xs:string"/>
+						<xs:element maxOccurs = "unbounded" minOccurs = "0" name = "PartNum" type = "xs:string"/>
+						<xs:element maxOccurs = "unbounded" minOccurs = "0" name = "Params" type = "typ:ParamType"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name = "GetCostListInfoOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element maxOccurs = "unbounded" minOccurs = "0" name = "CostList" type = "typ:CostList"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name = "GetCostListInfoRequest">
+		<wsdl:part element = "typ:GetCostListInfoInput" name = "GetCostListInfoRequest"/>
+	</wsdl:message>
+	<wsdl:message name = "GetCostListInfoResponse">
+		<wsdl:part element = "typ:GetCostListInfoOutput" name = "GetCostListInfoResponse"/>
+	</wsdl:message>
+	<wsdl:message name = "faultMessage">
+		<wsdl:part element = "com:FaultType" name = "fault"/>
+	</wsdl:message>
+	<wsdl:portType name = "GetCostListPort">
+		<wsdl:operation name = "GetCostListInfo">
+			<wsdl:input message = "tns:GetCostListInfoRequest"/>
+			<wsdl:output message = "tns:GetCostListInfoResponse"/>
+			<wsdl:fault message = "tns:faultMessage" name = "fault"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name = "GetCostListBinding" type = "tns:GetCostListPort">
+		<soap:binding style = "document" transport = "http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name = "GetCostListInfo">
+			<soap:operation soapAction = "GetCostListInfo"/>
+			<wsdl:input>
+				<soap:body use = "literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use = "literal"/>
+			</wsdl:output>
+			<wsdl:fault name = "fault">
+				<soap:fault name = "fault" use = "literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name = "GetCostList">
+		<wsdl:port binding = "tns:GetCostListBinding" name = "GetCostListPort">
+			<soap:address location = "ZESB/GetCostList"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

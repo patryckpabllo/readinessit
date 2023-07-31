@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.zain.com/ZESB/Services/CustomerProfile/Types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pfx="http://www.huawei.com/CDM/ES/" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns3="http://www.zain.com/ZESB/Types/Common" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://xmlns.example.com/1489744183310" xmlns:pfx3="http://www.ericsson.com/EAI/SchemaDefinitions/CDM/customerAccount" xmlns:pfx2="http://www.zain.com/ZESB/Services/CustomerProfile">
+    <xsd:import namespace="http://www.huawei.com/CDM/ES/" schemaLocation="/BusinessWSDLS/Services/EntitleServer/EntitleServerSoap.wsdl"/>
+    <wsdl:import namespace="http://www.huawei.com/CDM/ES/" location="/Resources/WSDL/EntitleServer/soap.wsdl"/>
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/CustomerProfile" location="/Resources/WSDL/CRM/QueryCustoemrProfile.wsdl"/>
+    <pd:name>Services/EntServer/eSIMProv/eSIMProvOperationImpl/AuthSub/AuthSub.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="group">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:authSubRequest"/>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                    <xsd:element name="statTimeStamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>30</pd:startX>
+    <pd:startY>63</pd:startY>
+    <pd:returnBindings>
+        <pfx:authSubResponse>
+            <parameters>
+                <xsl:choose>
+                    <xsl:when test="count($_error_SOAPRequestReply/ActivityErrors)>0">
+                        <pfx:authSubResponse>
+                            <pfx:RESULT_CODE>
+                                <xsl:value-of select="$_error_SOAPRequestReply/ActivityErrors/faultMessage/detail/ns3:FaultType/ns3:extErrorCode"/>
+                            </pfx:RESULT_CODE>
+                            <pfx:RESULT_DESC>
+                                <xsl:value-of select="$_error_SOAPRequestReply/ActivityErrors/faultMessage/detail/ns3:FaultType/ns3:description"/>
+                            </pfx:RESULT_DESC>
+                        </pfx:authSubResponse>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <pfx:authSubResponse>
+                            <pfx:RESULT_CODE>
+                                <xsl:value-of select="$Map-Data-1/root/param"/>
+                            </pfx:RESULT_CODE>
+                            <pfx:RESULT_DESC>
+                                <xsl:value-of select="if($Map-Data-1/root/param=0) then&#xA;'Success'&#xA;else&#xA;'Invalid PWD'"/>
+                            </pfx:RESULT_DESC>
+                        </pfx:authSubResponse>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </parameters>
+        </pfx:authSubResponse>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="pfx:authSubResponse"/>
+    <pd:endX>988</pd:endX>
+    <pd:endY>55</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1546859910103</pd:targetNamespace>
+    <pd:activity name="SOAPRequestReply">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>278</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <timeout>%%BusinessProcesses/Services/EntServer/AuthSub/QueryCustPrTimeout%%</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx2:CustomerProfile</service>
+            <servicePort>CustomerProfile</servicePort>
+            <operation>QueryCustomer</operation>
+            <soapAction>QueryCustomer</soapAction>
+            <sharedChannels>
+                <jmsChannel>
+                    <targetService/>
+                    <JMSPriority>4</JMSPriority>
+                    <JMSTimeToLive>0</JMSTimeToLive>
+                    <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                    <JMSMessageType>Text</JMSMessageType>
+                    <NamingURL>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUrl%%</NamingURL>
+                    <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+                    <NamingPrincipal>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUserName%%</NamingPrincipal>
+                    <NamingCredential>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Password%%</NamingCredential>
+                    <ConnectionFactory>QueueConnectionFactory</ConnectionFactory>
+                    <JMSTo>%%BusinessProcesses/Services/EntServer/AuthSub/CustomerProfileQueue%%</JMSTo>
+                    <JMSUserName>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUserName%%</JMSUserName>
+                    <JMSPassword>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Password%%</JMSPassword>
+                    <SoapJmsW3cFlag>false</SoapJmsW3cFlag>
+                    <NamingProperties/>
+                    <JMSNamingValidateSecurityContext>true</JMSNamingValidateSecurityContext>
+                </jmsChannel>
+            </sharedChannels>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <ns:QueryCustomerInput>
+                    <ns:MSISDN>
+                        <xsl:value-of select="$Start/group/pfx:authSubRequest/pfx:MSISDN"/>
+                    </ns:MSISDN>
+                </ns:QueryCustomerInput>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map-Data-1">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>705</pd:x>
+        <pd:y>61</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="param" type="xsd:int"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <param>
+                    <xsl:value-of select="if (($rc4Encryptor/javaCodeActivityOutput/encrypted = $Start/group/pfx:authSubRequest/pfx:PWD)&#xA; or &#xA;$SOAPRequestReply/outputMessage/ns:QueryCustomerResult/ns:SubscriberInfo[1]/ns:Identity/ns:Information/ns:PersonalNumber = $Start/group/pfx:authSubRequest/pfx:PWD) then&#xA;0&#xA;else&#xA;1"/>
+                </param>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ReturnFailedRes">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>652</pd:x>
+        <pd:y>201</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="rc4Encryptor">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>550</pd:x>
+        <pd:y>62</pd:y>
+        <config>
+            <fileName>AuthSubrc4Encryptor</fileName>
+            <packageName>Services.EntServer.eSIMProv.eSIMProvOperationImpl.AuthSub.AuthSub</packageName>
+            <fullsource>package Services.EntServer.eSIMProv.eSIMProvOperationImpl.AuthSub.AuthSub;
+import java.util.*;
+import java.io.*;
+public class AuthSubrc4Encryptor{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String password = "";
+	protected String key = "";
+	protected String encrypted = "";
+	public String getpassword() {
+		return password;
+	}
+	public void setpassword(String val) {
+		password = val;
+	}
+	public String getkey() {
+		return key;
+	}
+	public void setkey(String val) {
+		key = val;
+	}
+	public String getencrypted() {
+		return encrypted;
+	}
+	public void setencrypted(String val) {
+		encrypted = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public AuthSubrc4Encryptor() {
+
+
+
+
+
+    }
+    public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String password
+	In  : String key
+	Out : String encrypted
+* Available Variables: DO NOT MODIFY *****/
+         byte[] S = new byte[256];
+        byte[] T = new byte[256];
+        int keylen;
+
+        byte[] akey = getkey().getBytes();
+        if (akey.length &lt; 1 || akey.length &gt; 256) {
+            throw new Exception(
+                    "key must be between 1 and 256 bytes");
+        } else {
+            keylen = akey.length;
+            for (int i = 0; i &lt; 256; i++) {
+                S[i] = (byte) i;
+                T[i] = akey[i % keylen];
+            }
+            int j = 0;
+            byte tmp;
+            for (int i = 0; i &lt; 256; i++) {
+                j = (j + S[i] + T[i]) &amp; 0xFF;
+                tmp = S[j];
+                S[j] = S[i];
+                S[i] = tmp;
+            }
+
+            byte [] plaintext = getpassword().getBytes();
+             byte[] ciphertext = new byte[ plaintext.length];
+            int i1 = 0, j1 = 0, k, t;
+            byte tmp1;
+            for (int counter = 0; counter &lt; plaintext.length; counter++) {
+                i1 = (i1 + 1) &amp; 0xFF;
+                j1 = (j1 + S[i1]) &amp; 0xFF;
+                tmp1 = S[j1];
+                S[j1] = S[i1];
+                S[i1] = tmp1;
+                t = (S[i1] + S[j1]) &amp; 0xFF;
+                k = S[t];
+                ciphertext[counter] = (byte) (plaintext[counter] ^ k);
+            }
+
+            StringBuilder hexString = new StringBuilder();
+            for (int i = 0; i &lt; ciphertext.length; i++) {
+                String hex = Integer.toHexString(0xFF &amp; ciphertext[i]);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            setencrypted(hexString.toString().toUpperCase());
+        }
+    }
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>password</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>key</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>encrypted</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>AuthSubrc4Encryptor</name>
+                    <byteCode>yv66vgAAADMAVQkAFQAwCQAVADEJABUAMgoAFgAzCAA0CgAVADUKADYANwcAOAgAOQoACAA6CgAVADsHADwKAAwAMwoAPQA+CgA2AD8KAAwAQAoADABBCgAMAEIKADYAQwoAFQBEBwBFBwBGAQAIcGFzc3dvcmQBABJMamF2YS9sYW5nL1N0cmluZzsBAANrZXkBAAllbmNyeXB0ZWQBAAtnZXRwYXNzd29yZAEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEAC3NldHBhc3N3b3JkAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAGZ2V0a2V5AQAGc2V0a2V5AQAMZ2V0ZW5jcnlwdGVkAQAMc2V0ZW5jcnlwdGVkAQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQANU3RhY2tNYXBUYWJsZQcARQcARwcAPAcASAEACkV4Y2VwdGlvbnMBAApTb3VyY2VGaWxlAQAYQXV0aFN1YnJjNEVuY3J5cHRvci5qYXZhDAAXABgMABkAGAwAGgAYDAAlACYBAAAMACEAHAcASAwASQBKAQATamF2YS9sYW5nL0V4Y2VwdGlvbgEAI2tleSBtdXN0IGJlIGJldHdlZW4gMSBhbmQgMjU2IGJ5dGVzDAAlACAMABsAHAEAF2phdmEvbGFuZy9TdHJpbmdCdWlsZGVyBwBLDABMAE0MAE4ATwwAUABRDABQAFIMAFMAHAwAVAAcDAAkACABAFVTZXJ2aWNlcy9FbnRTZXJ2ZXIvZVNJTVByb3YvZVNJTVByb3ZPcGVyYXRpb25JbXBsL0F1dGhTdWIvQXV0aFN1Yi9BdXRoU3VicmM0RW5jcnlwdG9yAQAQamF2YS9sYW5nL09iamVjdAEAAltCAQAQamF2YS9sYW5nL1N0cmluZwEACGdldEJ5dGVzAQAEKClbQgEAEWphdmEvbGFuZy9JbnRlZ2VyAQALdG9IZXhTdHJpbmcBABUoSSlMamF2YS9sYW5nL1N0cmluZzsBAAZsZW5ndGgBAAMoKUkBAAZhcHBlbmQBABwoQylMamF2YS9sYW5nL1N0cmluZ0J1aWxkZXI7AQAtKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZ0J1aWxkZXI7AQAIdG9TdHJpbmcBAAt0b1VwcGVyQ2FzZQAhABUAFgAAAAMABAAXABgAAAAEABkAGAAAAAQAGgAYAAAACAABABsAHAABAB0AAAAdAAEAAQAAAAUqtAABsAAAAAEAHgAAAAYAAQAAAAoAAQAfACAAAQAdAAAAIgACAAIAAAAGKiu1AAGxAAAAAQAeAAAACgACAAAADQAFAA4AAQAhABwAAQAdAAAAHQABAAEAAAAFKrQAArAAAAABAB4AAAAGAAEAAAAQAAEAIgAgAAEAHQAAACIAAgACAAAABiortQACsQAAAAEAHgAAAAoAAgAAABMABQAUAAEAIwAcAAEAHQAAAB0AAQABAAAABSq0AAOwAAAAAQAeAAAABgABAAAAFgABACQAIAABAB0AAAAiAAIAAgAAAAYqK7UAA7EAAAABAB4AAAAKAAIAAAAZAAUAGgABACUAJgABAB0AAAA/AAIAAQAAABcqtwAEKhIFtQABKhIFtQACKhIFtQADsQAAAAEAHgAAABYABQAAABwABAAGAAoABwAQAAgAFgAiAAEAJwAmAAIAHQAAAq8ABQARAAABUxEBALwITBEBALwITSq2AAa2AAc6BBkEvgShAAwZBL4RAQCkAA27AAhZEgm3AAq/GQS+PgM2BRUFEQEAogAbKxUFFQWRVCwVBRkEFQUdcDNUhAUBp//jAzYFAzYHFQcRAQCiAC8VBSsVBzNgLBUHM2ARAP9+NgUrFQUzNgYrFQUrFQczVCsVBxUGVIQHAaf/zyq2AAu2AAc6BxkHvrwIOggDNgkDNgoDNg4VDhkHvqIAVxUJBGARAP9+NgkVCisVCTNgEQD/fjYKKxUKMzYNKxUKKxUJM1QrFQkVDVQrFQkzKxUKM2ARAP9+NgwrFQwzNgsZCBUOGQcVDjMVC4KRVIQOAaf/p7sADFm3AA06DgM2DxUPGQi+ogAwEQD/GQgVDzN+uAAOOhAZELYADwSgAAsZDhAwtgAQVxkOGRC2ABFXhA8Bp//OKhkOtgAStgATtgAUsQAAAAIAHgAAAJ4AJwAAACkABgAqAAwALQAVAC4AJQAvAC8AMgAzADMAPgA0AEUANQBQADMAVgA3AFkAOQBkADoAdgA7AHwAPACEAD0AigA5AJAAQACZAEEAoABCAKYARACxAEUAuwBGAMgARwDOAEgA1gBJANwASgDrAEsA8QBMAP8ARAEFAE8BDgBQARkAUQEnAFIBMABTATgAVQFAAFABRgBXAVIAWQAoAAAApgAL/wAlAAUHACkHACoHACoABwAqAAAJ/wAGAAYHACkHACoHACoBBwAqAQAA+gAf/gAFAQAB+QAz/wAYAA8HACkHACoHACoBBwAqAQAHACoHACoBAQAAAAEAAP8AWwALBwApBwAqBwAqAQcAKgEABwAqBwAqAQEAAP8ACwAQBwApBwAqBwAqAQcAKgEABwAqBwAqAQEAAAAHACsBAAD8ACYHACz5AA0ALQAAAAQAAQAIAAEALgAAAAIALw==</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <password>
+                    <xsl:value-of select="$SOAPRequestReply/outputMessage/ns:QueryCustomerResult/ns:SubscriberInfo[1]/ns:Identity/ns:Information/ns:PersonalNumber"/>
+                </password>
+                <key>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/EntServer/AuthSub/Key"/>
+                </key>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Logging_Message">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>278</pd:x>
+        <pd:y>199</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/EntServer/AuthSub/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="tib:render-xml($_error_SOAPRequestReply)"/>
+                    </ns22:TransactionID>
+                    <ns22:InterfaceID>
+                        <xsl:value-of select="$Start/group/pfx:authSubRequest/pfx:MSISDN"/>
+                    </ns22:InterfaceID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($Start)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/group/statTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Logging_Message-IN">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>142</pd:x>
+        <pd:y>63</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/EntServer/AuthSub/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:InterfaceID>
+                        <xsl:value-of select="$Start/group/pfx:authSubRequest/pfx:MSISDN"/>
+                    </ns22:InterfaceID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($Start)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/group/statTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Logging_Message-OUT">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>419</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/EntServer/AuthSub/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="tib:render-xml($SOAPRequestReply)"/>
+                    </ns22:TransactionID>
+                    <ns22:InterfaceID>
+                        <xsl:value-of select="$Start/group/pfx:authSubRequest/pfx:MSISDN"/>
+                    </ns22:InterfaceID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($Start)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/group/statTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Logging_Message-IN</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>Logging_Message-OUT</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map-Data-1</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>Logging_Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65434</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReturnFailedRes</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>rc4Encryptor</pd:from>
+        <pd:to>Map-Data-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Logging_Message</pd:from>
+        <pd:to>ReturnFailedRes</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Logging_Message-IN</pd:from>
+        <pd:to>SOAPRequestReply</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Logging_Message-OUT</pd:from>
+        <pd:to>rc4Encryptor</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

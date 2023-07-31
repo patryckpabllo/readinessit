@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.zain.com/ZESB/Services/CustomerProfile/Types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx4="http://www.zain.com/ZESB/Services/Payment" xmlns:pfx3="http://www.zain.com/ZESB/Types/Common" xmlns:pfx2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx="http://www.zain.com/ZESB/Services/CustomerProfile">
+    <xsd:import namespace="http://www.zain.com/ZESB/Types/Common" schemaLocation="/BusinessProcesses/Services/Common/Payment/Schema/QueryCustomerProfile_JMS.wsdl"/>
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/CustomerProfile" location="/BusinessProcesses/Services/Common/Payment/Schema/QueryCustomerProfile_JMS.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/Payment/HelperProcess/QueryCustomer.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="MSISDN" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <xsl:copy-of select="$SOAPRequestReply/outputMessage/ns:QuerySubscriberResult"/>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="ns:QuerySubscriberResult"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>466</pd:endX>
+    <pd:endY>67</pd:endY>
+    <pd:errorSchemas>
+        <Schema0 ref="pfx3:FaultType"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1527399852921</pd:targetNamespace>
+    <pd:activity name="SOAPRequestReply">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>296</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <timeout>%%BusinessProcesses/Services/Common/Payment/TimeOut%%</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx:CustomerProfile</service>
+            <servicePort>CustomerProfile</servicePort>
+            <operation>QuerySubscriber</operation>
+            <soapAction>QuerySubscriber</soapAction>
+            <endpointURL>http://localhost:7073/ESB/SOAP/QueryCustomerProfile</endpointURL>
+            <authScheme>NONE</authScheme>
+            <sharedChannels>
+                <jmsChannel>
+                    <NamingURL>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUrl%%</NamingURL>
+                    <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+                    <NamingPrincipal>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUserName%%</NamingPrincipal>
+                    <NamingCredential>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIPassword%%</NamingCredential>
+                    <ConnectionFactory>QueueConnectionFactory</ConnectionFactory>
+                    <JMSTo>%%BusinessProcesses/Services/Common/Payment/QueryCustomerQueue%%</JMSTo>
+                    <JMSMessageType>Text</JMSMessageType>
+                    <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                    <JMSPriority>4</JMSPriority>
+                    <JMSTimeToLive>0</JMSTimeToLive>
+                    <JMSUserName>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Username%%</JMSUserName>
+                    <JMSPassword>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Password%%</JMSPassword>
+                </jmsChannel>
+            </sharedChannels>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <ns:QuerySubscriberInput>
+                    <ns:MSISDN>
+                        <xsl:value-of select="$Start/root/MSISDN"/>
+                    </ns:MSISDN>
+                    <ns:SubscriberArea>
+                        <xsl:value-of select="&quot;&quot;"/>
+                    </ns:SubscriberArea>
+                    <ns:SubscriberType>
+                        <xsl:value-of select="&quot;&quot;"/>
+                    </ns:SubscriberType>
+                </ns:QuerySubscriberInput>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>301</pd:x>
+        <pd:y>180</pd:y>
+        <config>
+            <faultName>Schema0</faultName>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <data>
+                    <xsl:copy-of select="$_error_SOAPRequestReply/ActivityErrors/faultMessage/detail/pfx3:FaultType"/>
+                </data>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SOAPRequestReply</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

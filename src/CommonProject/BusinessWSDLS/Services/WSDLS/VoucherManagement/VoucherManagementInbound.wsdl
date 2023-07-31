@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/VoucherManagement" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:typ="http://www.zain.com/ZESB/Services/VoucherManagement/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://www.zain.com/ZESB/Services/VoucherManagement">
+    <wsdl:types>
+        <xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/VoucherManagement/Types">
+            <xs:simpleType name="VoucherStatus">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Expired"/>
+                    <xs:enumeration value="Active"/>
+                    <xs:enumeration value="Pending"/>
+                    <xs:enumeration value="Locked"/>
+                    <xs:enumeration value="DeActive"/>
+                    <xs:enumeration value="Deleted"/>
+                    <xs:enumeration value="Used"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="AllowedVoucherStatus">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Active"/>
+                    <xs:enumeration value="Pending"/>
+                    <xs:enumeration value="Locked"/>
+                    <xs:enumeration value="DeActive"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:complexType name="VoucherRechargeInfo">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Msisdn" type="xs:string"/>
+                    <xs:element minOccurs="0" name="HRN" type="xs:string"/>
+                    <xs:element minOccurs="0" name="RechargeDate" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="RechargeMode" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Status" type="typ:VoucherStatus"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="VoucherInfo">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="ActivationDate" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="CreationDate" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="Amount" type="xs:decimal"/>
+                    <xs:element minOccurs="0" name="ExpiryDate" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="LastUpdate" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="LockedDate" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="ScenarioId" type="xs:string"/>
+                    <xs:element minOccurs="0" name="ScenarioName" type="xs:string"/>
+                    <xs:element minOccurs="0" name="SerialNumber" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Status" type="typ:VoucherStatus"/>
+                    <xs:element minOccurs="0" name="StatusComment" type="xs:string"/>
+                    <xs:element minOccurs="0" name="VoucherCategoryId" type="xs:string"/>
+                    <xs:element minOccurs="0" name="VoucherCategoryName" type="xs:string"/>
+                    <xs:element minOccurs="0" name="VoucherClass" type="xs:string"/>
+                    <xs:element minOccurs="0" name="RechargeInfo" type="typ:VoucherRechargeInfo"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetVoucherInfoInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="1" name="SerialNo" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetVoucherInfoOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="1" name="VoucherInfo" type="typ:VoucherInfo"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ChangeVoucherStatusInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="1" name="SerialNo" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="1" name="Status" type="typ:AllowedVoucherStatus"/>
+                        <xs:element maxOccurs="1" minOccurs="0" name="Comment" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ChangeVoucherStatusOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="1" name="Result" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="GetVoucherInfoRequest">
+        <wsdl:part element="typ:GetVoucherInfoInput" name="GetVoucherInfoRequest"/>
+    </wsdl:message>
+    <wsdl:message name="GetVoucherInfoResponse">
+        <wsdl:part element="typ:GetVoucherInfoOutput" name="GetVoucherInfoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="ChangeVoucherStatusRequest">
+        <wsdl:part element="typ:ChangeVoucherStatusInput" name="ChangeVoucherStatusRequest"/>
+    </wsdl:message>
+    <wsdl:message name="ChangeVoucherStatusResponse">
+        <wsdl:part element="typ:ChangeVoucherStatusOutput" name="ChangeVoucherStatusResponse"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part element="com:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:portType name="VoucherManagementPort">
+        <wsdl:operation name="GetVoucherInfo">
+            <wsdl:input message="tns:GetVoucherInfoRequest"/>
+            <wsdl:output message="tns:GetVoucherInfoResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="ChangeVoucherStatus">
+            <wsdl:input message="tns:ChangeVoucherStatusRequest"/>
+            <wsdl:output message="tns:ChangeVoucherStatusResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="VoucherManagementBinding" type="tns:VoucherManagementPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="GetVoucherInfo">
+            <soap:operation soapAction="GetVoucherInfo"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="ChangeVoucherStatus">
+            <soap:operation soapAction="ChangeVoucherStatus"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="VoucherManagement">
+        <wsdl:port binding="tns:VoucherManagementBinding" name="VoucherManagementPort">
+            <soap:address location="ZESB/VoucherManagement"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

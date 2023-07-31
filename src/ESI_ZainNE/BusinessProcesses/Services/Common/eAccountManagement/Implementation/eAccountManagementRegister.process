@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns4="http://www.tibco.com/pe/EngineTypes" xmlns:ns3="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns5="http://schemas.tibco.com/bw/plugins/xml/5.0/xmlExceptions" xmlns:ns6="http://schemas.tibco.com/bw/plugins/jms/5.0/jmsExceptions" xmlns:pfx="http://www.zain.com/ZESB/Services/eAccountManagement/Types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/eAccountManagement/Types" schemaLocation="/BusinessWSDLS/Services/WSDLS/eAccountManagement_Custom/eAccountManagementOutbound_Custom.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/eAccountManagement/Implementation/eAccountManagementRegister.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>65</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Common/eAccountManager/Register/Request_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>847</pd:endX>
+    <pd:endY>35</pd:endY>
+    <pd:errorSchemas>
+        <Fault_Schema>
+            <xsd:element name="FaultType">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="type" type="xsd:string"/>
+                        <xsd:element name="code" type="xsd:string"/>
+                        <xsd:element name="description" type="xsd:string"/>
+                        <xsd:element name="sourceSystem" type="xsd:string"/>
+                        <xsd:element name="extErrorCode" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="detail" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </Fault_Schema>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1457777983710</pd:targetNamespace>
+    <pd:activity name="Reply to JMS Message">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>650</pd:x>
+        <pd:y>43</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <InDataxsdString ref="pfx:RegisterResponse"/>
+        </config>
+        <pd:inputBindings>
+            <ns1:ActivityInput>
+                <xsl:copy-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties"/>
+                <Body>
+                    <xsl:copy-of select="$ESI_Call_eAccountManagerRegister/pfx:RegisterResponse"/>
+                </Body>
+            </ns1:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply-to-JMS-Message-1">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>587</pd:x>
+        <pd:y>283</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <InDataxsdString ref="pfx:RegisterResponse"/>
+        </config>
+        <pd:inputBindings>
+            <ns1:ActivityInput>
+                <xsl:copy-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties"/>
+                <Body>
+                    <xsl:copy-of select="$Map-Data/pfx:RegisterResponse"/>
+                </Body>
+            </ns1:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetResCodes">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>198</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/ResponseCodes.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>306</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx:RegisterRequest"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>66</pd:x>
+        <pd:y>155</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonErrors/JMSErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate-Error-1">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>313</pd:x>
+        <pd:y>141</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonErrors/ParsingErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonErrors/ParsingErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>283</pd:x>
+        <pd:y>285</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx3:ExceptionRequest>
+                <ns3:Header>
+                    <ns3:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns3:ApplicationID>
+                    <ns3:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/eAccountManager/Register/ComponentName"/>
+                    </ns3:ComponentName>
+                    <ns3:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns3:Hostname>
+                    <ns3:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns3:Timestamp>
+                    <ns3:Message>
+                        <xsl:value-of select="tib:render-xml($_error/ns4:ErrorReport)"/>
+                    </ns3:Message>
+                </ns3:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$_error/ns4:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+                <xsl:if test="$_error/ns4:ErrorReport/StackTrace">
+                    <StackTrace>
+                        <xsl:value-of select="$_error/ns4:ErrorReport/StackTrace"/>
+                    </StackTrace>
+                </xsl:if>
+            </pfx3:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Login">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>420</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx2:LogRequest>
+                <ns3:Header>
+                    <ns3:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns3:ApplicationID>
+                    <ns3:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/eAccountManager/Register/ComponentName"/>
+                    </ns3:ComponentName>
+                    <ns3:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns3:Hostname>
+                    <ns3:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns3:Timestamp>
+                    <ns3:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns3:TransactionDomain>
+                    <ns3:TransactionID>
+                        <xsl:value-of select="$Parse-XML/pfx:RegisterRequest/pfx:TransactionID"/>
+                    </ns3:TransactionID>
+                    <ns3:Message>
+                        <xsl:value-of select="tib:render-xml($Parse-XML/pfx:RegisterRequest)"/>
+                    </ns3:Message>
+                </ns3:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$Parse-XML/pfx:RegisterRequest/pfx:StartTime"/>
+                </TimeDuration>
+                <Audit>
+                    <xsl:value-of select="'0'"/>
+                </Audit>
+            </pfx2:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ESI_Call_eAccountManagerRegister">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>530</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/eAccountManagement/HelperProcess/ESI_Call_eAccountManagerRegister.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx:RegisterRequest>
+                <xsl:if test="$Parse-XML/pfx:RegisterRequest/pfx:contractNumber">
+                    <pfx:contractNumber>
+                        <xsl:copy-of select="$Parse-XML/pfx:RegisterRequest/pfx:contractNumber/@xsi:nil"/>
+                        <xsl:value-of select="$Parse-XML/pfx:RegisterRequest/pfx:contractNumber"/>
+                    </pfx:contractNumber>
+                </xsl:if>
+                <xsl:if test="$Parse-XML/pfx:RegisterRequest/pfx:mobileNo">
+                    <pfx:mobileNo>
+                        <xsl:copy-of select="$Parse-XML/pfx:RegisterRequest/pfx:mobileNo/@xsi:nil"/>
+                        <xsl:value-of select="$Parse-XML/pfx:RegisterRequest/pfx:mobileNo"/>
+                    </pfx:mobileNo>
+                </xsl:if>
+                <xsl:if test="$Parse-XML/pfx:RegisterRequest/pfx:sendSMS">
+                    <pfx:sendSMS>
+                        <xsl:value-of select="$Parse-XML/pfx:RegisterRequest/pfx:sendSMS"/>
+                    </pfx:sendSMS>
+                </xsl:if>
+                <pfx:TransactionID>
+                    <xsl:value-of select="$Parse-XML/pfx:RegisterRequest/pfx:TransactionID"/>
+                </pfx:TransactionID>
+                <pfx:StartTime>
+                    <xsl:value-of select="$Parse-XML/pfx:RegisterRequest/pfx:StartTime"/>
+                </pfx:StartTime>
+            </pfx:RegisterRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Logout">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>748</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx2:LogRequest>
+                <ns3:Header>
+                    <ns3:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns3:ApplicationID>
+                    <ns3:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/eAccountManager/Register/ComponentName"/>
+                    </ns3:ComponentName>
+                    <ns3:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns3:Hostname>
+                    <ns3:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns3:Timestamp>
+                    <xsl:if test="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID">
+                        <ns3:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns3:TransactionID>
+                    </xsl:if>
+                    <ns3:Message>
+                        <xsl:value-of select="tib:render-xml($ESI_Call_eAccountManagerRegister/pfx:RegisterResponse)"/>
+                    </ns3:Message>
+                </ns3:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$Parse-XML/pfx:RegisterRequest/pfx:StartTime"/>
+                </TimeDuration>
+                <Audit>
+                    <xsl:value-of select="'0'"/>
+                </Audit>
+            </pfx2:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>753</pd:x>
+        <pd:y>283</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx2:LogRequest>
+                <ns3:Header>
+                    <ns3:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns3:ApplicationID>
+                    <ns3:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/eAccountManager/Register/ComponentName"/>
+                    </ns3:ComponentName>
+                    <ns3:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns3:Hostname>
+                    <ns3:Timestamp>
+                        <xsl:value-of select="tib:timestamp()"/>
+                    </ns3:Timestamp>
+                    <ns3:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns3:TransactionDomain>
+                    <xsl:if test="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID">
+                        <ns3:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns3:TransactionID>
+                    </xsl:if>
+                    <ns3:Message>
+                        <xsl:value-of select="tib:render-xml($Map-Data/pfx:RegisterResponse)"/>
+                    </ns3:Message>
+                </ns3:Header>
+                <xsl:if test="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/StartTimeStamp">
+                    <TimeDuration>
+                        <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </TimeDuration>
+                </xsl:if>
+                <Audit>
+                    <xsl:value-of select="'0'"/>
+                </Audit>
+            </pfx2:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>107</pd:x>
+        <pd:y>283</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>420</pd:x>
+        <pd:y>285</pd:y>
+        <config>
+            <element ref="pfx:RegisterResponse"/>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="exists($_error_Parse-XML/ActivityErrors)">
+                    <pfx:RegisterResponse>
+                        <pfx:resultStatus>
+                            <xsl:choose>
+                                <xsl:when test="exists($_error_Parse-XML/ActivityErrors/ns5:XMLParseException/msgCode)">
+                                    <xsl:value-of select="$_error_Parse-XML/ActivityErrors/ns5:XMLParseException/msgCode"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx:resultStatus>
+                        <pfx:resultMessage>
+                            <xsl:choose>
+                                <xsl:when test="exists($_error_Parse-XML/ActivityErrors/ns5:XMLParseException/msg)">
+                                    <xsl:value-of select="$_error_Parse-XML/ActivityErrors/ns5:XMLParseException/msg"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx:resultMessage>
+                        <pfx:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                        </pfx:TransactionID>
+                        <pfx:StartTime>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/CorrelationId"/>
+                        </pfx:StartTime>
+                    </pfx:RegisterResponse>
+                </xsl:when>
+                <xsl:when test="exists($_error_Reply-to-JMS-Message/ActivityErrors)">
+                    <pfx:RegisterResponse>
+                        <pfx:resultStatus>
+                            <xsl:choose>
+                                <xsl:when test="exists($_error_Reply-to-JMS-Message/ActivityErrors/ns6:JMSInvalidInputException/msgCode)">
+                                    <xsl:value-of select="$_error_Reply-to-JMS-Message/ActivityErrors/ns6:JMSInvalidInputException/msgCode"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx:resultStatus>
+                        <pfx:resultMessage>
+                            <xsl:choose>
+                                <xsl:when test="exists($_error_Reply-to-JMS-Message/ActivityErrors/ns6:JMSInvalidInputException/msg)">
+                                    <xsl:value-of select="$_error_Reply-to-JMS-Message/ActivityErrors/ns6:JMSInvalidInputException/msg"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx:resultMessage>
+                        <pfx:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                        </pfx:TransactionID>
+                        <pfx:StartTime>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </pfx:StartTime>
+                    </pfx:RegisterResponse>
+                </xsl:when>
+                <xsl:otherwise>
+                    <pfx:RegisterResponse>
+                        <pfx:resultStatus>
+                            <xsl:value-of select="$ErrorHandler/pfx3:ExceptionRequest/ExceptionCode"/>
+                        </pfx:resultStatus>
+                        <pfx:resultMessage>
+                            <xsl:choose>
+                                <xsl:when test="exists($ErrorHandler/pfx3:ExceptionRequest/StackTrace)">
+                                    <xsl:value-of select="$ErrorHandler/pfx3:ExceptionRequest/StackTrace"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx:resultMessage>
+                        <pfx:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                        </pfx:TransactionID>
+                        <pfx:StartTime>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </pfx:StartTime>
+                    </pfx:RegisterResponse>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Generate-Error-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>GetResCodes</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetResCodes</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Login</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Login</pd:from>
+        <pd:to>ESI_Call_eAccountManagerRegister</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ESI_Call_eAccountManagerRegister</pd:from>
+        <pd:to>Reply to JMS Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply to JMS Message</pd:from>
+        <pd:to>Logout</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Logout</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>Reply-to-JMS-Message-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply-to-JMS-Message-1</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

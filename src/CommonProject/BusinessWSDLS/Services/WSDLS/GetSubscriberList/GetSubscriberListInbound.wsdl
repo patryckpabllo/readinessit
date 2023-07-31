@@ -1,0 +1,121 @@
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/SubscriberList" xmlns:typ="http://www.zain.com/ZESB/Services/SubscriberList/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Services/SubscriberList">
+	<wsdl:types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema xmlns:typ="http://www.zain.com/ZESB/Services/SubscriberList/Types" targetNamespace="http://www.zain.com/ZESB/Services/SubscriberList/Types" elementFormDefault="qualified">
+			<xs:element name="GetSubscriberListInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractID" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="SubscriberInfo">
+				<xs:sequence>
+					<xs:element name="MSISDN" type="xs:string" minOccurs="0"/>
+					<xs:element name="Status" type="xs:string" minOccurs="0"/>
+					<xs:element name="BillingType" type="xs:string" minOccurs="0"/>
+					<xs:element name="BasicServiceType" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="GetSubscriberListOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractID" type="xs:string" minOccurs="0"/>
+						<xs:element name="SubscriberInfo" type="typ:SubscriberInfo" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetSubscribersSumInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractID" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetSubscribersSumOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Prepaid" type="xs:int" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="ActivePrepaid" type="xs:int" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Postpaid" type="xs:int" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="ActivePostpaid" type="xs:int" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Voice" type="xs:int" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="ActiveVoice" type="xs:int" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Data" type="xs:int" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="ActiveData" type="xs:int" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="GetSubscriberListRequest">
+		<wsdl:part name="request" element="typ:GetSubscriberListInput"/>
+	</wsdl:message>
+	<wsdl:message name="GetSubscriberListResponse">
+		<wsdl:part name="response" element="typ:GetSubscriberListOutput"/>
+	</wsdl:message>
+	<wsdl:message name="GetSubscribersSumRequest">
+		<wsdl:part name="request" element="typ:GetSubscribersSumInput"/>
+	</wsdl:message>
+	<wsdl:message name="GetSubscribersSumResponse">
+		<wsdl:part name="response" element="typ:GetSubscribersSumOutput"/>
+	</wsdl:message>
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType"/>
+	</wsdl:message>
+	<wsdl:portType name="SubscriberListPort">
+		<wsdl:operation name="GetSubscriberList">
+			<wsdl:input message="tns:GetSubscriberListRequest"/>
+			<wsdl:output message="tns:GetSubscriberListResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetSubscribersSum">
+			<wsdl:input message="tns:GetSubscribersSumRequest"/>
+			<wsdl:output message="tns:GetSubscribersSumResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="SubscriberListBinding" type="tns:SubscriberListPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="GetSubscriberList">
+			<soap:operation soapAction="GetSubscriberList"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="GetSubscribersSum">
+			<soap:operation soapAction="GetSubscribersSum"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="SubscriberList">
+		<wsdl:port name="SubscriberListPort" binding="tns:SubscriberListBinding"/>
+	</wsdl:service>
+</wsdl:definitions>

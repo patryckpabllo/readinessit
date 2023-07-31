@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns14="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:ns="http://np.systor.st/commontypes" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlPfx="http://np.systor.st/sp" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns13="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx="http://siebel.com/CustomUI" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns3="http://www.ericsson.com/BusinessSchemas/Services/Common/JMSSchema/JMSHeader.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://np.systor.st/sp" schemaLocation="/BusinessWSDLS/Services/WSDLS/SPService/SpService.wsdl"/>
+    <wsdl:import namespace="http://np.systor.st/sp" location="/BusinessWSDLS/Services/WSDLS/SPService/SpService.wsdl"/>
+    <pd:name>BusinessProcesses/Services/SPOperations/Implementation/SpPortHandleErrorNotification.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="wsdlPfx:HandleErrorNotification"/>
+    <pd:startX>27</pd:startX>
+    <pd:startY>207</pd:startY>
+    <pd:returnBindings>
+        <wsdlPfx:HandleErrorNotificationResponse>
+            <ack>
+                <wsdlPfx:MessageAck>
+                    <wsdlPfx:NPOrderID>
+                        <xsl:value-of select="$Start/wsdlPfx:HandleErrorNotification/error/wsdlPfx:ErrorNotification/ns:NPOrderID"/>
+                    </wsdlPfx:NPOrderID>
+                </wsdlPfx:MessageAck>
+            </ack>
+        </wsdlPfx:HandleErrorNotificationResponse>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="wsdlPfx:HandleErrorNotificationResponse"/>
+    <pd:endX>1085</pd:endX>
+    <pd:endY>186</pd:endY>
+    <pd:errorSchemas>
+        <Schema1 wsMsgRef="wsdlPfx:SpAccessFault"/>
+        <Schema2 wsMsgRef="wsdlPfx:SpTechnicalFault"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1466759443505</pd:targetNamespace>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>812</pd:x>
+        <pd:y>355</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/MNPOperations/NPActivated/Componentname"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                        <ns22:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns22:TransactionID>
+                    </xsl:if>
+                    <ns22:CorrelationID>
+                        <xsl:value-of select="$GetContext/ns3:_applicationProperties/ns3:JMSMessageID"/>
+                    </ns22:CorrelationID>
+                    <ns22:InterfaceID>
+                        <xsl:value-of select="$Start/wsdlPfx:HandleErrorNotification/error/wsdlPfx:ErrorNotification/ns:NPOrderID"/>
+                    </ns22:InterfaceID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($_error/ns2:ErrorReport)"/>
+                    </ns22:Message>
+                    <ns22:Transaction>
+                        <xsl:value-of select="tib:render-xml($CLE_To_Native/wsdlPfx:TechnicalFault)"/>
+                    </ns22:Transaction>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="if(string-length($GetTransactionID/GUID/StartTimeStamp)>0)&#xA;then $GetTransactionID/GUID/StartTimeStamp&#xA;else 0"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>1129</pd:x>
+        <pd:y>354</pd:y>
+        <config>
+            <faultName>Schema2</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns13:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/Msg"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                </messageCode>
+                <data>
+                    <wsdlPfx:SpTechnicalFault>
+                        <SpTechnicalFault>
+                            <xsl:copy-of select="$CLE_To_Native/wsdlPfx:TechnicalFault"/>
+                        </SpTechnicalFault>
+                    </wsdlPfx:SpTechnicalFault>
+                </data>
+            </ns13:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetContext">
+        <pd:type>com.tibco.ae.tools.palettes.servicepalette.GetContextActivity</pd:type>
+        <pd:resourceType>service.activity.getContext</pd:resourceType>
+        <pd:x>240</pd:x>
+        <pd:y>164</pd:y>
+        <config>
+            <variableConfig>/BusinessSchemas/Services/Common/JMSSchema/InputContext.contextResource</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="SetFaultContext">
+        <pd:type>com.tibco.ae.tools.palettes.servicepalette.SetContextActivity</pd:type>
+        <pd:resourceType>service.activity.setContext</pd:resourceType>
+        <pd:x>975</pd:x>
+        <pd:y>354</pd:y>
+        <config>
+            <variableConfig>/CommonResources/Context/Internal/EAIFaultContext.contextResource</variableConfig>
+        </config>
+        <pd:inputBindings>
+            <Fault>
+                <faultcode>
+                    <xsl:value-of select="$CLE_To_Native/wsdlPfx:TechnicalFault/ns:ErrorCode"/>
+                </faultcode>
+                <faultstring>
+                    <xsl:value-of select="$CLE_To_Native/wsdlPfx:TechnicalFault/ns:Description"/>
+                </faultstring>
+                <faultfactor>
+                    <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceSystem"/>
+                </faultfactor>
+            </Fault>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>225</pd:x>
+        <pd:y>352</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                <xsl:when test="string-length($_error_ErrorResp)>0">
+                    <ns14:ExceptionRequest>
+                        <ns22:Header>
+                            <ns22:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ns22:ApplicationID>
+                            <ns22:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/MNPOperations/ErrorNotification/componentname"/>
+                            </ns22:ComponentName>
+                            <ns22:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </ns22:Hostname>
+                            <ns22:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </ns22:Timestamp>
+                            <ns22:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                            </ns22:TransactionDomain>
+                            <ns22:TransactionType>
+                                <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                            </ns22:TransactionType>
+                            <ns22:TransactionID>
+                                <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                            </ns22:TransactionID>
+                            <ns22:CorrelationID>
+                                <xsl:value-of select="$GetContext/ns3:_applicationProperties/ns3:JMSMessageID"/>
+                            </ns22:CorrelationID>
+                            <ns22:InterfaceID>
+                                <xsl:value-of select="$Start/wsdlPfx:HandleErrorNotification/error/wsdlPfx:ErrorNotification/ns:NPOrderID"/>
+                            </ns22:InterfaceID>
+                            <ns22:Filename>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                            </ns22:Filename>
+                            <ns22:Message>
+                                <xsl:value-of select="tib:render-xml($Start/wsdlPfx:HandleErrorNotification)"/>
+                            </ns22:Message>
+                        </ns22:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="$_error_ErrorResp/wsdlPfx:SpTechnicalFault/SpTechnicalFault/wsdlPfx:TechnicalFault/ns:ErrorCode"/>
+                        </ExceptionCode>
+                        <StackTrace>
+                            <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                        </StackTrace>
+                    </ns14:ExceptionRequest>
+                </xsl:when>
+                <xsl:when test="string-length($_error)>0">
+                    <ns14:ExceptionRequest>
+                        <ns22:Header>
+                            <ns22:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ns22:ApplicationID>
+                            <ns22:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/MNPOperations/NPDonorAccept/Componentname"/>
+                            </ns22:ComponentName>
+                            <ns22:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </ns22:Hostname>
+                            <ns22:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </ns22:Timestamp>
+                            <ns22:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                            </ns22:TransactionDomain>
+                            <ns22:TransactionType>
+                                <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                            </ns22:TransactionType>
+                            <ns22:TransactionID>
+                                <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                            </ns22:TransactionID>
+                            <ns22:CorrelationID>
+                                <xsl:value-of select="$GetContext/ns3:_applicationProperties/ns3:JMSMessageID"/>
+                            </ns22:CorrelationID>
+                            <ns22:InterfaceID>
+                                <xsl:value-of select="$Start/wsdlPfx:HandleErrorNotification/error/wsdlPfx:ErrorNotification/ns:NPOrderID"/>
+                            </ns22:InterfaceID>
+                            <ns22:Filename>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                            </ns22:Filename>
+                            <ns22:Message>
+                                <xsl:value-of select="tib:render-xml($Start/wsdlPfx:HandleErrorNotification)"/>
+                            </ns22:Message>
+                        </ns22:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="substring-after(substring-before($_error/ns2:ErrorReport/Data,'&lt;/ExceptionCode>'),'&lt;ExceptionCode>')"/>
+                        </ExceptionCode>
+                        <StackTrace>
+                            <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                        </StackTrace>
+                    </ns14:ExceptionRequest>
+                </xsl:when>
+                <xsl:otherwise>
+                    <ns14:ExceptionRequest>
+                        <ns22:Header>
+                            <ns22:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ns22:ApplicationID>
+                            <ns22:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/MNPOperations/NPDonorAccept/Componentname"/>
+                            </ns22:ComponentName>
+                            <ns22:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </ns22:Hostname>
+                            <ns22:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </ns22:Timestamp>
+                            <ns22:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                            </ns22:TransactionDomain>
+                            <ns22:TransactionType>
+                                <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                            </ns22:TransactionType>
+                            <ns22:TransactionID>
+                                <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                            </ns22:TransactionID>
+                            <ns22:CorrelationID>
+                                <xsl:value-of select="$GetContext/ns3:_applicationProperties/ns3:JMSMessageID"/>
+                            </ns22:CorrelationID>
+                            <ns22:InterfaceID>
+                                <xsl:value-of select="$Start/wsdlPfx:HandleErrorNotification/error/wsdlPfx:ErrorNotification/ns:NPOrderID"/>
+                            </ns22:InterfaceID>
+                            <ns22:Filename>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                            </ns22:Filename>
+                            <ns22:Message>
+                                <xsl:value-of select="tib:render-xml($Start/wsdlPfx:HandleErrorNotification)"/>
+                            </ns22:Message>
+                        </ns22:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="&quot;9999&quot;"/>
+                        </ExceptionCode>
+                        <StackTrace>
+                            <xsl:value-of select="&quot;Input data invalid&quot;"/>
+                        </StackTrace>
+                    </ns14:ExceptionRequest>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CLE_To_Native">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>590</pd:x>
+        <pd:y>355</pd:y>
+        <config>
+            <element ref="wsdlPfx:TechnicalFault"/>
+        </config>
+        <pd:inputBindings>
+            <wsdlPfx:TechnicalFault>
+                <ns:ErrorCode>
+                    <xsl:value-of select="if(string-length($ErrorResponseMapFromEOM/root/ErrorUserErrCode)>0)&#xA;then $ErrorResponseMapFromEOM/root/ErrorUserErrCode&#xA;else $ErrorResponseMapFromEOM/root/ErrorSourceErrCode"/>
+                </ns:ErrorCode>
+                <ns:Description>
+                    <xsl:value-of select="if(string-length($ErrorResponseMapFromEOM/root/ErrorUserErrDesc)>0)&#xA;then $ErrorResponseMapFromEOM/root/ErrorUserErrDesc&#xA;else $ErrorResponseMapFromEOM/root/ErrorSourceErrDesc"/>
+                </ns:Description>
+            </wsdlPfx:TechnicalFault>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>385</pd:x>
+        <pd:y>65</pd:y>
+        <pd:width>549</pd:width>
+        <pd:height>239</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>simpleGroup</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>GetTransactionID</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogOut</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogIn</pd:from>
+            <pd:to>Call_ESI_NPErrorNotification</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Call_ESI_NPErrorNotification</pd:from>
+            <pd:to>LogOut</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetTransactionID</pd:from>
+            <pd:to>LogIn</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Call_ESI_NPErrorNotification</pd:from>
+            <pd:to>ErrorResp</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-65536</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$Call_ESI_NPErrorNotification/pfx:CBiO2MNPErrorNotification_Output/pfx:ErrorSourceErrCode!=0</pd:xpath>
+        </pd:transition>
+        <pd:activity name="Call_ESI_NPErrorNotification">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>696</pd:x>
+            <pd:y>130</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/SPOperations/HelperProcess/ESI_Call_ErrorNotification.process</processName>
+            </config>
+            <pd:inputBindings>
+                <group>
+                    <MNPErrorNotification>
+                        <xsl:if test="$Start/wsdlPfx:HandleErrorNotification/error/wsdlPfx:ErrorNotification/ns:NPOrderID">
+                            <NPOrderID>
+                                <xsl:value-of select="$Start/wsdlPfx:HandleErrorNotification/error/wsdlPfx:ErrorNotification/ns:NPOrderID"/>
+                            </NPOrderID>
+                        </xsl:if>
+                        <npcdbRejectMessage>
+                            <xsl:value-of select="$Start/wsdlPfx:HandleErrorNotification/error/wsdlPfx:ErrorNotification/ns:NpcdbRejectMessage"/>
+                        </npcdbRejectMessage>
+                        <npcdbRejectReason>
+                            <xsl:value-of select="$Start/wsdlPfx:HandleErrorNotification/error/wsdlPfx:ErrorNotification/ns:NpcdbRejectReason"/>
+                        </npcdbRejectReason>
+                    </MNPErrorNotification>
+                    <TransactionId>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionId>
+                    <SourseSystem>
+                        <xsl:value-of select="'NPCDB'"/>
+                    </SourseSystem>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </group>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GetTransactionID">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>460</pd:x>
+            <pd:y>130</pd:y>
+            <config>
+                <processName>/CommonProcesses/Utilities/GUID.process</processName>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="LogIn">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>568</pd:x>
+            <pd:y>129</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message_Masking.process</processName>
+            </config>
+            <pd:inputBindings>
+                <ns12:LogRequest>
+                    <ns22:Header>
+                        <ns22:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns22:ApplicationID>
+                        <ns22:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/MNPOperations/ErrorNotification/componentname"/>
+                        </ns22:ComponentName>
+                        <ns22:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns22:Hostname>
+                        <ns22:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns22:Timestamp>
+                        <ns22:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                        </ns22:TransactionDomain>
+                        <ns22:TransactionType>
+                            <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                        </ns22:TransactionType>
+                        <ns22:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns22:TransactionID>
+                        <xsl:if test="$GetContext/ns3:_applicationProperties/ns3:JMSMessageID">
+                            <ns22:CorrelationID>
+                                <xsl:value-of select="$GetContext/ns3:_applicationProperties/ns3:JMSMessageID"/>
+                            </ns22:CorrelationID>
+                        </xsl:if>
+                        <ns22:InterfaceID>
+                            <xsl:value-of select="$Start/wsdlPfx:HandleErrorNotification/error/wsdlPfx:ErrorNotification/ns:NPOrderID"/>
+                        </ns22:InterfaceID>
+                        <ns22:Filename>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                        </ns22:Filename>
+                        <ns22:Message>
+                            <xsl:value-of select="tib:render-xml($Start/wsdlPfx:HandleErrorNotification)"/>
+                        </ns22:Message>
+                    </ns22:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_RECV"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns12:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="LogOut">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>866</pd:x>
+            <pd:y>129</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            </config>
+            <pd:inputBindings>
+                <ns12:LogRequest>
+                    <ns22:Header>
+                        <ns22:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns22:ApplicationID>
+                        <ns22:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/MNPOperations/ErrorNotification/componentname"/>
+                        </ns22:ComponentName>
+                        <ns22:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns22:Hostname>
+                        <ns22:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns22:Timestamp>
+                        <ns22:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/PROVISIONING"/>
+                        </ns22:TransactionDomain>
+                        <ns22:TransactionType>
+                            <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                        </ns22:TransactionType>
+                        <ns22:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns22:TransactionID>
+                        <xsl:if test="$GetContext/ns3:_applicationProperties/ns3:JMSMessageID">
+                            <ns22:CorrelationID>
+                                <xsl:value-of select="$GetContext/ns3:_applicationProperties/ns3:JMSMessageID"/>
+                            </ns22:CorrelationID>
+                        </xsl:if>
+                        <ns22:InterfaceID>
+                            <xsl:value-of select="$Start/wsdlPfx:HandleErrorNotification/error/wsdlPfx:ErrorNotification/ns:NPOrderID"/>
+                        </ns22:InterfaceID>
+                        <ns22:Filename>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                        </ns22:Filename>
+                        <ns22:Message>
+                            <xsl:value-of select="tib:render-xml($Call_ESI_NPErrorNotification/*)"/>
+                        </ns22:Message>
+                    </ns22:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_SENT"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns12:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ErrorResp">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>783</pd:x>
+            <pd:y>228</pd:y>
+            <config>
+                <faultName>Schema2</faultName>
+            </config>
+            <pd:inputBindings>
+                <ns13:ActivityInput>
+                    <data>
+                        <wsdlPfx:SpTechnicalFault>
+                            <SpTechnicalFault>
+                                <wsdlPfx:TechnicalFault>
+                                    <ns:ErrorCode>
+                                        <xsl:value-of select="$Call_ESI_NPErrorNotification/pfx:CBiO2MNPErrorNotification_Output/pfx:ErrorSourceErrCode"/>
+                                    </ns:ErrorCode>
+                                    <ns:Description>
+                                        <xsl:value-of select="concat($Call_ESI_NPErrorNotification/pfx:CBiO2MNPErrorNotification_Output/pfx:ErrorSourceSystem,$Call_ESI_NPErrorNotification/pfx:CBiO2MNPErrorNotification_Output/pfx:ErrorSourceErrDesc)"/>
+                                    </ns:Description>
+                                </wsdlPfx:TechnicalFault>
+                            </SpTechnicalFault>
+                        </wsdlPfx:SpTechnicalFault>
+                    </data>
+                </ns13:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="ErrorResponseMapFromEOM">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>446</pd:x>
+        <pd:y>351</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/ErrorResponseMapFromEOM.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <SourceSystem>
+                    <xsl:value-of select="substring-before($_error/ns2:ErrorReport/Msg, '|')"/>
+                </SourceSystem>
+                <ChannelName>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/MNPOperations/ChannelName"/>
+                </ChannelName>
+                <ChannelType>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/MNPOperations/ChannelType"/>
+                </ChannelType>
+                <ResponseCode>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                </ResponseCode>
+                <ResponseDescription>
+                    <xsl:value-of select="substring-after($_error/ns2:ErrorReport/Msg, '|')"/>
+                </ResponseDescription>
+                <TIBCOServiceName>
+                    <xsl:value-of select="'SPSERVICE-HandleErrorNotification'"/>
+                </TIBCOServiceName>
+                <ErrorCategory>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/MNPOperations/ErrorCategory"/>
+                </ErrorCategory>
+                <TargetSystem>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/MNPOperations/TargetSystem"/>
+                </TargetSystem>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>SetFaultContext</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SetFaultContext</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>ErrorResponseMapFromEOM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_To_Native</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetContext</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorResponseMapFromEOM</pd:from>
+        <pd:to>CLE_To_Native</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetContext</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

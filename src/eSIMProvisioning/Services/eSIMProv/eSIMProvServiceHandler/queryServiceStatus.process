@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns4="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns3="http://www.tibco.com/pe/EngineTypes" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlPfx="http://www.huawei.com/CDM/ES/" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.huawei.com/CDM/ES/" schemaLocation="/Resources/WSDL/EntitleServer/soap.wsdl"/>
+    <wsdl:import namespace="http://www.huawei.com/CDM/ES/" location="/Resources/WSDL/EntitleServer/soap.wsdl"/>
+    <pd:name>Services/eSIMProv/eSIMProvServiceHandler/queryServiceStatus.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="wsdlPfx:queryServiceStatusIn"/>
+    <pd:startX>108</pd:startX>
+    <pd:startY>116</pd:startY>
+    <pd:returnBindings>
+        <wsdlPfx:queryServiceStatusOut>
+            <parameters>
+                <xsl:copy-of select="$MapRes/wsdlPfx:queryServiceStatusResponse"/>
+            </parameters>
+        </wsdlPfx:queryServiceStatusOut>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="wsdlPfx:queryServiceStatusOut"/>
+    <pd:endX>893</pd:endX>
+    <pd:endY>117</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1539161009266</pd:targetNamespace>
+    <pd:activity name="GUID">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>210</pd:x>
+        <pd:y>118</pd:y>
+        <config>
+            <processName>/LoggingProcess/GUID.process</processName>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="QueryAttachedUser">
+        <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+        <pd:x>525</pd:x>
+        <pd:y>49</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/QueryTimeout%%</timeout>
+            <commit>false</commit>
+            <maxRows>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/Maxrows%%</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/Resources/Connection/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>MSISDN</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+            <statement>select SECONDARY_MSISDN from T_ATTACH_USERS where PRIMARY_MSISDN=?</statement>
+            <oraObjects/>
+            <oraTables/>
+            <QueryOutputCachedSchemaColumns>SECONDARY_MSISDN</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+        </config>
+        <pd:inputBindings>
+            <jdbcQueryActivityInput>
+                <xsl:choose>
+                    <xsl:when test="string-length($QueryMSISDN/resultSet/Record[1]/MSISDN)>0&#xA;and&#xA;contains($QueryMSISDN/resultSet/Record[1]/MSISDN, &quot;+&quot;)">
+                        <MSISDN>
+                            <xsl:choose>
+                                <xsl:when test="exists(substring-after($QueryMSISDN/resultSet/Record[1]/MSISDN,&quot;+&quot;))">
+                                    <xsl:value-of select="substring-after($QueryMSISDN/resultSet/Record[1]/MSISDN,&quot;+&quot;)"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </MSISDN>
+                    </xsl:when>
+                    <xsl:when test="string-length($QueryMSISDN/resultSet/Record[1]/MSISDN)>0">
+                        <MSISDN>
+                            <xsl:choose>
+                                <xsl:when test="exists($QueryMSISDN/resultSet/Record[1]/MSISDN)">
+                                    <xsl:value-of select="$QueryMSISDN/resultSet/Record[1]/MSISDN"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </MSISDN>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="starts-with($Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest/wsdlPfx:MSISDN,&quot;+&quot;)">
+                                <MSISDN>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(substring-after($Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest/wsdlPfx:MSISDN,&quot;+&quot;))">
+                                            <xsl:value-of select="substring-after($Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest/wsdlPfx:MSISDN,&quot;+&quot;)"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </MSISDN>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <MSISDN>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(($Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest/wsdlPfx:MSISDN))">
+                                            <xsl:value-of select="($Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest/wsdlPfx:MSISDN)"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </MSISDN>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </jdbcQueryActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-In">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>329</pd:x>
+        <pd:y>118</pd:y>
+        <config>
+            <processName>/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/eSIMProv/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$GUID/GUID/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest/wsdlPfx:IMSI"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$GUID/GUID/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>734</pd:x>
+        <pd:y>118</pd:y>
+        <config>
+            <processName>/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/eSIMProv/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$GUID/GUID/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest/wsdlPfx:IMSI"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($MapRes/wsdlPfx:queryServiceStatusResponse)"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="concat(tib:render-xml($QueryMSISDN),tib:render-xml($QueryAttachedUser))"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$GUID/GUID/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>276</pd:x>
+        <pd:y>267</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="SetContext">
+        <pd:type>com.tibco.ae.tools.palettes.servicepalette.SetContextActivity</pd:type>
+        <pd:resourceType>service.activity.setContext</pd:resourceType>
+        <pd:x>411</pd:x>
+        <pd:y>267</pd:y>
+        <config>
+            <variableConfig>/Resources/Context/EAIFaultContext.contextResource</variableConfig>
+        </config>
+        <pd:inputBindings>
+            <Fault>
+                <faultcode>
+                    <xsl:value-of select="$_error/ns3:ErrorReport/MsgCode"/>
+                </faultcode>
+                <faultstring>
+                    <xsl:value-of select="$_error/ns3:ErrorReport/Msg"/>
+                </faultstring>
+                <faultfactor>
+                    <xsl:value-of select="&quot;TIBCO&quot;"/>
+                </faultfactor>
+            </Fault>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GenerateError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>704</pd:x>
+        <pd:y>266</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns4:ActivityInput>
+                <xsl:if test="$_error/ns3:ErrorReport/Msg">
+                    <message>
+                        <xsl:value-of select="$_error/ns3:ErrorReport/Msg"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$_error/ns3:ErrorReport/MsgCode">
+                    <messageCode>
+                        <xsl:value-of select="$_error/ns3:ErrorReport/MsgCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns4:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="QueryMSISDN">
+        <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+        <pd:x>526</pd:x>
+        <pd:y>185</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/LoginTimeout%%</timeout>
+            <commit>false</commit>
+            <maxRows>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/Maxrows%%</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/Resources/Connection/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>Select MSISDN from T_MAIN_USER where IMSI=?</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>IMSI</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+            <oraObjects/>
+            <oraTables/>
+            <QueryOutputCachedSchemaColumns>MSISDN</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+        </config>
+        <pd:inputBindings>
+            <jdbcQueryActivityInput>
+                <IMSI>
+                    <xsl:value-of select="$Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest/wsdlPfx:IMSI"/>
+                </IMSI>
+            </jdbcQueryActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="MapRes">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>636</pd:x>
+        <pd:y>120</pd:y>
+        <config>
+            <element ref="wsdlPfx:queryServiceStatusResponse"/>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="count($QueryAttachedUser/resultSet/Record)>0">
+                    <wsdlPfx:queryServiceStatusResponse>
+                        <wsdlPfx:RESULT_CODE>
+                            <xsl:value-of select="0"/>
+                        </wsdlPfx:RESULT_CODE>
+                        <wsdlPfx:RESULT_DESC>
+                            <xsl:value-of select="&quot;SUCCESS&quot;"/>
+                        </wsdlPfx:RESULT_DESC>
+                        <wsdlPfx:STATUS>
+                            <xsl:value-of select="1"/>
+                        </wsdlPfx:STATUS>
+                    </wsdlPfx:queryServiceStatusResponse>
+                </xsl:when>
+                <xsl:otherwise>
+                    <wsdlPfx:queryServiceStatusResponse>
+                        <wsdlPfx:RESULT_CODE>
+                            <xsl:value-of select="0"/>
+                        </wsdlPfx:RESULT_CODE>
+                        <wsdlPfx:RESULT_DESC>
+                            <xsl:value-of select="&quot;SUCCESS&quot;"/>
+                        </wsdlPfx:RESULT_DESC>
+                        <wsdlPfx:STATUS>
+                            <xsl:value-of select="0"/>
+                        </wsdlPfx:STATUS>
+                    </wsdlPfx:queryServiceStatusResponse>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-Err">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>537</pd:x>
+        <pd:y>270</pd:y>
+        <config>
+            <processName>/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/eSIMProv/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$GUID/GUID/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest/wsdlPfx:IMSI"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest)"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="concat(tib:render-xml($QueryMSISDN),tib:render-xml($QueryAttachedUser),tib:render-xml($_error))"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <xsl:choose>
+                    <xsl:when test="string-length($GUID/GUID/StartTimeStamp)>0">
+                        <TimeDuration>
+                            <xsl:value-of select="$GUID/GUID/StartTimeStamp"/>
+                        </TimeDuration>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <TimeDuration>
+                            <xsl:value-of select="tib:timestamp()"/>
+                        </TimeDuration>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GUID</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GUID</pd:from>
+        <pd:to>Log_Msg-In</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-In</pd:from>
+        <pd:to>QueryAttachedUser</pd:to>
+        <pd:xpathDescription>MSISDNExists</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>string-length(tib:trim($Start/wsdlPfx:queryServiceStatusIn/parameters/wsdlPfx:queryServiceStatusRequest/wsdlPfx:MSISDN))&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>QueryAttachedUser</pd:from>
+        <pd:to>MapRes</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-Out</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>SetContext</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SetContext</pd:from>
+        <pd:to>Log_Msg-Err</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-In</pd:from>
+        <pd:to>QueryMSISDN</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>QueryMSISDN</pd:from>
+        <pd:to>QueryAttachedUser</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapRes</pd:from>
+        <pd:to>Log_Msg-Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-Err</pd:from>
+        <pd:to>GenerateError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

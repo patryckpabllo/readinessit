@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns21="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:pfx="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Query/CustomerAssetQueryInbound.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns3="http://www.tibco.com/pe/EngineTypes" xmlns:pfx5="http://www.zain.com/ZESB/Types/Common" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx4="http://www.zain.com/ZESB/Services/CustomerServices/Types" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://siebel.com/CustomUI" xmlns:pfx21="http://www.siebel.com/xml/CBiO2SubscriberInfoDetails" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd">
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Query/CustomerAssetQueryInbound.xsd" schemaLocation="/BusinessSchemas/Services/Query/CustomerAsset/CustomerAssetQueryInbound.xsd"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/CustomerServices/Types" schemaLocation="/BusinessWSDLS/Services/WSDLS/QueryCustomerServices/QueryCustomerServicesInbound.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/SO_Constraints/HelperProcess/Call_ESI_QueryCustomerServices.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:queryAssetRequest"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>27</pd:startX>
+    <pd:startY>35</pd:startY>
+    <pd:returnBindings>
+        <xsl:copy-of select="$Parse-XML/*"/>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:choice>
+                    <xsd:element ref="pfx4:QueryResult"/>
+                    <xsd:element ref="pfx5:FaultType"/>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>574</pd:endX>
+    <pd:endY>35</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1489348105365</pd:targetNamespace>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>130</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx2:LogRequest>
+                <ns21:Header>
+                    <ns21:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns21:ApplicationID>
+                    <ns21:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/SO_Constraints/QueryAssets/ComponentName"/>
+                    </ns21:ComponentName>
+                    <ns21:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns21:Hostname>
+                    <ns21:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns21:Timestamp>
+                    <ns21:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns21:TransactionDomain>
+                    <ns21:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                    </ns21:TransactionType>
+                    <ns21:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns21:TransactionID>
+                    <ns21:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx:queryAssetRequest)"/>
+                    </ns21:Message>
+                </ns21:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </pfx2:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Common_EAI_EMSSendReceive">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>255</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/HelperProcesses/Common_EAI_EMSSendReceive.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <MessageBody>
+                    <xsl:value-of select="tib:render-xml($Start/root/pfx:queryAssetRequest)"/>
+                </MessageBody>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TransactionID>
+                <EMS_DestinationQueue>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/SO_Constraints/QueryAssets/Queue_Name"/>
+                </EMS_DestinationQueue>
+                <TransactionDomain>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                </TransactionDomain>
+                <TransactionType>
+                    <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                </TransactionType>
+                <ReplyToEngineID>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/EngineID"/>
+                </ReplyToEngineID>
+                <ReplyToDeployment>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                </ReplyToDeployment>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+                <RequestTimeOut>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/SO_Constraints/QueryAssets/TimeOut"/>
+                </RequestTimeOut>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>481</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx2:LogRequest>
+                <ns21:Header>
+                    <ns21:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns21:ApplicationID>
+                    <ns21:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/SO_Constraints/QueryAssets/ComponentName"/>
+                    </ns21:ComponentName>
+                    <ns21:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns21:Hostname>
+                    <ns21:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns21:Timestamp>
+                    <ns21:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns21:TransactionDomain>
+                    <ns21:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                    </ns21:TransactionType>
+                    <ns21:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns21:TransactionID>
+                    <ns21:Message>
+                        <xsl:value-of select="tib:render-xml($Parse-XML/*)"/>
+                    </ns21:Message>
+                </ns21:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </pfx2:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>382</pd:x>
+        <pd:y>136</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/ParsingErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/ParsingErrorCode"/>
+                </messageCode>
+            </ns2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>379</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:choice>
+                            <xsd:element ref="pfx4:QueryResult"/>
+                            <xsd:element ref="pfx5:FaultType"/>
+                        </xsd:choice>
+                    </xsd:complexType>
+                </xsd:element>
+            </term>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Common_EAI_EMSSendReceive/ResponseData"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>Common_EAI_EMSSendReceive</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Common_EAI_EMSSendReceive</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

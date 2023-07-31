@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:ns1="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/ManageSharedData/ManageSharedDataServicePort" xmlns:ns0="http://www.zain.com/ZESB/Services/ManageSharedData/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ManageSharedDataService" targetNamespace="http://www.zain.com/ZESB/Services/ManageSharedData/ManageSharedDataServicePort">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Services/ManageSharedData/Types" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:import namespace="http://www.zain.com/ZESB/Types/Common"/>
+            <xs:complexType name="DependantUsage">
+                <xs:sequence>
+                    <xs:element name="Msisdn" type="ns0:Msisdn"/>
+                    <xs:element name="OfferID" type="xs:string"/>
+                    <xs:element name="OfferName" type="xs:string"/>
+                    <xs:element name="Used" type="xs:long"/>
+                    <xs:element name="Threshold" type="xs:long"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="DependentsInfoList">
+                <xs:sequence>
+                    <xs:element name="DependentInfo" type="ns0:DependantUsage" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="MasterUsage">
+                <xs:sequence>
+                    <xs:element name="OfferID" type="xs:string"/>
+                    <xs:element name="OfferName" type="xs:string"/>
+                    <xs:element name="Used" type="xs:long"/>
+                    <xs:element name="Threshold" type="xs:long"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:simpleType name="Msisdn">
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="7"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="GetMasterUsageInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Msisdn" type="ns0:Msisdn"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetMasterUsageOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="StartDate" type="xs:dateTime"/>
+                        <xs:element name="EndDate" type="xs:dateTime"/>
+                        <xs:element name="TotalUsage" type="ns0:MasterUsage"/>
+                        <xs:element name="DependentsInfo" type="ns0:DependentsInfoList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="SetDependentThresholdInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MasterMsisdn" type="ns0:Msisdn"/>
+                        <xs:element name="DependentMsisdn" type="ns0:Msisdn"/>
+                        <xs:element name="OfferID" type="xs:string"/>
+                        <xs:element name="Threshold" type="xs:long"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="SetDependentThresholdOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Status" type="xs:string"/>
+                        <xs:element name="Description" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:import namespace="http://www.zain.com/ZESB/Services/ManageSharedData/Types"/>
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+                        <xs:element name="detail" type="xs:string" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="SetDependentThresholdRequest">
+        <wsdl:part name="request" element="ns0:SetDependentThresholdInput"/>
+    </wsdl:message>
+    <wsdl:message name="SetDependentThresholdResponse">
+        <wsdl:part name="response" element="ns0:SetDependentThresholdOutput"/>
+    </wsdl:message>
+    <wsdl:message name="FaultMessage">
+        <wsdl:part name="fault" element="ns1:FaultType"/>
+    </wsdl:message>
+    <wsdl:message name="GetMasterUsageRequest">
+        <wsdl:part name="request" element="ns0:GetMasterUsageInput"/>
+    </wsdl:message>
+    <wsdl:message name="GetMasterUsageResponse">
+        <wsdl:part name="response" element="ns0:GetMasterUsageOutput"/>
+    </wsdl:message>
+    <wsdl:portType name="ManageSharedDataServicePort">
+        <wsdl:operation name="SetDependentThreshold">
+            <wsdl:input message="tns:SetDependentThresholdRequest"/>
+            <wsdl:output message="tns:SetDependentThresholdResponse"/>
+            <wsdl:fault name="fault" message="tns:FaultMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetMasterUsage">
+            <wsdl:input message="tns:GetMasterUsageRequest"/>
+            <wsdl:output message="tns:GetMasterUsageResponse"/>
+            <wsdl:fault name="fault" message="tns:FaultMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ManageSharedData" type="tns:ManageSharedDataServicePort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="SetDependentThreshold">
+            <wsdl:documentation/>
+            <soap:operation style="document" soapAction="SetDependentThreshold"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetMasterUsage">
+            <wsdl:documentation/>
+            <soap:operation style="document" soapAction="GetMasterUsage"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ManageSharedDataService">
+        <wsdl:port name="ManageSharedData" binding="tns:ManageSharedData">
+            <soap:address location="http://10.96.100.3:7070/ESB/SOAP/ManageSharedDataService"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

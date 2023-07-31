@@ -1,0 +1,1101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:format="java://MSISDNFormatter" xmlns:ns5="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Query/CustomerAssetQueryInbound.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns6="http://www.siebel.com/xml/CBiO2SubscriberInfoDetails" xmlns:ns7="http://www.zain.com/ZESB/Services/CustomerServices/Types" xmlns:pfx="http://www.zain.com/ZESB/Services/ServiceEligibility/Types" xmlns:ns8="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns1="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns4="http://www.tibco.com/pe/EngineTypes" xmlns:ns3="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pfx5="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx4="http://www.zain.com/ZESB/Types/Common" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://siebel.com/CustomUI" xmlns:pfx2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx6="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/CustProfQryRes.xsd">
+    <xsd:import namespace="http://www.zain.com/ZESB/Types/Common" schemaLocation="/BusinessProcesses/Services/Common/ServiceEligibility/ServiceEligibilityInbound.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/ServiceEligibility/Implementation/ServiceEligibility_RMV.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>65</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Common/ServiceEligibility/RMV_BPI_QueueName%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>824</pd:endX>
+    <pd:endY>325</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1489495366119</pd:targetNamespace>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>186</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx:QueryRequestInput"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>288</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns3:Header>
+                    <ns3:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns3:ApplicationID>
+                    <ns3:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/RMV_ComponentName"/>
+                    </ns3:ComponentName>
+                    <ns3:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns3:Hostname>
+                    <ns3:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns3:Timestamp>
+                    <ns3:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns3:TransactionDomain>
+                    <ns3:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns3:TransactionType>
+                    <xsl:if test="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID">
+                        <ns3:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns3:TransactionID>
+                    </xsl:if>
+                    <ns3:Message>
+                        <xsl:value-of select="tib:render-xml($Parse-XML/pfx:QueryRequestInput)"/>
+                    </ns3:Message>
+                </ns3:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_ESI_QSP">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>417</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/ServiceEligibility/HelperProcess/Call_ESI_QuerySubscriberProfile.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns5:queryAssetRequest>
+                    <ns5:OperationType>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/QuerySubscriberProfile/CRM_OperationName"/>
+                    </ns5:OperationType>
+                    <ns5:MSISDN>
+                        <xsl:value-of select="format:FormatMSISDN($Parse-XML/pfx:QueryRequestInput/pfx:Msisdn, $_globalVariables/ns2:GlobalVariables/MSISDNBaseLength)"/>
+                    </ns5:MSISDN>
+                </ns5:queryAssetRequest>
+                <StartTimeStamp>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </StartTimeStamp>
+                <TransactionID>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                </TransactionID>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_ESI_QA">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>525</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/ServiceEligibility/HelperProcess/Call_ESI_QueryCustomerServices.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns5:queryAssetRequest>
+                    <ns5:OperationType>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/QueryAssets/CRM_OperationName"/>
+                    </ns5:OperationType>
+                    <ns5:MSISDN>
+                        <xsl:value-of select="format:FormatMSISDN($Parse-XML/pfx:QueryRequestInput/pfx:Msisdn, $_globalVariables/ns2:GlobalVariables/MSISDNBaseLength)"/>
+                    </ns5:MSISDN>
+                </ns5:queryAssetRequest>
+                <StartTimeStamp>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </StartTimeStamp>
+                <TransactionID>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                </TransactionID>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>234</pd:x>
+        <pd:y>800</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns8:ExceptionRequest>
+                <ns3:Header>
+                    <ns3:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns3:ApplicationID>
+                    <ns3:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/RMV_ComponentName"/>
+                    </ns3:ComponentName>
+                    <ns3:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns3:Hostname>
+                    <ns3:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns3:Timestamp>
+                    <ns3:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns3:TransactionDomain>
+                    <ns3:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns3:TransactionType>
+                    <xsl:if test="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID">
+                        <ns3:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns3:TransactionID>
+                    </xsl:if>
+                    <xsl:choose>
+                        <xsl:when test="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/pfx3:ErrorSourceErrCode>0">
+                            <ns3:Message>
+                                <xsl:value-of select="tib:render-xml($Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output)"/>
+                            </ns3:Message>
+                        </xsl:when>
+                        <xsl:when test="exists($Call_ESI_QA/root/pfx4:FaultType)">
+                            <ns3:Message>
+                                <xsl:value-of select="tib:render-xml($Call_ESI_QA/root/pfx4:FaultType)"/>
+                            </ns3:Message>
+                        </xsl:when>
+                        <xsl:when test="not($Conditions/root/Status='Active')">
+                            <ns3:Message>
+                                <xsl:value-of select="&quot;Subscriber is not Active&quot;"/>
+                            </ns3:Message>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <ns3:Message>
+                                <xsl:value-of select="tib:render-xml($_error/ns4:ErrorReport)"/>
+                            </ns3:Message>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ns3:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$_error/ns4:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+            </ns8:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogError">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>333</pd:x>
+        <pd:y>799</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns3:Header>
+                    <ns3:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns3:ApplicationID>
+                    <ns3:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/RMV_ComponentName"/>
+                    </ns3:ComponentName>
+                    <ns3:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns3:Hostname>
+                    <ns3:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns3:Timestamp>
+                    <ns3:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns3:TransactionDomain>
+                    <ns3:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns3:TransactionType>
+                    <xsl:if test="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID">
+                        <ns3:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns3:TransactionID>
+                    </xsl:if>
+                    <ns3:Message>
+                        <xsl:value-of select="tib:render-xml($ErrorLog/ns8:ExceptionRequest/ns3:Header/ns3:Message)"/>
+                    </ns3:Message>
+                </ns3:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="FetchEligible_REMOVABLE_Services">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>53</pd:x>
+        <pd:y>319</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/FetchEligible_REMOVABLE_Services.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>119</pd:x>
+        <pd:y>799</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>420</pd:x>
+        <pd:y>137</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate-Error-1">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>527</pd:x>
+        <pd:y>136</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Conditions">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>152</pd:x>
+        <pd:y>323</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Status" type="xsd:string"/>
+                            <xsd:element name="Loyalty" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="BillingType" type="xsd:string"/>
+                            <xsd:element name="BasicServiceType" type="xsd:string"/>
+                            <xsd:element name="SubscriberCategory" type="xsd:string"/>
+                            <xsd:element name="ServiceCategory" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/OldFlow='false'">
+                    <root>
+                        <Status>
+                            <xsl:value-of select="$Call_ESI_QSP_New/pfx6:CustProfQryResp/pfx6:Resultsets/pfx6:ResultSet1/pfx6:Record1[1]/pfx6:CUST_STAT_CD"/>
+                        </Status>
+                        <xsl:choose>
+                            <xsl:when test="$Call_ESI_QSP_New/pfx6:CustProfQryResp/pfx6:Resultsets/pfx6:ResultSet5/pfx6:Record5[pfx6:TYPE_CD='Service Account']/pfx6:X_CBIO2_LINE_TYPE=&quot;Prepaid&quot;">
+                                <BillingType>
+                                    <xsl:value-of select="&quot;PREP&quot;"/>
+                                </BillingType>
+                            </xsl:when>
+                            <xsl:when test="$Call_ESI_QSP_New/pfx6:CustProfQryResp/pfx6:Resultsets/pfx6:ResultSet5/pfx6:Record5[pfx6:TYPE_CD='Service Account']/pfx6:X_CBIO2_LINE_TYPE=&quot;Postpaid&quot;">
+                                <BillingType>
+                                    <xsl:value-of select="&quot;POST&quot;"/>
+                                </BillingType>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <BillingType>
+                                    <xsl:value-of select="$Call_ESI_QSP_New/pfx6:CustProfQryResp/pfx6:Resultsets/pfx6:ResultSet5/pfx6:Record5[pfx6:TYPE_CD='Service Account']/pfx6:X_CBIO2_LINE_TYPE"/>
+                                </BillingType>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:choose>
+                            <xsl:when test="upper-case($Call_ESI_QSP_New/pfx6:CustProfQryResp/pfx6:Resultsets/pfx6:ResultSet5/pfx6:Record5[pfx6:TYPE_CD='Service Account']/pfx6:X_CBIO2_CONNECTION_TYPE) = $_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/MIXED_BSType">
+                                <BasicServiceType>
+                                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/MIXED_BSType"/>
+                                </BasicServiceType>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <BasicServiceType>
+                                    <xsl:value-of select="$Call_ESI_QSP_New/pfx6:CustProfQryResp/pfx6:Resultsets/pfx6:ResultSet5/pfx6:Record5[pfx6:TYPE_CD='Service Account']/pfx6:X_CBIO2_CONNECTION_TYPE"/>
+                                </BasicServiceType>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <SubscriberCategory>
+                            <xsl:value-of select="$Call_ESI_QSP_New/pfx6:CustProfQryResp/pfx6:Resultsets/pfx6:ResultSet1/pfx6:Record1[1]/pfx6:X_CBIO2_CATEGORY_CODE"/>
+                        </SubscriberCategory>
+                        <xsl:for-each select="$Parse-XML/pfx:QueryRequestInput/pfx:Category">
+                            <ServiceCategory>
+                                <xsl:value-of select="."/>
+                            </ServiceCategory>
+                        </xsl:for-each>
+                    </root>
+                </xsl:when>
+                <xsl:otherwise>
+                    <root>
+                        <Status>
+                            <xsl:value-of select="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/ns6:ListOfCbio2subscriberinfodetails/ns6:SubscriberInfo[1]/ns6:ListOfSubscriberDetails/ns6:SubscriberDetails[1]/ns6:CBiO2SubscriberStatus"/>
+                        </Status>
+                        <xsl:choose>
+                            <xsl:when test="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/ns6:ListOfCbio2subscriberinfodetails/ns6:SubscriberInfo[1]/ns6:ListOfSubscriberDetails/ns6:SubscriberDetails[1]/ns6:CBiO2LineType=&quot;Prepaid&quot;">
+                                <BillingType>
+                                    <xsl:value-of select="&quot;PREP&quot;"/>
+                                </BillingType>
+                            </xsl:when>
+                            <xsl:when test="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/ns6:ListOfCbio2subscriberinfodetails/ns6:SubscriberInfo[1]/ns6:ListOfSubscriberDetails/ns6:SubscriberDetails[1]/ns6:CBiO2LineType=&quot;Postpaid&quot;">
+                                <BillingType>
+                                    <xsl:value-of select="&quot;POST&quot;"/>
+                                </BillingType>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <BillingType>
+                                    <xsl:value-of select="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/ns6:ListOfCbio2subscriberinfodetails/ns6:SubscriberInfo[1]/ns6:ListOfSubscriberDetails/ns6:SubscriberDetails[1]/ns6:CBiO2LineType"/>
+                                </BillingType>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <xsl:choose>
+                            <xsl:when test="upper-case($Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/ns6:ListOfCbio2subscriberinfodetails/ns6:SubscriberInfo[1]/ns6:ListOfSubscriberDetails/ns6:SubscriberDetails[1]/ns6:CBiO2ConnectionType) = $_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/MIXED_BSType">
+                                <BasicServiceType>
+                                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/MIXED_BSType"/>
+                                </BasicServiceType>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <BasicServiceType>
+                                    <xsl:value-of select="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/ns6:ListOfCbio2subscriberinfodetails/ns6:SubscriberInfo[1]/ns6:ListOfSubscriberDetails/ns6:SubscriberDetails[1]/ns6:CBiO2ConnectionType"/>
+                                </BasicServiceType>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <SubscriberCategory>
+                            <xsl:value-of select="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/ns6:ListOfCbio2subscriberinfodetails/ns6:SubscriberInfo[1]/ns6:ListOfSubscriberDetails/ns6:SubscriberDetails[1]/ns6:CBiO2CustomerCategoryCode"/>
+                        </SubscriberCategory>
+                        <xsl:for-each select="$Parse-XML/pfx:QueryRequestInput/pfx:Category">
+                            <ServiceCategory>
+                                <xsl:value-of select="."/>
+                            </ServiceCategory>
+                        </xsl:for-each>
+                    </root>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="EligibleServices">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>263</pd:x>
+        <pd:y>325</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Record" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="Status" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="BillingType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="BasicServiceType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Category" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Service" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="PromotionID" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ProductID" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ServiceCategory" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="EN_Name" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="AR_Name" type="xsd:string" minOccurs="0"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:for-each select="$Call_ESI_QA/root/ns7:QueryResult/ns7:SubscriberProducts">
+                    <xsl:if test="$FetchEligible_REMOVABLE_Services/FetchEligible_REMOVABLE_Services/Records/ServiceCode = ns7:Code">
+                        <Record>
+                            <xsl:variable name="var" select="current()/ns7:Code"/>
+                            <xsl:if test="$FetchEligible_REMOVABLE_Services/FetchEligible_REMOVABLE_Services/Records[$var=ServiceCode]/Status">
+                                <Status>
+                                    <xsl:value-of select="$FetchEligible_REMOVABLE_Services/FetchEligible_REMOVABLE_Services/Records[$var=ServiceCode]/Status"/>
+                                </Status>
+                            </xsl:if>
+                            <Service>
+                                <xsl:value-of select="$FetchEligible_REMOVABLE_Services/FetchEligible_REMOVABLE_Services/Records[$var=ServiceCode]/ServiceCode"/>
+                            </Service>
+                            <PromotionID>
+                                <xsl:value-of select="$FetchEligible_REMOVABLE_Services/FetchEligible_REMOVABLE_Services/Records[$var=ServiceCode]/PromotionID"/>
+                            </PromotionID>
+                            <ProductID>
+                                <xsl:value-of select="$FetchEligible_REMOVABLE_Services/FetchEligible_REMOVABLE_Services/Records[$var=ServiceCode]/ProductID"/>
+                            </ProductID>
+                            <ServiceCategory>
+                                <xsl:value-of select="$FetchEligible_REMOVABLE_Services/FetchEligible_REMOVABLE_Services/Records[$var=ServiceCode]/Category"/>
+                            </ServiceCategory>
+                            <EN_Name>
+                                <xsl:value-of select="$FetchEligible_REMOVABLE_Services/FetchEligible_REMOVABLE_Services/Records[$var=ServiceCode]/EN_Name"/>
+                            </EN_Name>
+                            <AR_Name>
+                                <xsl:value-of select="$FetchEligible_REMOVABLE_Services/FetchEligible_REMOVABLE_Services/Records[$var=ServiceCode]/AR_Name"/>
+                            </AR_Name>
+                        </Record>
+                    </xsl:if>
+                </xsl:for-each>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Response_Mapping">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>503</pd:x>
+        <pd:y>322</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="pfx:QueryResult"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx:QueryResult>
+                    <pfx:SubscriberInfo>
+                        <pfx:Status>
+                            <xsl:value-of select="$Conditions/root/Status"/>
+                        </pfx:Status>
+                        <pfx:BillingType>
+                            <xsl:value-of select="$Conditions/root/BillingType"/>
+                        </pfx:BillingType>
+                        <pfx:BSType>
+                            <xsl:value-of select="$Conditions/root/BasicServiceType"/>
+                        </pfx:BSType>
+                    </pfx:SubscriberInfo>
+                    <xsl:choose>
+                        <xsl:when test="exists($ServiceCategory_Check) and string-length($ServiceCategory_Check)>0">
+                            <xsl:for-each select="$ServiceCategory_Check/root/Record">
+                                <xsl:choose>
+                                    <xsl:when test="current()/Status=$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/RMV_Status_Y">
+                                        <pfx:Products>
+                                            <xsl:if test="current()/Service">
+                                                <pfx:Code>
+                                                    <xsl:value-of select="current()/Service"/>
+                                                </pfx:Code>
+                                            </xsl:if>
+                                            <xsl:if test="current()/EN_Name">
+                                                <pfx:DisplayName>
+                                                    <xsl:value-of select="current()/EN_Name"/>
+                                                </pfx:DisplayName>
+                                            </xsl:if>
+                                            <xsl:if test="current()/AR_Name">
+                                                <pfx:ArabicDisplayName>
+                                                    <xsl:value-of select="current()/AR_Name"/>
+                                                </pfx:ArabicDisplayName>
+                                            </xsl:if>
+                                            <xsl:if test="current()/ServiceCategory">
+                                                <pfx:Category>
+                                                    <xsl:value-of select="current()/ServiceCategory"/>
+                                                </pfx:Category>
+                                            </xsl:if>
+                                        </pfx:Products>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <pfx:Products/>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:for-each>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:for-each select="$EligibleServices/root/Record">
+                                <xsl:choose>
+                                    <xsl:when test="current()/Status=$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/RMV_Status_Y">
+                                        <pfx:Products>
+                                            <xsl:if test="current()/Service">
+                                                <pfx:Code>
+                                                    <xsl:value-of select="current()/Service"/>
+                                                </pfx:Code>
+                                            </xsl:if>
+                                            <xsl:if test="current()/EN_Name">
+                                                <pfx:DisplayName>
+                                                    <xsl:value-of select="current()/EN_Name"/>
+                                                </pfx:DisplayName>
+                                            </xsl:if>
+                                            <xsl:if test="current()/AR_Name">
+                                                <pfx:ArabicDisplayName>
+                                                    <xsl:value-of select="current()/AR_Name"/>
+                                                </pfx:ArabicDisplayName>
+                                            </xsl:if>
+                                            <xsl:if test="current()/ServiceCategory">
+                                                <pfx:Category>
+                                                    <xsl:value-of select="current()/ServiceCategory"/>
+                                                </pfx:Category>
+                                            </xsl:if>
+                                        </pfx:Products>
+                                    </xsl:when>
+                                    <xsl:otherwise/>
+                                </xsl:choose>
+                            </xsl:for-each>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </pfx:QueryResult>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ServiceCategory_Check">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>377</pd:x>
+        <pd:y>428</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Record" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="Status" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="BillingType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="BasicServiceType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Category" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Service" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="PromotionID" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ProductID" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ServiceCategory" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="EN_Name" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="AR_Name" type="xsd:string" minOccurs="0"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:for-each select="$Conditions/root/ServiceCategory">
+                    <xsl:choose>
+                        <xsl:when test="$EligibleServices/root/Record[current()=ServiceCategory]/ServiceCategory">
+                            <Record>
+                                <xsl:variable name="var" select="current()"/>
+                                <Status>
+                                    <xsl:value-of select="$EligibleServices/root/Record[$var=ServiceCategory]/Status"/>
+                                </Status>
+                                <BillingType>
+                                    <xsl:value-of select="$EligibleServices/root/Record[$var=ServiceCategory]/BillingType"/>
+                                </BillingType>
+                                <BasicServiceType>
+                                    <xsl:value-of select="$EligibleServices/root/Record[$var=ServiceCategory]/BasicServiceType"/>
+                                </BasicServiceType>
+                                <Category>
+                                    <xsl:value-of select="$EligibleServices/root/Record[$var=ServiceCategory]/Category"/>
+                                </Category>
+                                <Service>
+                                    <xsl:value-of select="$EligibleServices/root/Record[$var=ServiceCategory]/Service"/>
+                                </Service>
+                                <PromotionID>
+                                    <xsl:value-of select="$EligibleServices/root/Record[$var=ServiceCategory]/PromotionID"/>
+                                </PromotionID>
+                                <ProductID>
+                                    <xsl:value-of select="$EligibleServices/root/Record[$var=ServiceCategory]/ProductID"/>
+                                </ProductID>
+                                <ServiceCategory>
+                                    <xsl:value-of select="$EligibleServices/root/Record[$var=ServiceCategory]/ServiceCategory"/>
+                                </ServiceCategory>
+                                <EN_Name>
+                                    <xsl:value-of select="$EligibleServices/root/Record[$var=ServiceCategory]/EN_Name"/>
+                                </EN_Name>
+                                <AR_Name>
+                                    <xsl:value-of select="$EligibleServices/root/Record[$var=ServiceCategory]/AR_Name"/>
+                                </AR_Name>
+                            </Record>
+                        </xsl:when>
+                        <xsl:otherwise/>
+                    </xsl:choose>
+                </xsl:for-each>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply to JMS Message">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>698</pd:x>
+        <pd:y>331</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns1:ActivityInput>
+                <xsl:copy-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties"/>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($Response_Mapping/root/pfx:QueryResult)"/>
+                </Body>
+            </ns1:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply-to-JMS-Message-1">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>559</pd:x>
+        <pd:y>800</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns1:ActivityInput>
+                <xsl:copy-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties"/>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($FaultMapper/pfx4:FaultType)"/>
+                </Body>
+            </ns1:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate-Error-2">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>155</pd:x>
+        <pd:y>426</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="&quot;Subscriber is not Active&quot;"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="&quot;ZESB-1008&quot;"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>603</pd:x>
+        <pd:y>323</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns3:Header>
+                    <ns3:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns3:ApplicationID>
+                    <ns3:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/RMV_ComponentName"/>
+                    </ns3:ComponentName>
+                    <ns3:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns3:Hostname>
+                    <ns3:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns3:Timestamp>
+                    <ns3:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns3:TransactionDomain>
+                    <ns3:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns3:TransactionType>
+                    <xsl:if test="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID">
+                        <ns3:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns3:TransactionID>
+                    </xsl:if>
+                    <ns3:Message>
+                        <xsl:value-of select="tib:render-xml($Response_Mapping/root/pfx:QueryResult)"/>
+                    </ns3:Message>
+                </ns3:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="FaultMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>427</pd:x>
+        <pd:y>798</pd:y>
+        <config>
+            <element ref="pfx4:FaultType"/>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/pfx3:ErrorSourceErrCode>0">
+                    <pfx4:FaultType>
+                        <pfx4:type>
+                            <xsl:value-of select="&quot;Business&quot;"/>
+                        </pfx4:type>
+                        <pfx4:code>
+                            <xsl:value-of select="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/pfx3:ErrorSourceErrCode"/>
+                        </pfx4:code>
+                        <pfx4:description>
+                            <xsl:value-of select="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/pfx3:ErrorSourceErrDesc"/>
+                        </pfx4:description>
+                        <pfx4:sourceSystem>
+                            <xsl:value-of select="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/pfx3:ErrorSourceSystem"/>
+                        </pfx4:sourceSystem>
+                        <pfx4:extErrorCode>
+                            <xsl:value-of select="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/pfx3:ErrorSourceErrCode"/>
+                        </pfx4:extErrorCode>
+                        <pfx4:detail>
+                            <xsl:value-of select="$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/pfx3:ErrorSourceErrDesc"/>
+                        </pfx4:detail>
+                    </pfx4:FaultType>
+                </xsl:when>
+                <xsl:when test="exists($Call_ESI_QA/root/pfx4:FaultType)">
+                    <xsl:copy-of select="$Call_ESI_QA/root/pfx4:FaultType"/>
+                </xsl:when>
+                <xsl:when test="not($Conditions/root/Status='Active')">
+                    <pfx4:FaultType>
+                        <pfx4:type>
+                            <xsl:value-of select="&quot;Business&quot;"/>
+                        </pfx4:type>
+                        <pfx4:code>
+                            <xsl:value-of select="$_error/ns4:ErrorReport/MsgCode"/>
+                        </pfx4:code>
+                        <pfx4:description>
+                            <xsl:value-of select="$_error/ns4:ErrorReport/Msg"/>
+                        </pfx4:description>
+                        <pfx4:sourceSystem>
+                            <xsl:value-of select="&quot;CRM&quot;"/>
+                        </pfx4:sourceSystem>
+                        <pfx4:extErrorCode>
+                            <xsl:value-of select="$_error/ns4:ErrorReport/MsgCode"/>
+                        </pfx4:extErrorCode>
+                        <xsl:if test="$_error/ns4:ErrorReport/Msg">
+                            <pfx4:detail>
+                                <xsl:value-of select="$_error/ns4:ErrorReport/Msg"/>
+                            </pfx4:detail>
+                        </xsl:if>
+                    </pfx4:FaultType>
+                </xsl:when>
+                <xsl:otherwise>
+                    <pfx4:FaultType>
+                        <pfx4:type>
+                            <xsl:value-of select="&quot;Technical&quot;"/>
+                        </pfx4:type>
+                        <pfx4:code>
+                            <xsl:value-of select="$_error/ns4:ErrorReport/MsgCode"/>
+                        </pfx4:code>
+                        <pfx4:description>
+                            <xsl:value-of select="$_error/ns4:ErrorReport/Msg"/>
+                        </pfx4:description>
+                        <pfx4:sourceSystem>
+                            <xsl:value-of select="&quot;TIBCO&quot;"/>
+                        </pfx4:sourceSystem>
+                        <xsl:if test="$_error/ns4:ErrorReport/MsgCode">
+                            <pfx4:extErrorCode>
+                                <xsl:value-of select="$_error/ns4:ErrorReport/MsgCode"/>
+                            </pfx4:extErrorCode>
+                        </xsl:if>
+                        <xsl:if test="$_error/ns4:ErrorReport/Msg">
+                            <pfx4:detail>
+                                <xsl:value-of select="$_error/ns4:ErrorReport/Msg"/>
+                            </pfx4:detail>
+                        </xsl:if>
+                    </pfx4:FaultType>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_ESI_QSP_New">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>418</pd:x>
+        <pd:y>250</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/ServiceEligibility/HelperProcess/Call_ESI_QuerySubscriberProfile_New.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns5:queryAssetRequest>
+                    <ns5:MSISDN>
+                        <xsl:value-of select="format:FormatMSISDN($Parse-XML/pfx:QueryRequestInput/pfx:Msisdn, $_globalVariables/ns2:GlobalVariables/MSISDNBaseLength)"/>
+                    </ns5:MSISDN>
+                </ns5:queryAssetRequest>
+                <StartTimeStamp>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </StartTimeStamp>
+                <TransactionID>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns1:ActivityOutput/OtherProperties/TransactionID"/>
+                </TransactionID>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>Call_ESI_QSP</pd:to>
+        <pd:xpathDescription>Old_Flow</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/ServiceEligibility/OldFlow='true'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_QSP</pd:from>
+        <pd:to>Call_ESI_QA</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_QA</pd:from>
+        <pd:to>FetchEligible_REMOVABLE_Services</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_QSP</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:xpathDescription>Failure</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Call_ESI_QSP/pfx3:QuerySubscriberInfo_Output/pfx3:ErrorSourceErrCode&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_QA</pd:from>
+        <pd:to>Generate-Error-1</pd:to>
+        <pd:xpathDescription>Fault</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>exists($Call_ESI_QA/root/pfx4:FaultType) and string-length($Call_ESI_QA/root/pfx4:FaultType)&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>FetchEligible_REMOVABLE_Services</pd:from>
+        <pd:to>Conditions</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Conditions</pd:from>
+        <pd:to>EligibleServices</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EligibleServices</pd:from>
+        <pd:to>ServiceCategory_Check</pd:to>
+        <pd:xpathDescription>ServiceCategory</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>exists($Conditions/root/ServiceCategory)</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Response_Mapping</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>LogError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogError</pd:from>
+        <pd:to>FaultMapper</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ServiceCategory_Check</pd:from>
+        <pd:to>Response_Mapping</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EligibleServices</pd:from>
+        <pd:to>Response_Mapping</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply to JMS Message</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply-to-JMS-Message-1</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Conditions</pd:from>
+        <pd:to>Generate-Error-2</pd:to>
+        <pd:xpathDescription>NotActiveSub</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>not($Conditions/root/Status='Active')</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>Reply to JMS Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>FaultMapper</pd:from>
+        <pd:to>Reply-to-JMS-Message-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>Call_ESI_QSP_New</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_QSP_New</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:xpathDescription>Failure</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>not($Call_ESI_QSP_New/pfx6:CustProfQryResp/pfx5:ErrorResponse/pfx5:Error_SourceErrDesc='Success')</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_QSP_New</pd:from>
+        <pd:to>Call_ESI_QA</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

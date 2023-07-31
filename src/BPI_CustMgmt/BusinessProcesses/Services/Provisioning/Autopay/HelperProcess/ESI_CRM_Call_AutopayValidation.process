@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns5="http://xmlns.zain.com/BSS/ESB/CDM/Base" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://xmlns.zain.com/BSS/ESB/CDM/Finance" xmlns:ns3="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateBillProcessRequest.xsd" xmlns:pfx4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" xmlns:pfx2="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" xmlns:pfx7="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/AutopayExecutionResponse.xsd" xmlns:pfx6="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateBillProcessResponse.xsd">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileResponse.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateBillProcessRequest.xsd" schemaLocation="/BusinessSchemas/Services/Provisioning/CreateBillProcess/CreateBillProcessRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateBillProcessResponse.xsd" schemaLocation="/BusinessSchemas/Services/Provisioning/CreateBillProcess/CreateBillProcessResponse.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/AutopayExecutionResponse.xsd"/>
+    <pd:name>BusinessProcesses/Services/Provisioning/Autopay/HelperProcess/ESI_CRM_Call_AutopayValidation.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="AutopayExecutionInput">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="MSISDN" type="xsd:string"/>
+                                <xsd:element name="OperationType" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="TrackingID" type="xsd:string"/>
+                    <xsd:element name="StartTimestamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>52</pd:startX>
+    <pd:startY>128</pd:startY>
+    <pd:returnBindings>
+        <xsl:copy-of select="$ParseResponse/pfx7:AutopayExecutionResponse"/>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx7:AutopayExecutionResponse"/>
+    <pd:endX>784</pd:endX>
+    <pd:endY>124</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442397719743</pd:targetNamespace>
+    <pd:activity name="Common_EAI_EMSSender_WithRetry">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>348</pd:x>
+        <pd:y>126</pd:y>
+        <config>
+            <processName>/CommonProcesses/HelperProcesses/Common_EAI_EMSSendReceive.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <MessageBody>
+                    <xsl:value-of select="tib:render-xml($Start/root/AutopayExecutionInput)"/>
+                </MessageBody>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TrackingID"/>
+                </TransactionID>
+                <EMS_DestinationQueue>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/Autopay/ESI_RequestQueue"/>
+                </EMS_DestinationQueue>
+                <TransactionDomain>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                </TransactionDomain>
+                <TransactionType>
+                    <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                </TransactionType>
+                <ReplyToEngineID>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/EngineID"/>
+                </ReplyToEngineID>
+                <ReplyToDeployment>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                </ReplyToDeployment>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimestamp"/>
+                </StartTimeStamp>
+                <RequestTimeOut>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/Autopay/JMSTimeout"/>
+                </RequestTimeOut>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_CDM_Request">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>192</pd:x>
+        <pd:y>217</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/Autopay/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/CREATE_ORDER"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingID"/>
+                    </ns2:TransactionID>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/AutopayExecutionInput)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimestamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_CDM_Response">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>628</pd:x>
+        <pd:y>209</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message_Masking.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/Autopay/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingID"/>
+                    </ns2:TransactionID>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($ParseResponse/pfx7:AutopayExecutionResponse)"/>
+                    </ns2:Message>
+                    <xsl:for-each select="$ParseResponse/pfx7:AutopayExecutionResponse/ns4:CustomerPayment/ns4:PaymentMethod">
+                        <ns2:AltKey>
+                            <ns2:AltKeyName>
+                                <xsl:value-of select="&quot;SecretValue&quot;"/>
+                            </ns2:AltKeyName>
+                            <xsl:if test="current()/ns4:CreditCardPM/ns4:creditCardNumber">
+                                <ns2:AltKeyValue>
+                                    <xsl:value-of select="current()/ns4:CreditCardPM/ns4:creditCardNumber"/>
+                                </ns2:AltKeyValue>
+                            </xsl:if>
+                        </ns2:AltKey>
+                        <ns2:AltKey>
+                            <ns2:AltKeyName>
+                                <xsl:value-of select="&quot;MaskedValue&quot;"/>
+                            </ns2:AltKeyName>
+                            <ns2:AltKeyValue>
+                                <xsl:value-of select="concat(tib:left(current()/ns4:CreditCardPM/ns4:creditCardNumber,6),'XXXXXX',tib:right(current()/ns4:CreditCardPM/ns4:creditCardNumber,4))"/>
+                            </ns2:AltKeyValue>
+                        </ns2:AltKey>
+                    </xsl:for-each>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimestamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseResponse">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>493</pd:x>
+        <pd:y>124</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx7:AutopayExecutionResponse"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Common_EAI_EMSSender_WithRetry/ResponseData"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log_CDM_Request</pd:to>
+        <pd:xpathDescription>LogFlagCheck</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/Autopay/log_flag='true'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CDM_Request</pd:from>
+        <pd:to>Common_EAI_EMSSender_WithRetry</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Common_EAI_EMSSender_WithRetry</pd:from>
+        <pd:to>ParseResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CDM_Response</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseResponse</pd:from>
+        <pd:to>Log_CDM_Response</pd:to>
+        <pd:xpathDescription>LogFlagCheck</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Modification/CreateModifyBillingProfile/log_flag='true'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Common_EAI_EMSSender_WithRetry</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseResponse</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:label>
+        <pd:name>Label</pd:name>
+        <pd:description>This process performs orchestration for Billing Profile create/modify.</pd:description>
+        <pd:x>211</pd:x>
+        <pd:y>27</pd:y>
+        <pd:width>402</pd:width>
+        <pd:height>34</pd:height>
+        <pd:fontColor>-1</pd:fontColor>
+        <pd:color>-16777216</pd:color>
+        <pd:type>solid</pd:type>
+        <pd:thickness>0</pd:thickness>
+        <pd:fade>false</pd:fade>
+    </pd:label>
+</pd:ProcessDefinition>

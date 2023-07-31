@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx6="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/EOC/QueryEmpOrgDetails.xsd" xmlns:pfx7="http://www.siebel.com/xml/CBiO2%20Order%20Provisioning%20Req%20IO" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/CreateOrder/Request.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:pfx2="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/ModifyOrder/Request.xsd" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/CreateOrder/CreateOrderRequest.xsd" xmlns:pfx4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/TerminateInstallment/TerminateInstallment.xsd" xmlns:pfx5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/ChangeOwnership/ChangeOwnership.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/ModifyOrder/Request.xsd" schemaLocation="/BusinessSchemas/Services/Applications/ConceptWave/ModifyOrder/ModifyOrderRequest.xsd"/>
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/CreateOrder/CreateOrderRequest.xsd" schemaLocation="/BusinessSchemas/Services/Applications/ConceptWave/CreateOrder/CreateOrderRequest.xsd"/>
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/TerminateInstallment/TerminateInstallment.xsd" schemaLocation="/BusinessSchemas/Services/Applications/ConceptWave/TerminateInstallment/TerminateInstallment.xsd"/>
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/ChangeOwnership/ChangeOwnership.xsd" schemaLocation="/BusinessSchemas/Services/Applications/ConceptWave/ChangeOwnership/ChangeOwnership.xsd"/>
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/EOC/QueryEmpOrgDetails.xsd" schemaLocation="/BusinessSchemas/Services/Applications/ConceptWave/QueryEmpOrgDetails/QueryEmpOrgDetails.xsd"/>
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.siebel.com/xml/CBiO2%20Order%20Provisioning%20Req%20IO" schemaLocation="/BusinessSchemas/Services/Applications/CRM/Modification/XSD/listOfCbio2CancelFutureDateOrderReqIO.xsd"/>
+    <pd:name>tester/sendJmsMsg.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>72</pd:startX>
+    <pd:startY>65</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>642</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1441795539063</pd:targetNamespace>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>400</pd:x>
+        <pd:y>64</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/OrderManagement/CancelFutureOrder/CRM_EXT_Request_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($Map-Data/pfx7:listOfCbio2CancelOrderFutureDateReqIO)"/>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>213</pd:x>
+        <pd:y>66</pd:y>
+        <config>
+            <element ref="pfx7:listOfCbio2CancelOrderFutureDateReqIO"/>
+        </config>
+        <pd:inputBindings>
+            <pfx7:listOfCbio2CancelOrderFutureDateReqIO>
+                <pfx7:orderEntry-Orders>
+                    <pfx7:orderNumber>
+                        <xsl:value-of select="&quot;1-5295331840&quot;"/>
+                    </pfx7:orderNumber>
+                    <pfx7:cBiO2BSCSCustomerId>
+                        <xsl:value-of select="&quot;5000001594&quot;"/>
+                    </pfx7:cBiO2BSCSCustomerId>
+                    <pfx7:cBiO2TickNumber>
+                        <xsl:value-of select="&quot;178748&quot;"/>
+                    </pfx7:cBiO2TickNumber>
+                    <pfx7:cBiO2ContractBSCSId>
+                        <xsl:value-of select="&quot;CONTR0000027543&quot;"/>
+                    </pfx7:cBiO2ContractBSCSId>
+                    <pfx7:cBiO2CWMainProcessId>
+                        <xsl:value-of select="&quot;110003170322114&quot;"/>
+                    </pfx7:cBiO2CWMainProcessId>
+                </pfx7:orderEntry-Orders>
+            </pfx7:listOfCbio2CancelOrderFutureDateReqIO>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

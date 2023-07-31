@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:tns="http://www.zain.com/ZESB/Services/CallHistory" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:typ="http://www.zain.com/ZESB/Services/CallHistory/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://www.zain.com/ZESB/Services/CallHistory">
+    <types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:com="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <element name="FaultType">
+                <complexType>
+                    <sequence>
+                        <element name="type" type="string"/>
+                        <element name="code" type="string"/>
+                        <element name="description" type="string"/>
+                        <element name="sourceSystem" type="string"/>
+                        <element minOccurs="0" name="extErrorCode" type="string"/>
+                        <element minOccurs="0" name="detail" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </schema>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/CallHistory/Types">
+            <complexType name="Filter">
+                <sequence>
+                    <element maxOccurs="1" minOccurs="1" name="Type">
+                        <simpleType>
+                            <restriction base="string">
+                                <enumeration value="Only"/>
+                                <enumeration value="Except"/>
+                            </restriction>
+                        </simpleType>
+                    </element>
+                    <element maxOccurs="1" minOccurs="1" name="Value" type="string"/>
+                </sequence>
+            </complexType>
+            <complexType name="Records">
+                <sequence>
+                    <element maxOccurs="unbounded" minOccurs="0" name="R" type="typ:R"/>
+                </sequence>
+            </complexType>
+            <complexType name="R">
+                <sequence>
+                    <element maxOccurs="1" minOccurs="1" name="A" type="string">
+                        <annotation>
+                            <documentation>Calling Number A-Number</documentation>
+                        </annotation>
+                    </element>
+                    <element maxOccurs="1" minOccurs="1" name="B" type="string">
+                        <annotation>
+                            <documentation>Called Number B-Number</documentation>
+                        </annotation>
+                    </element>
+                    <element maxOccurs="1" minOccurs="1" name="T" type="dateTime">
+                        <annotation>
+                            <documentation>Call Date and Time</documentation>
+                        </annotation>
+                    </element>
+                    <element maxOccurs="1" minOccurs="1" name="M" type="decimal">
+                        <annotation>
+                            <documentation>Call Cost - aMount</documentation>
+                        </annotation>
+                    </element>
+                    <element maxOccurs="1" minOccurs="1" name="D" type="long">
+                        <annotation>
+                            <documentation>Call Duration</documentation>
+                        </annotation>
+                    </element>
+                    <element maxOccurs="1" minOccurs="1" name="C" type="string">
+                        <annotation>
+                            <documentation>Call Category: SMS, MMS, Local, Inter, Roaming, Video, Data</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </complexType>
+            <element name="GetHistoryRequest">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="1" minOccurs="1" name="ContractId" type="string"/>
+                        <element maxOccurs="1" minOccurs="1" name="Subno" type="string"/>
+                        <element maxOccurs="1" minOccurs="1" name="From" type="dateTime"/>
+                        <element maxOccurs="1" minOccurs="1" name="To" type="dateTime"/>
+                        <element maxOccurs="1" minOccurs="0" name="Filter" type="typ:Filter"/>
+                        <element maxOccurs="1" minOccurs="1" name="PageLimit">
+                            <simpleType>
+                                <restriction base="int">
+                                    <minInclusive value="1"/>
+                                    <maxInclusive value="500"/>
+                                </restriction>
+                            </simpleType>
+                        </element>
+                        <element maxOccurs="1" minOccurs="1" name="PageNo">
+                            <simpleType>
+                                <restriction base="int">
+                                    <minInclusive value="1"/>
+                                </restriction>
+                            </simpleType>
+                        </element>
+                    </sequence>
+                </complexType>
+            </element>
+            <element name="GetHistoryResponse">
+                <complexType>
+                    <sequence>
+                        <element maxOccurs="1" minOccurs="1" name="Status" type="string"/>
+                        <element minOccurs="0" name="Records" type="typ:Records"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </schema>
+    </types>
+    <message name="GetHistoryRequest">
+        <part element="typ:GetHistoryRequest" name="parameters"/>
+    </message>
+    <message name="GetHistoryResponse">
+        <part element="typ:GetHistoryResponse" name="parameters"/>
+    </message>
+    <message name="faultMessage">
+        <part element="com:FaultType" name="fault"/>
+    </message>
+    <portType name="CallHistoryPort">
+        <operation name="GetHistory">
+            <input message="tns:GetHistoryRequest"/>
+            <output message="tns:GetHistoryResponse"/>
+            <fault message="tns:faultMessage" name="fault"/>
+        </operation>
+    </portType>
+    <binding name="CallHistoryBinding" type="tns:CallHistoryPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="GetHistory">
+            <soap:operation soapAction="GetHistory"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+            <fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </fault>
+        </operation>
+    </binding>
+    <service name="CallHistory">
+        <port binding="tns:CallHistoryBinding" name="CallHistoryPort">
+            <soap:address location="/ZESB/CallHistory"/>
+        </port>
+    </service>
+</definitions>

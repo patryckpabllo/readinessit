@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns14="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns="pfx2" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlPfx="http://xmlns.example.com/1444473020556" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns5="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:ns13="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pfx="http://www.zain.com/ZESB/Services/Inventory/DeductInventoryResponse.xsd" xmlns:ns2="http://www.tibco.com/pe/DeployedVarsType" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.zain.com/ZESB/Services/Inventory/DeductInventoryRequest.xsd" xmlns:ns4="http://www.tibco.com/schemas/GW/BusinessProcesses/Services/ERP/BusinessSchemas/InventoryManagement/Fault/Schema.xsd" xmlns:ns3="http://www.tibco.com/pe/EngineTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx2="http://xmlns.example.com/1443506317373">
+    <wsdl:import namespace="http://xmlns.example.com/1444473020556" location="/BusinessWSDLS/Services/ERP/ERP_InventoryManagment.wsdl"/>
+    <wsdl:import namespace="http://xmlns.example.com/1443506317373" location="/BusinessProcesses/Services/ERP/BusinessWSDL/InventoryManagement.wsdl"/>
+    <pd:name>BusinessProcesses/Services/ERP/InventoryManagement/Implementation/InventoryManagementDeductInventoryItem.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="pfx2:DeductInventoryItemReq"/>
+    <pd:startX>45</pd:startX>
+    <pd:startY>137</pd:startY>
+    <pd:returnBindings>
+        <wsdlPfx:DeductInventoryItemRes>
+            <DeductInventoryResponse>
+                <pfx:DeductInventoryResponse>
+                    <pfx:responseCode>
+                        <xsl:value-of select="$ESI_Call_DeductInventory/pfx:DeductInventoryResponse/pfx:responseCode"/>
+                    </pfx:responseCode>
+                    <xsl:if test="$ESI_Call_DeductInventory/pfx:DeductInventoryResponse/pfx:responseMsg">
+                        <pfx:responseMsg>
+                            <xsl:value-of select="$ESI_Call_DeductInventory/pfx:DeductInventoryResponse/pfx:responseMsg"/>
+                        </pfx:responseMsg>
+                    </xsl:if>
+                    <xsl:if test="$ESI_Call_DeductInventory/pfx:DeductInventoryResponse/pfx:transactionRef">
+                        <pfx:transactionRef>
+                            <xsl:value-of select="$ESI_Call_DeductInventory/pfx:DeductInventoryResponse/pfx:transactionRef"/>
+                        </pfx:transactionRef>
+                    </xsl:if>
+                </pfx:DeductInventoryResponse>
+            </DeductInventoryResponse>
+        </wsdlPfx:DeductInventoryItemRes>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="pfx2:DeductInventoryItemRes"/>
+    <pd:endX>1022</pd:endX>
+    <pd:endY>126</pd:endY>
+    <pd:errorSchemas>
+        <Schema1 wsMsgRef="wsdlPfx:Fault"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1444659906686</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>232</pd:x>
+        <pd:y>2</pd:y>
+        <pd:width>606</pd:width>
+        <pd:height>250</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>simpleGroup</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>GetTransactionID</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogOut</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetTransactionID</pd:from>
+            <pd:to>LogIn</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call_DeductInventory</pd:from>
+            <pd:to>LogOut</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call_DeductInventory</pd:from>
+            <pd:to>GenerateErrorESI_ERP</pd:to>
+            <pd:xpathDescription>ErrorExists</pd:xpathDescription>
+            <pd:lineType>Straight</pd:lineType>
+            <pd:lineColor>-52429</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogIn</pd:from>
+            <pd:to>ESI_Call_DeductInventory</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="LogIn">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>444</pd:x>
+            <pd:y>70</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+                <spawn>false</spawn>
+            </config>
+            <pd:inputBindings>
+                <ns13:LogRequest>
+                    <ns22:Header>
+                        <ns22:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns22:ApplicationID>
+                        <ns22:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ReserveNumber/ComponentName"/>
+                        </ns22:ComponentName>
+                        <ns22:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns22:Timestamp>
+                        <ns22:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                        </ns22:TransactionDomain>
+                        <ns22:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns22:TransactionID>
+                        <ns22:Filename>
+                            <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/Deployment"/>
+                        </ns22:Filename>
+                    </ns22:Header>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_RECV"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns13:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="LogOut">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>770</pd:x>
+            <pd:y>66</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+                <spawn>false</spawn>
+            </config>
+            <pd:inputBindings>
+                <ns13:LogRequest>
+                    <ns22:Header>
+                        <ns22:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns22:ApplicationID>
+                        <ns22:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ReserveNumber/ComponentName"/>
+                        </ns22:ComponentName>
+                        <ns22:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns22:Timestamp>
+                        <ns22:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                        </ns22:TransactionDomain>
+                        <ns22:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns22:TransactionID>
+                        <ns22:Filename>
+                            <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/Deployment"/>
+                        </ns22:Filename>
+                    </ns22:Header>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_SENT"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns13:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ESI_Call_DeductInventory">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>589</pd:x>
+            <pd:y>71</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/ERP/InventoryManagement/HelperProcess/ESI_Call_DeductInventory.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <xsl:copy-of select="$Start/wsdlPfx:DeductInventoryItemReq/DeductInventoryItemReq/ns1:DeductInventoryItemRequest"/>
+                    <TransactionId>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GetTransactionID">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>307</pd:x>
+            <pd:y>69</pd:y>
+            <config>
+                <processName>/CommonProcesses/Utilities/GUID.process</processName>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="GenerateErrorESI_ERP">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>593</pd:x>
+            <pd:y>177</pd:y>
+            <config>
+                <faultName>Schema1</faultName>
+            </config>
+            <pd:inputBindings>
+                <ns5:ActivityInput>
+                    <data>
+                        <wsdlPfx:Fault>
+                            <fault>
+                                <ns4:FaultMessage>
+                                    <ns4:type>
+                                        <xsl:value-of select="&quot;&quot;"/>
+                                    </ns4:type>
+                                    <ns4:code>
+                                        <xsl:value-of select="$_error/ns3:ErrorReport/MsgCode"/>
+                                    </ns4:code>
+                                    <ns4:description>
+                                        <xsl:value-of select="$_error/ns3:ErrorReport/StackTrace"/>
+                                    </ns4:description>
+                                </ns4:FaultMessage>
+                            </fault>
+                        </wsdlPfx:Fault>
+                    </data>
+                </ns5:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>305</pd:x>
+        <pd:y>329</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ReserveNumber/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                        <ns22:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns22:TransactionID>
+                    </xsl:if>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <xsl:if test="$ErrorHandler/ns12:ExceptionRequest/StackTrace">
+                        <ns22:Transaction>
+                            <xsl:value-of select="$ErrorHandler/ns12:ExceptionRequest/StackTrace"/>
+                        </ns22:Transaction>
+                    </xsl:if>
+                </ns22:Header>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>44</pd:x>
+        <pd:y>332</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                <xsl:when test="exists($_error_GenerateErrorESI_ERP)&#xA;and&#xA;string-length($_error_GenerateErrorESI_ERP)>0">
+                    <ns12:ExceptionRequest>
+                        <ns22:Header>
+                            <ns22:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ns22:ApplicationID>
+                            <ns22:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ReserveNumber/ComponentName"/>
+                            </ns22:ComponentName>
+                            <ns22:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </ns22:Hostname>
+                            <ns22:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </ns22:Timestamp>
+                            <ns22:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                            </ns22:TransactionDomain>
+                            <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                                <ns22:TransactionID>
+                                    <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                                </ns22:TransactionID>
+                            </xsl:if>
+                        </ns22:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="$_error_GenerateErrorESI_ERP/wsdlPfx:Fault/fault/ns4:FaultMessage/ns4:code"/>
+                        </ExceptionCode>
+                        <StackTrace>
+                            <xsl:value-of select="$_error_GenerateErrorESI_ERP/wsdlPfx:Fault/fault/ns4:FaultMessage/ns4:description"/>
+                        </StackTrace>
+                    </ns12:ExceptionRequest>
+                </xsl:when>
+                <xsl:otherwise>
+                    <ns12:ExceptionRequest>
+                        <ns22:Header>
+                            <ns22:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ns22:ApplicationID>
+                            <ns22:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/BusinessProcesses/Services/Common/NumberReservation/ReserveNumber/ComponentName"/>
+                            </ns22:ComponentName>
+                            <ns22:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </ns22:Timestamp>
+                            <ns22:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns2:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                            </ns22:TransactionDomain>
+                            <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                                <ns22:TransactionID>
+                                    <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                                </ns22:TransactionID>
+                            </xsl:if>
+                        </ns22:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="&quot;9999&quot;"/>
+                        </ExceptionCode>
+                        <StackTrace>
+                            <xsl:value-of select="&quot;Input data invalid&quot;"/>
+                        </StackTrace>
+                    </ns12:ExceptionRequest>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>668</pd:x>
+        <pd:y>331</pd:y>
+        <config>
+            <faultName>Schema1</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns5:ActivityInput>
+                <data>
+                    <wsdlPfx:Fault>
+                        <fault>
+                            <ns4:FaultMessage>
+                                <ns4:type>
+                                    <xsl:value-of select="&quot;&quot;"/>
+                                </ns4:type>
+                                <ns4:code>
+                                    <xsl:value-of select="if(exists($ErrorHandler/ns12:ExceptionRequest/ExceptionCode))&#xA;then&#xA;$ErrorHandler/ns12:ExceptionRequest/ExceptionCode&#xA;else&#xA;$SetFaultContext-1/Fault/faultcode"/>
+                                </ns4:code>
+                                <ns4:description>
+                                    <xsl:value-of select="if(exists($ErrorHandler/ns12:ExceptionRequest/StackTrace))&#xA;then&#xA;$ErrorHandler/ns12:ExceptionRequest/StackTrace&#xA;else&#xA;$SetFaultContext-1/Fault/faultstring"/>
+                                </ns4:description>
+                            </ns4:FaultMessage>
+                        </fault>
+                    </wsdlPfx:Fault>
+                </data>
+            </ns5:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>173</pd:x>
+        <pd:y>442</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns14:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns3:ErrorReport/StackTrace"/>
+                </message>
+                <msgCode>
+                    <xsl:value-of select="$_error/ns3:ErrorReport/MsgCode"/>
+                </msgCode>
+            </ns14:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SetFaultContext-1">
+        <pd:type>com.tibco.ae.tools.palettes.servicepalette.SetContextActivity</pd:type>
+        <pd:resourceType>service.activity.setContext</pd:resourceType>
+        <pd:x>480</pd:x>
+        <pd:y>331</pd:y>
+        <config>
+            <variableConfig>/CommonResources/Context/Internal/EAIFaultContext.contextResource</variableConfig>
+            <showResult>true</showResult>
+        </config>
+        <pd:inputBindings>
+            <Fault>
+                <faultcode>
+                    <xsl:value-of select="$ESI_Call_DeductInventory/pfx:DeductInventoryResponse/pfx:responseCode"/>
+                </faultcode>
+                <faultstring>
+                    <xsl:value-of select="$ESI_Call_DeductInventory/pfx:DeductInventoryResponse/pfx:responseMsg"/>
+                </faultstring>
+                <faultfactor>
+                    <xsl:value-of select="&quot;&quot;"/>
+                </faultfactor>
+            </Fault>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:xpathDescription>Success</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$ESI_Call_DeductInventory/pfx:DeductInventoryResponse/pfx:responseCode='0'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>SetFaultContext-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SetFaultContext-1</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>SetFaultContext-1</pd:to>
+        <pd:xpathDescription>Otherwise</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

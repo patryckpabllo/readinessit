@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/KnetPayment" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:typ="http://www.zain.com/ZESB/Services/KnetPayment/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://www.zain.com/ZESB/Services/KnetPayment">
+    <wsdl:types>
+        <xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/KnetPayment/Types">
+            <xs:complexType name="Param">
+                <xs:sequence>
+                    <xs:element name="Name" type="xs:string"/>
+                    <xs:element name="Value" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Params">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Param" type="typ:Param"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="CreateOrderInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Channel" type="xs:string"/>
+                        <xs:element name="Msisdn" type="xs:string"/>
+                        <xs:element name="Amount" type="xs:decimal"/>
+                        <xs:element name="OrderID" type="xs:string"/>
+                        <xs:element name="OrderDescription" type="xs:string"/>
+                        <xs:element name="Language" type="xs:string"/>
+                        <xs:element name="ReturnPage" type="xs:string"/>
+                        <xs:element name="ErrorPage" type="xs:string"/>
+                        <xs:element minOccurs="0" name="CardNumber" type="xs:string"/>
+                        <xs:element minOccurs="0" name="CardExpiry" type="xs:string"/>
+                        <xs:element minOccurs="0" name="HandlerClass" type="xs:string"/>
+                        <xs:element minOccurs="0" name="Params" type="typ:Params"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="CreateOrderOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="PaymentID" type="xs:string"/>
+                        <xs:element name="PaymentPage" type="xs:string"/>
+                        <xs:element name="TerminalID" type="xs:string"/>
+                        <xs:element name="MerchantID" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="QueryPaymentInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="TerminalID" type="xs:string"/>
+                        <xs:element name="PaymentID" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="QueryPaymentOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="PaymentTransactionsList">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element maxOccurs="unbounded" minOccurs="0" name="PaymentTransaction">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="PaymentID" type="xs:string"/>
+                                                <xs:element name="TransactionID" type="xs:string"/>
+                                                <xs:element name="MerchantID" type="xs:string"/>
+                                                <xs:element name="TerminalID" type="xs:string"/>
+                                                <xs:element name="Amount" type="xs:decimal"/>
+                                                <xs:element name="TrackID" type="xs:string"/>
+                                                <xs:element name="ReferenceID" type="xs:string"/>
+                                                <xs:element name="PaymentReceipt" type="xs:string"/>
+                                                <xs:element name="PaymentStatus" type="xs:string"/>
+                                                <xs:element name="PaymentTimestamp" type="xs:dateTime"/>
+                                                <xs:element minOccurs="0" name="Params" type="typ:Params"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="CreateOrderRequest">
+        <wsdl:part element="typ:CreateOrderInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="CreateOrderResponse">
+        <wsdl:part element="typ:CreateOrderOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="QueryPaymentRequest">
+        <wsdl:part element="typ:QueryPaymentInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="QueryPaymentResponse">
+        <wsdl:part element="typ:QueryPaymentOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part element="com:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:portType name="KnetPaymentPort">
+        <wsdl:operation name="CreateOrder">
+            <wsdl:input message="tns:CreateOrderRequest"/>
+            <wsdl:output message="tns:CreateOrderResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="QueryPayment">
+            <wsdl:input message="tns:QueryPaymentRequest"/>
+            <wsdl:output message="tns:QueryPaymentResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="KnetPaymentBinding" type="tns:KnetPaymentPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="CreateOrder">
+            <soap:operation soapAction="CreateOrder"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="QueryPayment">
+            <soap:operation soapAction="QueryPayment"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="KnetPayment">
+        <wsdl:port binding="tns:KnetPaymentBinding" name="KnetPaymentPort">
+            <soap:address location="Adress"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

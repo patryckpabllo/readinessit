@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx4="http://www.siebel.com/xml/CBiO2%20MNP%20PortIn%20Acknowledgement%20IO" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/MNPPortInAckToCRDB.xsd" xmlns:format="java://MSISDNFormatter" xmlns:pfx2="http://www.siebel.com/xml/CBiO2PortOutNotificationReqIO" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortRequest.xsd">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortRequest.xsd" schemaLocation="/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortRequest.xsd"/>
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2PortOutNotificationReqIO" schemaLocation="/BusinessSchemas/Services/Provisioning/FinalBillNotification/ListOfCbio2finalbillnotificationreqio.xsd"/>
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2%20MNP%20PortIn%20Acknowledgement%20IO" schemaLocation="/BusinessSchemas/Services/Applications/CRM/Update/ListOfCbio2MnpPortinAcknowledgementIo.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/MNPPortInAckToCRDB.xsd" schemaLocation="/BusinessSchemas/Services/Applications/ConceptWave/MNPPortinAcKToCRDB/MNPPortInAckToCRDB.xsd"/>
+    <pd:name>Tester/MNPPortInAckToCRDB.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="CRMOrderNo" type="xsd:string"/>
+                    <xsd:element name="MSISDN" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>79</pd:startX>
+    <pd:startY>79</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>633</pd:endX>
+    <pd:endY>76</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1469097125625</pd:targetNamespace>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>217</pd:x>
+        <pd:y>80</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/MNPPortInAckToCRDB/EOM_Req_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <InDataxsdString ref="pfx3:MNPPortInAckToCRDBRequest"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <Body>
+                    <pfx3:MNPPortInAckToCRDBRequest>
+                        <pfx3:orderHeader>
+                            <pfx3:CRMOrderNo>
+                                <xsl:value-of select="$Start/root/CRMOrderNo"/>
+                            </pfx3:CRMOrderNo>
+                        </pfx3:orderHeader>
+                        <pfx3:Input>
+                            <pfx3:MSISDN>
+                                <xsl:value-of select="$Start/root/MSISDN"/>
+                            </pfx3:MSISDN>
+                        </pfx3:Input>
+                    </pfx3:MNPPortInAckToCRDBRequest>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Get JMS Queue Message">
+        <pd:type>com.tibco.plugin.jms.JMSQueueGetMessageActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueGetMessageActivity</pd:resourceType>
+        <pd:x>415</pd:x>
+        <pd:y>33</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/MNPPortInAckToCRDB/CRM_Res_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <OutDataxsdString ref="pfx4:ListOfCbio2MnpPortinAcknowledgementIo"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Get-JMS-Queue-Message-1">
+        <pd:type>com.tibco.plugin.jms.JMSQueueGetMessageActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueGetMessageActivity</pd:resourceType>
+        <pd:x>415</pd:x>
+        <pd:y>131</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/MNPPortInAckToCRDB/EOM_Res_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <OutDataxsdString ref="pfx3:MNPPortInAckToCRDBResponse"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>Get JMS Queue Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Get JMS Queue Message</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>Get-JMS-Queue-Message-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Get-JMS-Queue-Message-1</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

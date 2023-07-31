@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pfx="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:pfx2="http://www.siebel.com/xml/CBiO2TremblantFinalOrderResIO" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:pfx3="http://www.zain.com/ZESB/Services/PACIFinalAuthenticationRequest.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EntitleServer/EOM_NotifySES.xsd" xmlns:ns2="http://www.zain.com/ZESB/Services/QueryPACIStatusBiometricsResponse.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns1="http://www.zain.com/ZESB/Services/QueryPACIStatusBiometricsRequest.xsd" xmlns:ns4="http://www.tibco.com/pe/EngineTypes" xmlns:ns3="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns13="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns12="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd">
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2TremblantFinalOrderResIO" schemaLocation="/Services/SESEntServer/Resources/XSD/CRM_TremblantFinalOrderRes/CBiO2TremblantFinalOrderResIO.xsd"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/PACIFinalAuthenticationRequest.xsd" schemaLocation="/BusinessSchemas/Services/Transaction/PACIFinalAuthentication/PACIFinalAuthenticationRequest.xsd"/>
+    <pd:name>Services/SESEntServer/PACIGW/CallBackPACIFinalStatus/CallBackPACIFinalStatus.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="xmlIn" type="xsd:string"/>
+                    <xsd:element name="NameValuePairs" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="NameValue" minOccurs="0" maxOccurs="unbounded">
+                                    <xsd:complexType>
+                                        <xsd:sequence>
+                                            <xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+                                            <xsd:element name="Value" type="xsd:string" minOccurs="0"/>
+                                        </xsd:sequence>
+                                    </xsd:complexType>
+                                </xsd:element>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>96</pd:startX>
+    <pd:startY>290</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <xmlOut>
+                <xsl:value-of select="'&lt;root>&lt;/root>'"/>
+            </xmlOut>
+            <xsl:copy-of select="$Start/root/NameValuePairs"/>
+            <TransactionID>
+                <xsl:value-of select="$Start/root/TransactionID"/>
+            </TransactionID>
+            <StartTimeStamp>
+                <xsl:value-of select="$Start/root/StartTimeStamp"/>
+            </StartTimeStamp>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="xmlOut" type="xsd:string"/>
+                    <xsd:element name="NameValuePairs" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="NameValue" minOccurs="0" maxOccurs="unbounded">
+                                    <xsd:complexType>
+                                        <xsd:sequence>
+                                            <xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+                                            <xsd:element name="Value" type="xsd:string" minOccurs="0"/>
+                                        </xsd:sequence>
+                                    </xsd:complexType>
+                                </xsd:element>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>1501</pd:endX>
+    <pd:endY>288</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1641231132864</pd:targetNamespace>
+    <pd:activity name="ParseReq">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>277</pd:x>
+        <pd:y>283</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>false</validateOutput>
+            <term ref="pfx3:root"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Start/root/xmlIn"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>1205</pd:x>
+        <pd:y>284</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <DeliveryDelay>0</DeliveryDelay>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <destinationQueue>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/triggerSubscriptionActivation/ExternalQueue_TrembOrderResCancel"/>
+                </destinationQueue>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($ResumeCancel_watchAddition/pfx2:CBiO2TremblantFinalOrderResIO)"/>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ResumeCancel_watchAddition">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>618</pd:x>
+        <pd:y>284</pd:y>
+        <config>
+            <element ref="pfx2:CBiO2TremblantFinalOrderResIO"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:CBiO2TremblantFinalOrderResIO>
+                <xsl:choose>
+                    <xsl:when test="$ParseReq/pfx3:root/pfx3:Status='UserAccepted'">
+                        <pfx2:CBiO2AsyncOrderInputs>
+                            <pfx2:Operation>
+                                <xsl:value-of select="'Submit'"/>
+                            </pfx2:Operation>
+                            <pfx2:MSISDN>
+                                <xsl:value-of select="$QueryRecord/resultSet/Record[1]/SEC_MSISDN"/>
+                            </pfx2:MSISDN>
+                            <pfx2:OrderSubmittedDate>
+                                <xsl:value-of select="tib:format-date('MM/dd/yyyy',tib:parse-date(&quot;yyyy-MM-dd&quot;,(current-date())))"/>
+                            </pfx2:OrderSubmittedDate>
+                            <pfx2:UserName>
+                                <xsl:value-of select="'SES'"/>
+                            </pfx2:UserName>
+                            <pfx2:Source>
+                                <xsl:value-of select="'SES'"/>
+                            </pfx2:Source>
+                            <pfx2:TransactionId>
+                                <xsl:value-of select="$ParseReq/pfx3:root/pfx3:RequestID"/>
+                            </pfx2:TransactionId>
+                        </pfx2:CBiO2AsyncOrderInputs>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <pfx2:CBiO2AsyncOrderInputs>
+                            <pfx2:Operation>
+                                <xsl:value-of select="'Cancel'"/>
+                            </pfx2:Operation>
+                            <xsl:if test="$QueryRecord/resultSet/Record[1]/SEC_MSISDN">
+                                <pfx2:MSISDN>
+                                    <xsl:value-of select="$QueryRecord/resultSet/Record[1]/SEC_MSISDN"/>
+                                </pfx2:MSISDN>
+                            </xsl:if>
+                            <pfx2:OrderSubmittedDate>
+                                <xsl:value-of select="tib:format-date('MM/dd/yyyy',tib:parse-date(&quot;yyyy-MM-dd&quot;,(current-date())))"/>
+                            </pfx2:OrderSubmittedDate>
+                            <pfx2:UserName>
+                                <xsl:value-of select="'SES'"/>
+                            </pfx2:UserName>
+                            <pfx2:Source>
+                                <xsl:value-of select="'SES'"/>
+                            </pfx2:Source>
+                            <pfx2:TransactionId>
+                                <xsl:value-of select="$ParseReq/pfx3:root/pfx3:RequestID"/>
+                            </pfx2:TransactionId>
+                        </pfx2:CBiO2AsyncOrderInputs>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </pfx2:CBiO2TremblantFinalOrderResIO>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>727</pd:x>
+        <pd:y>166</pd:y>
+        <pd:width>372</pd:width>
+        <pd:height>226</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>ifThenElse</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Call_UnblockNumber</pd:to>
+            <pd:xpathDescription>Unblock number</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>not($ParseReq/pfx3:root/pfx3:Status='UserAccepted')</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>NotifySES</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Call_UnblockNumber</pd:from>
+            <pd:to>NotifySES</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Call_UnblockNumber">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>856</pd:x>
+            <pd:y>277</pd:y>
+            <config>
+                <processName>/Services/SESEntServer/eSIMCardMgr/HelperProcesses/ESI_Call_UnblockNumber.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <Number>
+                        <xsl:value-of select="$QueryRecord/resultSet/Record[1]/SEC_MSISDN"/>
+                    </Number>
+                    <TransactionId>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </TransactionId>
+                    <SourceSystem>
+                        <xsl:value-of select="'TIBCO'"/>
+                    </SourceSystem>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="NotifySES">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>1008</pd:x>
+            <pd:y>276</pd:y>
+            <config>
+                <processName>/Services/SESEntServer/eSIMCardMgr/HelperProcesses/SES_Helper_Process.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <ns0:NotifyUserDataReq>
+                        <ns0:SERVICE>
+                            <xsl:value-of select="'multi-sim'"/>
+                        </ns0:SERVICE>
+                        <ns0:TRADE_TYPE>
+                            <xsl:value-of select="'1'"/>
+                        </ns0:TRADE_TYPE>
+                        <ns0:MAIN_USER>
+                            <ns0:MSISDN>
+                                <xsl:value-of select="$QueryRecord/resultSet/Record[1]/PRM_MSISDN"/>
+                            </ns0:MSISDN>
+                            <ns0:IMSI>
+                                <xsl:value-of select="$QueryRecord/resultSet/Record[1]/PRIM_IMSI"/>
+                            </ns0:IMSI>
+                            <ns0:ICCID>
+                                <xsl:value-of select="$QueryRecord/resultSet/Record[1]/PRIM_ICCID"/>
+                            </ns0:ICCID>
+                        </ns0:MAIN_USER>
+                        <ns0:ATTACH_USERS>
+                            <ns0:MSISDN>
+                                <xsl:value-of select="$QueryRecord/resultSet/Record[1]/SEC_MSISDN"/>
+                            </ns0:MSISDN>
+                            <ns0:IMSI>
+                                <xsl:value-of select="$QueryRecord/resultSet/Record[1]/SEC_IMSI"/>
+                            </ns0:IMSI>
+                            <ns0:ICCID>
+                                <xsl:value-of select="substring($QueryRecord/resultSet/Record[1]/SEC_ICCID,1, $_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/callBackSES/iccid_length)"/>
+                            </ns0:ICCID>
+                            <ns0:STATUS>
+                                <xsl:value-of select="'3'"/>
+                            </ns0:STATUS>
+                            <ns0:EID>
+                                <xsl:value-of select="$QueryRecord/resultSet/Record[1]/SEC_EID"/>
+                            </ns0:EID>
+                        </ns0:ATTACH_USERS>
+                    </ns0:NotifyUserDataReq>
+                    <TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </TransactionID>
+                    <SourceSystem>
+                        <xsl:value-of select="'SES'"/>
+                    </SourceSystem>
+                    <Operation>
+                        <xsl:value-of select="'ADD'"/>
+                    </Operation>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                    </StartTimeStamp>
+                    <SES_ID>
+                        <xsl:value-of select="$ParseReq/pfx3:root/pfx3:RequestID"/>
+                    </SES_ID>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="Log_Msg-In">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>97</pd:x>
+        <pd:y>495</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/PACIGW/CallBackPACIFinalStatus/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/xmlIn)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1368</pd:x>
+        <pd:y>284</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/PACIGW/CallBackPACIFinalStatus/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($ResumeCancel_watchAddition/pfx2:CBiO2TremblantFinalOrderResIO)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null-2">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>279</pd:x>
+        <pd:y>489</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="QueryRecord">
+        <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+        <pd:x>453</pd:x>
+        <pd:y>283</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <commit>false</commit>
+            <maxRows>100</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <statement>SELECT * FROM T_SES_TRANS_REC WHERE SES_ID=?</statement>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>SES_ID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+            <oraObjects/>
+            <oraTables/>
+            <QueryOutputCachedSchemaColumns>SES_ID</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>ESB_ID</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>PRM_MSISDN</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>PRIM_IMSI</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>PRIM_ICCID</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SEC_MSISDN</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SEC_IMSI</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SEC_ICCID</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SEC_EID</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>TRX_TYPE</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>STATUS</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>TIME_STAMP</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>93</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>TIMESTAMP</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>RECORD_FLAG</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+        </config>
+        <pd:inputBindings>
+            <jdbcQueryActivityInput>
+                <SES_ID>
+                    <xsl:value-of select="$ParseReq/pfx3:root/pfx3:RequestID"/>
+                </SES_ID>
+            </jdbcQueryActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>458</pd:x>
+        <pd:y>433</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns12:ActivityInput>
+                <message>
+                    <xsl:value-of select="'No record exist in DB for SES_ID received from PACI GW Callback API '"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="'TIBCo-Err'"/>
+                </messageCode>
+            </ns12:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ResumeCancel_watchAddition</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>Log_Msg-Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-In</pd:from>
+        <pd:to>ParseReq</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-Out</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null-2</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log_Msg-In</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseReq</pd:from>
+        <pd:to>QueryRecord</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseReq</pd:from>
+        <pd:to>Null-2</pd:to>
+        <pd:xpathDescription>RequestNotFound</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$ParseReq/pfx3:root/pfx3:Status='RequestNotFound'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>QueryRecord</pd:from>
+        <pd:to>ResumeCancel_watchAddition</pd:to>
+        <pd:xpathDescription>Record exist</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>exists($QueryRecord/resultSet/Record/SES_ID)
+and
+string-length($QueryRecord/resultSet/Record[1]/SES_ID)&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>QueryRecord</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns16="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns14="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:ns15="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlPfx="http://xmlns.example.com/1450253296761" xmlns:ns9="http://xmlns.zain.com/BSS/ESB/CDM/SendSMSRes" xmlns:format="java://MSISDNFormatter" xmlns:ns5="http://xmlns.zain.com/BSS/ESB/CDM/Base" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns6="http://www.zain.com/ZESB/Services/SmsService/Types" xmlns:ns13="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx="http://www.zain.com/ZESB/Services/SmsService" xmlns:ns7="http://www.zain.com/ZESB/Types/Common" xmlns:ns10="http://www.ericsson.com/BusinessSchemas/Services/Common/JMSSchema/JMSHeader.xsd" xmlns:ns8="http://www.siebel.com/xml/CBiO2SendSMS" xmlns:ns11="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetUsageDetails.xsd" xmlns:ns3="http://www.zain.com/ZESB/Services/Query/GetUsageDetails.xsd" xmlns:ns0="http://xmlns.zain.com/BSS/ESB/CDM/SMSService" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://xmlns.zain.com/BSS/ESB/Notification/SendSMS">
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/Query/GetUsageDetails.xsd" schemaLocation="/BusinessSchemas/Services/Applications/Common/Query/GetUsageDetails/GetUsageDetails.xsd"/>
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2SendSMS" schemaLocation="/BusinessSchemas/Services/Applications/CRM/Update/ListOfCbio2sendsms.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/BusinessSchemas/Services/Common/CLE/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://xmlns.zain.com/BSS/ESB/CDM/SendSMSRes" schemaLocation="/BusinessSchemas/Services/Notification/SendSMSRes.xsd"/>
+    <xsd:import namespace="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" schemaLocation="/CDM/ZainKWFault.xsd"/>
+    <wsdl:import namespace="http://xmlns.example.com/1450253296761" location="/BusinessWSDLS/Services/TIBCO/GetUsageDetailsAbstract.wsdl"/>
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/SmsService" location="/BusinessWSDLS/Services/WSDLS/SmsService/SmsServiceInbound.wsdl"/>
+    <wsdl:import namespace="http://xmlns.zain.com/BSS/ESB/Notification/SendSMS" location="/BusinessWSDLS/Services/TIBCO/SendSMSAbtract.wsdl"/>
+    <pd:name>BusinessProcesses/Services/CRM/SMSServiceCRM/Implementation/SMSServiceCRM.process</pd:name>
+    <pd:startName>SMSServiceCRM</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings>
+        <pfx2:SendSMSOutput>
+            <part1>
+                <ns9:SendSMSResponse>
+                    <xsl:for-each select="$ESI_Call/ns9:SendSMSResponse/ns9:SMSResp">
+                        <ns9:SMSResp>
+                            <xsl:value-of select="."/>
+                        </ns9:SMSResp>
+                    </xsl:for-each>
+                </ns9:SendSMSResponse>
+            </part1>
+        </pfx2:SendSMSOutput>
+    </pd:returnBindings>
+    <pd:starter name="SMSServiceCRM">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>81</pd:x>
+        <pd:y>134</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/CRM/SMSServiceCRM/GW_Request_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/External/CRMtoGW_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1237</pd:endX>
+    <pd:endY>181</pd:endY>
+    <pd:errorSchemas>
+        <Schema1 wsMsgRef="pfx2:SendSMSFault"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1450342523273</pd:targetNamespace>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>794</pd:x>
+        <pd:y>421</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/CRM/SMSServiceCRM/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/UPDATE"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                    </xsl:if>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Parse-XML/ns8:SiebelMessage/ns8:ListOfCbio2sendsms/ns8:Cbio2sendsms[1]/ns8:SubscriptionNo"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="$SMSServiceCRM/ns16:ActivityOutput/Body"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="tib:render-xml($CLE_To_CDM/ns11:ErrorResponse)"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <xsl:if test="$GetTransactionID/GUID/StartTimeStamp">
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                </xsl:if>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>286</pd:x>
+        <pd:y>418</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="string-length($_error)>0">
+                    <ns14:ExceptionRequest>
+                        <ns2:Header>
+                            <ns2:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ns2:ApplicationID>
+                            <ns2:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/CRM/SMSServiceCRM/ComponentName"/>
+                            </ns2:ComponentName>
+                            <ns2:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </ns2:Hostname>
+                            <ns2:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </ns2:Timestamp>
+                            <ns2:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/UPDATE"/>
+                            </ns2:TransactionDomain>
+                            <ns2:TransactionType>
+                                <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                            </ns2:TransactionType>
+                            <ns2:TransactionID>
+                                <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                            </ns2:TransactionID>
+                            <ns2:InterfaceID>
+                                <xsl:value-of select="$Parse-XML/ns8:SiebelMessage/ns8:ListOfCbio2sendsms/ns8:Cbio2sendsms[1]/ns8:SubscriptionNo"/>
+                            </ns2:InterfaceID>
+                            <ns2:Filename>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                            </ns2:Filename>
+                            <ns2:Message>
+                                <xsl:value-of select="$SMSServiceCRM/ns16:ActivityOutput/Body"/>
+                            </ns2:Message>
+                        </ns2:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </ExceptionCode>
+                        <StackTrace>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                        </StackTrace>
+                    </ns14:ExceptionRequest>
+                </xsl:when>
+                <xsl:otherwise>
+                    <ns14:ExceptionRequest>
+                        <ns2:Header>
+                            <ns2:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ns2:ApplicationID>
+                            <ns2:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/CRM/SMSServiceCRM/ComponentName"/>
+                            </ns2:ComponentName>
+                            <ns2:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </ns2:Hostname>
+                            <ns2:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </ns2:Timestamp>
+                            <ns2:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/UPDATE"/>
+                            </ns2:TransactionDomain>
+                            <ns2:TransactionType>
+                                <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                            </ns2:TransactionType>
+                            <ns2:TransactionID>
+                                <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                            </ns2:TransactionID>
+                            <ns2:InterfaceID>
+                                <xsl:value-of select="$Parse-XML/ns8:SiebelMessage/ns8:ListOfCbio2sendsms/ns8:Cbio2sendsms[1]/ns8:SubscriptionNo"/>
+                            </ns2:InterfaceID>
+                            <ns2:Filename>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                            </ns2:Filename>
+                            <ns2:Message>
+                                <xsl:value-of select="$SMSServiceCRM/ns16:ActivityOutput/Body"/>
+                            </ns2:Message>
+                        </ns2:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="'9999'"/>
+                        </ExceptionCode>
+                        <StackTrace>
+                            <xsl:value-of select="&quot;Input data invalid&quot;"/>
+                        </StackTrace>
+                    </ns14:ExceptionRequest>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>506</pd:x>
+        <pd:y>552</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns15:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                </message>
+                <msgCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </msgCode>
+            </ns15:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ConfirmOnError">
+        <pd:type>com.tibco.pe.core.ConfirmActivity</pd:type>
+        <pd:resourceType>activity.confirm</pd:resourceType>
+        <pd:x>163</pd:x>
+        <pd:y>417</pd:y>
+        <config>
+            <ConfirmEvent>SMSServiceCRM</ConfirmEvent>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="CLE_To_CDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>499</pd:x>
+        <pd:y>419</pd:y>
+        <config>
+            <element ref="ns11:ErrorResponse"/>
+        </config>
+        <pd:inputBindings>
+            <ns11:ErrorResponse>
+                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorSourceSystem">
+                    <ns11:Error_SourceSystem>
+                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceSystem"/>
+                    </ns11:Error_SourceSystem>
+                </xsl:if>
+                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorSourceErrCode">
+                    <ns11:Error_SourceErrCode>
+                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrCode"/>
+                    </ns11:Error_SourceErrCode>
+                </xsl:if>
+                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorSourceErrDesc">
+                    <ns11:Error_SourceErrDesc>
+                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrDesc"/>
+                    </ns11:Error_SourceErrDesc>
+                </xsl:if>
+                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorType">
+                    <ns11:Error_Type>
+                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorType"/>
+                    </ns11:Error_Type>
+                </xsl:if>
+                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorUserErrDesc">
+                    <ns11:Error_UserErrCode>
+                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorUserErrDesc"/>
+                    </ns11:Error_UserErrCode>
+                </xsl:if>
+                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorUserErrCode">
+                    <ns11:Error_UserErrDesc>
+                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorUserErrCode"/>
+                    </ns11:Error_UserErrDesc>
+                </xsl:if>
+                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorOccuranceTime">
+                    <ns11:Error_Occurance_Time>
+                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorOccuranceTime"/>
+                    </ns11:Error_Occurance_Time>
+                </xsl:if>
+                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorAdditionalDesc1">
+                    <ns11:Error_Additional_Desc1>
+                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorAdditionalDesc1"/>
+                    </ns11:Error_Additional_Desc1>
+                </xsl:if>
+                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorAdditionalDesc2">
+                    <ns11:Error_Additional_Desc2>
+                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorAdditionalDesc2"/>
+                    </ns11:Error_Additional_Desc2>
+                </xsl:if>
+            </ns11:ErrorResponse>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>269</pd:x>
+        <pd:y>20</pd:y>
+        <pd:width>879</pd:width>
+        <pd:height>209</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>simpleGroup</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>GetTransactionID</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogOut</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetTransactionID</pd:from>
+            <pd:to>Parse XML</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call</pd:from>
+            <pd:to>Confirm</pd:to>
+            <pd:xpathDescription>Success</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogIn</pd:from>
+            <pd:to>ESI_Call</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Parse XML</pd:from>
+            <pd:to>LogIn</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Confirm</pd:from>
+            <pd:to>LogOut</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call</pd:from>
+            <pd:to>Generate Error</pd:to>
+            <pd:xpathDescription>Error</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="LogIn">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>540</pd:x>
+            <pd:y>92</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+                <spawn>false</spawn>
+            </config>
+            <pd:inputBindings>
+                <ns12:LogRequest>
+                    <ns2:Header>
+                        <ns2:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns2:ApplicationID>
+                        <ns2:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/CRM/SMSServiceCRM/ComponentName"/>
+                        </ns2:ComponentName>
+                        <ns2:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns2:Hostname>
+                        <ns2:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns2:Timestamp>
+                        <ns2:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/UPDATE"/>
+                        </ns2:TransactionDomain>
+                        <ns2:TransactionType>
+                            <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                        </ns2:TransactionType>
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                        <ns2:InterfaceID>
+                            <xsl:value-of select="$Parse-XML/ns8:SiebelMessage/ns8:ListOfCbio2sendsms/ns8:Cbio2sendsms[1]/ns8:SubscriptionNo"/>
+                        </ns2:InterfaceID>
+                        <ns2:Filename>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                        </ns2:Filename>
+                        <ns2:Message>
+                            <xsl:value-of select="$SMSServiceCRM/ns16:ActivityOutput/Body"/>
+                        </ns2:Message>
+                    </ns2:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_RECV"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns12:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="LogOut">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>1080</pd:x>
+            <pd:y>96</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+                <spawn>false</spawn>
+            </config>
+            <pd:inputBindings>
+                <ns12:LogRequest>
+                    <ns2:Header>
+                        <ns2:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns2:ApplicationID>
+                        <ns2:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/CRM/SMSServiceCRM/ComponentName"/>
+                        </ns2:ComponentName>
+                        <ns2:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns2:Hostname>
+                        <ns2:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns2:Timestamp>
+                        <ns2:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/UPDATE"/>
+                        </ns2:TransactionDomain>
+                        <ns2:TransactionType>
+                            <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                        </ns2:TransactionType>
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                        <ns2:InterfaceID>
+                            <xsl:value-of select="$Parse-XML/ns8:SiebelMessage/ns8:ListOfCbio2sendsms/ns8:Cbio2sendsms[1]/ns8:SubscriptionNo"/>
+                        </ns2:InterfaceID>
+                        <ns2:Filename>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                        </ns2:Filename>
+                        <ns2:Message>
+                            <xsl:value-of select="tib:render-xml($ESI_Call/ns9:SendSMSResponse)"/>
+                        </ns2:Message>
+                    </ns2:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_SENT"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns12:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ESI_Call">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>673</pd:x>
+            <pd:y>95</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/CRM/SMSServiceCRM/HelperProcess/ESI_Call_SMSServiceCRM.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <TransactionId>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                    <xsl:for-each select="$Parse-XML/ns8:SiebelMessage">
+                        <ns8:SiebelMessage>
+                            <xsl:if test="@MessageId">
+                                <xsl:attribute name="MessageId">
+                                    <xsl:value-of select="@MessageId"/>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:if test="@MessageType">
+                                <xsl:attribute name="MessageType">
+                                    <xsl:value-of select="@MessageType"/>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:if test="@IntObjectName">
+                                <xsl:attribute name="IntObjectName">
+                                    <xsl:value-of select="@IntObjectName"/>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:if test="@IntObjectFormat">
+                                <xsl:attribute name="IntObjectFormat">
+                                    <xsl:value-of select="@IntObjectFormat"/>
+                                </xsl:attribute>
+                            </xsl:if>
+                            <xsl:for-each select="ns8:ListOfCbio2sendsms">
+                                <ns8:ListOfCbio2sendsms>
+                                    <xsl:for-each select="ns8:Cbio2sendsms">
+                                        <ns8:Cbio2sendsms>
+                                            <xsl:if test="ns8:SMSText">
+                                                <ns8:SMSText>
+                                                    <xsl:value-of select="ns8:SMSText"/>
+                                                </ns8:SMSText>
+                                            </xsl:if>
+                                            <ns8:From>
+                                                <xsl:value-of select="ns8:From"/>
+                                            </ns8:From>
+                                            <xsl:if test="ns8:Language">
+                                                <ns8:Language>
+                                                    <xsl:value-of select="ns8:Language"/>
+                                                </ns8:Language>
+                                            </xsl:if>
+                                            <ns8:To>
+                                                <xsl:value-of select="if(string-length(ns8:To)>0)&#xA;then&#xA;format:FormatMSISDN(ns8:To, $_globalVariables/ns:GlobalVariables/MSISDNBaseLength)&#xA;else ''"/>
+                                            </ns8:To>
+                                            <xsl:if test="ns8:Channel">
+                                                <ns8:Channel>
+                                                    <xsl:value-of select="ns8:Channel"/>
+                                                </ns8:Channel>
+                                            </xsl:if>
+                                            <ns8:SubscriptionNo>
+                                                <xsl:value-of select="if(string-length(ns8:SubscriptionNo)>0)&#xA;then&#xA;format:FormatMSISDN(ns8:SubscriptionNo, $_globalVariables/ns:GlobalVariables/MSISDNBaseLength)&#xA;else ''"/>
+                                            </ns8:SubscriptionNo>
+                                            <xsl:if test="ns8:ContractId">
+                                                <ns8:ContractId>
+                                                    <xsl:value-of select="ns8:ContractId"/>
+                                                </ns8:ContractId>
+                                            </xsl:if>
+                                            <xsl:if test="ns8:PreferredEndTime">
+                                                <ns8:PreferredEndTime>
+                                                    <xsl:value-of select="ns8:PreferredEndTime"/>
+                                                </ns8:PreferredEndTime>
+                                            </xsl:if>
+                                            <xsl:if test="ns8:PreferredStartTime">
+                                                <ns8:PreferredStartTime>
+                                                    <xsl:value-of select="ns8:PreferredStartTime"/>
+                                                </ns8:PreferredStartTime>
+                                            </xsl:if>
+                                            <xsl:if test="ns8:Remarks">
+                                                <ns8:Remarks>
+                                                    <xsl:value-of select="ns8:Remarks"/>
+                                                </ns8:Remarks>
+                                            </xsl:if>
+                                        </ns8:Cbio2sendsms>
+                                    </xsl:for-each>
+                                </ns8:ListOfCbio2sendsms>
+                            </xsl:for-each>
+                        </ns8:SiebelMessage>
+                    </xsl:for-each>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GetTransactionID">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>344</pd:x>
+            <pd:y>84</pd:y>
+            <config>
+                <processName>/CommonProcesses/Utilities/GUID.process</processName>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="Parse XML">
+            <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+            <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+            <pd:x>460</pd:x>
+            <pd:y>85</pd:y>
+            <config>
+                <inputStyle>text</inputStyle>
+                <xsdVersion>default</xsdVersion>
+                <validateOutput>true</validateOutput>
+                <term ref="ns8:SiebelMessage"/>
+            </config>
+            <pd:inputBindings>
+                <xmlString>
+                    <xsl:value-of select="$SMSServiceCRM/ns16:ActivityOutput/Body"/>
+                </xmlString>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Confirm">
+            <pd:type>com.tibco.pe.core.ConfirmActivity</pd:type>
+            <pd:resourceType>activity.confirm</pd:resourceType>
+            <pd:x>954</pd:x>
+            <pd:y>93</pd:y>
+            <config>
+                <ConfirmEvent>SMSServiceCRM</ConfirmEvent>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="Generate Error">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>782</pd:x>
+            <pd:y>174</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns13:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                    </message>
+                    <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                        <messageCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </messageCode>
+                    </xsl:if>
+                </ns13:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="ErrorResponseMapFromEOM">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>391</pd:x>
+        <pd:y>419</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/ErrorResponseMapFromEOM.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <SourceSystem>
+                    <xsl:value-of select="substring-before($ErrorHandler/ns14:ExceptionRequest/StackTrace, '|')"/>
+                </SourceSystem>
+                <ChannelName>
+                    <xsl:value-of select="'CRM'"/>
+                </ChannelName>
+                <ChannelType>
+                    <xsl:value-of select="'Internal'"/>
+                </ChannelType>
+                <ResponseCode>
+                    <xsl:value-of select="$ErrorHandler/ns14:ExceptionRequest/ExceptionCode"/>
+                </ResponseCode>
+                <ResponseDescription>
+                    <xsl:value-of select="substring-after($ErrorHandler/ns14:ExceptionRequest/StackTrace, '|')"/>
+                </ResponseDescription>
+                <TIBCOServiceName>
+                    <xsl:value-of select="'SMSServiceCRM'"/>
+                </TIBCOServiceName>
+                <ErrorCategory>
+                    <xsl:value-of select="'SINGLE_ERROR_CODE'"/>
+                </ErrorCategory>
+                <TargetSystem>
+                    <xsl:value-of select="'CADE'"/>
+                </TargetSystem>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>ErrorResponseMapFromEOM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ConfirmOnError</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_To_CDM</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_To_CDM</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SMSServiceCRM</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorResponseMapFromEOM</pd:from>
+        <pd:to>CLE_To_CDM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>ConfirmOnError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SMSServiceCRM</pd:from>
+        <pd:to>ConfirmOnError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

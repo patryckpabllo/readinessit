@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://com.ttech.cms.ws" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.siebel.com/xml/CBiO2%20Customer%20Creation%20IO" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/CMS-LMCRequest.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.xmlns.zain.com/BSS/ESB/CmsLmcService" xmlns:pfx2="http://siebel.com/CustomUI" xmlns:pfx="http://www.zain.com/ZESB/Services/UpsertCustomer/Types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/UpsertCustomer/Types" schemaLocation="/BusinessWSDLS/Services/WSDLS/UpsertCustomer/UpsertCustomerInbound.wsdl"/>
+    <xsd:import namespace="http://siebel.com/CustomUI" schemaLocation="/BusinessWSDLS/Services/CRM/CBiO2QuerySubscriberServicesWS.wsdl"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/CMS-LMCRequest.xsd" schemaLocation="/BusinessProcesses/Services/Common/CampaignManagement/CMS-LMC/Implementation/CMS-LMCRequest.xsd"/>
+    <wsdl:import namespace="http://com.ttech.cms.ws" location="/BusinessProcesses/Services/Common/CampaignManagement/CMS-LMC/Implementation/Tester/CMS-LMC.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/CampaignManagement/CMS-LMC/Process Definition.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>629</pd:endX>
+    <pd:endY>54</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1455199519125</pd:targetNamespace>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>308</pd:x>
+        <pd:y>72</pd:y>
+        <config>
+            <element ref="pfx4:LMCRequest"/>
+        </config>
+        <pd:inputBindings>
+            <pfx4:LMCRequest>
+                <pfx4:Request>
+                    <pfx4:targetListId>
+                        <xsl:value-of select="'abc'"/>
+                    </pfx4:targetListId>
+                    <pfx4:msisdn>
+                        <xsl:value-of select="'96591000060'"/>
+                    </pfx4:msisdn>
+                    <pfx4:campaignId>
+                        <xsl:value-of select="'123'"/>
+                    </pfx4:campaignId>
+                    <pfx4:campaignGroupId>
+                        <xsl:value-of select="'456'"/>
+                    </pfx4:campaignGroupId>
+                </pfx4:Request>
+            </pfx4:LMCRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SOAPRequestReply">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>474</pd:x>
+        <pd:y>69</pd:y>
+        <config>
+            <timeout>60</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>ns2:CmsLmcService</service>
+            <servicePort>CmsLmcServiceHTTP</servicePort>
+            <operation>HasDataPlan</operation>
+            <soapAction>/HasDataPlan</soapAction>
+            <sharedChannels>
+                <jmsChannel>
+                    <NamingURL>tibjmsnaming://localhost:7222</NamingURL>
+                    <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+                    <NamingPrincipal>admin</NamingPrincipal>
+                    <NamingCredential/>
+                    <ConnectionFactory>queueconnectionfactory</ConnectionFactory>
+                    <JMSTo>CBIO.BSS.DOM_ESB.GW.QUERY.CMS-LMC.SVC.Q.EXT.REQ</JMSTo>
+                    <JMSMessageType>Text</JMSMessageType>
+                    <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                    <JMSPriority>4</JMSPriority>
+                    <JMSTimeToLive>0</JMSTimeToLive>
+                    <JMSUserName>admin</JMSUserName>
+                    <JMSPassword/>
+                </jmsChannel>
+            </sharedChannels>
+            <authScheme>NONE</authScheme>
+            <endpointURL>http://localhost:7073/ESB/SOAP/CMS-LMC</endpointURL>
+            <useProxy>false</useProxy>
+            <requireBasicAuth>false</requireBasicAuth>
+            <basicHttpAuthIdentity/>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <ns2:HasDataPlan>
+                    <request>
+                        <xsl:value-of select="tib:render-xml($Map-Data/pfx4:LMCRequest)"/>
+                    </request>
+                </ns2:HasDataPlan>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>SOAPRequestReply</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

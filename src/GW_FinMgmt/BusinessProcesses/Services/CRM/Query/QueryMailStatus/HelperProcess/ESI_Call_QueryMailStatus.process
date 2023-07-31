@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pfx16="http://www.tibco.com/pe/CheckpointSchema" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:zainesbcustom="java://GenUUID" xmlns:pfx18="http://schemas.tibco.com/bw/plugins/jms/5.0/jmsExceptions" xmlns:pfx17="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions" xmlns:pfx5="http://xmlns.example.com/1323156482391/OperationImpl" xmlns:pfx4="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.zain.com/ZESB/Services/Query/QueryBestPackage.xsd" xmlns:pfx2="http://www.zain.com/ZESB/Services/Query/QueryMailStatus.xsd" xmlns:pfx9="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/ImmediateSimulationBillQuery.xsd" xmlns:pfx8="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pfx7="http://www.tibco.com/pe/SignalInActivitySchema" xmlns:pfx6="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns9="http://www.tibco.com/pe/EngineTypes" xmlns:ns12="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns5="www.tibco.com/createcustomer" xmlns:ns13="http://schemas.tibco.com/bw/plugins/xml/5.0/xmlExceptions" xmlns:ns10="http://www.tibco.com/namespaces/tnt/plugins/file" xmlns:pfx="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns11="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:ns8="http://www.tibco.com/pe/DeployedVarsType" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns0="www.tibco.com/plugin/Sleep" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" schemaLocation="/CDM/CDM.xsd"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/Query/QueryMailStatus.xsd" schemaLocation="/BusinessSchemas/Services/Query/QueryMailStatus/QueryMailStatus.xsd"/>
+    <wsdl:import namespace="http://xmlns.example.com/1323156482391/OperationImpl" location="/SharedResources/WSDL/BscsWsdl.wsdl"/>
+    <pd:name>BusinessProcesses/Services/CRM/Query/QueryMailStatus/HelperProcess/ESI_Call_QueryMailStatus.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx2:QueryMailStatusRequest"/>
+                    <xsd:element name="TransactionId" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>122</pd:startX>
+    <pd:startY>173</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <xsl:choose>
+                <xsl:when test="exists($ParseResponse/root/pfx2:QueryMailStatusResponse)">
+                    <xsl:for-each select="$ParseResponse/root/pfx2:QueryMailStatusResponse">
+                        <pfx2:QueryMailStatusResponse>
+                            <xsl:for-each select="pfx2:Item">
+                                <pfx2:Item>
+                                    <xsl:if test="pfx2:MSISDN">
+                                        <pfx2:MSISDN>
+                                            <xsl:value-of select="pfx2:MSISDN"/>
+                                        </pfx2:MSISDN>
+                                    </xsl:if>
+                                    <xsl:if test="pfx2:Receiver_Mail_Id">
+                                        <pfx2:Receiver_Mail_Id>
+                                            <xsl:value-of select="pfx2:Receiver_Mail_Id"/>
+                                        </pfx2:Receiver_Mail_Id>
+                                    </xsl:if>
+                                    <xsl:if test="pfx2:Attachment">
+                                        <pfx2:Attachment>
+                                            <xsl:value-of select="pfx2:Attachment"/>
+                                        </pfx2:Attachment>
+                                    </xsl:if>
+                                    <xsl:if test="pfx2:Status">
+                                        <pfx2:Status>
+                                            <xsl:value-of select="pfx2:Status"/>
+                                        </pfx2:Status>
+                                    </xsl:if>
+                                    <xsl:if test="pfx2:Bill_Cycle_Date">
+                                        <pfx2:Bill_Cycle_Date>
+                                            <xsl:value-of select="pfx2:Bill_Cycle_Date"/>
+                                        </pfx2:Bill_Cycle_Date>
+                                    </xsl:if>
+                                    <xsl:if test="pfx2:Send_Time">
+                                        <pfx2:Send_Time>
+                                            <xsl:value-of select="pfx2:Send_Time"/>
+                                        </pfx2:Send_Time>
+                                    </xsl:if>
+                                </pfx2:Item>
+                            </xsl:for-each>
+                        </pfx2:QueryMailStatusResponse>
+                    </xsl:for-each>
+                </xsl:when>
+                <xsl:otherwise>
+                    <pfx2:FaultResponse>
+                        <xsl:copy-of select="$ParseResponse/root/pfx2:FaultResponse/pfx4:ErrorResponse"/>
+                    </pfx2:FaultResponse>
+                </xsl:otherwise>
+            </xsl:choose>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:choice>
+                    <xsd:element ref="pfx2:QueryMailStatusResponse"/>
+                    <xsd:element ref="pfx2:FaultResponse"/>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>953</pd:endX>
+    <pd:endY>172</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1318823885551</pd:targetNamespace>
+    <pd:activity name="Log_CDM_Response">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>591</pd:x>
+        <pd:y>175</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <pfx6:LogRequest>
+                <pfx8:Header>
+                    <pfx8:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx8:ApplicationID>
+                    <pfx8:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/Services/CRM/Query/QueryMailStatus/ComponentName"/>
+                    </pfx8:ComponentName>
+                    <pfx8:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </pfx8:Hostname>
+                    <pfx8:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx8:Timestamp>
+                    <pfx8:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </pfx8:TransactionDomain>
+                    <pfx8:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns9:ProcessContext/ProcessId))"/>
+                    </pfx8:TransactionType>
+                    <pfx8:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionId"/>
+                    </pfx8:TransactionID>
+                    <xsl:if test="$Start/root/pfx2:QueryMailStatusRequest/pfx2:MSISDN">
+                        <pfx8:InterfaceID>
+                            <xsl:value-of select="$Start/root/pfx2:QueryMailStatusRequest/pfx2:MSISDN"/>
+                        </pfx8:InterfaceID>
+                    </xsl:if>
+                    <pfx8:Filename>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/Deployment"/>
+                    </pfx8:Filename>
+                    <pfx8:Message>
+                        <xsl:value-of select="tib:render-xml($Common_EAI_EMSSendReceive/ResponseData)"/>
+                    </pfx8:Message>
+                </pfx8:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </pfx6:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseResponse">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>757</pd:x>
+        <pd:y>173</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:choice>
+                            <xsd:element ref="pfx2:QueryMailStatusResponse"/>
+                            <xsd:element ref="pfx2:FaultResponse"/>
+                        </xsd:choice>
+                    </xsd:complexType>
+                </xsd:element>
+            </term>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Common_EAI_EMSSendReceive/ResponseData"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_CDM_Request">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>261</pd:x>
+        <pd:y>172</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <pfx6:LogRequest>
+                <pfx8:Header>
+                    <pfx8:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx8:ApplicationID>
+                    <pfx8:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/Services/CRM/Query/QueryMailStatus/ComponentName"/>
+                    </pfx8:ComponentName>
+                    <pfx8:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </pfx8:Hostname>
+                    <pfx8:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx8:Timestamp>
+                    <pfx8:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </pfx8:TransactionDomain>
+                    <pfx8:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns9:ProcessContext/ProcessId))"/>
+                    </pfx8:TransactionType>
+                    <pfx8:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionId"/>
+                    </pfx8:TransactionID>
+                    <xsl:if test="$Start/root/pfx2:QueryMailStatusRequest/pfx2:MSISDN">
+                        <pfx8:InterfaceID>
+                            <xsl:value-of select="$Start/root/pfx2:QueryMailStatusRequest/pfx2:MSISDN"/>
+                        </pfx8:InterfaceID>
+                    </xsl:if>
+                    <pfx8:Filename>
+                        <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/Deployment"/>
+                    </pfx8:Filename>
+                    <pfx8:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx2:QueryMailStatusRequest)"/>
+                    </pfx8:Message>
+                </pfx8:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </pfx6:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParsingResponseError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>759</pd:x>
+        <pd:y>304</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns9:ErrorReport/Msg"/>
+                </message>
+                <xsl:if test="$_error/ns9:ErrorReport/MsgCode">
+                    <messageCode>
+                        <xsl:value-of select="$_error/ns9:ErrorReport/MsgCode"/>
+                    </messageCode>
+                </xsl:if>
+            </pfx:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Common_EAI_EMSSendReceive">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>426</pd:x>
+        <pd:y>176</pd:y>
+        <config>
+            <processName>/CommonProcesses/HelperProcesses/Common_EAI_EMSSendReceive.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <MessageBody>
+                    <xsl:value-of select="tib:render-xml($Start/root/pfx2:QueryMailStatusRequest)"/>
+                </MessageBody>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionId"/>
+                </TransactionID>
+                <EMS_DestinationQueue>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/Services/CRM/Query/QueryMailStatus/ESI_Queue"/>
+                </EMS_DestinationQueue>
+                <TransactionDomain>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                </TransactionDomain>
+                <TransactionType>
+                    <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns9:ProcessContext/ProcessId))"/>
+                </TransactionType>
+                <ReplyToEngineID>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/EngineID"/>
+                </ReplyToEngineID>
+                <ReplyToDeployment>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/Deployment"/>
+                </ReplyToDeployment>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+                <RequestTimeOut>
+                    <xsl:value-of select="$_globalVariables/ns8:GlobalVariables/BusinessProcesses/Services/CRM/Query/QueryMailStatus/JMSTimeout"/>
+                </RequestTimeOut>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>ParseResponse</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CDM_Request</pd:from>
+        <pd:to>Common_EAI_EMSSendReceive</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Common_EAI_EMSSendReceive</pd:from>
+        <pd:to>Log_CDM_Response</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CDM_Response</pd:from>
+        <pd:to>ParseResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseResponse</pd:from>
+        <pd:to>ParsingResponseError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log_CDM_Request</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

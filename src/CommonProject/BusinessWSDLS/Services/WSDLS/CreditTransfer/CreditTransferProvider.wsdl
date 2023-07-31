@@ -1,0 +1,897 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://CreditTransfer.Services/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://CreditTransfer.Services/">
+    <wsdl:types>
+        <s:schema elementFormDefault="qualified" targetNamespace="http://CreditTransfer.Services/">
+            <s:element name="Subscribe">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminName" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminPassword" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="source" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="phone" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="sendSMS" type="s:boolean"/>
+                        <s:element maxOccurs="1" minOccurs="0" name="language" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="SubscribeResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="0" name="SubscribeResult" type="tns:NewPinResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="NewPinResult">
+                <s:complexContent mixed="false">
+                    <s:extension base="tns:BaseResult">
+                        <s:sequence>
+                            <s:element maxOccurs="1" minOccurs="0" name="Pin" type="s:string"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="BaseResult">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="StatusCode" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="0" name="Description" type="s:string"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="SubscriberDetailsResult">
+                <s:complexContent mixed="false">
+                    <s:extension base="tns:BaseResult">
+                        <s:sequence>
+                            <s:element maxOccurs="1" minOccurs="0" name="SubscriberInfo" type="tns:SubscriberDetails"/>
+                        </s:sequence>
+                    </s:extension>
+                </s:complexContent>
+            </s:complexType>
+            <s:complexType name="SubscriberDetails">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="0" name="Phone" type="s:string"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="Type" type="tns:PayType"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="Status" type="tns:SubscriberStatus"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="RegisteredOn" nillable="true" type="s:dateTime"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="DeletedOn" nillable="true" type="s:dateTime"/>
+                    <s:element maxOccurs="1" minOccurs="0" name="UsageInfo" type="tns:AccountUsageInfo"/>
+                    <s:element maxOccurs="1" minOccurs="0" name="AccountLimits" type="tns:SubscriberLimits"/>
+                </s:sequence>
+            </s:complexType>
+            <s:simpleType name="PayType">
+                <s:restriction base="s:string">
+                    <s:enumeration value="Prepaid"/>
+                    <s:enumeration value="Postpaid"/>
+                    <s:enumeration value="Unknown"/>
+                </s:restriction>
+            </s:simpleType>
+            <s:simpleType name="SubscriberStatus">
+                <s:restriction base="s:string">
+                    <s:enumeration value="Undefined"/>
+                    <s:enumeration value="Active"/>
+                    <s:enumeration value="Blocked"/>
+                    <s:enumeration value="Unsubscribed"/>
+                </s:restriction>
+            </s:simpleType>
+            <s:complexType name="AccountUsageInfo">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="LastSeen" nillable="true" type="s:dateTime"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="FraudCounter" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="LastFraudEntry" nillable="true" type="s:dateTime"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="LastFraudReset" nillable="true" type="s:dateTime"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="LastPINChange" nillable="true" type="s:dateTime"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="LastPayTypeChange" nillable="true" type="s:dateTime"/>
+                </s:sequence>
+            </s:complexType>
+            <s:complexType name="SubscriberLimits">
+                <s:sequence>
+                    <s:element maxOccurs="1" minOccurs="1" name="MinTransactionAmount" type="s:decimal"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="MaxTransactionAmount" type="s:decimal"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="TransactionsPerDayLimit" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="TransactionsPerWeekLimit" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="TransactionsPerMonthLimit" type="s:int"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="AmountPerDayLimit" type="s:decimal"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="AmountPerWeekLimit" type="s:decimal"/>
+                    <s:element maxOccurs="1" minOccurs="1" name="AmountPerMonthLimit" type="s:decimal"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="Unsubscribe">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminName" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminPassword" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="source" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="phone" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="sendSMS" type="s:boolean"/>
+                        <s:element maxOccurs="1" minOccurs="0" name="language" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="pin" nillable="true" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="UnsubscribeResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="0" name="UnsubscribeResult" type="tns:BaseResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="ChangePin">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminName" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminPassword" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="source" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="phone" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="sendSMS" type="s:boolean"/>
+                        <s:element maxOccurs="1" minOccurs="0" name="language" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="oldPin" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="newPin" nillable="true" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="ChangePinResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="0" name="ChangePinResult" type="tns:BaseResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="ResetPin">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminName" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminPassword" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="source" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="phone" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="sendSMS" type="s:boolean"/>
+                        <s:element maxOccurs="1" minOccurs="0" name="language" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="ResetPinResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="0" name="ResetPinResult" type="tns:NewPinResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="Transfer">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminName" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminPassword" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="source" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="phone" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="sendSMS" type="s:boolean"/>
+                        <s:element maxOccurs="1" minOccurs="0" name="language" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="receiverPhone" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="amount" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="pin" nillable="true" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="TransferResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="0" name="TransferResult" type="tns:BaseResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="Block">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminName" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminPassword" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="phone" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="fromDate" type="s:dateTime"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="toDate" type="s:dateTime"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="reason" nillable="true" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="BlockResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="0" name="BlockResult" type="tns:BaseResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="Unblock">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminName" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminPassword" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="phone" nillable="true" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="UnblockResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="0" name="UnblockResult" type="tns:BaseResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="GetSubscriberInfo">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminName" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="adminPassword" nillable="true" type="s:string"/>
+                        <s:element maxOccurs="1" minOccurs="1" name="phone" nillable="true" type="s:string"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="GetSubscriberInfoResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element maxOccurs="1" minOccurs="0" name="GetSubscriberInfoResult" type="tns:BaseResult"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="NewPinResult" nillable="true" type="tns:NewPinResult"/>
+            <s:element name="BaseResult" nillable="true" type="tns:BaseResult"/>
+        </s:schema>
+    </wsdl:types>
+    <wsdl:message name="SubscribeSoapIn">
+        <wsdl:part element="tns:Subscribe" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="SubscribeSoapOut">
+        <wsdl:part element="tns:SubscribeResponse" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="UnsubscribeSoapIn">
+        <wsdl:part element="tns:Unsubscribe" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="UnsubscribeSoapOut">
+        <wsdl:part element="tns:UnsubscribeResponse" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="ChangePinSoapIn">
+        <wsdl:part element="tns:ChangePin" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="ChangePinSoapOut">
+        <wsdl:part element="tns:ChangePinResponse" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="ResetPinSoapIn">
+        <wsdl:part element="tns:ResetPin" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="ResetPinSoapOut">
+        <wsdl:part element="tns:ResetPinResponse" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="TransferSoapIn">
+        <wsdl:part element="tns:Transfer" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="TransferSoapOut">
+        <wsdl:part element="tns:TransferResponse" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="BlockSoapIn">
+        <wsdl:part element="tns:Block" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="BlockSoapOut">
+        <wsdl:part element="tns:BlockResponse" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="UnblockSoapIn">
+        <wsdl:part element="tns:Unblock" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="UnblockSoapOut">
+        <wsdl:part element="tns:UnblockResponse" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="GetSubscriberInfoSoapIn">
+        <wsdl:part element="tns:GetSubscriberInfo" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="GetSubscriberInfoSoapOut">
+        <wsdl:part element="tns:GetSubscriberInfoResponse" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="SubscribeHttpGetIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="source" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="sendSMS" type="s:string"/>
+        <wsdl:part name="language" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="SubscribeHttpGetOut">
+        <wsdl:part element="tns:NewPinResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="UnsubscribeHttpGetIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="source" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="sendSMS" type="s:string"/>
+        <wsdl:part name="language" type="s:string"/>
+        <wsdl:part name="pin" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="UnsubscribeHttpGetOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="ChangePinHttpGetIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="source" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="sendSMS" type="s:string"/>
+        <wsdl:part name="language" type="s:string"/>
+        <wsdl:part name="oldPin" type="s:string"/>
+        <wsdl:part name="newPin" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="ChangePinHttpGetOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="ResetPinHttpGetIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="source" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="sendSMS" type="s:string"/>
+        <wsdl:part name="language" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="ResetPinHttpGetOut">
+        <wsdl:part element="tns:NewPinResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="TransferHttpGetIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="source" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="sendSMS" type="s:string"/>
+        <wsdl:part name="language" type="s:string"/>
+        <wsdl:part name="receiverPhone" type="s:string"/>
+        <wsdl:part name="amount" type="s:string"/>
+        <wsdl:part name="pin" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="TransferHttpGetOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="BlockHttpGetIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="fromDate" type="s:string"/>
+        <wsdl:part name="toDate" type="s:string"/>
+        <wsdl:part name="reason" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="BlockHttpGetOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="UnblockHttpGetIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="UnblockHttpGetOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="GetSubscriberInfoHttpGetIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="GetSubscriberInfoHttpGetOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="SubscribeHttpPostIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="source" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="sendSMS" type="s:string"/>
+        <wsdl:part name="language" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="SubscribeHttpPostOut">
+        <wsdl:part element="tns:NewPinResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="UnsubscribeHttpPostIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="source" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="sendSMS" type="s:string"/>
+        <wsdl:part name="language" type="s:string"/>
+        <wsdl:part name="pin" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="UnsubscribeHttpPostOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="ChangePinHttpPostIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="source" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="sendSMS" type="s:string"/>
+        <wsdl:part name="language" type="s:string"/>
+        <wsdl:part name="oldPin" type="s:string"/>
+        <wsdl:part name="newPin" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="ChangePinHttpPostOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="ResetPinHttpPostIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="source" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="sendSMS" type="s:string"/>
+        <wsdl:part name="language" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="ResetPinHttpPostOut">
+        <wsdl:part element="tns:NewPinResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="TransferHttpPostIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="source" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="sendSMS" type="s:string"/>
+        <wsdl:part name="language" type="s:string"/>
+        <wsdl:part name="receiverPhone" type="s:string"/>
+        <wsdl:part name="amount" type="s:string"/>
+        <wsdl:part name="pin" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="TransferHttpPostOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="BlockHttpPostIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+        <wsdl:part name="fromDate" type="s:string"/>
+        <wsdl:part name="toDate" type="s:string"/>
+        <wsdl:part name="reason" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="BlockHttpPostOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="UnblockHttpPostIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="UnblockHttpPostOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:message name="GetSubscriberInfoHttpPostIn">
+        <wsdl:part name="adminName" type="s:string"/>
+        <wsdl:part name="adminPassword" type="s:string"/>
+        <wsdl:part name="phone" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="GetSubscriberInfoHttpPostOut">
+        <wsdl:part element="tns:BaseResult" name="Body"/>
+    </wsdl:message>
+    <wsdl:portType name="CreditTransferSoap">
+        <wsdl:operation name="Subscribe">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Subscribes specified phone</wsdl:documentation>
+            <wsdl:input message="tns:SubscribeSoapIn"/>
+            <wsdl:output message="tns:SubscribeSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Unsubscribe">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Unsubscribes specified phone</wsdl:documentation>
+            <wsdl:input message="tns:UnsubscribeSoapIn"/>
+            <wsdl:output message="tns:UnsubscribeSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="ChangePin">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Changes PIN</wsdl:documentation>
+            <wsdl:input message="tns:ChangePinSoapIn"/>
+            <wsdl:output message="tns:ChangePinSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="ResetPin">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Resets PIN</wsdl:documentation>
+            <wsdl:input message="tns:ResetPinSoapIn"/>
+            <wsdl:output message="tns:ResetPinSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Transfer">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Credit transfer</wsdl:documentation>
+            <wsdl:input message="tns:TransferSoapIn"/>
+            <wsdl:output message="tns:TransferSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Block">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Adds subscriber to Black List</wsdl:documentation>
+            <wsdl:input message="tns:BlockSoapIn"/>
+            <wsdl:output message="tns:BlockSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Unblock">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Deletes subscriber from Black List</wsdl:documentation>
+            <wsdl:input message="tns:UnblockSoapIn"/>
+            <wsdl:output message="tns:UnblockSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetSubscriberInfo">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns subscriber info.</wsdl:documentation>
+            <wsdl:input message="tns:GetSubscriberInfoSoapIn"/>
+            <wsdl:output message="tns:GetSubscriberInfoSoapOut"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="CreditTransferHttpGet">
+        <wsdl:operation name="Subscribe">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Subscribes specified phone</wsdl:documentation>
+            <wsdl:input message="tns:SubscribeHttpGetIn"/>
+            <wsdl:output message="tns:SubscribeHttpGetOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Unsubscribe">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Unsubscribes specified phone</wsdl:documentation>
+            <wsdl:input message="tns:UnsubscribeHttpGetIn"/>
+            <wsdl:output message="tns:UnsubscribeHttpGetOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="ChangePin">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Changes PIN</wsdl:documentation>
+            <wsdl:input message="tns:ChangePinHttpGetIn"/>
+            <wsdl:output message="tns:ChangePinHttpGetOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="ResetPin">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Resets PIN</wsdl:documentation>
+            <wsdl:input message="tns:ResetPinHttpGetIn"/>
+            <wsdl:output message="tns:ResetPinHttpGetOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Transfer">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Credit transfer</wsdl:documentation>
+            <wsdl:input message="tns:TransferHttpGetIn"/>
+            <wsdl:output message="tns:TransferHttpGetOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Block">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Adds subscriber to Black List</wsdl:documentation>
+            <wsdl:input message="tns:BlockHttpGetIn"/>
+            <wsdl:output message="tns:BlockHttpGetOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Unblock">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Deletes subscriber from Black List</wsdl:documentation>
+            <wsdl:input message="tns:UnblockHttpGetIn"/>
+            <wsdl:output message="tns:UnblockHttpGetOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetSubscriberInfo">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns subscriber info.</wsdl:documentation>
+            <wsdl:input message="tns:GetSubscriberInfoHttpGetIn"/>
+            <wsdl:output message="tns:GetSubscriberInfoHttpGetOut"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="CreditTransferHttpPost">
+        <wsdl:operation name="Subscribe">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Subscribes specified phone</wsdl:documentation>
+            <wsdl:input message="tns:SubscribeHttpPostIn"/>
+            <wsdl:output message="tns:SubscribeHttpPostOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Unsubscribe">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Unsubscribes specified phone</wsdl:documentation>
+            <wsdl:input message="tns:UnsubscribeHttpPostIn"/>
+            <wsdl:output message="tns:UnsubscribeHttpPostOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="ChangePin">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Changes PIN</wsdl:documentation>
+            <wsdl:input message="tns:ChangePinHttpPostIn"/>
+            <wsdl:output message="tns:ChangePinHttpPostOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="ResetPin">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Resets PIN</wsdl:documentation>
+            <wsdl:input message="tns:ResetPinHttpPostIn"/>
+            <wsdl:output message="tns:ResetPinHttpPostOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Transfer">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Credit transfer</wsdl:documentation>
+            <wsdl:input message="tns:TransferHttpPostIn"/>
+            <wsdl:output message="tns:TransferHttpPostOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Block">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Adds subscriber to Black List</wsdl:documentation>
+            <wsdl:input message="tns:BlockHttpPostIn"/>
+            <wsdl:output message="tns:BlockHttpPostOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="Unblock">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Deletes subscriber from Black List</wsdl:documentation>
+            <wsdl:input message="tns:UnblockHttpPostIn"/>
+            <wsdl:output message="tns:UnblockHttpPostOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetSubscriberInfo">
+            <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Returns subscriber info.</wsdl:documentation>
+            <wsdl:input message="tns:GetSubscriberInfoHttpPostIn"/>
+            <wsdl:output message="tns:GetSubscriberInfoHttpPostOut"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CreditTransferSoap" type="tns:CreditTransferSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Subscribe">
+            <soap:operation soapAction="http://CreditTransfer.Services/Subscribe" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Unsubscribe">
+            <soap:operation soapAction="http://CreditTransfer.Services/Unsubscribe" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ChangePin">
+            <soap:operation soapAction="http://CreditTransfer.Services/ChangePin" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ResetPin">
+            <soap:operation soapAction="http://CreditTransfer.Services/ResetPin" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Transfer">
+            <soap:operation soapAction="http://CreditTransfer.Services/Transfer" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Block">
+            <soap:operation soapAction="http://CreditTransfer.Services/Block" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Unblock">
+            <soap:operation soapAction="http://CreditTransfer.Services/Unblock" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetSubscriberInfo">
+            <soap:operation soapAction="http://CreditTransfer.Services/GetSubscriberInfo" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="CreditTransferSoap12" type="tns:CreditTransferSoap">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Subscribe">
+            <soap12:operation soapAction="http://CreditTransfer.Services/Subscribe" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Unsubscribe">
+            <soap12:operation soapAction="http://CreditTransfer.Services/Unsubscribe" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ChangePin">
+            <soap12:operation soapAction="http://CreditTransfer.Services/ChangePin" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ResetPin">
+            <soap12:operation soapAction="http://CreditTransfer.Services/ResetPin" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Transfer">
+            <soap12:operation soapAction="http://CreditTransfer.Services/Transfer" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Block">
+            <soap12:operation soapAction="http://CreditTransfer.Services/Block" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Unblock">
+            <soap12:operation soapAction="http://CreditTransfer.Services/Unblock" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetSubscriberInfo">
+            <soap12:operation soapAction="http://CreditTransfer.Services/GetSubscriberInfo" style="document"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="CreditTransferHttpGet" type="tns:CreditTransferHttpGet">
+        <http:binding verb="GET"/>
+        <wsdl:operation name="Subscribe">
+            <http:operation location="/Subscribe"/>
+            <wsdl:input>
+                <http:urlEncoded/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Unsubscribe">
+            <http:operation location="/Unsubscribe"/>
+            <wsdl:input>
+                <http:urlEncoded/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ChangePin">
+            <http:operation location="/ChangePin"/>
+            <wsdl:input>
+                <http:urlEncoded/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ResetPin">
+            <http:operation location="/ResetPin"/>
+            <wsdl:input>
+                <http:urlEncoded/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Transfer">
+            <http:operation location="/Transfer"/>
+            <wsdl:input>
+                <http:urlEncoded/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Block">
+            <http:operation location="/Block"/>
+            <wsdl:input>
+                <http:urlEncoded/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Unblock">
+            <http:operation location="/Unblock"/>
+            <wsdl:input>
+                <http:urlEncoded/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetSubscriberInfo">
+            <http:operation location="/GetSubscriberInfo"/>
+            <wsdl:input>
+                <http:urlEncoded/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="CreditTransferHttpPost" type="tns:CreditTransferHttpPost">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="Subscribe">
+            <http:operation location="/Subscribe"/>
+            <wsdl:input>
+                <mime:content type="application/x-www-form-urlencoded"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Unsubscribe">
+            <http:operation location="/Unsubscribe"/>
+            <wsdl:input>
+                <mime:content type="application/x-www-form-urlencoded"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ChangePin">
+            <http:operation location="/ChangePin"/>
+            <wsdl:input>
+                <mime:content type="application/x-www-form-urlencoded"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="ResetPin">
+            <http:operation location="/ResetPin"/>
+            <wsdl:input>
+                <mime:content type="application/x-www-form-urlencoded"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Transfer">
+            <http:operation location="/Transfer"/>
+            <wsdl:input>
+                <mime:content type="application/x-www-form-urlencoded"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Block">
+            <http:operation location="/Block"/>
+            <wsdl:input>
+                <mime:content type="application/x-www-form-urlencoded"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="Unblock">
+            <http:operation location="/Unblock"/>
+            <wsdl:input>
+                <mime:content type="application/x-www-form-urlencoded"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="GetSubscriberInfo">
+            <http:operation location="/GetSubscriberInfo"/>
+            <wsdl:input>
+                <mime:content type="application/x-www-form-urlencoded"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CreditTransfer">
+        <wsdl:port binding="tns:CreditTransferSoap" name="CreditTransferSoap">
+            <soap:address location="http://10.151.4.83/creditransfer/services/services/credittransfer.asmx"/>
+        </wsdl:port>
+        <wsdl:port binding="tns:CreditTransferSoap12" name="CreditTransferSoap12">
+            <soap12:address location="http://10.151.4.83/creditransfer/services/services/credittransfer.asmx"/>
+        </wsdl:port>
+        <wsdl:port binding="tns:CreditTransferHttpGet" name="CreditTransferHttpGet">
+            <http:address location="http://10.151.4.83/creditransfer/services/services/credittransfer.asmx"/>
+        </wsdl:port>
+        <wsdl:port binding="tns:CreditTransferHttpPost" name="CreditTransferHttpPost">
+            <http:address location="http://10.151.4.83/creditransfer/services/services/credittransfer.asmx"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

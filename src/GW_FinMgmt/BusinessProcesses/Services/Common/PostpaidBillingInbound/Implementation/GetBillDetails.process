@@ -1,0 +1,2246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns14="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:ns15="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlPfx="http://xmlns.example.com/1450253296761" xmlns:format="java://MSISDNFormatter" xmlns:ns5="http://xmlns.zain.com/BSS/ESB/CDM/Base" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns13="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns6="http://www.zain.com/ZESB/Types/Common" xmlns:ns7="http://www.ericsson.com/BusinessSchemas/Services/Common/JMSSchema/JMSHeader.xsd" xmlns:pfx="http://www.zain.com/ZESB/Services/PostpaidBilling" xmlns:ns11="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:ns8="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Applications/Common/Query/InvoiceQuery/Schema.xsd" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetUsageDetails.xsd" xmlns:ns3="http://www.zain.com/ZESB/Services/Query/GetUsageDetails.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/QueryCustomerIDBAID.xsd" xmlns:pfx2="http://www.zain.com/ZESB/Services/PostpaidBilling/Types" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/Query/GetUsageDetails.xsd" schemaLocation="/BusinessSchemas/Services/Applications/Common/Query/GetUsageDetails/GetUsageDetails.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetUsageDetails.xsd" schemaLocation="/BusinessSchemas/Services/Query/GetUsageDetails/GetUsageDetails.xsd"/>
+    <xsd:import namespace="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" schemaLocation="/CDM/ZainKWFault.xsd"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Types/Common" schemaLocation="/BusinessWSDLS/Services/WSDLS/PostpaidBilling/PostpaidBillingInbound.wsdl"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Applications/Common/Query/InvoiceQuery/Schema.xsd" schemaLocation="/BusinessSchemas/Services/Applications/Common/Query/InvoiceQuery/BillDetailsQueryCDM.xsd"/>
+    <wsdl:import namespace="http://xmlns.example.com/1450253296761" location="/BusinessWSDLS/Services/TIBCO/GetUsageDetailsAbstract.wsdl"/>
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/PostpaidBilling" location="/BusinessWSDLS/Services/WSDLS/PostpaidBilling/PostpaidBillingInbound.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/PostpaidBillingInbound/Implementation/GetBillDetails.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="pfx:BillDetailsRequest"/>
+    <pd:startX>48</pd:startX>
+    <pd:startY>175</pd:startY>
+    <pd:returnBindings>
+        <pfx:BillDetailsResponse>
+            <parameters>
+                <xsl:copy-of select="$CDMToNativeResponseMap/pfx2:BillDetailsResponse"/>
+            </parameters>
+        </pfx:BillDetailsResponse>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="pfx:BillDetailsResponse"/>
+    <pd:endX>1490</pd:endX>
+    <pd:endY>171</pd:endY>
+    <pd:errorSchemas>
+        <Schema1 wsMsgRef="pfx:faultMessage"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1450342523273</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>296</pd:x>
+        <pd:y>1</pd:y>
+        <pd:width>1039</pd:width>
+        <pd:height>328</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>simpleGroup</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>GetContext</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogOut</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetTransactionID</pd:from>
+            <pd:to>LogIn</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call_For_Usage</pd:from>
+            <pd:to>ErrorESI_Call</pd:to>
+            <pd:xpathDescription>ErrorExists</pd:xpathDescription>
+            <pd:lineType>Straight</pd:lineType>
+            <pd:lineColor>-52429</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogIn</pd:from>
+            <pd:to>CheckCustomerId</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CDMToNativeResponse</pd:from>
+            <pd:to>LogOut</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetContext</pd:from>
+            <pd:to>GetTransactionID</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogIn</pd:from>
+            <pd:to>Generate-Error-1</pd:to>
+            <pd:xpathDescription>FutureDate-Error</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-52480</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>tib:compare-dateTime($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate, current-dateTime())=1</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call_For_Usage</pd:from>
+            <pd:to>Map_For_Usage</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CheckCustomerId</pd:from>
+            <pd:to>ESI_Call_For_Usage</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CheckCustomerId</pd:from>
+            <pd:to>Generate-Error-CustomerMismatch</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$CheckCustomerId/pfx3:QueryResponse/ns5:customerId/ns5:value!=$Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:ContractId</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call</pd:from>
+            <pd:to>ErrorESI_Call-NoData</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call</pd:from>
+            <pd:to>ErrorESI_Call-For_Usage</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Map_For_Usage</pd:from>
+            <pd:to>CDMToNativeResponse</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>1=2</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Map_For_Usage</pd:from>
+            <pd:to>CDMToNativeResponseMap</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>count($Map_For_Usage/ns8:Records/ns8:Record)&gt;0</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CDMToNativeResponseMap</pd:from>
+            <pd:to>LogOut</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call</pd:from>
+            <pd:to>Map_For_Usage</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Map_For_Usage</pd:from>
+            <pd:to>ErrorESI_Call-NoData</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CheckCustomerId</pd:from>
+            <pd:to>ESI_Call</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>ESI_Call_For_Usage</pd:from>
+            <pd:to>ErrorESI_Call-NoData</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="LogIn">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>489</pd:x>
+            <pd:y>65</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+                <spawn>false</spawn>
+            </config>
+            <pd:inputBindings>
+                <ns12:LogRequest>
+                    <ns2:Header>
+                        <ns2:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns2:ApplicationID>
+                        <ns2:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ComponentName"/>
+                        </ns2:ComponentName>
+                        <ns2:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns2:Hostname>
+                        <ns2:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns2:Timestamp>
+                        <ns2:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                        </ns2:TransactionDomain>
+                        <ns2:TransactionType>
+                            <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                        </ns2:TransactionType>
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                        <xsl:if test="$GetContext/ns7:_applicationProperties/ns7:JMSMessageID">
+                            <ns2:CorrelationID>
+                                <xsl:value-of select="$GetContext/ns7:_applicationProperties/ns7:JMSMessageID"/>
+                            </ns2:CorrelationID>
+                        </xsl:if>
+                        <ns2:InterfaceID>
+                            <xsl:value-of select="$Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Msisdn"/>
+                        </ns2:InterfaceID>
+                        <ns2:Filename>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                        </ns2:Filename>
+                        <ns2:Message>
+                            <xsl:value-of select="tib:render-xml($Start/pfx:BillDetailsRequest)"/>
+                        </ns2:Message>
+                    </ns2:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_RECV"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns12:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="LogOut">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>1278</pd:x>
+            <pd:y>136</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+                <spawn>false</spawn>
+            </config>
+            <pd:inputBindings>
+                <ns12:LogRequest>
+                    <ns2:Header>
+                        <ns2:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns2:ApplicationID>
+                        <ns2:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ComponentName"/>
+                        </ns2:ComponentName>
+                        <ns2:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns2:Hostname>
+                        <ns2:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns2:Timestamp>
+                        <ns2:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                        </ns2:TransactionDomain>
+                        <ns2:TransactionType>
+                            <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                        </ns2:TransactionType>
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                        <xsl:if test="$GetContext/ns7:_applicationProperties/ns7:JMSMessageID">
+                            <ns2:CorrelationID>
+                                <xsl:value-of select="$GetContext/ns7:_applicationProperties/ns7:JMSMessageID"/>
+                            </ns2:CorrelationID>
+                        </xsl:if>
+                        <ns2:InterfaceID>
+                            <xsl:value-of select="$Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Msisdn"/>
+                        </ns2:InterfaceID>
+                        <ns2:Filename>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                        </ns2:Filename>
+                        <ns2:Message>
+                            <xsl:value-of select="tib:render-xml($CDMToNativeResponse/pfx2:BillDetailsResponse)"/>
+                        </ns2:Message>
+                    </ns2:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_SENT"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns12:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ESI_Call_For_Usage">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>854</pd:x>
+            <pd:y>60</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/PostpaidBillingInbound/HelperProcess/ESI_Call_GetBillDetails.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <TransactionId>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                    <ns3:BilledUsageRequest>
+                        <ns3:subscriberNumber>
+                            <xsl:value-of select="$Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Msisdn"/>
+                        </ns3:subscriberNumber>
+                        <ns3:contractID>
+                            <xsl:value-of select="$Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:ContractId"/>
+                        </ns3:contractID>
+                        <ns3:toDate>
+                            <xsl:value-of select="tib:add-to-date($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate, 0, 1, 0)"/>
+                        </ns3:toDate>
+                    </ns3:BilledUsageRequest>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GetTransactionID">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>372</pd:x>
+            <pd:y>68</pd:y>
+            <config>
+                <processName>/CommonProcesses/Utilities/GUID.process</processName>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="ErrorESI_Call">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>811</pd:x>
+            <pd:y>158</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns13:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                    </message>
+                    <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                        <messageCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </messageCode>
+                    </xsl:if>
+                </ns13:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="CDMToNativeResponse">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>1202</pd:x>
+            <pd:y>62</pd:y>
+            <config>
+                <element ref="pfx2:BillDetailsResponse"/>
+            </config>
+            <pd:inputBindings>
+                <pfx2:BillDetailsResponse>
+                    <pfx2:Entries>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/MainTitle"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="'Monthly Charges'"/>
+                            </pfx2:Text>
+                            <pfx2:From>
+                                <xsl:choose>
+                                    <xsl:when test="exists(tib:format-date('MM-dd-yyyy', tib:create-date(tib:get-year-from-date($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), tib:get-month-from-dateTime($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), '01')))">
+                                        <xsl:value-of select="tib:format-date('MM-dd-yyyy', tib:create-date(tib:get-year-from-date($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), tib:get-month-from-dateTime($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), '01'))"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </pfx2:From>
+                            <pfx2:To>
+                                <xsl:choose>
+                                    <xsl:when test="exists($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='CURRENT MONTH CHARGES'][1]/ns8:ToDate)">
+                                        <xsl:value-of select="$ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='CURRENT MONTH CHARGES'][1]/ns8:ToDate"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </pfx2:To>
+                        </pfx2:Entry>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Title"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="'Subscriptions'"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <xsl:for-each select="$ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='SUBSCRIPTION CURRENT MONTH']">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(ns8:BillText)">
+                                            <xsl:value-of select="ns8:BillText"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:Text>
+                                <pfx2:From>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(ns8:FromDate)">
+                                            <xsl:value-of select="ns8:FromDate"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:From>
+                                <pfx2:To>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(ns8:TransactionDate)">
+                                            <xsl:value-of select="ns8:TransactionDate"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:To>
+                                <pfx2:Amount>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(if(string-length(ns8:BillAmount)>0) then current()/ns8:BillAmount else 0)">
+                                            <xsl:value-of select="if(string-length(ns8:BillAmount)>0) then current()/ns8:BillAmount else 0"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:for-each>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTotal"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="'Total Monthly Charges :'"/>
+                            </pfx2:Text>
+                            <pfx2:Amount>
+                                <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='SUBSCRIPTION CURRENT MONTH']/ns8:BillAmount)"/>
+                            </pfx2:Amount>
+                        </pfx2:Entry>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/MainTitle"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="'Usage Charges :'"/>
+                            </pfx2:Text>
+                            <pfx2:From>
+                                <xsl:value-of select="tib:format-date('MM-dd-yyyy', tib:create-date(tib:get-year-from-date($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), tib:get-month-from-dateTime($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), '01'))"/>
+                            </pfx2:From>
+                            <xsl:if test="$ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='CURRENT MONTH CHARGES'][1]/ns8:ToDate">
+                                <pfx2:To>
+                                    <xsl:value-of select="$ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='CURRENT MONTH CHARGES'][1]/ns8:ToDate"/>
+                                </pfx2:To>
+                            </xsl:if>
+                        </pfx2:Entry>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Title"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="'Voice'"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTitle"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="'Covered by Plan'"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))  and ns8:Duration!=0 and exists(ns8:Duration)]/ns8:BillAmount)=0 and&#xA;sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))  and ns8:Duration!=0 and exists(ns8:Duration)]/ns8:Duration)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/Peak"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'min'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'Calls'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and ns8:BillAmount=0]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and (contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))  and ns8:Duration!=0 and exists(ns8:Duration)]/ns8:BillAmount)=0 and&#xA;sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and (contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))  and ns8:Duration!=0 and exists(ns8:Duration)]/ns8:Duration)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/OffPeak"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'min'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and (contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'Calls'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and (contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="0"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and (contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount))) and (number(ns8:Duration)>0 and exists(ns8:Duration))]/ns8:BillAmount)=0 and &#xA;sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and (contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount))) and (number(ns8:Duration)>0 and exists(ns8:Duration))]/ns8:Duration)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/NonZain"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'min'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and (contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount))) and (number(ns8:Duration)>0 and exists(ns8:Duration))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'Calls'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and (contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount))) and (number(ns8:Duration)>0 and exists(ns8:Duration))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and (contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount))) and ns8:Duration!=0 and exists(ns8:Duration)]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="$ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='USAGE']/ns8:BillAmount>0 and (not(contains($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='USAGE']/ns8:BillText, 'VAS') or contains($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='USAGE']/ns8:BillText, 'MMS') or contains($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='USAGE']/ns8:BillText, 'SMS') or contains($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='USAGE']/ns8:BillText, 'OTHERS') or contains($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='USAGE']/ns8:BillText, 'INTERNET')))">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTitle"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="'Extra Charges'"/>
+                                </pfx2:Text>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/Peak"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'min'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'Calls'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and (contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/OffPeak"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'min'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and (contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'Calls'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and (contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and (contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and (contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/NonZain"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'min'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and (contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'Calls'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and (contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and (contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount) +&#xA;&#xA;sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and (contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount) +&#xA;&#xA;sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and (contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Remark"/>
+                                </pfx2:Level>
+                                <xsl:variable name="var" select="current()/ns8:ChargeType"/>
+                                <xsl:variable name="var2" select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount) +&#xA;&#xA;sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and not(contains(ns8:BillText,'NON_ZAIN')) and (contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount) +&#xA;&#xA;sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and not(contains(ns8:BillText,'INTERNATIONAL')) and not(contains(ns8:BillText,'ROAMING')) and (contains(ns8:BillText,'NON_ZAIN')) and not(contains(ns8:BillText,'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)"/>
+                                <xsl:variable name="var3" select="current()/ns8:BillAmount"/>
+                                <pfx2:Text>
+                                    <xsl:value-of select="concat('Dear Customer, you have exceeded your monthly plan by ',$var2 )"/>
+                                </pfx2:Text>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'INTERNATIONAL'))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/InternationalCalls"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'min'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'INTERNATIONAL'))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'Calls'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'INTERNATIONAL'))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'INTERNATIONAL'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'ROAMING_INCOMING'))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/RoamingIncoming"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'min'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'ROAMING_INCOMING'))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'Calls'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'ROAMING_INCOMING'))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'ROAMING_INCOMING'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'ROAMING_OUTGOING'))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/RoamingOutgoing"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'min'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'ROAMING_OUTGOING'))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'Calls'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'ROAMING_OUTGOING'))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='min' and (contains(ns8:BillText,'ROAMING_OUTGOING'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Title"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="'Messaging'"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='msg' and (contains(ns8:BillText,'LOCAL'))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/SMSLocal"/>
+                                </pfx2:Text>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'msgs'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='msg' and (contains(ns8:BillText,'LOCAL'))]/ns8:Duration)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='msg' and (contains(ns8:BillText,'LOCAL'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='msg' and (contains(ns8:BillText,'INTERNATIONAL'))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/SMSInternational"/>
+                                </pfx2:Text>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'msgs'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='msg' and (contains(ns8:BillText,'INTERNATIONAL'))]/ns8:Duration)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='msg' and (contains(ns8:BillText,'INTERNATIONAL'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='msg' and (contains(ns8:BillText,'ROAMING'))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/SMSRoaming"/>
+                                </pfx2:Text>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'msgs'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='msg' and (contains(ns8:BillText,'ROAMING'))]/ns8:Duration)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='msg' and (contains(ns8:BillText,'ROAMING'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Title"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/MobileInternet"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <xsl:if test="round((sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='GB' ]/ns8:Duration))*1024*1024)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/MobileInternet"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="'Kb'"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="round((sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='GB' ]/ns8:Duration))*1024*1024)"/>
+                                </pfx2:Duration>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="(sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:VolumeUnit='GB' ]/ns8:BillAmount))"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Title"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="'Other Services'"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <xsl:if test="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='USAGE' and (contains(ns8:BillText,'VAS') or contains(ns8:BillText,'OTHERS'))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/VAS"/>
+                                </pfx2:Text>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='USAGE' and (contains(ns8:BillText,'VAS') or contains(ns8:BillText,'OTHERS'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTotal"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="'Total Usage Charges :'"/>
+                            </pfx2:Text>
+                            <pfx2:Amount>
+                                <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='USAGE' and string-length(ns8:BillAmount)>0]/ns8:BillAmount)"/>
+                            </pfx2:Amount>
+                        </pfx2:Entry>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Total"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="'Total Charges :'"/>
+                            </pfx2:Text>
+                            <pfx2:Amount>
+                                <xsl:value-of select="sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='USAGE' and string-length(ns8:BillAmount)>0]/ns8:BillAmount) + sum($ESI_Call_For_Usage/ns8:Records/ns8:Record[ns8:ChargeType='SUBSCRIPTION CURRENT MONTH']/ns8:BillAmount)"/>
+                            </pfx2:Amount>
+                        </pfx2:Entry>
+                    </pfx2:Entries>
+                </pfx2:BillDetailsResponse>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GetContext">
+            <pd:type>com.tibco.ae.tools.palettes.servicepalette.GetContextActivity</pd:type>
+            <pd:resourceType>service.activity.getContext</pd:resourceType>
+            <pd:x>377</pd:x>
+            <pd:y>247</pd:y>
+            <config>
+                <variableConfig>/BusinessSchemas/Services/Common/JMSSchema/InputContext.contextResource</variableConfig>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="Generate-Error-1">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>501</pd:x>
+            <pd:y>213</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns13:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/BSCSBillDateFromFutureErrDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/BSCSBillDateFromFutureErrCode"/>
+                    </messageCode>
+                </ns13:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="CheckCustomerId">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>613</pd:x>
+            <pd:y>64</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/PostpaidBillingInbound/HelperProcess/ESI_Call_FetchCustomerID.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <pfx3:QueryRequest>
+                        <ns5:MSISDN>
+                            <xsl:value-of select="$Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Msisdn"/>
+                        </ns5:MSISDN>
+                    </pfx3:QueryRequest>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                    <TransactionID>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionID>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Generate-Error-CustomerMismatch">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>616</pd:x>
+            <pd:y>223</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns13:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/CustomerMismatchErrorDes"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/CustomerMismatchErrorCode"/>
+                    </messageCode>
+                </ns13:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ErrorESI_Call-NoData">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>918</pd:x>
+            <pd:y>153</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns13:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/CommonQueryNoDataFoundErrorDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/CommonQueryNoDataFoundErrorCode"/>
+                    </messageCode>
+                </ns13:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ESI_Call">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>856</pd:x>
+            <pd:y>273</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/PostpaidBillingInbound/HelperProcess/ESI_Call_GetBillDetails.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <TransactionId>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                    <ns3:BilledUsageRequest>
+                        <ns3:subscriberNumber>
+                            <xsl:value-of select="$Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Msisdn"/>
+                        </ns3:subscriberNumber>
+                        <ns3:contractID>
+                            <xsl:value-of select="$Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:ContractId"/>
+                        </ns3:contractID>
+                        <ns3:toDate>
+                            <xsl:value-of select="$Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate"/>
+                        </ns3:toDate>
+                    </ns3:BilledUsageRequest>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ErrorESI_Call-For_Usage">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>714</pd:x>
+            <pd:y>275</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns13:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                    </message>
+                    <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                        <messageCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </messageCode>
+                    </xsl:if>
+                </ns13:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Map_For_Usage">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>1062</pd:x>
+            <pd:y>148</pd:y>
+            <config>
+                <element ref="ns8:Records"/>
+            </config>
+            <pd:inputBindings>
+                <ns8:Records>
+                    <xsl:variable name="var" select="tib:get-month-from-date($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate)"/>
+                    <xsl:for-each select="$ESI_Call/ns8:Records/ns8:Record[tib:get-month-from-date(tib:parse-date('MM/dd/yyyy', ns8:ToDate))=$var]">
+                        <ns8:Record>
+                            <xsl:if test="ns8:ContractNo">
+                                <ns8:ContractNo>
+                                    <xsl:value-of select="ns8:ContractNo"/>
+                                </ns8:ContractNo>
+                            </xsl:if>
+                            <xsl:if test="ns8:SubscriberDetails">
+                                <ns8:SubscriberDetails>
+                                    <xsl:value-of select="ns8:SubscriberDetails"/>
+                                </ns8:SubscriberDetails>
+                            </xsl:if>
+                            <xsl:if test="ns8:BillText">
+                                <ns8:BillText>
+                                    <xsl:value-of select="ns8:BillText"/>
+                                </ns8:BillText>
+                            </xsl:if>
+                            <xsl:if test="ns8:BillAmount">
+                                <ns8:BillAmount>
+                                    <xsl:value-of select="ns8:BillAmount"/>
+                                </ns8:BillAmount>
+                            </xsl:if>
+                            <xsl:if test="ns8:TransactionDate">
+                                <ns8:TransactionDate>
+                                    <xsl:value-of select="ns8:TransactionDate"/>
+                                </ns8:TransactionDate>
+                            </xsl:if>
+                            <xsl:if test="ns8:ChargeType">
+                                <ns8:ChargeType>
+                                    <xsl:value-of select="ns8:ChargeType"/>
+                                </ns8:ChargeType>
+                            </xsl:if>
+                            <xsl:if test="ns8:Duration">
+                                <ns8:Duration>
+                                    <xsl:value-of select="ns8:Duration"/>
+                                </ns8:Duration>
+                            </xsl:if>
+                            <xsl:if test="ns8:SegmentType">
+                                <ns8:SegmentType>
+                                    <xsl:value-of select="ns8:SegmentType"/>
+                                </ns8:SegmentType>
+                            </xsl:if>
+                            <xsl:if test="ns8:VolumeUnit">
+                                <ns8:VolumeUnit>
+                                    <xsl:value-of select="ns8:VolumeUnit"/>
+                                </ns8:VolumeUnit>
+                            </xsl:if>
+                            <xsl:if test="ns8:FromDate">
+                                <ns8:FromDate>
+                                    <xsl:value-of select="ns8:FromDate"/>
+                                </ns8:FromDate>
+                            </xsl:if>
+                            <xsl:if test="ns8:ColumnName">
+                                <ns8:ColumnName>
+                                    <xsl:value-of select="ns8:ColumnName"/>
+                                </ns8:ColumnName>
+                            </xsl:if>
+                            <xsl:if test="ns8:ToDate">
+                                <ns8:ToDate>
+                                    <xsl:value-of select="ns8:ToDate"/>
+                                </ns8:ToDate>
+                            </xsl:if>
+                            <xsl:if test="ns8:CallQuantity">
+                                <ns8:CallQuantity>
+                                    <xsl:value-of select="ns8:CallQuantity"/>
+                                </ns8:CallQuantity>
+                            </xsl:if>
+                        </ns8:Record>
+                    </xsl:for-each>
+                    <xsl:for-each select="$ESI_Call_For_Usage/ns8:Records/ns8:Record[tib:get-month-from-date(tib:parse-date('MM/dd/yyyy', ns8:ToDate))=$var]">
+                        <ns8:Record>
+                            <xsl:if test="ns8:ContractNo">
+                                <ns8:ContractNo>
+                                    <xsl:value-of select="ns8:ContractNo"/>
+                                </ns8:ContractNo>
+                            </xsl:if>
+                            <xsl:if test="ns8:SubscriberDetails">
+                                <ns8:SubscriberDetails>
+                                    <xsl:value-of select="ns8:SubscriberDetails"/>
+                                </ns8:SubscriberDetails>
+                            </xsl:if>
+                            <xsl:if test="ns8:BillText">
+                                <ns8:BillText>
+                                    <xsl:value-of select="ns8:BillText"/>
+                                </ns8:BillText>
+                            </xsl:if>
+                            <xsl:if test="ns8:BillAmount">
+                                <ns8:BillAmount>
+                                    <xsl:value-of select="ns8:BillAmount"/>
+                                </ns8:BillAmount>
+                            </xsl:if>
+                            <xsl:if test="ns8:TransactionDate">
+                                <ns8:TransactionDate>
+                                    <xsl:value-of select="ns8:TransactionDate"/>
+                                </ns8:TransactionDate>
+                            </xsl:if>
+                            <xsl:if test="ns8:ChargeType">
+                                <ns8:ChargeType>
+                                    <xsl:value-of select="ns8:ChargeType"/>
+                                </ns8:ChargeType>
+                            </xsl:if>
+                            <xsl:if test="ns8:Duration">
+                                <ns8:Duration>
+                                    <xsl:value-of select="ns8:Duration"/>
+                                </ns8:Duration>
+                            </xsl:if>
+                            <xsl:if test="ns8:SegmentType">
+                                <ns8:SegmentType>
+                                    <xsl:value-of select="ns8:SegmentType"/>
+                                </ns8:SegmentType>
+                            </xsl:if>
+                            <xsl:if test="ns8:VolumeUnit">
+                                <ns8:VolumeUnit>
+                                    <xsl:value-of select="ns8:VolumeUnit"/>
+                                </ns8:VolumeUnit>
+                            </xsl:if>
+                            <xsl:if test="ns8:FromDate">
+                                <ns8:FromDate>
+                                    <xsl:value-of select="ns8:FromDate"/>
+                                </ns8:FromDate>
+                            </xsl:if>
+                            <xsl:if test="ns8:ColumnName">
+                                <ns8:ColumnName>
+                                    <xsl:value-of select="ns8:ColumnName"/>
+                                </ns8:ColumnName>
+                            </xsl:if>
+                            <xsl:if test="ns8:ToDate">
+                                <ns8:ToDate>
+                                    <xsl:value-of select="ns8:ToDate"/>
+                                </ns8:ToDate>
+                            </xsl:if>
+                            <xsl:if test="ns8:CallQuantity">
+                                <ns8:CallQuantity>
+                                    <xsl:value-of select="ns8:CallQuantity"/>
+                                </ns8:CallQuantity>
+                            </xsl:if>
+                        </ns8:Record>
+                    </xsl:for-each>
+                    <xsl:if test="$ESI_Call_For_Usage/ns8:Records/ns8:ResponseCode">
+                        <ns8:ResponseCode>
+                            <xsl:value-of select="$ESI_Call_For_Usage/ns8:Records/ns8:ResponseCode"/>
+                        </ns8:ResponseCode>
+                    </xsl:if>
+                    <ns8:ResponseDescription>
+                        <xsl:value-of select="$ESI_Call_For_Usage/ns8:Records/ns8:ResponseDescription"/>
+                    </ns8:ResponseDescription>
+                </ns8:Records>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="CDMToNativeResponseMap">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>1195</pd:x>
+            <pd:y>261</pd:y>
+            <config>
+                <element ref="pfx2:BillDetailsResponse"/>
+            </config>
+            <pd:inputBindings>
+                <pfx2:BillDetailsResponse>
+                    <pfx2:Entries>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then $_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/MainTitleArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/MainTitle"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then $_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/MonthlyChargesArabic&#xA;else $_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/MonthlyCharges"/>
+                            </pfx2:Text>
+                            <pfx2:From>
+                                <xsl:choose>
+                                    <xsl:when test="exists(tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,tib:create-date(tib:get-year-from-date($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), tib:get-month-from-dateTime($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), '01')))">
+                                        <xsl:value-of select="tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,tib:create-date(tib:get-year-from-date($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), tib:get-month-from-dateTime($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), '01'))"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </pfx2:From>
+                            <xsl:variable name="var4" select="count($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='CURRENT MONTH CHARGES'])"/>
+                            <pfx2:To>
+                                <xsl:choose>
+                                    <xsl:when test="exists(if(string-length($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='CURRENT MONTH CHARGES'][$var4]/ns8:ToDate)>0)&#xA;then&#xA;tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,tib:parse-date('MM/dd/yyyy',$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='CURRENT MONTH CHARGES'][$var4]/ns8:ToDate))&#xA;else '')">
+                                        <xsl:value-of select="if(string-length($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='CURRENT MONTH CHARGES'][$var4]/ns8:ToDate)>0)&#xA;then&#xA;tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,tib:parse-date('MM/dd/yyyy',$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='CURRENT MONTH CHARGES'][$var4]/ns8:ToDate))&#xA;else ''"/>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </pfx2:To>
+                        </pfx2:Entry>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then $_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/TitleArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Title"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/SubscriptionsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Subscriptions"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <xsl:for-each select="$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='SUBSCRIPTION CURRENT MONTH']">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(ns8:BillText)">
+                                            <xsl:value-of select="ns8:BillText"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:Text>
+                                <pfx2:From>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:FromDate))))">
+                                            <xsl:value-of select="tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:FromDate)))"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:From>
+                                <pfx2:To>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:TransactionDate))))">
+                                            <xsl:value-of select="tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:TransactionDate)))"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:To>
+                                <pfx2:Amount>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(if(string-length(ns8:BillAmount)>0) then current()/ns8:BillAmount else 0)">
+                                            <xsl:value-of select="if(string-length(ns8:BillAmount)>0) then current()/ns8:BillAmount else 0"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:for-each>
+                        <xsl:for-each select="$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='SUBSCRIPTION CHARGE DETAILS']">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(ns8:BillText)">
+                                            <xsl:value-of select="ns8:BillText"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:Text>
+                                <pfx2:From>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:FromDate))))">
+                                            <xsl:value-of select="tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:FromDate)))"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:From>
+                                <pfx2:To>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:TransactionDate))))">
+                                            <xsl:value-of select="tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:TransactionDate)))"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:To>
+                                <pfx2:Amount>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(if(string-length(ns8:BillAmount)>0) then current()/ns8:BillAmount else 0)">
+                                            <xsl:value-of select="if(string-length(ns8:BillAmount)>0) then current()/ns8:BillAmount else 0"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:for-each>
+                        <xsl:for-each select="$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='RECURRING']">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(ns8:BillText)">
+                                            <xsl:value-of select="ns8:BillText"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:Text>
+                                <pfx2:From>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:FromDate))))">
+                                            <xsl:value-of select="tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:FromDate)))"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:From>
+                                <pfx2:To>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:TransactionDate))))">
+                                            <xsl:value-of select="tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',ns8:TransactionDate)))"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:To>
+                                <pfx2:Amount>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(if(string-length(ns8:BillAmount)>0) then current()/ns8:BillAmount else 0)">
+                                            <xsl:value-of select="if(string-length(ns8:BillAmount)>0) then current()/ns8:BillAmount else 0"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:for-each>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTotalArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTotal"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/TotalMonthlyChrgsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/TotalMonthlyChrgs"/>
+                            </pfx2:Text>
+                            <pfx2:Amount>
+                                <xsl:value-of select="tib:round-fraction(sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='SUBSCRIPTION CURRENT MONTH']/ns8:BillAmount) +&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='SUBSCRIPTION CHARGE DETAILS']/ns8:BillAmount)+&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='RECURRING']/ns8:BillAmount),3)"/>
+                            </pfx2:Amount>
+                        </pfx2:Entry>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/MainTitleArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/MainTitle"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/UsageChrgsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/UsageChrgs"/>
+                            </pfx2:Text>
+                            <pfx2:From>
+                                <xsl:value-of select="tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat, tib:create-date(tib:get-year-from-date($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), tib:get-month-from-dateTime($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), '01'))"/>
+                            </pfx2:From>
+                            <xsl:variable name="var5" select="count($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='CURRENT MONTH CHARGES'])"/>
+                            <pfx2:To>
+                                <xsl:value-of select="tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,(tib:parse-date('MM/dd/yyyy',$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='CURRENT MONTH CHARGES'][$var5]/ns8:ToDate)))"/>
+                            </pfx2:To>
+                        </pfx2:Entry>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/TitleArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Title"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/VoiceArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Voice"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTitleArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTitle"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/CoveredByPlanArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/CoveredByPlan"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))  and ns8:Duration!=0 and exists(ns8:Duration)]/ns8:BillAmount)=0 and&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))  and ns8:Duration!=0 and exists(ns8:Duration)]/ns8:Duration)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/PeakArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/Peak"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/minArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/min"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/CallsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Calls"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and ns8:BillAmount=0]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and (contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))  and ns8:Duration!=0 and exists(ns8:Duration)]/ns8:BillAmount)=0 and&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and (contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))  and ns8:Duration!=0 and exists(ns8:Duration)]/ns8:Duration)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/OffPeakArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/OffPeak"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/minArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/min"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and (contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/CallsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Calls"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and (contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount)))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="0"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and (contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount))) and (number(ns8:Duration)>0 and exists(ns8:Duration))]/ns8:BillAmount)=0 and &#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and (contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount))) and (number(ns8:Duration)>0 and exists(ns8:Duration))]/ns8:Duration)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/NonZainArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/NonZain"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/minArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/min"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and (contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount))) and (number(ns8:Duration)>0 and exists(ns8:Duration))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/CallsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Calls"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and (contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount))) and (number(ns8:Duration)>0 and exists(ns8:Duration))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and (contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount=0 or not(exists(ns8:BillAmount))) and ns8:Duration!=0 and exists(ns8:Duration)]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='USAGE']/ns8:BillAmount>0 and (not(contains(upper-case($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='USAGE']/ns8:BillText), 'VAS') or contains(upper-case($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='USAGE']/ns8:BillText), 'MMS') or contains(upper-case($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='USAGE']/ns8:BillText), 'SMS') or contains(upper-case($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='USAGE']/ns8:BillText), 'OTHERS') or contains(upper-case($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='USAGE']/ns8:BillText), 'INTERNET')))">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTitleArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTitle"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/ExtraChrgesArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/ExtraChrges"/>
+                                </pfx2:Text>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/PeakArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/Peak"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/minArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/min"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/CallsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Calls"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and (contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/OffPeakArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/OffPeak"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/minArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/min"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and (contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/CallsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Calls"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and (contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and (contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and (contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/NonZainArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/NonZain"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/minArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/min"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and (contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/CallsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Calls"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and (contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and (contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount) +&#xA;&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and (contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount) +&#xA;&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and (contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/RemarkArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Remark"/>
+                                </pfx2:Level>
+                                <xsl:variable name="var" select="current()/ns8:ChargeType"/>
+                                <xsl:variable name="var2" select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount) +&#xA;&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and not(contains(upper-case(ns8:BillText),'NON_ZAIN')) and (contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount) +&#xA;&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and not(contains(upper-case(ns8:BillText),'INTERNATIONAL')) and not(contains(upper-case(ns8:BillText),'ROAMING')) and (contains(upper-case(ns8:BillText),'NON_ZAIN')) and not(contains(upper-case(ns8:BillText),'OFF_PEAK')) and (ns8:BillAmount>0 and (exists(ns8:BillAmount)))]/ns8:BillAmount)"/>
+                                <xsl:variable name="var3" select="current()/ns8:BillAmount"/>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;concat($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/ExceedMsgArabic,$var2 )&#xA;else&#xA;concat($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/ExceedMsg,$var2 )"/>
+                                </pfx2:Text>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'INTERNATIONAL'))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/InternationalCallsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/InternationalCalls"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/minArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/min"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'INTERNATIONAL'))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/CallsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Calls"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'INTERNATIONAL'))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'INTERNATIONAL'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'ROAMING_INCOMING'))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/RoamingIncomingArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/RoamingIncoming"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/minArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/min"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'ROAMING_INCOMING'))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/CallsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Calls"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'ROAMING_INCOMING'))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'ROAMING_INCOMING'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'ROAMING_OUTGOING'))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/RoamingOutgoingArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/RoamingOutgoing"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/minArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/min"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'ROAMING_OUTGOING'))]/ns8:Duration)"/>
+                                </pfx2:Duration>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/CallsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Calls"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'ROAMING_OUTGOING'))]/ns8:CallQuantity)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MIN' and (contains(upper-case(ns8:BillText),'ROAMING_OUTGOING'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/TitleArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Title"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/MessagingArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Messaging"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MSG' and (contains(upper-case(ns8:BillText),'LOCAL'))]/ns8:Duration)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/SMSLocalArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/SMSLocal"/>
+                                </pfx2:Text>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/msgsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/msgs"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MSG' and (contains(upper-case(ns8:BillText),'LOCAL'))]/ns8:Duration)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MSG' and (contains(upper-case(ns8:BillText),'LOCAL'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MSG' and (contains(upper-case(ns8:BillText),'INTERNATIONAL'))]/ns8:Duration)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/SMSInternationalArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/SMSInternational"/>
+                                </pfx2:Text>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/msgsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/msgs"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MSG' and (contains(upper-case(ns8:BillText),'INTERNATIONAL'))]/ns8:Duration)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MSG' and (contains(upper-case(ns8:BillText),'INTERNATIONAL'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MSG' and (contains(upper-case(ns8:BillText),'ROAMING'))]/ns8:Duration)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/SMSRoamingArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/SMSRoaming"/>
+                                </pfx2:Text>
+                                <pfx2:Quantity>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/msgsArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/msgs"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MSG' and (contains(upper-case(ns8:BillText),'ROAMING'))]/ns8:Duration)"/>
+                                </pfx2:Quantity>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='MSG' and (contains(upper-case(ns8:BillText),'ROAMING'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/TitleArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Title"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/MobileInternetArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/MobileInternet"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <xsl:if test="round((sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='GB' ]/ns8:Duration))*1024*1024)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/MobileInternetArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/MobileInternet"/>
+                                </pfx2:Text>
+                                <pfx2:Duration>
+                                    <xsl:attribute name="unit">
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/KbArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/Kb"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="round((sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='GB' ]/ns8:Duration))*1024*1024)"/>
+                                </pfx2:Duration>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="(sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:VolumeUnit)='GB' ]/ns8:BillAmount))"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/TitleArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Title"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/OtherSrvcArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/OtherSrvc"/>
+                            </pfx2:Text>
+                        </pfx2:Entry>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='USAGE' and (contains(upper-case(ns8:BillText),'VAS') or contains(upper-case(ns8:BillText),'OTHERS'))]/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/VASArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/EnglishItems/VAS"/>
+                                </pfx2:Text>
+                                <pfx2:Amount>
+                                    <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='USAGE' and (contains(upper-case(ns8:BillText),'VAS') or contains(upper-case(ns8:BillText),'OTHERS'))]/ns8:BillAmount)"/>
+                                </pfx2:Amount>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTotalArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/SubTotal"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/TotalUsgChrgesArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/TotalUsageChrges"/>
+                            </pfx2:Text>
+                            <pfx2:Amount>
+                                <xsl:value-of select="tib:round-fraction(sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='USAGE' and string-length(ns8:BillAmount)>0]/ns8:BillAmount),3)"/>
+                            </pfx2:Amount>
+                        </pfx2:Entry>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and starts-with(upper-case(ns8:BillText),'SIM ')]/ns8:BillAmount)>0&#xA;or&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and upper-case(ns8:BillText)='COMMITMENT PENALTY']/ns8:BillAmount)>0">
+                            <pfx2:Entry>
+                                <pfx2:Level>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/MainTitleArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/MainTitle"/>
+                                </pfx2:Level>
+                                <pfx2:Text>
+                                    <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/OthrCrdtsExtraChrgArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/OthrCrdtsExtraChrg"/>
+                                </pfx2:Text>
+                                <pfx2:From>
+                                    <xsl:value-of select="tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,tib:create-date(tib:get-year-from-date($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), tib:get-month-from-dateTime($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:BillDate), '01'))"/>
+                                </pfx2:From>
+                                <pfx2:To>
+                                    <xsl:value-of select="if(string-length($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and starts-with(upper-case(ns8:BillText),'SIM ')]/ns8:ToDate)>0)&#xA;then&#xA;tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,tib:parse-date('MM/dd/yyyy',$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and starts-with(upper-case(ns8:BillText),'SIM ')]/ns8:ToDate))&#xA;else if(string-length($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and upper-case(ns8:BillText)='COMMITMENT PENALTY']/ns8:ToDate)>0)&#xA;then tib:format-date($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ChannelDateFormat,tib:parse-date('MM/dd/yyyy',$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and upper-case(ns8:BillText)='COMMITMENT PENALTY']/ns8:ToDate))&#xA;else ''"/>
+                                </pfx2:To>
+                            </pfx2:Entry>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and upper-case(ns8:BillText)='COMMITMENT PENALTY']/ns8:BillAmount)>0">
+                            <xsl:for-each select="$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and upper-case(ns8:BillText)='COMMITMENT PENALTY']">
+                                <pfx2:Entry>
+                                    <pfx2:Level>
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                    </pfx2:Level>
+                                    <pfx2:Text>
+                                        <xsl:value-of select="current()/ns8:BillText"/>
+                                    </pfx2:Text>
+                                    <pfx2:Amount>
+                                        <xsl:value-of select="if(string-length(current()/ns8:BillAmount)>0) then current()/ns8:BillAmount else 0"/>
+                                    </pfx2:Amount>
+                                </pfx2:Entry>
+                            </xsl:for-each>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and upper-case(ns8:SegmentType)='CHARGE']/ns8:BillAmount)>0">
+                            <xsl:for-each select="$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and upper-case(ns8:SegmentType)='CHARGE']">
+                                <pfx2:Entry>
+                                    <pfx2:Level>
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                    </pfx2:Level>
+                                    <pfx2:Text>
+                                        <xsl:value-of select="current()/ns8:BillText"/>
+                                    </pfx2:Text>
+                                    <pfx2:Amount>
+                                        <xsl:value-of select="if(string-length(current()/ns8:BillAmount)>0) then current()/ns8:BillAmount else 0"/>
+                                    </pfx2:Amount>
+                                </pfx2:Entry>
+                            </xsl:for-each>
+                        </xsl:if>
+                        <xsl:if test="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and starts-with(upper-case(ns8:BillText),'SIM ')]/ns8:BillAmount)>0">
+                            <xsl:for-each select="$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and starts-with(upper-case(ns8:BillText),'SIM ')]">
+                                <pfx2:Entry>
+                                    <pfx2:Level>
+                                        <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/ItemArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Item"/>
+                                    </pfx2:Level>
+                                    <pfx2:Text>
+                                        <xsl:value-of select="$Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and starts-with(upper-case(ns8:BillText),'SIM ')]/ns8:BillText"/>
+                                    </pfx2:Text>
+                                    <pfx2:Amount>
+                                        <xsl:value-of select="sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and starts-with(upper-case(ns8:BillText),'SIM ')]/ns8:BillAmount)"/>
+                                    </pfx2:Amount>
+                                </pfx2:Entry>
+                            </xsl:for-each>
+                        </xsl:if>
+                        <pfx2:Entry>
+                            <pfx2:Level>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/TotalArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Levels/Total"/>
+                            </pfx2:Level>
+                            <pfx2:Text>
+                                <xsl:value-of select="if(upper-case($Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Language)='AR')&#xA;then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/TotalChrgArabic&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/Text/TotalChrg"/>
+                            </pfx2:Text>
+                            <pfx2:Amount>
+                                <xsl:value-of select="tib:round-fraction(sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='USAGE' and string-length(ns8:BillAmount)>0]/ns8:BillAmount) + &#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='SUBSCRIPTION CURRENT MONTH']/ns8:BillAmount) + &#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='SUBSCRIPTION CHARGE DETAILS']/ns8:BillAmount) +&#xA; sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='RECURRING']/ns8:BillAmount)+&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and starts-with(upper-case(ns8:BillText),'SIM ')]/ns8:BillAmount)+&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and upper-case(ns8:SegmentType)='CHARGE']/ns8:BillAmount)+&#xA;sum($Map_For_Usage/ns8:Records/ns8:Record[upper-case(ns8:ChargeType)='ONE-TIME' and upper-case(ns8:BillText)='COMMITMENT PENALTY']/ns8:BillAmount),3)"/>
+                            </pfx2:Amount>
+                        </pfx2:Entry>
+                    </pfx2:Entries>
+                </pfx2:BillDetailsResponse>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>797</pd:x>
+        <pd:y>511</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/GetBillDetails/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                    </xsl:if>
+                    <xsl:if test="$GetContext/ns7:_applicationProperties/ns7:JMSMessageID">
+                        <ns2:CorrelationID>
+                            <xsl:value-of select="$GetContext/ns7:_applicationProperties/ns7:JMSMessageID"/>
+                        </ns2:CorrelationID>
+                    </xsl:if>
+                    <xsl:if test="$Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Msisdn">
+                        <ns2:InterfaceID>
+                            <xsl:value-of select="$Start/pfx:BillDetailsRequest/parameters/pfx2:BillDetailsRequest/pfx2:Msisdn"/>
+                        </ns2:InterfaceID>
+                    </xsl:if>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/pfx:BillDetailsRequest)"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="tib:render-xml($CLE_To_Native/ns6:FaultType)"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <xsl:if test="string-length($GetTransactionID/GUID/StartTimeStamp)>0">
+                    <xsl:if test="$GetTransactionID/GUID/StartTimeStamp">
+                        <TimeDuration>
+                            <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                        </TimeDuration>
+                    </xsl:if>
+                </xsl:if>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>167</pd:x>
+        <pd:y>512</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns14:ExceptionRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/UsageDetails/BilledUsage/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                    </xsl:if>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/pfx:BillDetailsRequest)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+                <StackTrace>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                </StackTrace>
+            </ns14:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>934</pd:x>
+        <pd:y>510</pd:y>
+        <config>
+            <faultName>Schema1</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns13:ActivityInput>
+                <data>
+                    <pfx:faultMessage>
+                        <fault>
+                            <xsl:copy-of select="$CLE_To_Native/ns6:FaultType"/>
+                        </fault>
+                    </pfx:faultMessage>
+                </data>
+            </ns13:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>264</pd:x>
+        <pd:y>607</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns15:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                </message>
+                <msgCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </msgCode>
+            </ns15:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SendErrorContext">
+        <pd:type>com.tibco.ae.tools.palettes.servicepalette.SetContextActivity</pd:type>
+        <pd:resourceType>service.activity.setContext</pd:resourceType>
+        <pd:x>657</pd:x>
+        <pd:y>510</pd:y>
+        <config>
+            <variableConfig>/CommonResources/Context/Internal/EAIFaultContext.contextResource</variableConfig>
+            <showResult>true</showResult>
+        </config>
+        <pd:inputBindings>
+            <Fault>
+                <faultcode>
+                    <xsl:value-of select="$CLE_To_Native/ns6:FaultType/ns6:code"/>
+                </faultcode>
+                <faultstring>
+                    <xsl:value-of select="$CLE_To_Native/ns6:FaultType/ns6:description"/>
+                </faultstring>
+                <faultfactor>
+                    <xsl:value-of select="$CLE_To_Native/ns6:FaultType/ns6:sourceSystem"/>
+                </faultfactor>
+            </Fault>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorResponseMapFromEOM">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>380</pd:x>
+        <pd:y>513</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/ErrorResponseMapFromEOM.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <SourceSystem>
+                    <xsl:value-of select="if(string-length(substring-before($_error/ns1:ErrorReport/Msg, '|'))>0)&#xA;then&#xA;substring-before($_error/ns1:ErrorReport/Msg, '|')&#xA;else&#xA;'TIBCO'"/>
+                </SourceSystem>
+                <ChannelName>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/ChannelName"/>
+                </ChannelName>
+                <ChannelType>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/ChannelType"/>
+                </ChannelType>
+                <ResponseCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                </ResponseCode>
+                <ResponseDescription>
+                    <xsl:value-of select="if (contains($_error/ns1:ErrorReport/Msg,'|'))&#xA;then substring-after($_error/ns1:ErrorReport/Msg, '|')&#xA;else $_error/ns1:ErrorReport/Msg"/>
+                </ResponseDescription>
+                <TIBCOServiceName>
+                    <xsl:value-of select="'PostpaidBillingService-getBillDetails'"/>
+                </TIBCOServiceName>
+                <ErrorCategory>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/ErrorCategory"/>
+                </ErrorCategory>
+                <TargetSystem>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PostpaidBillingInbound/TargetSystem"/>
+                </TargetSystem>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CLE_To_Native">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>524</pd:x>
+        <pd:y>511</pd:y>
+        <config>
+            <element ref="ns6:FaultType"/>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="$ErrorResponseMapFromEOM/root/ErrorUserErrCode='ZESB-9999'">
+                    <ns6:FaultType>
+                        <ns6:type>
+                            <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorType"/>
+                        </ns6:type>
+                        <ns6:code>
+                            <xsl:value-of select="'ZESB-1001'"/>
+                        </ns6:code>
+                        <ns6:description>
+                            <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrDesc"/>
+                        </ns6:description>
+                        <ns6:sourceSystem>
+                            <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceSystem"/>
+                        </ns6:sourceSystem>
+                        <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorSourceErrCode">
+                            <ns6:extErrorCode>
+                                <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrCode"/>
+                            </ns6:extErrorCode>
+                        </xsl:if>
+                        <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorSourceErrDesc">
+                            <ns6:detail>
+                                <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrDesc"/>
+                            </ns6:detail>
+                        </xsl:if>
+                    </ns6:FaultType>
+                </xsl:when>
+                <xsl:otherwise>
+                    <ns6:FaultType>
+                        <ns6:type>
+                            <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorType"/>
+                        </ns6:type>
+                        <ns6:code>
+                            <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorUserErrCode"/>
+                        </ns6:code>
+                        <ns6:description>
+                            <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrDesc"/>
+                        </ns6:description>
+                        <ns6:sourceSystem>
+                            <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceSystem"/>
+                        </ns6:sourceSystem>
+                        <ns6:extErrorCode>
+                            <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrCode"/>
+                        </ns6:extErrorCode>
+                        <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorSourceErrDesc">
+                            <ns6:detail>
+                                <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrDesc"/>
+                            </ns6:detail>
+                        </xsl:if>
+                    </ns6:FaultType>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-3407872</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>ErrorResponseMapFromEOM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SendErrorContext</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorResponseMapFromEOM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-3407872</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorResponseMapFromEOM</pd:from>
+        <pd:to>CLE_To_Native</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_To_Native</pd:from>
+        <pd:to>SendErrorContext</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

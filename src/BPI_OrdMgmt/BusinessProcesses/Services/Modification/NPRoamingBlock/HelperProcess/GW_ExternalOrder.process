@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://www.zain.com/ZESB/QUERY/ProductDetalis.xsd" xmlns:ns3="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/ModifyOrderReq.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderRes.xsd" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderReq.xsd" xmlns:pfx2="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" xmlns:pfx9="http://orm.zain.com/ServiceOrder" xmlns:pfx8="http://www.ericsson.com/schemas/Adapter/NPRoaming.xsd" xmlns:pfx7="http://orm.zain.com/types/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:pfx6="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/ModifyOrderRes.xsd">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderReq.xsd" schemaLocation="/BusinessSchemas/Services/Provisioning/CreateOrder/CreateOrderReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderRes.xsd" schemaLocation="/BusinessSchemas/Services/Provisioning/CreateOrder/CreateOrderRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/ModifyOrderReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyOrder/ModifyOrderReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/ModifyOrderRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyOrder/ModifyOrderRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/schemas/Adapter/NPRoaming.xsd" schemaLocation="/BusinessSchemas/Services/Modification/NPRoaming/NPRoaming.xsd"/>
+    <xsd:import namespace="http://orm.zain.com/types/" schemaLocation="/BusinessProcesses/Services/Modification/NPRoamingBlock/Resources/ExternalOrder.wsdl"/>
+    <wsdl:import namespace="http://orm.zain.com/ServiceOrder" location="/BusinessProcesses/Services/Modification/NPRoamingBlock/Resources/ExternalOrder.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Modification/NPRoamingBlock/HelperProcess/GW_ExternalOrder.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx8:NPRoamingReq"/>
+                    <xsd:element name="TrackingId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>26</pd:startX>
+    <pd:startY>120</pd:startY>
+    <pd:returnBindings>
+        <xsl:copy-of select="$CallExternalOrderSOAPCall/outputMessage/pfx7:processOrderResponseElement"/>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx7:processOrderResponseElement"/>
+    <pd:endX>903</pd:endX>
+    <pd:endY>112</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442397719743</pd:targetNamespace>
+    <pd:activity name="Log_CDM_Request">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>509</pd:x>
+        <pd:y>34</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Modification/NPRoamingBlock/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/CREATE_ORDER"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </ns2:TransactionID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx8:NPRoamingReq)"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="tib:render-xml($MapReq/pfx7:processOrderElement)"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_CDM_Response">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>744</pd:x>
+        <pd:y>114</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Modification/NPRoamingBlock/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/CREATE_ORDER"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </ns2:TransactionID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($CallExternalOrderSOAPCall/outputMessage)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>516</pd:x>
+        <pd:y>215</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="$_error_CallExternalOrderSOAPCall/ActivityErrors/defaultFaultElement">
+                    <ns3:ActivityInput>
+                        <message>
+                            <xsl:value-of select="$_error_CallExternalOrderSOAPCall/ActivityErrors/defaultFaultElement/faultstring"/>
+                        </message>
+                        <messageCode>
+                            <xsl:value-of select="$_error_CallExternalOrderSOAPCall/ActivityErrors/defaultFaultElement/faultcode"/>
+                        </messageCode>
+                    </ns3:ActivityInput>
+                </xsl:when>
+                <xsl:otherwise>
+                    <ns3:ActivityInput>
+                        <message>
+                            <xsl:value-of select="concat(tib:render-xml($_error),&#xA;tib:render-xml($_error_CallExternalOrderSOAPCall))"/>
+                        </message>
+                        <messageCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </messageCode>
+                    </ns3:ActivityInput>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="MapReq">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>357</pd:x>
+        <pd:y>116</pd:y>
+        <config>
+            <element ref="pfx7:processOrderElement"/>
+        </config>
+        <pd:inputBindings>
+            <pfx7:processOrderElement>
+                <pfx7:session>
+                    <pfx7:username>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Modification/NPRoamingBlock/Session/UserName"/>
+                    </pfx7:username>
+                    <pfx7:password>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Modification/NPRoamingBlock/Session/Password"/>
+                    </pfx7:password>
+                </pfx7:session>
+                <pfx7:orderType>
+                    <xsl:choose>
+                        <xsl:when test="exists($Start/root/pfx8:NPRoamingReq/pfx8:Action)">
+                            <xsl:value-of select="$Start/root/pfx8:NPRoamingReq/pfx8:Action"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </pfx7:orderType>
+                <pfx7:msisdn>
+                    <xsl:value-of select="$Start/root/pfx8:NPRoamingReq/pfx8:MSISDN"/>
+                </pfx7:msisdn>
+                <pfx7:serviceCode>
+                    <xsl:choose>
+                        <xsl:when test="exists($GetProductID/ns4:ProductDetalis/ns4:Products/ns4:Product[ns4:CFSSID=$GetCFSID/root/Records[CSOfferId=$Start/root/pfx8:NPRoamingReq/pfx8:CSOfferID]/CFSSId]/ns4:ServiceCode)">
+                            <xsl:value-of select="$GetProductID/ns4:ProductDetalis/ns4:Products/ns4:Product[ns4:CFSSID=$GetCFSID/root/Records[CSOfferId=$Start/root/pfx8:NPRoamingReq/pfx8:CSOfferID]/CFSSId]/ns4:ServiceCode"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </pfx7:serviceCode>
+                <pfx7:paramList>
+                    <pfx7:param>
+                        <pfx7:name>
+                            <xsl:value-of select="&quot;&quot;"/>
+                        </pfx7:name>
+                        <pfx7:value>
+                            <xsl:value-of select="&quot;&quot;"/>
+                        </pfx7:value>
+                    </pfx7:param>
+                </pfx7:paramList>
+            </pfx7:processOrderElement>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CallExternalOrderSOAPCall">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>513</pd:x>
+        <pd:y>113</pd:y>
+        <config>
+            <timeout>%%BusinessProcesses/Services/Modification/NPRoamingBlock/Timeout%%</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx9:ExternalChannelOrder</service>
+            <servicePort>ServiceOrder</servicePort>
+            <operation>processOrder</operation>
+            <soapAction>http://orm.zain.com//processOrder</soapAction>
+            <sharedChannels>
+                <jmsChannel>
+                    <NamingURL>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUrl%%</NamingURL>
+                    <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+                    <NamingPrincipal>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUserName%%</NamingPrincipal>
+                    <NamingCredential>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Password%%</NamingCredential>
+                    <ConnectionFactory>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/QueueConnectionFactory%%</ConnectionFactory>
+                    <JMSTo>%%BusinessProcesses/Services/Modification/NPRoamingBlock/ExternalOrderQueue%%</JMSTo>
+                    <JMSMessageType>Text</JMSMessageType>
+                    <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                    <JMSPriority>4</JMSPriority>
+                    <JMSTimeToLive>0</JMSTimeToLive>
+                    <JMSUserName>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUserName%%</JMSUserName>
+                    <JMSPassword>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Password%%</JMSPassword>
+                </jmsChannel>
+            </sharedChannels>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <xsl:copy-of select="$MapReq/pfx7:processOrderElement"/>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="GetEquipID">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>96</pd:x>
+        <pd:y>0</pd:y>
+        <pd:width>167</pd:width>
+        <pd:height>220</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>simpleGroup</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>GetCFSID</pd:to>
+            <pd:lineType>Multiple Bends</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetProductID</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Multiple Bends</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetCFSID</pd:from>
+            <pd:to>GetProductID</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="GetCFSID">
+            <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+            <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+            <pd:x>169</pd:x>
+            <pd:y>154</pd:y>
+            <config>
+                <variableConfig>/CommonResources/SharedVariables/External/CFSSID.sharedvariable</variableConfig>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="GetProductID">
+            <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+            <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+            <pd:x>169</pd:x>
+            <pd:y>55</pd:y>
+            <config>
+                <variableConfig>/CommonResources/SharedVariables/External/ProductDetails.sharedvariable</variableConfig>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="GetEquipIDGenError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>65</pd:x>
+        <pd:y>290</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInput>
+                <message>
+                    <xsl:value-of select="&quot;Error while Fetching Equip id &quot;"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="&quot;TIB-VAL-EQUIPID-NOT-FOUND&quot;"/>
+                </messageCode>
+            </ns3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Log_CDM_Request</pd:from>
+        <pd:to>CallExternalOrderSOAPCall</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CDM_Response</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapReq</pd:from>
+        <pd:to>Log_CDM_Request</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallExternalOrderSOAPCall</pd:from>
+        <pd:to>Log_CDM_Response</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallExternalOrderSOAPCall</pd:from>
+        <pd:to>JMSError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52378</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetEquipID</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetEquipID</pd:from>
+        <pd:to>MapReq</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetEquipID</pd:from>
+        <pd:to>GetEquipIDGenError</pd:to>
+        <pd:xpathDescription>NoEquipIDFound</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-13261</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>count($GetProductID/ns4:ProductDetalis/ns4:Products/ns4:Product[ns4:CFSSID=$GetCFSID/root/Records[CSOfferId=$Start/root/pfx8:NPRoamingReq/pfx8:CSOfferID]/CFSSId]/ns4:ServiceCode)=0</pd:xpath>
+    </pd:transition>
+</pd:ProcessDefinition>

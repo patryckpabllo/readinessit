@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ericsson.com/services/ws_CMI_5" xmlns:sch3="http://ericsson.com/services/ws_CMI_5/paymentprofileread" xmlns:sch2="http://ericsson.com/services/ws_CMI_5/sessionchange" xmlns:sch1="http://lhsgroup.com/lhsws/svlany" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:sch0="http://lhsgroup.com/lhsws/money" targetNamespace="http://ericsson.com/services/ws_CMI_5">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lhsws="http://lhsgroup.com/lhsws/money" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://lhsgroup.com/lhsws/money">
+            <xs:complexType name="money">
+                <xs:sequence>
+                    <xs:element name="amount" type="xs:double"/>
+                    <xs:element name="currency" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lhsws="http://lhsgroup.com/lhsws/svlany" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://lhsgroup.com/lhsws/svlany">
+            <xs:complexType name="svlany">
+                <xs:sequence>
+                    <xs:element name="content" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsi="http://ericsson.com/services/ws_CMI_5/sessionchange" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CMI_5/sessionchange">
+            <xs:complexType name="valuesListpartRequest">
+                <xs:all>
+                    <xs:element name="key" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Name of the value that shall be changed. See release dependent documentation for supported keys&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="value" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;New value for a named value.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:complexType>
+            <xs:complexType name="valuesRequest">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="item" type="wsi:valuesListpartRequest"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="sessionChangeRequest">
+                <xs:all>
+                    <xs:annotation>
+                        <xs:documentation>&lt;p&gt;
+						
+						&lt;/p&gt;
+						</xs:documentation>
+                    </xs:annotation>
+                    <xs:element minOccurs="0" name="values" type="wsi:valuesRequest"/>
+                </xs:all>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsi="http://ericsson.com/services/ws_CMI_5/paymentprofileread" xmlns:sessionchange="http://ericsson.com/services/ws_CMI_5/sessionchange" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CMI_5/paymentprofileread">
+            <xs:import namespace="http://ericsson.com/services/ws_CMI_5/sessionchange"/>
+            <xs:element name="paymentProfileReadRequest" type="wsi:paymentProfileReadRequest"/>
+            <xs:element name="paymentProfileReadResponse" type="wsi:paymentProfileReadResponse"/>
+            <xs:complexType name="paymentProfileReadResponse">
+                <xs:all>
+                    <xs:element minOccurs="0" name="paymentId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;PAYMENT ID&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:complexType>
+            <xs:complexType name="inputAttributes">
+                <xs:all>
+                    <xs:annotation>
+                        <xs:documentation>&lt;p&gt;&lt;/p&gt;</xs:documentation>
+                    </xs:annotation>
+                    <xs:element name="csidpub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;MSISDN&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:complexType>
+            <xs:complexType name="paymentProfileReadRequest">
+                <xs:all>
+                    <xs:element minOccurs="0" name="inputAttributes" type="wsi:inputAttributes"/>
+                    <xs:element minOccurs="0" name="sessionChangeRequest" type="sessionchange:sessionChangeRequest"/>
+                </xs:all>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="paymentProfileReadResponse">
+        <wsdl:part element="sch3:paymentProfileReadResponse" name="paymentProfileReadResponse">    </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="paymentProfileReadRequest">
+        <wsdl:part element="sch3:paymentProfileReadRequest" name="paymentProfileReadRequest">    </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="PaymentProfileReadService">
+        <wsdl:operation name="paymentProfileRead">
+            <wsdl:input message="tns:paymentProfileReadRequest" name="paymentProfileReadRequest">    </wsdl:input>
+            <wsdl:output message="tns:paymentProfileReadResponse" name="paymentProfileReadResponse">    </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="PaymentProfileReadServiceSoap11" type="tns:PaymentProfileReadService">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="paymentProfileRead">
+            <soap:operation soapAction=""/>
+            <wsdl:input name="paymentProfileReadRequest">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="paymentProfileReadResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="PaymentProfileReadService">
+        <wsdl:port binding="tns:PaymentProfileReadServiceSoap11" name="PaymentProfileReadServiceSoap11">
+            <soap:address location="http://10.103.23.91:20103/wsi/services/ws_CIL_5_PaymentProfileReadService.wsdl"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pfx="http://www.siebel.com/xml/CBiO2TremblantSusResIO" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns0="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions">
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2TremblantSusResIO" schemaLocation="/BusinessProcesses/Services/Provisioning/DIAR/HelperProcess/CBiO2TremblantSusResIO.xsd"/>
+    <pd:name>BusinessProcesses/Services/Provisioning/DIAR/HelperProcess/SuspendResumeTremblant_HelperProcess.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="SecondaryMSISDN" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="ActionCode" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="TrackingId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>84</pd:startX>
+    <pd:startY>228</pd:startY>
+    <pd:returnBindings>
+        <root/>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1011</pd:endX>
+    <pd:endY>223</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1642423542479</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>376</pd:x>
+        <pd:y>61</pd:y>
+        <pd:width>479</pd:width>
+        <pd:height>316</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$Start/root/SecondaryMSISDN</pd:over>
+            <pd:iterationElementSlot>SecondaryMSISDN</pd:iterationElementSlot>
+            <pd:indexSlot>i</pd:indexSlot>
+            <pd:activityOutputName/>
+            <pd:accumulateOutput>false</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>SecondaryMsisdnSupendResume_Map</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogMsg_SentOnQueue</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>SecondaryMsisdnSupendResume_Map</pd:from>
+            <pd:to>SentToCRM</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>SentToCRM</pd:from>
+            <pd:to>LogMsg_SentOnQueue</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>SentToCRM</pd:from>
+            <pd:to>GenerateError</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-52429</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="SentToCRM">
+            <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+            <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+            <pd:x>612</pd:x>
+            <pd:y>191</pd:y>
+            <config>
+                <PermittedMessageType>Text</PermittedMessageType>
+                <SessionAttributes>
+                    <transacted>false</transacted>
+                    <acknowledgeMode>1</acknowledgeMode>
+                    <maxSessions>1</maxSessions>
+                </SessionAttributes>
+                <ConfigurableHeaders>
+                    <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                    <JMSExpiration>0</JMSExpiration>
+                    <JMSPriority>4</JMSPriority>
+                </ConfigurableHeaders>
+                <DeliveryDelay>0</DeliveryDelay>
+                <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            </config>
+            <pd:inputBindings>
+                <ns3:ActivityInput>
+                    <destinationQueue>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/DIAR/CRM_EXT_Queue_SecTremb"/>
+                    </destinationQueue>
+                    <Body>
+                        <xsl:value-of select="tib:render-xml($SecondaryMsisdnSupendResume_Map/root/pfx:CBiO2TremblantSusResIO)"/>
+                    </Body>
+                </ns3:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="SecondaryMsisdnSupendResume_Map">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>475</pd:x>
+            <pd:y>191</pd:y>
+            <config>
+                <element>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element ref="pfx:CBiO2TremblantSusResIO" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </element>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <xsl:choose>
+                        <xsl:when test="$Start/root/ActionCode='ADD'">
+                            <pfx:CBiO2TremblantSusResIO>
+                                <pfx:CBiO2TremblantSusResIC>
+                                    <pfx:OrderSubType>
+                                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/DIAR/OrderSubTypeSuspend"/>
+                                    </pfx:OrderSubType>
+                                    <pfx:MSISDN>
+                                        <xsl:value-of select="$SecondaryMSISDN/SecondaryMSISDN"/>
+                                    </pfx:MSISDN>
+                                    <pfx:Source>
+                                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/DIAR/SecondaryMSISDNSusResSource"/>
+                                    </pfx:Source>
+                                    <xsl:if test="$Start/root/TrackingId">
+                                        <pfx:TransactionId>
+                                            <xsl:value-of select="$Start/root/TrackingId"/>
+                                        </pfx:TransactionId>
+                                    </xsl:if>
+                                    <pfx:OrderReason>
+                                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/DIAR/OrderReasonSuspend"/>
+                                    </pfx:OrderReason>
+                                </pfx:CBiO2TremblantSusResIC>
+                            </pfx:CBiO2TremblantSusResIO>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <pfx:CBiO2TremblantSusResIO>
+                                <pfx:CBiO2TremblantSusResIC>
+                                    <pfx:OrderSubType>
+                                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/DIAR/OrderSubTypeResume"/>
+                                    </pfx:OrderSubType>
+                                    <pfx:MSISDN>
+                                        <xsl:value-of select="$SecondaryMSISDN/SecondaryMSISDN"/>
+                                    </pfx:MSISDN>
+                                    <pfx:Source>
+                                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/DIAR/SecondaryMSISDNSusResSource"/>
+                                    </pfx:Source>
+                                    <xsl:if test="$Start/root/TrackingId">
+                                        <pfx:TransactionId>
+                                            <xsl:value-of select="$Start/root/TrackingId"/>
+                                        </pfx:TransactionId>
+                                    </xsl:if>
+                                    <pfx:OrderReason>
+                                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/DIAR/OrderReasonResume"/>
+                                    </pfx:OrderReason>
+                                </pfx:CBiO2TremblantSusResIC>
+                            </pfx:CBiO2TremblantSusResIO>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="LogMsg_SentOnQueue">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>742</pd:x>
+            <pd:y>190</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+                <spawn>true</spawn>
+            </config>
+            <pd:inputBindings>
+                <ns12:LogRequest>
+                    <ns2:Header>
+                        <ns2:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns2:ApplicationID>
+                        <ns2:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/DIAR/ComponentName"/>
+                        </ns2:ComponentName>
+                        <ns2:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns2:Hostname>
+                        <ns2:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns2:Timestamp>
+                        <ns2:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/CREATE_ORDER"/>
+                        </ns2:TransactionDomain>
+                        <ns2:TransactionType>
+                            <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                        </ns2:TransactionType>
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$Start/root/TrackingId"/>
+                        </ns2:TransactionID>
+                        <ns2:Filename>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                        </ns2:Filename>
+                        <ns2:Message>
+                            <xsl:value-of select="concat('Secondary MSISDN suspend/resume message sent to CRM on queue:-','&#xA;',tib:render-xml($SecondaryMsisdnSupendResume_Map/root))"/>
+                        </ns2:Message>
+                    </ns2:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_RES_RECV"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns12:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GenerateError">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>516</pd:x>
+            <pd:y>294</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns0:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/JMSErrorDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                    </messageCode>
+                </ns0:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="Log_CDM_Request">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>244</pd:x>
+        <pd:y>230</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Provisioning/DIAR/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/CREATE_ORDER"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </ns2:TransactionID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log_CDM_Request</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CDM_Request</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

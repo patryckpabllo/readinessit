@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:zainKW="java://com.ZainKW.CurrentNanoSecconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://www.tibco.com/ns/no_namespace_schema_location/BusinessSchemas/Services/Common/SDP/XSD's/GenericRPCReq.xsd" xmlns:pfx="http://www.tibco.com/ns/no_namespace_schema_location/BusinessSchemas/Services/Modification/SDP/XSD/GenericRPCReq.xsd">
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/BusinessSchemas/Services/Modification/SDP/XSD/GenericRPCReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/SDP/XSD/GenericRPCReq.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/BusinessSchemas/Services/Common/SDP/XSD's/GenericRPCReq.xsd" schemaLocation="/BusinessSchemas/Services/Common/SDP/XSD's/GenericRPCReq.xsd"/>
+    <pd:name>BusinessProcesses/Services/Update/UpdateUsage/HelperProcess/CallChargingDA.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="Request">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="Misdn" type="xsd:string"/>
+                    <xsd:element name="Offers" type="xsd:string"/>
+                    <xsd:element name="DAGroup" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="DA" minOccurs="0" maxOccurs="unbounded">
+                                    <xsd:complexType>
+                                        <xsd:sequence>
+                                            <xsd:element name="id" type="xsd:string"/>
+                                            <xsd:element name="Vlaue" type="xsd:string"/>
+                                            <xsd:element name="Type" type="xsd:string"/>
+                                            <xsd:element name="OfferID" type="xsd:string"/>
+                                        </xsd:sequence>
+                                    </xsd:complexType>
+                                </xsd:element>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="transID" type="xsd:string"/>
+                    <xsd:element name="StartTime" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>166</pd:startX>
+    <pd:startY>126</pd:startY>
+    <pd:returnBindings>
+        <Response>
+            <Status>
+                <xsl:value-of select="if($Parse-XML/methodResponse/params/param/value/struct/member[name='responseCode']/value/i4='0') then&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/Charging/Success&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/Charging/FailureStatus"/>
+            </Status>
+        </Response>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="Response">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="Status" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>970</pd:endX>
+    <pd:endY>126</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1563165450259</pd:targetNamespace>
+    <pd:activity name="NativeToCDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>374</pd:x>
+        <pd:y>132</pd:y>
+        <config>
+            <element ref="pfx2:methodCall"/>
+        </config>
+        <pd:inputBindings>
+            <methodCall>
+                <methodName>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/Charging/methodName"/>
+                </methodName>
+                <params>
+                    <param>
+                        <value>
+                            <struct>
+                                <member>
+                                    <name>
+                                        <xsl:value-of select="'externalData1'"/>
+                                    </name>
+                                    <value>
+                                        <string>
+                                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/Charging/DA/externalData1"/>
+                                        </string>
+                                    </value>
+                                </member>
+                                <member>
+                                    <name>
+                                        <xsl:value-of select="'transactionCurrency'"/>
+                                    </name>
+                                    <value>
+                                        <string>
+                                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/Charging/DA/transactionCurrency"/>
+                                        </string>
+                                    </value>
+                                </member>
+                                <member>
+                                    <name>
+                                        <xsl:value-of select="'originTransactionID'"/>
+                                    </name>
+                                    <value>
+                                        <string>
+                                            <xsl:value-of select="zainKW:getCurrentNanoSecconds()"/>
+                                        </string>
+                                    </value>
+                                </member>
+                                <member>
+                                    <name>
+                                        <xsl:value-of select="'originTimeStamp'"/>
+                                    </name>
+                                    <value>
+                                        <dateTime.iso8601>
+                                            <xsl:value-of select="concat(tib:format-date('yyyyMMdd',current-date()),'T',tib:format-dateTime('HH:mm:ss', current-dateTime()),'+0300')"/>
+                                        </dateTime.iso8601>
+                                    </value>
+                                </member>
+                                <member>
+                                    <name>
+                                        <xsl:value-of select="'subscriberNumber'"/>
+                                    </name>
+                                    <value>
+                                        <string>
+                                            <xsl:value-of select="$Start/Request/Misdn"/>
+                                        </string>
+                                    </value>
+                                </member>
+                                <member>
+                                    <name>
+                                        <xsl:value-of select="'externalData2'"/>
+                                    </name>
+                                    <value>
+                                        <string>
+                                            <xsl:value-of select="zainKW:getCurrentNanoSecconds()"/>
+                                        </string>
+                                    </value>
+                                </member>
+                                <member>
+                                    <name>
+                                        <xsl:value-of select="'originNodeType'"/>
+                                    </name>
+                                    <value>
+                                        <string>
+                                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/Charging/DA/originNodeType"/>
+                                        </string>
+                                    </value>
+                                </member>
+                                <member>
+                                    <name>
+                                        <xsl:value-of select="'originHostName'"/>
+                                    </name>
+                                    <value>
+                                        <string>
+                                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/Charging/DA/originHostName"/>
+                                        </string>
+                                    </value>
+                                </member>
+                                <member>
+                                    <name>
+                                        <xsl:value-of select="'dedicatedAccountUpdateInformation'"/>
+                                    </name>
+                                    <value>
+                                        <array>
+                                            <data>
+                                                <value>
+                                                    <struct>
+                                                        <xsl:for-each select="$Start/Request/DAGroup/DA">
+                                                            <member>
+                                                                <name>
+                                                                    <xsl:value-of select="'dedicatedAccountUnitType'"/>
+                                                                </name>
+                                                                <value>
+                                                                    <int>
+                                                                        <xsl:value-of select="current()/Type"/>
+                                                                    </int>
+                                                                </value>
+                                                            </member>
+                                                            <member>
+                                                                <name>
+                                                                    <xsl:value-of select="'dedicatedAccountValueNew'"/>
+                                                                </name>
+                                                                <value>
+                                                                    <string>
+                                                                        <xsl:value-of select="current()/Vlaue"/>
+                                                                    </string>
+                                                                </value>
+                                                            </member>
+                                                            <member>
+                                                                <name>
+                                                                    <xsl:value-of select="'dedicatedAccountID'"/>
+                                                                </name>
+                                                                <value>
+                                                                    <i4>
+                                                                        <xsl:value-of select="current()/id"/>
+                                                                    </i4>
+                                                                </value>
+                                                            </member>
+                                                        </xsl:for-each>
+                                                    </struct>
+                                                </value>
+                                            </data>
+                                        </array>
+                                    </value>
+                                </member>
+                                <member>
+                                    <name>
+                                        <xsl:value-of select="'subscriberNumberNAI'"/>
+                                    </name>
+                                    <value>
+                                        <i4>
+                                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/Charging/DA/subscriberNumberNAI"/>
+                                        </i4>
+                                    </value>
+                                </member>
+                                <member>
+                                    <name>
+                                        <xsl:value-of select="'negotiatedCapabilities'"/>
+                                    </name>
+                                    <value>
+                                        <array>
+                                            <data>
+                                                <value>
+                                                    <i4>
+                                                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/Charging/DA/negotiatedCapabilities"/>
+                                                    </i4>
+                                                </value>
+                                            </data>
+                                        </array>
+                                    </value>
+                                </member>
+                            </struct>
+                        </value>
+                    </param>
+                </params>
+            </methodCall>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Common_EAI_EMSSendReceive">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>567</pd:x>
+        <pd:y>130</pd:y>
+        <config>
+            <processName>/CommonProcesses/HelperProcesses/Common_EAI_EMSSendReceive.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <MessageBody>
+                    <xsl:value-of select="tib:render-xml($NativeToCDM/methodCall)"/>
+                </MessageBody>
+                <TransactionID>
+                    <xsl:value-of select="$Start/Request/transID"/>
+                </TransactionID>
+                <EMS_DestinationQueue>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/Charging/CallChargingESI"/>
+                </EMS_DestinationQueue>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/Request/StartTime"/>
+                </StartTimeStamp>
+                <RequestTimeOut>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/CommonSettings/JMSTimeOuts/Timeout_Long_Wait"/>
+                </RequestTimeOut>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>742</pd:x>
+        <pd:y>127</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx2:methodResponse"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Common_EAI_EMSSendReceive/ResponseData"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>NativeToCDM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>NativeToCDM</pd:from>
+        <pd:to>Common_EAI_EMSSendReceive</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Common_EAI_EMSSendReceive</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

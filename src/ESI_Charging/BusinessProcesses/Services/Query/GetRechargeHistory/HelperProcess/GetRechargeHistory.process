@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:pfx16="http://www.tibco.com/pe/CheckpointSchema" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns28="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:ns101="http://www.tibco.com/namespaces/tnt/plugins/file" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns02="www.tibco.com/plugin/Sleep" xmlns:pfx5="http://xmlns.example.com/1450268187825" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://schemas.tibco.com/bw/plugins/jms/5.0/jmsExceptions" xmlns:pfx3="http://www.zain.com/ZESB/Services/PrepaidBalance/Types" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pfx9="http://www.tibco.com/pe/DeployedVarsType" xmlns:pfx7="http://www.zain.com/ZESB/Services/GetPrepaidRechargeHistory/Types" xmlns:pfx6="http://cms.server.ws.netas.com" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx51="http://xmlns.example.com/1323156482391/OperationImpl" xmlns:ns15="http://xmlns.tibco.com/encodings/mime" xmlns:ns9="http://schemas.tibco.com/bw/plugins/http/5.0/httpExceptions" xmlns:ns12="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns13="http://tibco.com/namespaces/tnt/plugins/soap" xmlns:pfx="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns10="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions" xmlns:pfx71="http://www.tibco.com/pe/SignalInActivitySchema" xmlns:ns7="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns8="http://www.tibco.com/pe/EngineTypes" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.zain.com/ZESB/Types/Common" xmlns:ns0="http://xml.apache.org/axis/wsdd/providers/java" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/PrepaidBalance/Types" schemaLocation="/BusinessWSDLS/Services/TIBCO/GetPrepaidBalance.wsdl"/>
+    <xsd:import namespace="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" schemaLocation="/CDM/ZainKWFault.xsd"/>
+    <xsd:import namespace="http://cms.server.ws.netas.com" schemaLocation="/BusinessWSDLS/Services/WSDLS/TotalRechargesOC/TotalRechargesOC.wsdl"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/GetPrepaidRechargeHistory/Types" schemaLocation="/BusinessWSDLS/Services/TIBCO/GetPrepaidRechargeHistory.wsdl"/>
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/PrepaidBalance/Types" location="/BusinessWSDLS/Services/TIBCO/GetPrepaidBalance.wsdl"/>
+    <wsdl:import namespace="http://xmlns.example.com/1450268187825" location="/BusinessWSDLS/Services/TIBCO/GetPrepaidRechargeHistory.wsdl"/>
+    <wsdl:import namespace="http://cms.server.ws.netas.com" location="/BusinessWSDLS/Services/WSDLS/TotalRechargesOC/TotalRechargesOC.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Query/GetRechargeHistory/HelperProcess/GetRechargeHistory.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="group">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="TrackingId" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string" minOccurs="0"/>
+                    <xsd:element ref="pfx7:GetPrepaidRechargeHistoryInput"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>241</pd:startX>
+    <pd:startY>183</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <pfx7:GetPrepaidRechargeHistoryOutput>
+                <pfx7:RechargeTransactionsList>
+                    <xsl:copy-of select="$CALL_GetRechargeHistory/outputMessage/pfx7:GetPrepaidRechargeHistoryOutput/pfx7:RechargeTransactionsList/pfx7:RechargeTransaction"/>
+                </pfx7:RechargeTransactionsList>
+            </pfx7:GetPrepaidRechargeHistoryOutput>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx7:GetPrepaidRechargeHistoryOutput"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>1246</pd:endX>
+    <pd:endY>181</pd:endY>
+    <pd:errorSchemas>
+        <Schema1>
+            <xsd:element name="root">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element ref="ns28:ErrorResponse"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </Schema1>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1323154311057</pd:targetNamespace>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>394</pd:x>
+        <pd:y>181</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <pfx:LogRequest>
+                <pfx2:Header>
+                    <pfx2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx2:ApplicationID>
+                    <pfx2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/BusinessProcesses/Services/SDP/Query/GetRechargeHistory/ComponentName"/>
+                    </pfx2:ComponentName>
+                    <pfx2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </pfx2:Hostname>
+                    <pfx2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx2:Timestamp>
+                    <pfx2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_ORDER"/>
+                    </pfx2:TransactionDomain>
+                    <pfx2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns8:ProcessContext/ProcessId))"/>
+                    </pfx2:TransactionType>
+                    <pfx2:TransactionID>
+                        <xsl:value-of select="$Start/group/TrackingId"/>
+                    </pfx2:TransactionID>
+                    <pfx2:Filename>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/Deployment"/>
+                    </pfx2:Filename>
+                    <pfx2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/group/pfx7:GetPrepaidRechargeHistoryInput)"/>
+                    </pfx2:Message>
+                </pfx2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/group/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </pfx:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1057</pd:x>
+        <pd:y>179</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <pfx:LogRequest>
+                <pfx2:Header>
+                    <pfx2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx2:ApplicationID>
+                    <pfx2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/BusinessProcesses/Services/SDP/Query/GetRechargeHistory/ComponentName"/>
+                    </pfx2:ComponentName>
+                    <pfx2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </pfx2:Hostname>
+                    <pfx2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx2:Timestamp>
+                    <pfx2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_ORDER"/>
+                    </pfx2:TransactionDomain>
+                    <pfx2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns8:ProcessContext/ProcessId))"/>
+                    </pfx2:TransactionType>
+                    <pfx2:TransactionID>
+                        <xsl:value-of select="$Start/group/TrackingId"/>
+                    </pfx2:TransactionID>
+                    <pfx2:Filename>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/Deployment"/>
+                    </pfx2:Filename>
+                    <pfx2:Message>
+                        <xsl:value-of select="tib:render-xml($CALL_GetRechargeHistory/outputMessage)"/>
+                    </pfx2:Message>
+                </pfx2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/group/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </pfx:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>602</pd:x>
+        <pd:y>57</pd:y>
+        <pd:width>335</pd:width>
+        <pd:height>330</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>errorLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:indexSlot>iError</pd:indexSlot>
+            <pd:errorCondition>$iError=$_globalVariables/pfx9:GlobalVariables/CommonProcesses/ErrorHandling/Retry/MaxRetryCount</pd:errorCondition>
+            <pd:suspendAfterErrorRetry>false</pd:suspendAfterErrorRetry>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>CALL_GetRechargeHistory</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Null</pd:from>
+            <pd:to>end</pd:to>
+            <pd:xpathDescription>otherwise</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CALL_GetRechargeHistory</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Null</pd:from>
+            <pd:to>Sleep</pd:to>
+            <pd:xpathDescription>Timeout</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>exists($_error_CALL_GetRechargeHistory/ActivityErrors/ns10:ActivityTimedOutException)
+or
+exists($_error_CALL_GetRechargeHistory/ActivityErrors/pfx4:JMSMessageCreateException)
+or
+exists($_error_CALL_GetRechargeHistory/ActivityErrors/pfx4:JMSSessionCreateException)
+or
+exists($_error_CALL_GetRechargeHistory/ActivityErrors/pfx4:JMSSendException)
+or
+exists($_error_CALL_GetRechargeHistory/ActivityErrors/pfx4:JMSReceiveException)</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CALL_GetRechargeHistory</pd:from>
+            <pd:to>Null</pd:to>
+            <pd:xpathDescription>Error</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-65536</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Sleep</pd:from>
+            <pd:to>GenerateTechnicalError</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Sleep">
+            <pd:type>com.tibco.plugin.timer.SleepActivity</pd:type>
+            <pd:resourceType>ae.activities.sleep</pd:resourceType>
+            <pd:x>861</pd:x>
+            <pd:y>312</pd:y>
+            <config/>
+            <pd:inputBindings>
+                <ns02:SleepInputSchema>
+                    <IntervalInMillisec>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/BusinessProcesses/CommonSettings/JMSTimeOuts/Timeout_Regular_Wait"/>
+                    </IntervalInMillisec>
+                </ns02:SleepInputSchema>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Null">
+            <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+            <pd:resourceType>ae.activities.null</pd:resourceType>
+            <pd:x>751</pd:x>
+            <pd:y>245</pd:y>
+            <config/>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="CALL_GetRechargeHistory">
+            <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+            <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+            <pd:x>755</pd:x>
+            <pd:y>124</pd:y>
+            <config>
+                <timeout>%%BusinessProcesses/Services/SDP/Query/GetPrepaidBalance/SOAP_Timeout%%</timeout>
+                <soapAttachmentStyle>SwA</soapAttachmentStyle>
+                <timeoutType>Seconds</timeoutType>
+                <service>pfx5:GetPrepaidRechargeHistory</service>
+                <servicePort>GetPrepaidRechargeHistoryPortEndpoint</servicePort>
+                <operation>GetPrepaidRechargeHistory</operation>
+                <soapAction>GetPrepaidRechargeHistory</soapAction>
+                <endpointURL>http://10.103.23.91:20103/wsi/services</endpointURL>
+                <authScheme>NONE</authScheme>
+                <useProxy>false</useProxy>
+                <requireBasicAuth>false</requireBasicAuth>
+                <basicHttpAuthIdentity/>
+                <sharedChannels>
+                    <jmsChannel>
+                        <NamingURL>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUrl%%</NamingURL>
+                        <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+                        <NamingPrincipal>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUserName%%</NamingPrincipal>
+                        <NamingCredential>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Password%%</NamingCredential>
+                        <ConnectionFactory>QueueConnectionFactory</ConnectionFactory>
+                        <JMSTo>%%BusinessProcesses/Services/SDP/Query/GetRechargeHistory/ExternalRequest_Queue%%</JMSTo>
+                        <JMSMessageType>Text</JMSMessageType>
+                        <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                        <JMSPriority>4</JMSPriority>
+                        <JMSTimeToLive>0</JMSTimeToLive>
+                        <JMSUserName>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUserName%%</JMSUserName>
+                        <JMSPassword>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIPassword%%</JMSPassword>
+                    </jmsChannel>
+                </sharedChannels>
+            </config>
+            <pd:inputBindings>
+                <inputMessage>
+                    <pfx7:GetPrepaidRechargeHistoryInput>
+                        <pfx7:Msisdn>
+                            <xsl:value-of select="$Start/group/pfx7:GetPrepaidRechargeHistoryInput/pfx7:Msisdn"/>
+                        </pfx7:Msisdn>
+                        <pfx7:FromDate>
+                            <xsl:value-of select="$Start/group/pfx7:GetPrepaidRechargeHistoryInput/pfx7:FromDate"/>
+                        </pfx7:FromDate>
+                        <pfx7:ToDate>
+                            <xsl:value-of select="$Start/group/pfx7:GetPrepaidRechargeHistoryInput/pfx7:ToDate"/>
+                        </pfx7:ToDate>
+                        <xsl:if test="$Start/group/pfx7:GetPrepaidRechargeHistoryInput/pfx7:RechargeType">
+                            <pfx7:RechargeType>
+                                <xsl:value-of select="$Start/group/pfx7:GetPrepaidRechargeHistoryInput/pfx7:RechargeType"/>
+                            </pfx7:RechargeType>
+                        </xsl:if>
+                    </pfx7:GetPrepaidRechargeHistoryInput>
+                </inputMessage>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GenerateTechnicalError">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>726</pd:x>
+            <pd:y>320</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_error/ns8:ErrorReport/Msg"/>
+                    </message>
+                    <xsl:if test="$_error/ns8:ErrorReport/MsgCode">
+                        <messageCode>
+                            <xsl:value-of select="$_error/ns8:ErrorReport/MsgCode"/>
+                        </messageCode>
+                    </xsl:if>
+                </ns:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="GenerateTimeOutError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>485</pd:x>
+        <pd:y>328</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:if test="$_error/ns8:ErrorReport/Msg">
+                    <message>
+                        <xsl:value-of select="$_error/ns8:ErrorReport/Msg"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$_error/ns8:ErrorReport/MsgCode">
+                    <messageCode>
+                        <xsl:value-of select="$_error/ns8:ErrorReport/MsgCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="FaultError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>1126</pd:x>
+        <pd:y>315</pd:y>
+        <config>
+            <faultName>Schema1</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <data>
+                    <root>
+                        <ns28:ErrorResponse>
+                            <ns28:Error_SourceSystem>
+                                <xsl:value-of select="$_error_CALL_GetRechargeHistory/ActivityErrors/faultMessage/faultactor"/>
+                            </ns28:Error_SourceSystem>
+                            <ns28:Error_SourceErrCode>
+                                <xsl:value-of select="$_error_CALL_GetRechargeHistory/ActivityErrors/faultMessage/detail/ns1:FaultType/ns1:code"/>
+                            </ns28:Error_SourceErrCode>
+                            <ns28:Error_SourceErrDesc>
+                                <xsl:value-of select="$_error_CALL_GetRechargeHistory/ActivityErrors/faultMessage/detail/ns1:FaultType/ns1:description"/>
+                            </ns28:Error_SourceErrDesc>
+                            <ns28:Error_Type>
+                                <xsl:value-of select="&quot;Business&quot;"/>
+                            </ns28:Error_Type>
+                            <ns28:Error_UserErrCode>
+                                <xsl:value-of select="$_error_CALL_GetRechargeHistory/ActivityErrors/faultMessage/detail/ns1:FaultType/ns1:extErrorCode"/>
+                            </ns28:Error_UserErrCode>
+                            <ns28:Error_UserErrDesc>
+                                <xsl:value-of select="$_error_CALL_GetRechargeHistory/ActivityErrors/faultMessage/detail/ns1:FaultType/ns1:detail"/>
+                            </ns28:Error_UserErrDesc>
+                        </ns28:ErrorResponse>
+                    </root>
+                </data>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>GenerateTimeOutError</pd:to>
+        <pd:xpathDescription>TimeOutError</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>exists($_error_CALL_GetRechargeHistory/ActivityErrors/ns10:ActivityTimedOutException)</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>FaultError</pd:to>
+        <pd:xpathDescription>Fault Generated</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>exists($_error_CALL_GetRechargeHistory/ActivityErrors/faultMessage) and 
+string-length($_error_CALL_GetRechargeHistory/ActivityErrors/faultMessage)</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

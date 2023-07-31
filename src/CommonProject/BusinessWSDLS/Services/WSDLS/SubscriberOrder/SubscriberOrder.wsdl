@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:ns2="http://www.zain.com/ZESB/Services/SubscriberOrder/Types" xmlns:ns1="http://www.zain.com/ZESB/Types/Common" xmlns:ns="http://www.zain.com/ZESB/Services/SubscriberOrder" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/SubscriberOrder" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" targetNamespace="http://www.zain.com/ZESB/Services/SubscriberOrder">
+    <wsdl:types>
+        <xs:schema xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:tns="http://www.zain.com/ZESB/Services/SubscriberOrder" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="Params">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Param">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Name" type="xs:string"/>
+                                <xs:element name="Value" type="xs:string"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:ns="http://www.zain.com/ZESB/Services/SubscriberOrder/Types" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:tns="http://www.zain.com/ZESB/Services/SubscriberOrder/Types" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/SubscriberOrder/Types">
+            <xs:simpleType name="MSISDN">
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="8"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="NonEmptyString">
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="ChargedType">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Yes"/>
+                    <xs:enumeration value="No"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="BillingType">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Postpaid"/>
+                    <xs:enumeration value="Prepaid"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="BasicServiceType">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Voice"/>
+                    <xs:enumeration value="Data"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="OrderRequester">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Subscriber"/>
+                    <xs:enumeration value="Admin"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="TerminateReason">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Request"/>
+                    <xs:enumeration value="Nonpayment"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:complexType name="SessionIdentifier">
+                <xs:sequence>
+                    <xs:element name="Username" type="xs:string"/>
+                    <xs:element name="Password" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="OrderState">
+                <xs:sequence>
+                    <xs:element name="Code" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>A numeric value representing the order state.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="Description" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>Text describing the order state.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Params">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="Param">
+                        <xs:annotation>
+                            <xs:documentation>A pair of Name/Value.</xs:documentation>
+                        </xs:annotation>
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Name" type="xs:string">
+                                    <xs:annotation>
+                                        <xs:documentation>Param's name/key.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="Value" type="xs:string">
+                                    <xs:annotation>
+                                        <xs:documentation>Params' value.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="InstallInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>The Subscriber's MSISDN to install.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="ContractId" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>The customer contract ID .</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="BillingType" type="tns:BillingType"/>
+                        <xs:element name="BasicServiceType" type="tns:BasicServiceType"/>
+                        <xs:element name="Charged" type="tns:ChargedType"/>
+                        <xs:element name="Username" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>The username logged with the order.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="InstallOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="OrderState" type="tns:OrderState"/>
+                        <xs:element minOccurs="0" name="Params" type="tns:Params"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="SubscriberProduct">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="Code" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Status" type="xs:string"/>
+                    <xs:element minOccurs="0" name="SerialNumber" type="xs:string"/>
+                    <xs:element minOccurs="0" name="DisplayName" type="xs:string"/>
+                    <xs:element minOccurs="0" name="ArabicDisplayName" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Category" type="xs:string"/>
+                    <xs:element minOccurs="0" name="SubCategory" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Classification" type="xs:string"/>
+                    <xs:element minOccurs="0" name="StartDate" nillable="true" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="EndDate" nillable="true" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="PromotionID" type="xs:string"/>
+                    <xs:element minOccurs="0" name="RatingInfo">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded" name="RatingInfoItem">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element minOccurs="0" name="Unit" type="xs:string"/>
+                                            <xs:element minOccurs="0" name="Quantity" type="xs:decimal"/>
+                                            <xs:element minOccurs="0" name="UsedQuantity" type="xs:decimal"/>
+                                            <xs:element minOccurs="0" name="MaxLimit" type="xs:string"/>
+                                            <xs:element minOccurs="0" name="MinLimit" type="xs:string"/>
+                                            <xs:element minOccurs="0" name="WarningLimit" type="xs:string"/>
+                                            <xs:element minOccurs="0" name="ExpirationDate" nillable="true" type="xs:dateTime"/>
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="ProductSpecs">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded" name="ProductSpec">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="Name" type="xs:string"/>
+                                            <xs:element name="Value" type="xs:string"/>
+                                            <xs:element name="Measure" type="xs:string"/>
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="CommitmentStartDate" nillable="true" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="CommitmentEndDate" nillable="true" type="xs:dateTime"/>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Params" type="com:Params"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="SubscriberProducts">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="1" name="SubscriberProduct" type="tns:SubscriberProduct"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ReinstallInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="xs:string"/>
+                        <xs:element name="BillingType" type="tns:BillingType"/>
+                        <xs:element name="BasicServiceType" type="tns:BasicServiceType"/>
+                        <xs:element name="Charged" type="tns:ChargedType"/>
+                        <xs:element name="SimCardNumber" type="xs:string"/>
+                        <xs:element name="Username" type="xs:string"/>
+                        <xs:element minOccurs="0" name="Products" type="tns:SubscriberProducts"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ReinstallOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="OrderState" type="tns:OrderState"/>
+                        <xs:element minOccurs="0" name="Params" type="tns:Params"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="DisconnectInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="tns:MSISDN">
+                            <xs:annotation>
+                                <xs:documentation>The Subscriber's MSISDN to disconnect.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="Requester" type="tns:OrderRequester">
+                            <xs:annotation>
+                                <xs:documentation>The order requester. (e.g. Admin/Subscriber)</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="Username" type="tns:NonEmptyString">
+                            <xs:annotation>
+                                <xs:documentation>The username logged with the order.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="DisconnectOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="OrderState" type="tns:OrderState">
+                            <xs:annotation>
+                                <xs:documentation>The state/result of the order after execution.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="Params" type="tns:Params">
+                            <xs:annotation>
+                                <xs:documentation>Custom Parameters.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="Condition">
+                <xs:sequence>
+                    <xs:element minOccurs="0" name="RequestType" type="xs:string"/>
+                    <xs:element minOccurs="0" name="ExecutionDate" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="ConditionType" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Action" type="xs:string"/>
+                    <xs:element minOccurs="0" name="ConditionAmount" type="xs:decimal"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="DisconnectExtInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="tns:MSISDN">
+                            <xs:annotation>
+                                <xs:documentation>The Subscriber's MSISDN to disconnect.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="Requester" type="tns:OrderRequester">
+                            <xs:annotation>
+                                <xs:documentation>The order requester. (e.g. Admin/Subscriber)</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="Username" type="tns:NonEmptyString">
+                            <xs:annotation>
+                                <xs:documentation>The username logged with the order.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="Condition" type="tns:Condition"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ReconnectInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="tns:MSISDN">
+                            <xs:annotation>
+                                <xs:documentation>The Subscriber's MSISDN to reconnect.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="Requester" type="tns:OrderRequester">
+                            <xs:annotation>
+                                <xs:documentation>The order requester. (e.g. Admin/Subscriber)</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="Username" type="tns:NonEmptyString">
+                            <xs:annotation>
+                                <xs:documentation>The username logged with the order.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ReconnectOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="OrderState" type="tns:OrderState">
+                            <xs:annotation>
+                                <xs:documentation>The state/result of the order after execution.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="Params" type="tns:Params">
+                            <xs:annotation>
+                                <xs:documentation>Custom Parameters.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="TerminateInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="xs:string"/>
+                        <xs:element name="Reason" type="tns:TerminateReason"/>
+                        <xs:element name="Username" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="TerminateOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="OrderState" type="tns:OrderState"/>
+                        <xs:element minOccurs="0" name="Params" type="tns:Params"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="NumberChangeInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="OldMSISDN" type="xs:string"/>
+                        <xs:element name="NewMSISDN" type="xs:string"/>
+                        <xs:element name="BillingType" type="tns:BillingType"/>
+                        <xs:element name="BasicServiceType" type="tns:BasicServiceType"/>
+                        <xs:element name="Charged" type="tns:ChargedType"/>
+                        <xs:element name="Username" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="NumberChangeOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="OrderState" type="tns:OrderState"/>
+                        <xs:element minOccurs="0" name="Params" type="tns:Params"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="TransferOwnershipInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="xs:string"/>
+                        <xs:element name="Type" type="xs:string"/>
+                        <xs:element name="NewContract" type="xs:string"/>
+                        <xs:element name="Username" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="TransferOwnershipOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="OrderState" type="tns:OrderState"/>
+                        <xs:element minOccurs="0" name="Params" type="tns:Params"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UnbarRechargeInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>The Subscriber's MSISDN to unbar recharge from.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UnbarRechargeOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="OrderState" type="tns:OrderState"/>
+                        <xs:element minOccurs="0" name="Params" type="tns:Params"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ChangeSIMCardInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Username" type="xs:string"/>
+                        <xs:element name="MSISDN" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>The Subscriber's MSISDN to Change SIM Card for.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="SIMCardSerialNo" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>The new SIM Card Serial Number.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="ItemCode" type="xs:string"/>
+                        <xs:element name="Charged" type="tns:ChargedType"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ChangeSIMCardOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="OrderState" type="tns:OrderState"/>
+                        <xs:element minOccurs="0" name="Params" type="tns:Params"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="InstallRequest">
+        <wsdl:part element="ns2:InstallInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="InstallResponse">
+        <wsdl:part element="ns2:InstallOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="ReinstallRequest">
+        <wsdl:part element="ns2:ReinstallInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="ReinstallResponse">
+        <wsdl:part element="ns2:ReinstallOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="DisconnectRequest">
+        <wsdl:part element="ns2:DisconnectInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="DisconnectResponse">
+        <wsdl:part element="ns2:DisconnectOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="ReconnectRequest">
+        <wsdl:part element="ns2:ReconnectInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="ReconnectResponse">
+        <wsdl:part element="ns2:ReconnectOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="TerminateRequest">
+        <wsdl:part element="ns2:TerminateInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="TerminateResponse">
+        <wsdl:part element="ns2:TerminateOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="NumberChangeRequest">
+        <wsdl:part element="ns2:NumberChangeInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="NumberChangeResponse">
+        <wsdl:part element="ns2:NumberChangeOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="TransferOwnershipRequest">
+        <wsdl:part element="ns2:TransferOwnershipInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="TransferOwnershipResponse">
+        <wsdl:part element="ns2:TransferOwnershipOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="FaultMessage">
+        <wsdl:part element="ns1:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:message name="UnbarRechargeRequest">
+        <wsdl:part element="ns2:UnbarRechargeInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="UnbarRechargeResponse">
+        <wsdl:part element="ns2:UnbarRechargeOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="ChangeSIMCardRequest">
+        <wsdl:part element="ns2:ChangeSIMCardInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="ChangeSIMCardResponse">
+        <wsdl:part element="ns2:ChangeSIMCardOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="DisconnectExtRequest">
+        <wsdl:part element="ns2:DisconnectExtInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="DisconnectExtResponse">
+        <wsdl:part element="ns2:DisconnectOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="NewMessage"/>
+    <wsdl:portType name="SubscriberOrderPort">
+        <wsdl:operation name="Install">
+            <wsdl:input message="ns:InstallRequest"/>
+            <wsdl:output message="ns:InstallResponse"/>
+            <wsdl:fault message="ns:FaultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="Reinstall">
+            <wsdl:input message="ns:ReinstallRequest"/>
+            <wsdl:output message="ns:ReinstallResponse"/>
+            <wsdl:fault message="ns:FaultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="Disconnect">
+            <wsdl:input message="ns:DisconnectRequest"/>
+            <wsdl:output message="ns:DisconnectResponse"/>
+            <wsdl:fault message="ns:FaultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="Reconnect">
+            <wsdl:input message="ns:ReconnectRequest"/>
+            <wsdl:output message="ns:ReconnectResponse"/>
+            <wsdl:fault message="ns:FaultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="Terminate">
+            <wsdl:input message="ns:TerminateRequest"/>
+            <wsdl:output message="ns:TerminateResponse"/>
+            <wsdl:fault message="ns:FaultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="NumberChange">
+            <wsdl:input message="ns:NumberChangeRequest"/>
+            <wsdl:output message="ns:NumberChangeResponse"/>
+            <wsdl:fault message="ns:FaultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="TransferOwnership">
+            <wsdl:input message="ns:TransferOwnershipRequest"/>
+            <wsdl:output message="ns:TransferOwnershipResponse"/>
+            <wsdl:fault message="ns:FaultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="UnbarRecharge">
+            <wsdl:input message="ns:UnbarRechargeRequest"/>
+            <wsdl:output message="ns:UnbarRechargeResponse"/>
+            <wsdl:fault message="ns:FaultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="ChangeSIMCard">
+            <wsdl:input message="ns:ChangeSIMCardRequest"/>
+            <wsdl:output message="ns:ChangeSIMCardResponse"/>
+            <wsdl:fault message="ns:FaultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="DisconnectExt">
+            <wsdl:input message="tns:DisconnectExtRequest"/>
+            <wsdl:output message="tns:DisconnectExtResponse"/>
+            <wsdl:fault message="tns:FaultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="SubscriberOrderBinding" type="tns:SubscriberOrderPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Install">
+            <soap:operation soapAction="Install"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="Reinstall">
+            <soap:operation soapAction="Reinstall"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="Disconnect">
+            <soap:operation soapAction="Disconnect"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="Reconnect">
+            <soap:operation soapAction="Reconnect"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="Terminate">
+            <soap:operation soapAction="Terminate"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="NumberChange">
+            <soap:operation soapAction="NumberChange"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="TransferOwnership">
+            <soap:operation soapAction="TransferOwnership"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="UnbarRecharge">
+            <soap:operation soapAction="UnbarRecharge"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="ChangeSIMCard">
+            <soap:operation soapAction="ChangeSIMCard"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="DisconnectExt">
+            <soap:operation soapAction="DisconnectExt" style="document"/>
+            <wsdl:input>
+                <soap:body parts="request" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="response" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="SubscriberOrder">
+        <wsdl:port binding="tns:SubscriberOrderBinding" name="SubscriberOrderPort">
+            <soap:address location="http://iapi-test.kw.zain.com/UAT/SOAP/SubscriberOrder"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,968 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pfx5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/eAccountManagerRequest.xsd" xmlns:pfx4="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/Schema.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx8="http://www.zain.com/ZESB/Types/Common" xmlns:pfx7="http://www.zain.com/ZESB/Services/eAccountManagement/Types" xmlns:pfx6="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetCustomerProfileResponse.xsd" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns9="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetCustomerProfileRequest.xsd" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" xmlns:ns13="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariable/Internal/ResponseCodes_Ph2.xsd" xmlns:ns6="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns10="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Query/CustomerAssetQueryInbound.xsd" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" xmlns:ns7="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" xmlns:ns11="http://xmlns.zain.com/BSS/ESB/CDM/Base" xmlns:ns8="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/Schema.xsd2" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns4="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerReq.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/BusinessSchemas/Services/Common/CLE/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileResponse.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/Schema.xsd" schemaLocation="/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/eAccountManagerRequest.xsd" schemaLocation="/BusinessSchemas/Services/Modification/eAccountManager/eAccountManagerRequest.xsd"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Types/Common" schemaLocation="/BusinessWSDLS/Services/WSDLS/eAccountManagement_Custom/eAccountManagementInbound_Custom.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/eAccountManagement/Implementation/eAccountManagementConfirmRequest.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>65</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/eAccountManagement/ConfirmRequest/GW_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>972</pd:endX>
+    <pd:endY>336</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442397282862</pd:targetNamespace>
+    <pd:activity name="Call_ESI_CRM_GetCustomerProfile">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>534</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/eAccountManagement/HelperProcess/Call_ESI_CRM_GetCustomerProfile.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns9:GetCustomerProfileRequest>
+                    <ns4:MSISDN>
+                        <xsl:value-of select="$Parse-XML/pfx7:ConfirmRequest/pfx7:Msisdn"/>
+                    </ns4:MSISDN>
+                </ns9:GetCustomerProfileRequest>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TransactionID>
+                </xsl:if>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                    <StartTimeStamp>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>227</pd:x>
+        <pd:y>334</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="CLE_to_CDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>499</pd:x>
+        <pd:y>332</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="pfx8:FaultType"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:choose>
+                    <xsl:when test="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseCode !=0">
+                        <pfx8:FaultType>
+                            <pfx8:type>
+                                <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseCode"/>
+                            </pfx8:type>
+                            <pfx8:code>
+                                <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseCode"/>
+                            </pfx8:code>
+                            <pfx8:description>
+                                <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseDescription"/>
+                            </pfx8:description>
+                            <pfx8:sourceSystem>
+                                <xsl:value-of select="&quot;CRM&quot;"/>
+                            </pfx8:sourceSystem>
+                            <xsl:if test="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseCode">
+                                <pfx8:extErrorCode>
+                                    <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseCode"/>
+                                </pfx8:extErrorCode>
+                            </xsl:if>
+                            <xsl:if test="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseDescription">
+                                <pfx8:detail>
+                                    <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseDescription"/>
+                                </pfx8:detail>
+                            </xsl:if>
+                        </pfx8:FaultType>
+                    </xsl:when>
+                    <xsl:when test="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseCode !=0">
+                        <pfx8:FaultType>
+                            <pfx8:type>
+                                <xsl:value-of select="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseCode"/>
+                            </pfx8:type>
+                            <pfx8:code>
+                                <xsl:value-of select="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseCode"/>
+                            </pfx8:code>
+                            <pfx8:description>
+                                <xsl:value-of select="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseDescription"/>
+                            </pfx8:description>
+                            <pfx8:sourceSystem>
+                                <xsl:value-of select="&quot;CRM&quot;"/>
+                            </pfx8:sourceSystem>
+                            <xsl:if test="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseCode">
+                                <pfx8:extErrorCode>
+                                    <xsl:value-of select="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseCode"/>
+                                </pfx8:extErrorCode>
+                            </xsl:if>
+                            <xsl:if test="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseDescription">
+                                <pfx8:detail>
+                                    <xsl:value-of select="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseDescription"/>
+                                </pfx8:detail>
+                            </xsl:if>
+                        </pfx8:FaultType>
+                    </xsl:when>
+                    <xsl:when test="$Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultStatus !=0">
+                        <pfx8:FaultType>
+                            <pfx8:type>
+                                <xsl:value-of select="$Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultStatus"/>
+                            </pfx8:type>
+                            <pfx8:code>
+                                <xsl:value-of select="$Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultStatus"/>
+                            </pfx8:code>
+                            <pfx8:description>
+                                <xsl:value-of select="$Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultMessage"/>
+                            </pfx8:description>
+                            <pfx8:sourceSystem>
+                                <xsl:value-of select="&quot;eAccountManagement&quot;"/>
+                            </pfx8:sourceSystem>
+                            <xsl:if test="$Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultStatus">
+                                <pfx8:extErrorCode>
+                                    <xsl:value-of select="$Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultStatus"/>
+                                </pfx8:extErrorCode>
+                            </xsl:if>
+                            <xsl:if test="not(($Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultMessage/@xsi:nil=(&quot;true&quot;)) or ($Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultMessage/@xsi:nil=(&quot;1&quot;)))">
+                                <pfx8:detail>
+                                    <xsl:value-of select="$Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultMessage"/>
+                                </pfx8:detail>
+                            </xsl:if>
+                        </pfx8:FaultType>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <pfx8:FaultType>
+                            <pfx8:type>
+                                <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                            </pfx8:type>
+                            <pfx8:code>
+                                <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                            </pfx8:code>
+                            <pfx8:description>
+                                <xsl:value-of select="$_error/ns2:ErrorReport/Msg"/>
+                            </pfx8:description>
+                            <pfx8:sourceSystem>
+                                <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                            </pfx8:sourceSystem>
+                            <xsl:if test="$_error/ns2:ErrorReport/MsgCode">
+                                <pfx8:extErrorCode>
+                                    <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                                </pfx8:extErrorCode>
+                            </xsl:if>
+                            <xsl:if test="$_error/ns2:ErrorReport/StackTrace">
+                                <pfx8:detail>
+                                    <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                                </pfx8:detail>
+                            </xsl:if>
+                        </pfx8:FaultType>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>376</pd:x>
+        <pd:y>333</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:coercions>
+            <pd:coercion xpath="$Catch/exceptiondata/*" element="pfx2:ExceptionRequest"/>
+        </pd:coercions>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="exists($Catch/exceptiondata/pfx2:ExceptionRequest/StackTrace)">
+                    <xsl:copy-of select="$Catch/exceptiondata/pfx2:ExceptionRequest"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <pfx2:ExceptionRequest>
+                        <ns22:Header>
+                            <ns22:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ns22:ApplicationID>
+                            <ns22:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                            </ns22:ComponentName>
+                            <ns22:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </ns22:Hostname>
+                            <ns22:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </ns22:Timestamp>
+                            <ns22:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                            </ns22:TransactionDomain>
+                            <ns22:TransactionType>
+                                <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                            </ns22:TransactionType>
+                            <ns22:TransactionID>
+                                <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                            </ns22:TransactionID>
+                        </ns22:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/MiscErrorCode"/>
+                        </ExceptionCode>
+                    </pfx2:ExceptionRequest>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>797</pd:x>
+        <pd:y>334</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/eAccountManagement/ConfirmRequest/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($CLE_to_CDM/root/pfx8:FaultType)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <xsl:if test="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError">
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                    </Category>
+                </xsl:if>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSReceiverError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>63</pd:x>
+        <pd:y>149</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>300</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/eAccountManagement/ConfirmRequest/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($JMS-Queue-Receiver/ns3:ActivityOutput/Body)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>967</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/eAccountManagement/ConfirmRequest/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>411</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx7:ConfirmRequest"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParsingError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>413</pd:x>
+        <pd:y>146</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply to JMS Message">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>972</pd:x>
+        <pd:y>182</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <InDataxsdString>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="pfx7:ConfirmResponse"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </InDataxsdString>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInput>
+                <xsl:copy-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties"/>
+                <Body>
+                    <root>
+                        <pfx7:ConfirmResponse>
+                            <pfx7:ContractId>
+                                <xsl:value-of select="$Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:contractNo"/>
+                            </pfx7:ContractId>
+                            <pfx7:BillingType>
+                                <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/BillingType"/>
+                            </pfx7:BillingType>
+                            <pfx7:Category>
+                                <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/Category"/>
+                            </pfx7:Category>
+                            <xsl:if test="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/Nationality">
+                                <pfx7:Nationality>
+                                    <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/Nationality"/>
+                                </pfx7:Nationality>
+                            </xsl:if>
+                            <pfx7:ContractOwner>
+                                <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ContractOwner"/>
+                            </pfx7:ContractOwner>
+                            <pfx7:HasPostpaid>
+                                <xsl:value-of select="if($Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns10:ListOfCbio2QueryAssetIo/ns10:Account/ns10:CBiO2CalcPostpaidLines>0)&#xA;then 'true'&#xA;else 'false'"/>
+                            </pfx7:HasPostpaid>
+                            <pfx7:HasPrepaid>
+                                <xsl:value-of select="if($Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns10:ListOfCbio2QueryAssetIo/ns10:Account/ns10:CBiO2CalcPrepaidLines>0)&#xA;then 'true'&#xA;else 'false'"/>
+                            </pfx7:HasPrepaid>
+                            <pfx7:TransactionID>
+                                <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                            </pfx7:TransactionID>
+                            <pfx7:StartTime>
+                                <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                            </pfx7:StartTime>
+                        </pfx7:ConfirmResponse>
+                    </root>
+                </Body>
+            </ns3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Error_CRM">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>538</pd:x>
+        <pd:y>160</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:if test="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseDescription">
+                    <message>
+                        <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseDescription"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseCode">
+                    <messageCode>
+                        <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_ESI_eAccountManagement_ConfirmRequest">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>857</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/eAccountManagement/HelperProcess/Call_ESI_eAccountManagement_ConfirmRequest.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx7:ConfirmRequest>
+                <pfx7:activationCode>
+                    <xsl:value-of select="$Parse-XML/pfx7:ConfirmRequest/pfx7:ActivationCode"/>
+                </pfx7:activationCode>
+                <xsl:if test="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/BillingType">
+                    <pfx7:billingType>
+                        <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/BillingType"/>
+                    </pfx7:billingType>
+                </xsl:if>
+                <pfx7:categoryCode>
+                    <xsl:choose>
+                        <xsl:when test="exists($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainIndividualList/ZainIndividual[1]/CategoryType)">
+                            <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainIndividualList/ZainIndividual[1]/CategoryType"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </pfx7:categoryCode>
+                <pfx7:civilId>
+                    <xsl:value-of select="$Parse-XML/pfx7:ConfirmRequest/pfx7:OwnedContract"/>
+                </pfx7:civilId>
+                <xsl:if test="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ContractID">
+                    <pfx7:contractNo>
+                        <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ContractID"/>
+                    </pfx7:contractNo>
+                </xsl:if>
+                <pfx7:email>
+                    <xsl:value-of select="$Parse-XML/pfx7:ConfirmRequest/pfx7:Email"/>
+                </pfx7:email>
+                <pfx7:hasPostpaid>
+                    <xsl:value-of select="if ($Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns10:ListOfCbio2QueryAssetIo/ns10:Account/ns10:CBiO2CalcPostpaidLines >0)&#xA;then 'true'&#xA;else&#xA;'false'"/>
+                </pfx7:hasPostpaid>
+                <pfx7:hasPrepaid>
+                    <xsl:value-of select="if ($Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns10:ListOfCbio2QueryAssetIo/ns10:Account/ns10:CBiO2CalcPrepaidLines >0)&#xA;then 'true'&#xA;else&#xA;'false'"/>
+                </pfx7:hasPrepaid>
+                <pfx7:loginName>
+                    <xsl:value-of select="$Parse-XML/pfx7:ConfirmRequest/pfx7:Username"/>
+                </pfx7:loginName>
+                <pfx7:mobileNo>
+                    <xsl:value-of select="$Parse-XML/pfx7:ConfirmRequest/pfx7:Msisdn"/>
+                </pfx7:mobileNo>
+                <pfx7:name>
+                    <xsl:choose>
+                        <xsl:when test="exists($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/fullName)">
+                            <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/fullName"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </pfx7:name>
+                <pfx7:nationality>
+                    <xsl:choose>
+                        <xsl:when test="exists($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainIndividualList/ZainIndividual[1]/nationality)">
+                            <xsl:value-of select="$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainIndividualList/ZainIndividual[1]/nationality"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </pfx7:nationality>
+                <pfx7:password>
+                    <xsl:value-of select="$Parse-XML/pfx7:ConfirmRequest/pfx7:Password"/>
+                </pfx7:password>
+                <pfx7:subscriptionStatus>
+                    <xsl:choose>
+                        <xsl:when test="exists(if($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ContractOwner = 'false')&#xA;then &quot;S&quot;&#xA;else &quot;C&quot;)">
+                            <xsl:value-of select="if($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ContractOwner = 'false')&#xA;then &quot;S&quot;&#xA;else &quot;C&quot;"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </pfx7:subscriptionStatus>
+                <pfx7:userType>
+                    <xsl:value-of select="if($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount/customerCategory = &quot;Corporate&quot;)&#xA;then &quot;CC&quot;&#xA;else if ($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount/customerCategory !=&quot;Corporate&quot; and $Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount/SubAccounts >1)&#xA;then &quot;MC&quot;&#xA;else &quot;SC&quot;"/>
+                </pfx7:userType>
+                <pfx7:TransactionID>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                </pfx7:TransactionID>
+                <pfx7:StartTime>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </pfx7:StartTime>
+            </pfx7:ConfirmRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Error_Confirm">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>863</pd:x>
+        <pd:y>162</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:if test="not(($Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultMessage/@xsi:nil=(&quot;true&quot;)) or ($Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultMessage/@xsi:nil=(&quot;1&quot;)))">
+                    <message>
+                        <xsl:value-of select="$Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultMessage"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="not(($Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultStatus/@xsi:nil=(&quot;true&quot;)) or ($Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultStatus/@xsi:nil=(&quot;1&quot;)))">
+                    <messageCode>
+                        <xsl:value-of select="$Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultStatus"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply-to-JMS-Message-1">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>649</pd:x>
+        <pd:y>332</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <InDataxsdString>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="pfx8:FaultType"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </InDataxsdString>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInput>
+                <xsl:copy-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties"/>
+                <Body>
+                    <root>
+                        <xsl:copy-of select="$CLE_to_CDM/root/pfx8:FaultType"/>
+                    </root>
+                </Body>
+            </ns3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_ESI_CRM_QueryAsset">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>664</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/eAccountManagement/HelperProcess/Call_ESI_CRM_QueryAsset.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns10:queryAssetRequest>
+                    <ns10:OperationType>
+                        <xsl:value-of select="&quot;QueryAsset&quot;"/>
+                    </ns10:OperationType>
+                    <ns10:MSISDN>
+                        <xsl:value-of select="$Parse-XML/pfx7:ConfirmRequest/pfx7:Msisdn"/>
+                    </ns10:MSISDN>
+                </ns10:queryAssetRequest>
+                <TransactionID>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                </TransactionID>
+                <StartTimeStamp>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Error_CRM-1">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>667</pd:x>
+        <pd:y>158</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:if test="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseDescription">
+                    <message>
+                        <xsl:value-of select="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseDescription"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseCode">
+                    <messageCode>
+                        <xsl:value-of select="$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="NotContractHolder">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>785</pd:x>
+        <pd:y>198</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:if test="$ResCodes/ns13:ResponseCodeVar/ns13:paramgroup[ns13:USERERRORDESC=&quot;Customer not Contract Holder&quot;]/ns13:SOURCEERRORDESC">
+                    <message>
+                        <xsl:value-of select="$ResCodes/ns13:ResponseCodeVar/ns13:paramgroup[ns13:USERERRORDESC=&quot;Customer not Contract Holder&quot;]/ns13:SOURCEERRORDESC"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$ResCodes/ns13:ResponseCodeVar/ns13:paramgroup[ns13:USERERRORDESC=&quot;Customer not Contract Holder&quot;]/ns13:SOURCEERRORCODE">
+                    <messageCode>
+                        <xsl:value-of select="$ResCodes/ns13:ResponseCodeVar/ns13:paramgroup[ns13:USERERRORDESC=&quot;Customer not Contract Holder&quot;]/ns13:SOURCEERRORCODE"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ResCodes">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>181</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/ResponseCodes_Ph2.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>ResCodes</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply to JMS Message</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>JMSReceiverError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>ParsingError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>Reply to JMS Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>CLE_to_CDM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_to_CDM</pd:from>
+        <pd:to>Reply-to-JMS-Message-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_CRM_GetCustomerProfile</pd:from>
+        <pd:to>Error_CRM</pd:to>
+        <pd:xpathDescription>RespCode</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:Response/ResponseCode !='0'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Call_ESI_CRM_GetCustomerProfile</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_eAccountManagement_ConfirmRequest</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_eAccountManagement_ConfirmRequest</pd:from>
+        <pd:to>Error_Confirm</pd:to>
+        <pd:xpathDescription>RespCode</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Call_ESI_eAccountManagement_ConfirmRequest/pfx7:ConfirmResponse/pfx7:resultStatus !=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply-to-JMS-Message-1</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_CRM_GetCustomerProfile</pd:from>
+        <pd:to>Call_ESI_CRM_QueryAsset</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_CRM_QueryAsset</pd:from>
+        <pd:to>Call_ESI_eAccountManagement_ConfirmRequest</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_CRM_QueryAsset</pd:from>
+        <pd:to>Error_CRM-1</pd:to>
+        <pd:xpathDescription>RespCode</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Call_ESI_CRM_QueryAsset/ns10:queryAssetResponse/ns11:Response/ns11:ResponseCode !=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_ESI_CRM_QueryAsset</pd:from>
+        <pd:to>NotContractHolder</pd:to>
+        <pd:xpathDescription>NotContractHolder</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>if ($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/Category = "Corporate")
+then 'false'
+else if ($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/Category !="Corporate")
+then (
+if($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/SubAccounts = 1)
+then 'true'
+else if($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/SubAccounts &gt; 1 
+and $Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ContractOwner = 'true')
+then 'false'
+else if ($Call_ESI_CRM_GetCustomerProfile/pfx6:GetCustomerProfileResponse/ns4:ZainIndividualList/ZainIndividual[1]/CivilId = $Parse-XML/pfx7:ConfirmRequest/pfx7:CivilId)
+then 'true'
+else 'false' ) 
+else 
+'false'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ResCodes</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

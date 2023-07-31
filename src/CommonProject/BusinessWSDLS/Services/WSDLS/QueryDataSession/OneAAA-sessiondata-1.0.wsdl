@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soap-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:sessdata="urn:bso-nsn-com:cie:aaa:radiussessiondata:1:0" targetNamespace="urn:bso-nsn-com:cie:aaa:radiussessiondata:1:0">
+	<wsdl:types>
+		<xsd:schema targetNamespace="urn:bso-nsn-com:cie:aaa:radiussessiondata:1:0" xmlns="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+			<xsd:complexType name="Attribute">
+				<xsd:sequence>
+					<xsd:element name="key" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+					<xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="Attributes">
+				<xsd:sequence>
+					<xsd:choice>
+						<xsd:element name="loginip" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+						<xsd:element name="msisdn" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+					</xsd:choice>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="SessionEntry">
+				<xsd:sequence>
+					<xsd:element name="attribute" type="sessdata:Attribute" minOccurs="0" maxOccurs="unbounded"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="SessionEntriesList">
+				<xsd:sequence>
+					<xsd:element name="sessionEntry" type="sessdata:SessionEntry" minOccurs="1" maxOccurs="unbounded"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="SearchRequest">
+				<xsd:sequence>
+					<xsd:element name="Name" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="Password" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="SessionID" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+					<xsd:element name="Attributes" type="sessdata:Attributes" minOccurs="0" maxOccurs="1"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="ResponseHeader">
+				<xsd:sequence>
+					<xsd:element name="SessionID" type="xsd:string"/>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:complexType name="SearchResponse">
+				<xsd:sequence>
+					<xsd:element name="ResultCode" type="xsd:int">
+						<xsd:annotation>
+							<xsd:documentation>
+				  		The ResultCode is numeric value with following mappings:
+				  		0   Search performed successfully with at least one session entry found.
+				  		100 Authentication errors (common group number).
+					  	101 Name (bind name) and/or password are wrong.
+					  	200 Search errors (common group number).
+					  	201 No session found for the given search key.
+					  	300 Operation errors (reserved for the future use, e.g. 'operation not allowed').
+					  	400 Service errors (common group number).
+				  		401 Service temporarily unavailable.
+				  		500 Other errors (all errors that do not fall into one of the previous groups).
+   					</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="ResultText" type="xsd:string">
+						<xsd:annotation>
+							<xsd:documentation>
+   						Describes the returned ResultCode in human-readable text form.
+   					</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+					<xsd:element name="SessionEntries" type="sessdata:SessionEntriesList">
+						<xsd:annotation>
+							<xsd:documentation>
+   						If the search was performed successfuly a list of one or more session entries, 
+   						each with a list of all configured attributes is returned (in form of key-value pairs).
+   					</xsd:documentation>
+						</xsd:annotation>
+					</xsd:element>
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="searchRequest" type="sessdata:SearchRequest"/>
+			<xsd:element name="responseHeader" type="sessdata:ResponseHeader"/>
+			<xsd:element name="searchResponse" type="sessdata:SearchResponse"/>
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="SearchRequestMessage">
+		<wsdl:part name="body" element="sessdata:searchRequest"/>
+	</wsdl:message>
+	<wsdl:message name="SearchResponseMessageHeader">
+		<wsdl:part name="header" element="sessdata:responseHeader"/>
+	</wsdl:message>
+	<wsdl:message name="SearchResponseMessage">
+		<wsdl:part name="body" element="sessdata:searchResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="SoapToSessionPortType">
+		<wsdl:operation name="search">
+			<wsdl:input name="SearchRequest" message="sessdata:SearchRequestMessage"/>
+			<wsdl:output name="SearchResponse" message="sessdata:SearchResponseMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="SoapToSessionBinding" type="sessdata:SoapToSessionPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="search">
+			<soap:operation soapAction="urn:bso-nsn-com:cie:aaa:radiussessiondata:1:0/searchRequest" style="document"/>
+			<wsdl:input name="SearchRequest">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="SearchResponse">
+				<soap:header message="sessdata:SearchResponseMessageHeader" part="header" use="literal"/>
+				<soap:body parts="body" use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="SoapToSessionService">
+		<wsdl:port name="SoapToSessionPortType" binding="sessdata:SoapToSessionBinding">
+			<soap:address location="http://localhost:8085/SessionGateway/Services/SessionData"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/QueryEsimSubscriptionReqSchema.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/QueryEsimSubscriptionReqSchema.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/QueryEsimSubscriptionReqSchema.xsd"/>
+    <pd:name>Test/SESGetTest.process</pd:name>
+    <pd:startName>HTTP Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="HTTP Receiver">
+        <pd:type>com.tibco.plugin.http.HTTPEventSource</pd:type>
+        <pd:resourceType>httppalette.httpEventSource</pd:resourceType>
+        <pd:x>130</pd:x>
+        <pd:y>70</pd:y>
+        <config>
+            <outputMode>String</outputMode>
+            <defaultEncoding>ISO8859_1</defaultEncoding>
+            <inputOutputVersion>5.3.0</inputOutputVersion>
+            <newMimeSupport>true</newMimeSupport>
+            <sharedChannel>/Test/HTTP Connection.sharedhttp</sharedChannel>
+            <customField>
+                <row>
+                    <attribute>primaryImsi</attribute>
+                    <attributeType>string</attributeType>
+                    <attributeCard>optional</attributeCard>
+                </row>
+                <row>
+                    <attribute>eid</attribute>
+                    <attributeType>string</attributeType>
+                    <attributeCard>optional</attributeCard>
+                </row>
+                <row>
+                    <attribute>primaryMsisdn</attribute>
+                    <attributeType>string</attributeType>
+                    <attributeCard>optional</attributeCard>
+                </row>
+                <row>
+                    <attribute>primaryIccid</attribute>
+                    <attributeType>string</attributeType>
+                    <attributeCard>optional</attributeCard>
+                </row>
+                <row>
+                    <attribute>applicationCategory</attribute>
+                    <attributeType>string</attributeType>
+                    <attributeCard>optional</attributeCard>
+                </row>
+            </customField>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Accept" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Charset" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Encoding" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Length" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Connection" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>664</pd:endX>
+    <pd:endY>72</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1594310168991</pd:targetNamespace>
+    <pd:activity name="Send HTTP Response">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>493</pd:x>
+        <pd:y>74</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <xsl:if test="$XML_JSON/javaCodeActivityOutput/jsonOut">
+                    <asciiContent>
+                        <xsl:value-of select="$XML_JSON/javaCodeActivityOutput/jsonOut"/>
+                    </asciiContent>
+                </xsl:if>
+                <Headers>
+                    <Content-Type>
+                        <xsl:value-of select="&quot;application/json&quot;"/>
+                    </Content-Type>
+                </Headers>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="XML_JSON">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>283</pd:x>
+        <pd:y>71</pd:y>
+        <config>
+            <fileName>SESGetTestXML_JSON</fileName>
+            <packageName>Test.SESGetTest</packageName>
+            <fullsource>package Test.SESGetTest;
+import java.util.*;
+import java.io.*;
+import org.json.JSONObject;
+import org.json.XML;
+
+public class SESGetTestXML_JSON{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String jsonIn = "";
+	protected String xmlIn = "";
+	protected String xmlOut = "";
+	protected String jsonOut = "";
+	public String getjsonIn() {
+		return jsonIn;
+	}
+	public void setjsonIn(String val) {
+		jsonIn = val;
+	}
+	public String getxmlIn() {
+		return xmlIn;
+	}
+	public void setxmlIn(String val) {
+		xmlIn = val;
+	}
+	public String getxmlOut() {
+		return xmlOut;
+	}
+	public void setxmlOut(String val) {
+		xmlOut = val;
+	}
+	public String getjsonOut() {
+		return jsonOut;
+	}
+	public void setjsonOut(String val) {
+		jsonOut = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public SESGetTestXML_JSON() {
+	}
+	public void invoke() throws Exception {
+	String xmlOt="";
+	String jsonOt="";
+        System.out.println("XML to JSON***********************************");
+		JSONObject jObj1 = XML.toJSONObject(getxmlIn());
+		
+		setjsonOut(jObj1.toString());
+/* Available Variables: DO NOT MODIFY
+	In  : String jsonIn
+	In  : String xmlIn
+	Out : String xmlOut
+	Out : String jsonOut
+* Available Variables: DO NOT MODIFY *****/
+
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>jsonIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>xmlIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>xmlOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>jsonOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>SESGetTestXML_JSON</name>
+                    <byteCode>yv66vgAAADMARgkADgAoCQAOACkJAA4AKgkADgArCgAPACwIAC0JAC4ALwgAMAoAMQAyCgAOADMKADQANQoANgA3CgAOADgHADkHADoBAAZqc29uSW4BABJMamF2YS9sYW5nL1N0cmluZzsBAAV4bWxJbgEABnhtbE91dAEAB2pzb25PdXQBAAlnZXRqc29uSW4BABQoKUxqYXZhL2xhbmcvU3RyaW5nOwEABENvZGUBAA9MaW5lTnVtYmVyVGFibGUBAAlzZXRqc29uSW4BABUoTGphdmEvbGFuZy9TdHJpbmc7KVYBAAhnZXR4bWxJbgEACHNldHhtbEluAQAJZ2V0eG1sT3V0AQAJc2V0eG1sT3V0AQAKZ2V0anNvbk91dAEACnNldGpzb25PdXQBAAY8aW5pdD4BAAMoKVYBAAZpbnZva2UBAApFeGNlcHRpb25zBwA7AQAKU291cmNlRmlsZQEAF1NFU0dldFRlc3RYTUxfSlNPTi5qYXZhDAAQABEMABIAEQwAEwARDAAUABEMACEAIgEAAAcAPAwAPQA+AQAuWE1MIHRvIEpTT04qKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKgcAPwwAQAAaDAAbABYHAEEMAEIAQwcARAwARQAWDAAgABoBACJUZXN0L1NFU0dldFRlc3QvU0VTR2V0VGVzdFhNTF9KU09OAQAQamF2YS9sYW5nL09iamVjdAEAE2phdmEvbGFuZy9FeGNlcHRpb24BABBqYXZhL2xhbmcvU3lzdGVtAQADb3V0AQAVTGphdmEvaW8vUHJpbnRTdHJlYW07AQATamF2YS9pby9QcmludFN0cmVhbQEAB3ByaW50bG4BAAxvcmcvanNvbi9YTUwBAAx0b0pTT05PYmplY3QBACkoTGphdmEvbGFuZy9TdHJpbmc7KUxvcmcvanNvbi9KU09OT2JqZWN0OwEAE29yZy9qc29uL0pTT05PYmplY3QBAAh0b1N0cmluZwAhAA4ADwAAAAQABAAQABEAAAAEABIAEQAAAAQAEwARAAAABAAUABEAAAAKAAEAFQAWAAEAFwAAAB0AAQABAAAABSq0AAGwAAAAAQAYAAAABgABAAAADgABABkAGgABABcAAAAiAAIAAgAAAAYqK7UAAbEAAAABABgAAAAKAAIAAAARAAUAEgABABsAFgABABcAAAAdAAEAAQAAAAUqtAACsAAAAAEAGAAAAAYAAQAAABQAAQAcABoAAQAXAAAAIgACAAIAAAAGKiu1AAKxAAAAAQAYAAAACgACAAAAFwAFABgAAQAdABYAAQAXAAAAHQABAAEAAAAFKrQAA7AAAAABABgAAAAGAAEAAAAaAAEAHgAaAAEAFwAAACIAAgACAAAABiortQADsQAAAAEAGAAAAAoAAgAAAB0ABQAeAAEAHwAWAAEAFwAAAB0AAQABAAAABSq0AASwAAAAAQAYAAAABgABAAAAIAABACAAGgABABcAAAAiAAIAAgAAAAYqK7UABLEAAAABABgAAAAKAAIAAAAjAAUAJAABACEAIgABABcAAABJAAIAAQAAAB0qtwAFKhIGtQABKhIGtQACKhIGtQADKhIGtQAEsQAAAAEAGAAAABoABgAAACYABAAJAAoACgAQAAsAFgAMABwAJwABACMAIgACABcAAABLAAIABAAAAB8SBkwSBk2yAAcSCLYACSq2AAq4AAtOKi22AAy2AA2xAAAAAQAYAAAAGgAGAAAAKQADACoABgArAA4ALAAWAC4AHgA2ACQAAAAEAAEAJQABACYAAAACACc=</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xmlIn>
+                    <xsl:value-of select="&quot;&quot;"/>
+                </xmlIn>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>HTTP Receiver</pd:from>
+        <pd:to>XML_JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send HTTP Response</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>XML_JSON</pd:from>
+        <pd:to>Send HTTP Response</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns0="http://orm.zain.com/types/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://orm.zain.com/" name="ServiceOrder" targetNamespace="http://orm.zain.com/">
+	<types>
+		<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soap11-enc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="http://orm.zain.com/types/" targetNamespace="http://orm.zain.com/types/" elementFormDefault="qualified">
+			<complexType name="Session">
+				<sequence>
+					<element name="username" type="string" nillable="true"/>
+					<element name="password" type="string" nillable="true"/>
+				</sequence>
+			</complexType>
+			<complexType name="ParamList">
+				<sequence>
+					<element name="param" type="tns:Param" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+				</sequence>
+			</complexType>
+			<complexType name="Param">
+				<sequence>
+					<element name="name" type="string" nillable="true"/>
+					<element name="value" type="string" nillable="true"/>
+				</sequence>
+			</complexType>
+			<element name="processOrderElement">
+				<complexType>
+					<sequence>
+						<element name="session" type="tns:Session" nillable="true"/>
+						<element name="orderType" type="string" nillable="true"/>
+						<element name="msisdn" type="string" nillable="true"/>
+						<element name="serviceCode" type="string" nillable="true"/>
+						<element name="paramList" type="tns:ParamList" nillable="true"/>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="processOrderResponseElement">
+				<complexType>
+					<sequence>
+						<element name="result" type="tns:ProcessOrderResponse" nillable="true"/>
+					</sequence>
+				</complexType>
+			</element>
+			<complexType name="ProcessOrderResponse">
+				<sequence>
+					<element name="resultCode" type="int"/>
+					<element name="paramList" type="tns:ParamList" nillable="true"/>
+				</sequence>
+			</complexType>
+		</schema>
+	</types>
+	<message name="ServiceOrderPortType_processOrder">
+		<part name="parameters" element="tns0:processOrderElement"/>
+	</message>
+	<message name="ServiceOrderPortType_processOrderResponse">
+		<part name="parameters" element="tns0:processOrderResponseElement"/>
+	</message>
+	<portType name="ServiceOrder">
+		<operation name="processOrder">
+			<input message="tns:ServiceOrderPortType_processOrder"/>
+			<output message="tns:ServiceOrderPortType_processOrderResponse"/>
+		</operation>
+	</portType>
+	<binding name="ServiceOrderSoapHttp" type="tns:ServiceOrder">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="processOrder">
+			<soap:operation soapAction="http://orm.zain.com//processOrder"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+	</binding>
+	<service name="ServiceOrder">
+		<port name="ServiceOrderSoapHttpPort" binding="tns:ServiceOrderSoapHttp">
+			<soap:address location="http://falcon8:7780/ServiceOrder/ServiceOrderSoapHttpPort"/>
+		</port>
+	</service>
+</definitions>

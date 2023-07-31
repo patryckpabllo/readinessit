@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.zain.com/ZESB/Services/GetDataUsage/Types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx2="http://xmlns.example.com/1451073576082" xmlns:pfx="http://www.zain.com/ZESB/Services/GetDataUsage">
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/GetDataUsage/Types" schemaLocation="/BusinessProcesses/Services/SDP/Query/GetPrepaidBalance/Connections/GetDataUsage_JMS.wsdl"/>
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/GetDataUsage" location="/BusinessProcesses/Services/SDP/Query/GetPrepaidBalance/Connections/GetDataUsage_wsdl.wsdl"/>
+    <wsdl:import namespace="http://xmlns.example.com/1451073576082" location="/BusinessProcesses/Services/SDP/Query/GetPrepaidBalance/Connections/GetDataUsage_JMS.wsdl"/>
+    <pd:name>BusinessProcesses/Services/SDP/Query/GetPrepaidBalance/HelperProcess/GetUsage.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="ns:GetDataUsageInput"/>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <xsl:copy-of select="$SOAPRequestReply/outputMessage/ns:GetDataUsageOutput"/>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="ns:GetDataUsageOutput"/>
+    <pd:endX>450</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1470843120540</pd:targetNamespace>
+    <pd:activity name="SOAPRequestReply">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>290</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <timeout>0</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx2:GetDataUsage</service>
+            <servicePort>GetDataUsageEndpoint</servicePort>
+            <operation>GetDataUsage</operation>
+            <soapAction>GetDataUsage</soapAction>
+            <endpointURL>http://10.96.11.37:7071/ESB/SOAP/GetDataUsage</endpointURL>
+            <authScheme>NONE</authScheme>
+            <sharedChannels>
+                <jmsChannel>
+                    <NamingURL>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUrl%%</NamingURL>
+                    <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+                    <NamingPrincipal>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUserName%%</NamingPrincipal>
+                    <NamingCredential>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIPassword%%</NamingCredential>
+                    <ConnectionFactory>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/QueueConnectionFactory%%</ConnectionFactory>
+                    <JMSTo>%%BusinessProcesses/Services/Query/GetPrepaidBalance/GetUsage_queue%%</JMSTo>
+                    <JMSMessageType>Text</JMSMessageType>
+                    <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                    <JMSPriority>4</JMSPriority>
+                    <JMSTimeToLive>0</JMSTimeToLive>
+                    <JMSUserName>%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Username%%</JMSUserName>
+                    <JMSPassword>#!RW0rYIk2rPRElZM2hp/hdZ4R9U7hMmsIRuDy4S/pCYo=</JMSPassword>
+                </jmsChannel>
+            </sharedChannels>
+            <useSsl>false</useSsl>
+            <ns0:ssl xmlns:ns0="http://www.tibco.com/xmlns/aemeta/services/2002"/>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <ns:GetDataUsageInput>
+                    <ns:MSISDN>
+                        <xsl:value-of select="$Start/ns:GetDataUsageInput/ns:MSISDN"/>
+                    </ns:MSISDN>
+                </ns:GetDataUsageInput>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SOAPRequestReply</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

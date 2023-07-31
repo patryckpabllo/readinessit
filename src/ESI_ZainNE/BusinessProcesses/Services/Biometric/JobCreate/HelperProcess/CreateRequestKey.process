@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <pd:name>BusinessProcesses/Services/Biometric/JobCreate/HelperProcess/CreateRequestKey.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="InputText" type="xsd:string"/>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <FinalKey>
+            <xsl:value-of select="$GenerateSHAKey/javaCodeActivityOutput/outputtext"/>
+        </FinalKey>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="FinalKey" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>450</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1543392663654</pd:targetNamespace>
+    <pd:activity name="GenerateSHAKey">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>289</pd:x>
+        <pd:y>66</pd:y>
+        <config>
+            <fullsource>package BusinessProcesses.Services.Biometric.JobCreate.HelperProcess.CreateRequestKey;
+import java.util.*;
+import java.io.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+public class CreateRequestKeyGenerateSHAKey{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String inputtext = "";
+	protected String outputtext = "";
+	public String getinputtext() {
+		return inputtext;
+	}
+	public void setinputtext(String val) {
+		inputtext = val;
+	}
+	public String getoutputtext() {
+		return outputtext;
+	}
+	public void setoutputtext(String val) {
+		outputtext = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public CreateRequestKeyGenerateSHAKey() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String inputtext
+	Out : String outputtext
+* Available Variables: DO NOT MODIFY *****/
+
+
+    String sha1 = "";
+    try
+    {
+        MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+        crypt.reset();
+        crypt.update(inputtext.getBytes("UTF-8"));
+
+		Formatter formatter = new Formatter();
+		for (byte b : crypt.digest())
+    {
+        formatter.format("%02x", b);
+    }
+    String result = formatter.toString();
+    formatter.close();
+	
+    
+	   outputtext=result;
+	   
+    }
+    catch(NoSuchAlgorithmException e)
+    {
+        e.printStackTrace();
+    }
+    catch(UnsupportedEncodingException e)
+    {
+        e.printStackTrace();
+    }
+}
+}
+</fullsource>
+            <fileName>CreateRequestKeyGenerateSHAKey</fileName>
+            <packageName>BusinessProcesses.Services.Biometric.JobCreate.HelperProcess.CreateRequestKey</packageName>
+            <outputData>
+                <row>
+                    <fieldName>outputtext</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>inputtext</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>CreateRequestKeyGenerateSHAKey</name>
+                    <byteCode>yv66vgAAADMAYQkAGAAzCQAYADQKAA8ANQgANggANwoAOAA5CgA4ADoIADsKADwAPQoAOAA+BwA/CgALADUKADgAQAgAQQcAQgoAQwBECgALAEUKAAsARgoACwBHBwBICgAUAEkHAEoKABYASQcASwEACWlucHV0dGV4dAEAEkxqYXZhL2xhbmcvU3RyaW5nOwEACm91dHB1dHRleHQBAAxnZXRpbnB1dHRleHQBABQoKUxqYXZhL2xhbmcvU3RyaW5nOwEABENvZGUBAA9MaW5lTnVtYmVyVGFibGUBAAxzZXRpbnB1dHRleHQBABUoTGphdmEvbGFuZy9TdHJpbmc7KVYBAA1nZXRvdXRwdXR0ZXh0AQANc2V0b3V0cHV0dGV4dAEABjxpbml0PgEAAygpVgEABmludm9rZQEADVN0YWNrTWFwVGFibGUHAEsHAEwHAE0HAD8HAE4HAEgHAEoBAApFeGNlcHRpb25zBwBPAQAKU291cmNlRmlsZQEAI0NyZWF0ZVJlcXVlc3RLZXlHZW5lcmF0ZVNIQUtleS5qYXZhDAAZABoMABsAGgwAJAAlAQAAAQAFU0hBLTEHAE0MAFAAUQwAUgAlAQAFVVRGLTgHAEwMAFMAVAwAVQBWAQATamF2YS91dGlsL0Zvcm1hdHRlcgwAVwBYAQAEJTAyeAEAEGphdmEvbGFuZy9PYmplY3QHAFkMAFoAWwwAXABdDABeAB0MAF8AJQEAJmphdmEvc2VjdXJpdHkvTm9TdWNoQWxnb3JpdGhtRXhjZXB0aW9uDABgACUBACRqYXZhL2lvL1Vuc3VwcG9ydGVkRW5jb2RpbmdFeGNlcHRpb24BAGxCdXNpbmVzc1Byb2Nlc3Nlcy9TZXJ2aWNlcy9CaW9tZXRyaWMvSm9iQ3JlYXRlL0hlbHBlclByb2Nlc3MvQ3JlYXRlUmVxdWVzdEtleS9DcmVhdGVSZXF1ZXN0S2V5R2VuZXJhdGVTSEFLZXkBABBqYXZhL2xhbmcvU3RyaW5nAQAbamF2YS9zZWN1cml0eS9NZXNzYWdlRGlnZXN0AQACW0IBABNqYXZhL2xhbmcvRXhjZXB0aW9uAQALZ2V0SW5zdGFuY2UBADEoTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL3NlY3VyaXR5L01lc3NhZ2VEaWdlc3Q7AQAFcmVzZXQBAAhnZXRCeXRlcwEAFihMamF2YS9sYW5nL1N0cmluZzspW0IBAAZ1cGRhdGUBAAUoW0IpVgEABmRpZ2VzdAEABCgpW0IBAA5qYXZhL2xhbmcvQnl0ZQEAB3ZhbHVlT2YBABMoQilMamF2YS9sYW5nL0J5dGU7AQAGZm9ybWF0AQA8KExqYXZhL2xhbmcvU3RyaW5nO1tMamF2YS9sYW5nL09iamVjdDspTGphdmEvdXRpbC9Gb3JtYXR0ZXI7AQAIdG9TdHJpbmcBAAVjbG9zZQEAD3ByaW50U3RhY2tUcmFjZQAhABgADwAAAAIABAAZABoAAAAEABsAGgAAAAYAAQAcAB0AAQAeAAAAHQABAAEAAAAFKrQAAbAAAAABAB8AAAAGAAEAAAAMAAEAIAAhAAEAHgAAACIAAgACAAAABiortQABsQAAAAEAHwAAAAoAAgAAAA8ABQAQAAEAIgAdAAEAHgAAAB0AAQABAAAABSq0AAKwAAAAAQAfAAAABgABAAAAEgABACMAIQABAB4AAAAiAAIAAgAAAAYqK7UAArEAAAABAB8AAAAKAAIAAAAVAAUAFgABACQAJQABAB4AAAA1AAIAAQAAABEqtwADKhIEtQABKhIEtQACsQAAAAEAHwAAABIABAAAABgABAAJAAoACgAQABkAAQAmACUAAgAeAAABHAAGAAgAAAB4EgRMEgW4AAZNLLYABywqtAABEgi2AAm2AAq7AAtZtwAMTiy2AA06BBkEvjYFAzYGFQYVBaIAIxkEFQYzNgctEg4EvQAPWQMVB7gAEFO2ABFXhAYBp//cLbYAEjoELbYAEyoZBLUAAqcAEE0stgAVpwAITSy2ABexAAIAAwBnAGoAFAADAGcAcgAWAAIAHwAAAEoAEgAAACEAAwAkAAkAJQANACYAGgAoACIAKQA+ACsAUQApAFcALQBdAC4AYQAxAGcAOwBqADQAawA2AG8AOwByADgAcwA6AHcAPAAnAAAAMgAF/wAwAAcHACgHACkHACoHACsHACwBAQAA+AAm/wASAAIHACgHACkAAQcALUcHAC4EAC8AAAAEAAEAMAABADEAAAACADI=</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <inputtext>
+                    <xsl:value-of select="$Start/InputText"/>
+                </inputtext>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GenerateSHAKey</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GenerateSHAKey</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

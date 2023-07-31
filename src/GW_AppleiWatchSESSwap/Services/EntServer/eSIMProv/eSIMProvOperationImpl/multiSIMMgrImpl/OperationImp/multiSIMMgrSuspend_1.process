@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:format="java://MSISDNFormatter" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns6="http://siebel.com/CustomUI" xmlns:ns7="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/StorageMediumDetailsRead.xsd" xmlns:pfx="http://www.huawei.com/CDM/ES/" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://ericsson.com/services/ws_CMI_5/sessionchange" xmlns:ns3="http://ericsson.com/services/ws_CMI_5/storagemediumdetailsread" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://schemas.ericsson.com/cai3g1.2/" xmlns:pfx3="http://schemas.ericsson.com/ema/UserProvisioning/SPGSV/" xmlns:pfx2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.huawei.com/CDM/ES/" schemaLocation="/Resources/WSDL/EntitleServer/soap.wsdl"/>
+    <pd:name>Services/EntServer/eSIMProv/eSIMProvOperationImpl/multiSIMMgrImpl/OperationImp/multiSIMMgrSuspend_1.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:multiSIMMgrRequest"/>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>18</pd:startX>
+    <pd:startY>166</pd:startY>
+    <pd:returnBindings>
+        <pfx:multiSIMMgrResponse>
+            <pfx:RESULT_CODE>
+                <xsl:value-of select="0"/>
+            </pfx:RESULT_CODE>
+            <pfx:RESULT_DESC>
+                <xsl:value-of select="&quot;SUCCESS&quot;"/>
+            </pfx:RESULT_DESC>
+        </pfx:multiSIMMgrResponse>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:multiSIMMgrResponse"/>
+    <pd:endX>714</pd:endX>
+    <pd:endY>158</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1539231524072</pd:targetNamespace>
+    <pd:activity name="GenErrCheckifDataExists">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>356</pd:x>
+        <pd:y>256</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="&quot;TIBCO-Err&quot;"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="concat(&quot; Secondary/Primary MSISDN  not found -&quot;,$Start/root/pfx:multiSIMMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN)"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-In">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>93</pd:x>
+        <pd:y>52</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/eSIMProv/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/pfx:multiSIMMgrRequest/pfx:MAIN_USER/pfx:ICCID"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx:multiSIMMgrRequest)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>710</pd:x>
+        <pd:y>48</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/eSIMProv/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/pfx:multiSIMMgrRequest/pfx:MAIN_USER/pfx:ICCID"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx:multiSIMMgrRequest)"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="concat(tib:render-xml($GetCustAsset/root/pfx:queryUserDataResponse),tib:render-xml($ESI_StorageMediumDetailsRead),tib:render-xml($CallCRMSusResumeiwatch))"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetCustAsset">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>168</pd:x>
+        <pd:y>167</pd:y>
+        <config>
+            <processName>/Services/EntServer/eSIMProv/eSIMProvOperationImpl/GetUserData/GetCustAsset.process</processName>
+        </config>
+        <pd:inputBindings>
+            <group>
+                <MSISDN>
+                    <xsl:value-of select="$Start/root/pfx:multiSIMMgrRequest/pfx:MAIN_USER/pfx:MSISDN"/>
+                </MSISDN>
+                <TrackingId>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TrackingId>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+                <IMSI>
+                    <xsl:value-of select="$Start/root/pfx:multiSIMMgrRequest/pfx:MAIN_USER/pfx:IMSI"/>
+                </IMSI>
+                <ICCID>
+                    <xsl:value-of select="substring($Start/root/pfx:multiSIMMgrRequest/pfx:MAIN_USER/pfx:ICCID,1, 18)"/>
+                </ICCID>
+            </group>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_MsgOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>254</pd:x>
+        <pd:y>57</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/eSIMProv/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/pfx:multiSIMMgrRequest/pfx:MAIN_USER/pfx:ICCID"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx:multiSIMMgrRequest)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Decision-1">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>294</pd:x>
+        <pd:y>163</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="GetCustAssetErr">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>242</pd:x>
+        <pd:y>264</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CallCRMSusResumeiwatch">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>516</pd:x>
+        <pd:y>162</pd:y>
+        <config>
+            <processName>/Services/EntServer/eSIMProv/ComHelpProc/CRMSusResiWatchImpl/CRMSusResiWatchiwatch.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns6:CBiO2_spcApple_spcWatch_spcSuspend-Resume_spcWS_Input>
+                    <ns6:NickName>
+                        <xsl:value-of select="$Start/root/pfx:multiSIMMgrRequest/pfx:ATTACH_USERS/pfx:NICKNAME"/>
+                    </ns6:NickName>
+                    <ns6:EID>
+                        <xsl:value-of select="$Start/root/pfx:multiSIMMgrRequest/pfx:ATTACH_USERS/pfx:EID"/>
+                    </ns6:EID>
+                    <ns6:TransportKey>
+                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:transportKey"/>
+                    </ns6:TransportKey>
+                    <ns6:Channel>
+                        <xsl:value-of select="&quot;CS&quot;"/>
+                    </ns6:Channel>
+                    <ns6:UserName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/eSIMProv/UserName"/>
+                    </ns6:UserName>
+                    <ns6:OrderDate>
+                        <xsl:value-of select="tib:format-date('MM/dd/yyyy',tib:parse-date(&quot;yyyy-MM-dd&quot;,(current-date())))"/>
+                    </ns6:OrderDate>
+                    <ns6:MSISDN>
+                        <xsl:value-of select="$Start/root/pfx:multiSIMMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN"/>
+                    </ns6:MSISDN>
+                    <ns6:PrimaryIMSI>
+                        <xsl:value-of select="$Start/root/pfx:multiSIMMgrRequest/pfx:MAIN_USER/pfx:IMSI"/>
+                    </ns6:PrimaryIMSI>
+                    <ns6:TransactionId>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns6:TransactionId>
+                    <ns6:Operation>
+                        <xsl:value-of select="&quot;Suspend&quot;"/>
+                    </ns6:Operation>
+                </ns6:CBiO2_spcApple_spcWatch_spcSuspend-Resume_spcWS_Input>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TransactionID>
+                <StartTimestamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimestamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-In-1">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>390</pd:x>
+        <pd:y>48</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/eSIMProv/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/pfx:multiSIMMgrRequest/pfx:MAIN_USER/pfx:ICCID"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx:multiSIMMgrRequest)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_MsgOut-1">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>602</pd:x>
+        <pd:y>47</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/eSIMProv/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/pfx:multiSIMMgrRequest/pfx:MAIN_USER/pfx:ICCID"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx:multiSIMMgrRequest)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CallCRMAddDeliwatchErr">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>576</pd:x>
+        <pd:y>242</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="concat(&quot;CRM&quot;,$_error/ns1:ErrorReport/MsgCode)"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ESI_StorageMediumDetailsRead">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>386</pd:x>
+        <pd:y>162</pd:y>
+        <config>
+            <processName>/Services/EntServer/eSIMProv/ComHelpProc/ESI_StorageMediumDetailsRead.process</processName>
+        </config>
+        <pd:inputBindings>
+            <group>
+                <ns7:StorageMediumDetailsReadInput>
+                    <ns7:smserialno>
+                        <xsl:value-of select="substring($Start/root/pfx:multiSIMMgrRequest/pfx:ATTACH_USERS/pfx:ICCID,1, 18)"/>
+                    </ns7:smserialno>
+                </ns7:StorageMediumDetailsReadInput>
+                <TrackingId>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TrackingId>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+            </group>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log_Msg-In</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-In</pd:from>
+        <pd:to>GetCustAsset</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-Out</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetCustAsset</pd:from>
+        <pd:to>Log_MsgOut</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:description/>
+        <pd:from>Decision-1</pd:from>
+        <pd:to>GenErrCheckifDataExists</pd:to>
+        <pd:xpathDescription>notFound</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-13261</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>count($GetCustAsset/root/pfx:queryUserDataResponse[$Start/root/pfx:multiSIMMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN=pfx:ATTACH_USERS/pfx:MSISDN]/pfx:ATTACH_USERS)=0
+{-- and $GetCustAsset/root/pfx:queryUserDataResponse/pfx:ATTACH_USERS[pfx:MSISDN=$Start/root/pfx:multiSIMMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN]/pfx:STATUS='Active' --}</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_MsgOut</pd:from>
+        <pd:to>Decision-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetCustAsset</pd:from>
+        <pd:to>GetCustAssetErr</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Decision-1</pd:from>
+        <pd:to>ESI_StorageMediumDetailsRead</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-In-1</pd:from>
+        <pd:to>CallCRMSusResumeiwatch</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallCRMSusResumeiwatch</pd:from>
+        <pd:to>Log_MsgOut-1</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallCRMSusResumeiwatch</pd:from>
+        <pd:to>CallCRMAddDeliwatchErr</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-13261</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_MsgOut-1</pd:from>
+        <pd:to>Log_Msg-Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ESI_StorageMediumDetailsRead</pd:from>
+        <pd:to>Log_Msg-In-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

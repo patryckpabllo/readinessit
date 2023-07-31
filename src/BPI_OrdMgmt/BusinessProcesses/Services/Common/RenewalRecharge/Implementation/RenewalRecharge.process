@@ -1,0 +1,540 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns25="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/AutopayExecutionResponse.xsd" xmlns:ns26="http://xmlns.zain.com/BSS/ESB/CDM/Finance" xmlns:ns21="http://ericsson.com/services/ws_CMI_5/contractinfowrite" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns23="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/Dunning.xsd" xmlns:ns24="http://ericsson.com/services/ws_CMI_5/sessionchange" xmlns:ns20="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:pfx5="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateReq.xsd" xmlns:pfx4="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/Schema.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx7="http://www.zain.com/ZESB/Services/SalesOrder/Types" xmlns:pfx6="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/ContractStatusUpdate.xsd" xmlns:ns16="http://www.siebel.com/xml/CBiO2%20Auto%20Renewal%20Req%20IO" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:ns17="http://www.siebel.com/xml/CBiO2AutoRenewalCancelReq" xmlns:ns14="http://www.ericsson.com/CDM/telecom/Response" xmlns:ns15="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateRes.xsd" xmlns:ns18="http://www.siebel.com/xml/CBiO2DunningOrder" xmlns:ns19="http://xmlns.zain.com/BSS/ESB/CDM/Base" xmlns:ns9="http://www.ericsson.com/CDM/telecom/Subscriber" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" xmlns:ns13="http://www.ericsson.com/CDM/telecom/SubscriberAssets" xmlns:ns6="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns10="http://www.ericsson.com/CDM/telecom/Header" xmlns:ns7="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" xmlns:ns11="http://www.ericsson.com/CDM/telecom/FAF" xmlns:ns8="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/Schema.xsd2" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns4="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerReq.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/BusinessSchemas/Services/Common/CLE/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileResponse.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/AutoRenewalCancel/AutoRenewalFlagUpdateReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/ContractStatusUpdate.xsd" schemaLocation="/BusinessSchemas/Services/Applications/Common/ContractStatusUpdate/ContractStatusUpdate.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/Schema.xsd" schemaLocation="/BusinessSchemas/Services/Modification/AutoRenewalFlagUpdate/AutoRenewalFlagUpdateReq.xsd"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/SalesOrder/Types" schemaLocation="/BusinessWSDLS/Services/TIBCO/SalesOrder_JMS.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/RenewalRecharge/Implementation/RenewalRecharge.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>94</pd:x>
+        <pd:y>37</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Update/RenewalRecharge/Request_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <OutDataxsdString ref="pfx4:AutoRenewalFlagUpdateReq"/>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1072</pd:endX>
+    <pd:endY>37</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442397282862</pd:targetNamespace>
+    <pd:activity name="Call_SalesOrder">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>768</pd:x>
+        <pd:y>37</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/RenewalRecharge/HelperProcess/Call_SalesOrder.process</processName>
+        </config>
+        <pd:inputBindings>
+            <xsl:copy-of select="$SalesOrder-Request/pfx7:SalesOrderInput"/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_EOM_OfferPrice">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>485</pd:x>
+        <pd:y>38</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/RenewalRecharge/HelperProcess/EOM_Offer_Price.process</processName>
+        </config>
+        <pd:inputBindings>
+            <OfferPrice>
+                <CS_OfferId>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/Body/pfx4:AutoRenewalFlagUpdateReq/ns4:SubscriberAssets/ListOfAssets/Asset[1]/AssetID"/>
+                </CS_OfferId>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TransactionId>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TransactionId>
+                </xsl:if>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                    <StartTimeStamp>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </xsl:if>
+            </OfferPrice>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>743</pd:x>
+        <pd:y>222</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="CRM_Query_Auto_Prepaid">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>303</pd:x>
+        <pd:y>36</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/RenewalRecharge/HelperProcess/CRM_AutoPay_Query.process</processName>
+        </config>
+        <pd:inputBindings>
+            <AutopayExecutionInput>
+                <MSISDN>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/Body/pfx4:AutoRenewalFlagUpdateReq/ns4:SubscriberAssets/Subscriber/ServiceNo"/>
+                </MSISDN>
+                <OperationType>
+                    <xsl:value-of select="&quot;Query&quot;"/>
+                </OperationType>
+                <TransactionId>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                </TransactionId>
+                <SourceTimeStamp>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </SourceTimeStamp>
+            </AutopayExecutionInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>930</pd:x>
+        <pd:y>223</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:coercions>
+            <pd:coercion xpath="$Catch/exceptiondata/*" element="pfx2:ExceptionRequest"/>
+        </pd:coercions>
+        <pd:inputBindings>
+            <pfx2:ExceptionRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/UPDATE"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($Catch/exceptiondata)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+                <xsl:if test="$_error/ns2:ErrorReport/ProcessStack">
+                    <StackTrace>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/ProcessStack"/>
+                    </StackTrace>
+                </xsl:if>
+                <xsl:if test="$_error/ns2:ErrorReport/Msg">
+                    <Custom>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/Msg"/>
+                    </Custom>
+                </xsl:if>
+            </pfx2:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1073</pd:x>
+        <pd:y>222</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/ContractStatusUpdate/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($_error/ns2:ErrorReport)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <xsl:if test="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError">
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                    </Category>
+                </xsl:if>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSReceiverError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>95</pd:x>
+        <pd:y>145</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>900</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/ContractStatusUpdate/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:InterfaceID>
+                        <xsl:value-of select="concat($Call_SalesOrder/pfx7:SalesOrderOutput/pfx7:RequestStatus,',ReceiptNo-',$Call_SalesOrder/pfx7:SalesOrderOutput/pfx7:ReceiptNumber)"/>
+                    </ns22:InterfaceID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($Call_SalesOrder/*)"/>
+                    </ns22:Message>
+                    <ns22:Transaction>
+                        <xsl:value-of select="tib:render-xml($Call_EOM_OfferPrice/*)"/>
+                    </ns22:Transaction>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SalesOrder-Request">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>645</pd:x>
+        <pd:y>37</pd:y>
+        <config>
+            <element ref="pfx7:SalesOrderInput"/>
+        </config>
+        <pd:inputBindings>
+            <pfx7:SalesOrderInput>
+                <pfx7:Msisdn>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/Body/pfx4:AutoRenewalFlagUpdateReq/ns4:SubscriberAssets/Subscriber/ServiceNo"/>
+                </pfx7:Msisdn>
+                <pfx7:Amount>
+                    <xsl:value-of select="$Call_EOM_OfferPrice/OfferPriceResponse/Charge"/>
+                </pfx7:Amount>
+                <pfx7:UserName>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/RechargeTypes/Username"/>
+                </pfx7:UserName>
+                <pfx7:PaymentMethod>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/RechargeTypes/PaymentMethod"/>
+                </pfx7:PaymentMethod>
+                <pfx7:TransactionReference>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                </pfx7:TransactionReference>
+                <pfx7:AuthorizeCredit>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/RechargeTypes/AuthorizeCreditFlag"/>
+                </pfx7:AuthorizeCredit>
+                <pfx7:OrderLines>
+                    <pfx7:ItemCode>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/RechargeTypes/ItemCode"/>
+                    </pfx7:ItemCode>
+                    <pfx7:Amount>
+                        <xsl:value-of select="$Call_EOM_OfferPrice/OfferPriceResponse/Charge"/>
+                    </pfx7:Amount>
+                    <pfx7:Quantity>
+                        <xsl:value-of select="1"/>
+                    </pfx7:Quantity>
+                    <pfx7:ItemType>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/RechargeTypes/ItemType"/>
+                    </pfx7:ItemType>
+                </pfx7:OrderLines>
+                <pfx7:CardDetails>
+                    <xsl:if test="$CRM_Query_Auto_Prepaid/ns25:AutopayExecutionResponse/ns26:CustomerPayment/ns26:PaymentMethod[1]/ns26:CreditCardPM/ns26:creditCardType">
+                        <pfx7:CardType>
+                            <xsl:value-of select="$CRM_Query_Auto_Prepaid/ns25:AutopayExecutionResponse/ns26:CustomerPayment/ns26:PaymentMethod[1]/ns26:CreditCardPM/ns26:creditCardType"/>
+                        </pfx7:CardType>
+                    </xsl:if>
+                    <pfx7:MerchantId>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/RechargeTypes/MerchantId"/>
+                    </pfx7:MerchantId>
+                    <pfx7:MerchantPassword>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/RechargeTypes/MerchantPassword"/>
+                    </pfx7:MerchantPassword>
+                    <pfx7:TerminalId>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/RechargeTypes/TerminalId"/>
+                    </pfx7:TerminalId>
+                    <pfx7:CardNumber>
+                        <xsl:value-of select="$CRM_Query_Auto_Prepaid/ns25:AutopayExecutionResponse/ns26:CustomerPayment/ns26:PaymentMethod[1]/ns26:CreditCardPM/ns26:creditCardNumber"/>
+                    </pfx7:CardNumber>
+                    <pfx7:ExpiryDate>
+                        <xsl:value-of select="concat($CRM_Query_Auto_Prepaid/ns25:AutopayExecutionResponse/ns26:CustomerPayment/ns26:PaymentMethod[1]/ns26:CreditCardPM/ns26:ExpirationMonth,$CRM_Query_Auto_Prepaid/ns25:AutopayExecutionResponse/ns26:CustomerPayment/ns26:PaymentMethod[1]/ns26:CreditCardPM/ns26:ExpirationYear)"/>
+                    </pfx7:ExpiryDate>
+                </pfx7:CardDetails>
+            </pfx7:SalesOrderInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Else Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>304</pd:x>
+        <pd:y>153</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/NotAutoPayDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/AutoPayDafultCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="No Price Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>488</pd:x>
+        <pd:y>142</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/NoPriceErrorDescription"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/RenewalRecharge/AutoPayDafultCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CRM_Query_Auto_Prepaid</pd:from>
+        <pd:to>Call_EOM_OfferPrice</pd:to>
+        <pd:xpathDescription>AutpPay-Active</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777012</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$CRM_Query_Auto_Prepaid/ns25:AutopayExecutionResponse/ns25:ZainAutoPayInfo/ns26:status='Active'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_EOM_OfferPrice</pd:from>
+        <pd:to>SalesOrder-Request</pd:to>
+        <pd:xpathDescription>Price-Confirmed</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777012</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>string-length($Call_EOM_OfferPrice/OfferPriceResponse/Charge)&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_SalesOrder</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>JMSReceiverError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>CRM_Query_Auto_Prepaid</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SalesOrder-Request</pd:from>
+        <pd:to>Call_SalesOrder</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CRM_Query_Auto_Prepaid</pd:from>
+        <pd:to>Else Error</pd:to>
+        <pd:xpathDescription>No Matching Condition</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16751053</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_EOM_OfferPrice</pd:from>
+        <pd:to>No Price Error</pd:to>
+        <pd:xpathDescription>No Price/Error Occured</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16738048</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:label>
+        <pd:name>Label</pd:name>
+        <pd:description>When No Active AutoPay, generating the Error for Logs.</pd:description>
+        <pd:x>217</pd:x>
+        <pd:y>127</pd:y>
+        <pd:width>118</pd:width>
+        <pd:height>50</pd:height>
+        <pd:fontName>Microsoft JhengHei UI-bold-9</pd:fontName>
+        <pd:fontColor>-16777216</pd:fontColor>
+        <pd:color>-3355393</pd:color>
+        <pd:type>dash</pd:type>
+        <pd:thickness>0</pd:thickness>
+        <pd:fade>true</pd:fade>
+    </pd:label>
+    <pd:label>
+        <pd:name>Label (1)</pd:name>
+        <pd:description>This is the Auto Recharge Service for AutoPay Subscriber and used to Recharge in case of Renewal Failed for the Subscriber.</pd:description>
+        <pd:x>347</pd:x>
+        <pd:y>255</pd:y>
+        <pd:width>585</pd:width>
+        <pd:height>57</pd:height>
+        <pd:fontName>Dialog.plain-plain-14</pd:fontName>
+        <pd:fontColor>-16777216</pd:fontColor>
+        <pd:color>-6684775</pd:color>
+        <pd:type>solid</pd:type>
+        <pd:thickness>0</pd:thickness>
+        <pd:fade>true</pd:fade>
+    </pd:label>
+    <pd:label>
+        <pd:name>Label (2)</pd:name>
+        <pd:description>When No Price Available, generating the Error for Logs.</pd:description>
+        <pd:x>596</pd:x>
+        <pd:y>131</pd:y>
+        <pd:width>120</pd:width>
+        <pd:height>52</pd:height>
+        <pd:fontName>Microsoft JhengHei UI-bold-9</pd:fontName>
+        <pd:fontColor>-16777216</pd:fontColor>
+        <pd:color>-3355393</pd:color>
+        <pd:type>dash</pd:type>
+        <pd:thickness>0</pd:thickness>
+        <pd:fade>true</pd:fade>
+    </pd:label>
+</pd:ProcessDefinition>

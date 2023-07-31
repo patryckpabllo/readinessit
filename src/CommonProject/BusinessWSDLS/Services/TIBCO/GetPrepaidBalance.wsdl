@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/PrepaidBalance/Types" xmlns:jms="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS" xmlns:ns0="http://www.zain.com/ZESB/Types/Common" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:jndi="http://www.tibco.com/namespaces/ws/2004/soap/apis/jndi" name="Untitled" targetNamespace="http://www.zain.com/ZESB/Services/PrepaidBalance/Types">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:import namespace="http://www.zain.com/ZESB/Services/PrepaidBalance/Types"/>
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+                        <xs:element name="detail" type="xs:string" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Services/PrepaidBalance/Types" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:import namespace="http://www.zain.com/ZESB/Types/Common"/>
+            <xs:element name="getBalanceInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Msisdn" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="getBalanceOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Balance" type="xs:decimal"/>
+                        <xs:element name="ExpiryDate" type="xs:dateTime"/>
+                        <xs:element name="FirstCallDate" type="xs:dateTime"/>
+                        <xs:element name="IsLocked" type="xs:boolean"/>
+                        <xs:element name="SubscriberStatus" type="xs:string"/>
+                        <xs:element name="FraudCounter" type="xs:string"/>
+                        <xs:element name="LanguageID" type="xs:string"/>
+                        <xs:element name="OfferID" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="GetPrepaidBalanceService">
+        <wsdl:port name="PrepaidBalancePortEndpoint" binding="tns:PrepaidBalancePortEndpointBinding">
+            <soap:address location=""/>
+            <jms:connectionFactory>QueueConnectionFactory</jms:connectionFactory>
+            <jms:targetAddress destination="queue">CBIO.BSS.DEV.DOM_ESB.GW.QUERY_MGMT.QUERY_SDP_GET_ACCNT_DTLS.SVC.Q.EXT.REQ</jms:targetAddress>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="PrepaidBalancePort">
+        <wsdl:operation name="getBalance">
+            <wsdl:input message="tns:getBalanceRequest"/>
+            <wsdl:output message="tns:getBalanceResponse"/>
+            <wsdl:fault name="fault" message="tns:faultMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="PrepaidBalancePortEndpointBinding" type="tns:PrepaidBalancePort">
+        <soap:binding style="document" transport="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS"/>
+        <jms:binding messageFormat="Text"/>
+        <wsdl:operation name="getBalance">
+            <soap:operation style="document" soapAction="getBalance"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="getBalanceRequest">
+        <wsdl:part name="request" element="tns:getBalanceInput"/>
+    </wsdl:message>
+    <wsdl:message name="getBalanceResponse">
+        <wsdl:part name="response" element="tns:getBalanceOutput"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part name="fault" element="ns0:FaultType"/>
+    </wsdl:message>
+</wsdl:definitions>

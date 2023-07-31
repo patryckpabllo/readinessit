@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://ericsson.com/services/ws_CIL_5" xmlns:sch3="http://ericsson.com/services/ws_CIL_5/bookingrequestwrite" xmlns:sch2="http://ericsson.com/services/ws_CIL_5/sessionchange" xmlns:sch1="http://lhsgroup.com/lhsws/svlany" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:sch0="http://lhsgroup.com/lhsws/money" xmlns:sch5="http://ericsson.com/services/ws_CIL_5/bookingrequestswrite" xmlns:sch4="http://ericsson.com/services/ws_CIL_5/bookingrequestssearch" targetNamespace="http://ericsson.com/services/ws_CIL_5">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lhsws="http://lhsgroup.com/lhsws/money" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://lhsgroup.com/lhsws/money">
+            <xs:complexType name="money">
+                <xs:sequence>
+                    <xs:element name="amount" type="xs:double"/>
+                    <xs:element name="currency" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lhsws="http://lhsgroup.com/lhsws/svlany" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://lhsgroup.com/lhsws/svlany">
+            <xs:complexType name="svlany">
+                <xs:sequence>
+                    <xs:element name="content" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsi="http://ericsson.com/services/ws_CIL_5/sessionchange" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CIL_5/sessionchange">
+            <xs:complexType name="valuesListpartRequest">
+                <xs:all>
+                    <xs:element name="key" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Name of the value that shall be changed. See release dependent documentation for supported keys&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="value" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;New value for a named value.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:complexType>
+            <xs:complexType name="valuesRequest">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" name="item" type="wsi:valuesListpartRequest"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="sessionChangeRequest">
+                <xs:all>
+                    <xs:annotation>
+                        <xs:documentation>&lt;p&gt;
+						
+						&lt;/p&gt;
+						</xs:documentation>
+                    </xs:annotation>
+                    <xs:element minOccurs="0" name="values" type="wsi:valuesRequest"/>
+                </xs:all>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:money="http://lhsgroup.com/lhsws/money" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsi="http://ericsson.com/services/ws_CIL_5/bookingrequestwrite" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CIL_5/bookingrequestwrite">
+            <xs:import namespace="http://lhsgroup.com/lhsws/money"/>
+            <xs:complexType name="bookingRequestWriteRequest">
+                <xs:all>
+                    <xs:annotation>
+                        <xs:documentation>&lt;p&gt;Identifies a contract with the public or private key.&lt;/p&gt;</xs:documentation>
+                    </xs:annotation>
+                    <xs:element name="actionCode" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Action Code.
+							&lt;ul&gt;&lt;li&gt;'I' : Insert&lt;/li&gt;&lt;li&gt;'D' : Delete&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;p&gt;For Delete action, booking request that have been billed will be deleted only if the DeleteAlreadyBilledOCC is set to true (which might be required for recurring charges that need to be canceled).&lt;/p&gt;
+							</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="feeClass" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;
+							This parameter indicates the category of the booking request.
+							The following values are supported :&lt;ul&gt;&lt;li&gt;1 : credit on the invoice&lt;/li&gt;&lt;li&gt;2 : credit on the call&lt;/li&gt;&lt;li&gt;3 : credit/charge, based on an event service generated by a user (OCC)&lt;/li&gt;&lt;li&gt;4 : charge, based on an event service generated by the system&lt;/li&gt;&lt;li&gt;5 : free unit credit&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;
+							</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="rpcode" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Rate plan&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="rpcodePub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public key of the rate plan&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="spcode" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Service Package Code&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="spcodePub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public key of the service package&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="sncode" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Service Code&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="sncodePub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public key of the service&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="rpVscode" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Version Code&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="eventCode" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Event Code&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="amount" type="money:money">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Amount of Booking Request, determines credit or debit&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="amountRel" type="xs:double">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;relative amount: use either &lt;code&gt;AMOUNT&lt;/code&gt; for absolute amounts or &lt;code&gt;AMOUNT_REL&lt;/code&gt; for relative amount (factor)&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="numPeriods" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Number of Bills Booking Request will be applied to. Must be set to 1 for non recurring fees, greater than 1 or -1 for recurring fees. -1 means, that the fee is charged with every bill run.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="periodEndDate" type="xs:dateTime">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Alternative to PERIOD. Is the date, up to which the fee is applied to the bill. A valid end date overrules PERIOD&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="firstPeriodProrate" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; First application of fee to bill is pro-rated.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="validFrom" type="xs:dateTime">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Booking Request is valid from this date&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="glcode" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;General Ledger account to be used by this Booking Request. Changing the default GLCODE is only possible if the registry entry "/CMS Settings/Accounting Settings/GLAccountOverrideAllowed" is set to true.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="remark" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;This field is generated by server for fee classes pertaining to Invoice(1), Call Record(2) and Service(3/4).&lt;/p&gt;&lt;p&gt;Any input provided by client is concatenated with the generated remark.&lt;/p&gt;&lt;p&gt;Following information are available through generated remark:&lt;ul&gt;&lt;li&gt;Invoice: Invoice Number, Date and Amount&lt;/li&gt;&lt;li&gt;Call Record: Market Name, Port and Amount&lt;/li&gt;&lt;li&gt;Service: Service Name&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;p&gt;No remark is generated for Fee Class 5, i.e. Free Unit.&lt;/p&gt;&lt;p&gt;Any additional information if needed, e.g. Directory Number or Call Date etc. should be passed in by client.
+							&lt;/p&gt;
+							</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="seqno" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Sequence Number - This is needed for deleting a specified row&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="feeType" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;type of fee.&lt;ul&gt;&lt;li&gt;'R' : Recurring&lt;/li&gt;&lt;li&gt;'N' : Non-recurring&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="billFormat" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Bill format string for this fee.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="jobcost" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Jobcost to be used by this Booking Request&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="jobcostPub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public key of the job cost&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="jobcostdisc" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Jobcost Identifier for Discounts to be used by this Booking Request&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="jobcostdiscPub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public key of the job cost&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="jobcostmin" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Jobcost Identifier for Minimal Commitments to be used by this Booking Request&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="jobcostminPub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public key of the job cost&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="glcodedisc" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;General Ledger Account for Discounts to be used by this Booking Request. Changing the default discount GLCODE is only possible if the registry entry "/CMS Settings/Accounting Settings/GLAccountOverrideAllowed" is set to true.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="glcodemin" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;General Ledger Account for Minimal Commitments to be used by this Booking Request. Changing the default minimum commitments GLCODE is only possible if the registry entry "/CMS Settings/Accounting Settings/GLAccountOverrideAllowed" is set to true.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="ivId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Invoice Id&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="servcatCode" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Service Category&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="servCode" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Service Code&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="servType" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Service Type&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="fuPackId" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;FreeUnit to apply through this booking request&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="fuPackIdPub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public key of the free unit package&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="fuVer" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;FUP Element Version.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="fuPkver" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Free Units Package Version.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="fuPkelsq" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;FUP Element Sequence number.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="fuNum" type="xs:double">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Number of Free Units.&lt;/p&gt;&lt;p&gt;The &lt;code&gt;FU_NUM&lt;/code&gt;  value  will be converted to an internal unit of measurement by CMS and stored in the database.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="recordId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;CallRecord information, only valid for FEE_CLASS=2. Reference to the call event from the RTX table.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="recordSubId" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Call Data Record Sub Identifier, only valid for FEE_CLASS=2. Reference to the call event from the RTX table.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="rerateSeqno" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Call record re-rating sequence number, only valid for FEE_CLASS=2.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="recordSummaryId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Call record summary identifier, only valid for FEE_CLASS=2.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="basePartId" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;UDR Base Part Identifier, only valid for FEE_CLASS=2. Reference to the base part of a call event from the RTX table.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="chargePartId" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;UDR Charge Part Identifier, only valid for FEE_CLASS=2. Reference to the charge part of a call event from the RTX table.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="dirnum" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Directory number of the Calling (served) party, used for the remark of a fee with FEE_CLASS=2 only.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="devicenum" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Contract device (Storage medium / port) number, used for the remark of a fee with FEE_CLASS=2 only.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="callDate" type="xs:dateTime">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Start Date and Time of the call, used for the remark of a fee with FEE_CLASS=2 only.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="billingAccountCode" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public billing account key&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="billingAccountId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Private billing account key&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="csId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;internal BSCS customer id.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="csIdPub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Customers public key&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="coId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Contract Id&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="coIdPub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public key of the contract&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="payerCustomerId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Customer identifier of the fee payment responsible.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:money="http://lhsgroup.com/lhsws/money" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsi="http://ericsson.com/services/ws_CIL_5/bookingrequestssearch" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CIL_5/bookingrequestssearch">
+            <xs:import namespace="http://lhsgroup.com/lhsws/money"/>
+            <xs:complexType name="bookingrequestsListpartResponse">
+                <xs:all>
+                    <xs:element minOccurs="0" name="customerCode" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public customer key&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="seqno" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Unique generated sequence number.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="type" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Type of fee: Recurring or Non-recurring. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="servCatCode" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Service category code. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="servCode" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Service code. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="servType" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Service type. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="amount" type="money:money">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Fee amount. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="amountRel" type="xs:double">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Relative amount (either AMOUNT or AMOUNT_REL is set).&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="numPeriods" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Number of bills to be applied to i.e billing run. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="initialNumberOfPeriods" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Initial number of bills to be applied. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="numberOfChargedPeriods" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Number of already charged bills. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="periodEndDate" type="xs:dateTime">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Alternative to PERIOD. Is the date, up to which the fee is applied to the bill. A valid end date overrules PERIOD. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="firstPeriodProrate" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; First application of fee to bill is pro-rated. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="validFrom" type="xs:dateTime">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;  Date when fee should be billed. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="glcode" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; General ledger account code. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="remark" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Remark related to fee. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="jobcost" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Job cost number.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="ivId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="fuPackId" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Free unit package identifier. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="fuVer" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Free unit package element version. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="fuPkver" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Free unit package version. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="fuPkelsq" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Free unit package element sequence number. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="fuNum" type="xs:double">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Number of free units. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="recordId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Call data record identifier.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="recordSubId" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Call data record sub-identifier.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="rerateSeqno" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Call record re-rating sequence number.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="recordSummaryId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Call record summary identifier.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="basePartId" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; UDR base part identifier. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="chargePartId" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; UDR charge part identifier. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="rpcode" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Tariff Model Code&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="spcode" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Service Package Code&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="sncode" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Service Code&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="rpVscode" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Version Code&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="eventCode" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Event Code&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="feeClass" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;FEE_CLASS; Indicating the detailed booking request class&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="billingAccountId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Billing account identifier &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="csId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;customer id&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="csIdPub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Customers public key&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="coId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Contract Id. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="coIdPub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public key of the contract&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:complexType>
+            <xs:complexType name="bookingrequestsResponse">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="wsi:bookingrequestsListpartResponse"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="bookingRequestsSearchResponse">
+                <xs:all>
+                    <xs:annotation>
+                        <xs:documentation>&lt;p&gt; Out put argument list from the search result of booking request. &lt;/p&gt;</xs:documentation>
+                    </xs:annotation>
+                    <xs:element minOccurs="0" name="bookingrequests" type="wsi:bookingrequestsResponse"/>
+                    <xs:element minOccurs="0" name="searchIsComplete" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;flag indicating if search was completed.&lt;/p&gt;&lt;p&gt;This flag will be set to false if more rows than specified in Srch_Count are available in the database&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:complexType>
+            <xs:complexType name="bookingRequestsSearchRequest">
+                <xs:all>
+                    <xs:annotation>
+                        <xs:documentation>&lt;p&gt;Identifies a contract with the public or private key.&lt;/p&gt;</xs:documentation>
+                    </xs:annotation>
+                    <xs:element minOccurs="0" name="customerCode" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public customer key&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="contractCode" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public contract key&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="csId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Customer Id &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="csIdPub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Customers public key&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="coId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Contract Id &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="coIdPub" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Public key of the contract&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="srchCount" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Size of result set.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="recordId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Call data record identifier.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="recordSubId" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Call data record sub-identifier.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="basePartId" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; UDR base part identifier. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="chargePartId" type="xs:integer">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; UDR charge part identifier. &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="ivId" type="xs:long">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Invoice Id&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="ordrValidFrom" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Order the result by the &lt;code&gt;VALID_FROM&lt;/code&gt; value. Possible values are:
+							&lt;ul&gt;&lt;li&gt;"a" - ascending search, oldest first.&lt;/li&gt;&lt;li&gt;"d" - descnding search, youngest entries first.&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;&lt;p&gt;If not set, the result is delivered as provided from the database.&lt;/p&gt;
+							</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="startValidFrom" type="xs:date">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Start value from date &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="endValidFrom" type="xs:date">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; End value from date &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="includeSubNodes" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;If true, the result must include also information regarding all customer children.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="feeClass" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Fee class criteria. (Use the '!' sign for logical 'NOT') e.g. 1,2,3,!1,!2,...&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="numPeriods" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Number of billing runs. (Use the '!' sign for logical 'NOT') e.g. -1,0,1,2,3,!-1,!0,...&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="numberOfChargedPeriods" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt;Number of applied billing runs. (Use the '!' sign for logical 'NOT') e.g. -1,0,1,2,3,!-1,!0,...&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="firstPeriodProrate" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; First application of fee to bill is pro-rated.&lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="startPeriodEndDate" type="xs:date">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; Start value for period end date &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element minOccurs="0" name="endPeriodEndDate" type="xs:date">
+                        <xs:annotation>
+                            <xs:documentation>&lt;p&gt; End value for period end date &lt;/p&gt;</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:bookingrequestssearch="http://ericsson.com/services/ws_CIL_5/bookingrequestssearch" xmlns:wsi="http://ericsson.com/services/ws_CIL_5/bookingrequestswrite" xmlns:bookingrequestwrite="http://ericsson.com/services/ws_CIL_5/bookingrequestwrite" xmlns:sessionchange="http://ericsson.com/services/ws_CIL_5/sessionchange" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CIL_5/bookingrequestswrite">
+            <xs:import namespace="http://ericsson.com/services/ws_CIL_5/sessionchange"/>
+            <xs:import namespace="http://ericsson.com/services/ws_CIL_5/bookingrequestwrite"/>
+            <xs:import namespace="http://ericsson.com/services/ws_CIL_5/bookingrequestssearch"/>
+            <xs:element name="bookingRequestsWriteRequest" type="wsi:bookingRequestsWriteRequest"/>
+            <xs:element name="bookingRequestsWriteResponse" type="wsi:bookingRequestsWriteResponse"/>
+            <xs:complexType name="bookingRequestsWriteResponse">
+                <xs:all>
+                    <xs:annotation>
+                        <xs:documentation/>
+                    </xs:annotation>
+                    <xs:element minOccurs="0" name="bookingRequestsSearch" type="bookingrequestssearch:bookingRequestsSearchResponse">
+                        <xs:annotation>
+                            <xs:documentation/>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:complexType>
+            <xs:complexType name="bookingRequestsListpartRequest">
+                <xs:all>
+                    <xs:element minOccurs="0" name="bookingRequestWrite" type="bookingrequestwrite:bookingRequestWriteRequest">
+                        <xs:annotation>
+                            <xs:documentation/>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:complexType>
+            <xs:complexType name="bookingRequestsRequest">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="item" type="wsi:bookingRequestsListpartRequest"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="inputAttributes">
+                <xs:all>
+                    <xs:element minOccurs="0" name="bookingRequests" type="wsi:bookingRequestsRequest"/>
+                    <xs:element minOccurs="0" name="bookingRequestsSearch" type="bookingrequestssearch:bookingRequestsSearchRequest">
+                        <xs:annotation>
+                            <xs:documentation/>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:complexType>
+            <xs:complexType name="bookingRequestsWriteRequest">
+                <xs:all>
+                    <xs:element minOccurs="0" name="inputAttributes" type="wsi:inputAttributes"/>
+                    <xs:element minOccurs="0" name="sessionChangeRequest" type="sessionchange:sessionChangeRequest"/>
+                </xs:all>
+            </xs:complexType>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="bookingRequestsWriteRequest">
+        <wsdl:part element="sch5:bookingRequestsWriteRequest" name="bookingRequestsWriteRequest">    </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="bookingRequestsWriteResponse">
+        <wsdl:part element="sch5:bookingRequestsWriteResponse" name="bookingRequestsWriteResponse">    </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="BookingRequestsWriteService">
+        <wsdl:operation name="bookingRequestsWrite">
+            <wsdl:input message="tns:bookingRequestsWriteRequest" name="bookingRequestsWriteRequest">    </wsdl:input>
+            <wsdl:output message="tns:bookingRequestsWriteResponse" name="bookingRequestsWriteResponse">    </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="BookingRequestsWriteServiceSoap11" type="tns:BookingRequestsWriteService">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="bookingRequestsWrite">
+            <soap:operation soapAction=""/>
+            <wsdl:input name="bookingRequestsWriteRequest">
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output name="bookingRequestsWriteResponse">
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="BookingRequestsWriteService">
+        <wsdl:port binding="tns:BookingRequestsWriteServiceSoap11" name="BookingRequestsWriteServiceSoap11">
+            <soap:address location="http://10.103.23.91:20103/wsi/services/ws_CIL_5_BookingRequestsWriteService.wsdl"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns3="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns32="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns12="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:pfx="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd">
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/SharedResources/SchemaDefinitions/Public/Exception/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/SchemaDefinitions/Public/Exception/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" schemaLocation="/BusinessSchemas/Services/Common/CLE/LogRequest.xsd"/>
+    <pd:name>CommonProcesses/LoggingProcess/Logging_Message_Masking.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:LogRequest"/>
+    <pd:startX>36</pd:startX>
+    <pd:startY>95</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>701</pd:endX>
+    <pd:endY>95</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables>
+        <logLevel>
+            <xsd:element name="root">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="level" type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </logLevel>
+    </pd:processVariables>
+    <pd:targetNamespace>http://xmlns.example.com/1325832465721</pd:targetNamespace>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>715</pd:x>
+        <pd:y>261</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="GetCLEHeaderVariable">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>295</pd:x>
+        <pd:y>96</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/JobSharedCLEHeaderVariable.jobsharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="JMS-Queue-Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>534</pd:x>
+        <pd:y>97</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%CommonProcesses/Logging/Logging_Message/LoggingQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>%%CommonProcesses/Logging/Logging_Message/DeliveryMode%%</JMSDeliveryMode>
+                <JMSExpiration>%%CommonProcesses/Logging/Logging_Message/JMSExpiration%%</JMSExpiration>
+                <JMSPriority>%%CommonProcesses/Logging/Logging_Message/JMSPriority%%</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/CLEEMSConnection.sharedjmscon</ConnectionReference>
+            <InDataxsdString ref="pfx:LogRequest"/>
+        </config>
+        <pd:inputBindings>
+            <ns1:ActivityInput>
+                <Body>
+                    <xsl:for-each xmlns:xsl="http://www.w3.org/1999/XSL/Transform" select="$Start/pfx:LogRequest">
+                        <pfx:LogRequest>
+                            <xsl:for-each select="ns32:Header">
+                                <xsl:choose>
+                                    <xsl:when test="exists($GetCLEHeaderVariable/ns32:Header)">
+                                        <ns32:Header>
+                                            <ns32:ApplicationID>
+                                                <xsl:value-of select="if (string-length(ns32:ApplicationID) !=0 )then $Start/pfx:LogRequest/ns32:Header/ns32:ApplicationID&#xA;else&#xA;&quot;TIBCO&quot;"/>
+                                            </ns32:ApplicationID>
+                                            <ns32:ComponentName>
+                                                <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:ComponentName"/>
+                                            </ns32:ComponentName>
+                                            <ns32:Hostname>
+                                                <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:Hostname"/>
+                                            </ns32:Hostname>
+                                            <ns32:Timestamp>
+                                                <xsl:value-of select="ns32:Timestamp"/>
+                                            </ns32:Timestamp>
+                                            <ns32:TransactionDomain>
+                                                <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:TransactionDomain"/>
+                                            </ns32:TransactionDomain>
+                                            <ns32:TransactionType>
+                                                <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:TransactionType"/>
+                                            </ns32:TransactionType>
+                                            <ns32:TransactionID>
+                                                <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:TransactionID"/>
+                                            </ns32:TransactionID>
+                                            <xsl:if test="$GetCLEHeaderVariable/ns32:Header/ns32:CorrelationID">
+                                                <ns32:CorrelationID>
+                                                    <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:CorrelationID"/>
+                                                </ns32:CorrelationID>
+                                            </xsl:if>
+                                            <xsl:if test="$GetCLEHeaderVariable/ns32:Header/ns32:InterfaceID">
+                                                <ns32:InterfaceID>
+                                                    <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:InterfaceID"/>
+                                                </ns32:InterfaceID>
+                                            </xsl:if>
+                                            <xsl:if test="$GetCLEHeaderVariable/ns32:Header/ns32:Filename">
+                                                <ns32:Filename>
+                                                    <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:Filename"/>
+                                                </ns32:Filename>
+                                            </xsl:if>
+                                            <xsl:choose>
+                                                <xsl:when test="string-length($Mask/javaCodeActivityOutput/MaskedMessageXML)>0">
+                                                    <xsl:if test="$Mask/javaCodeActivityOutput/MaskedMessageXML">
+                                                        <ns32:Message>
+                                                            <xsl:value-of select="$Mask/javaCodeActivityOutput/MaskedMessageXML"/>
+                                                        </ns32:Message>
+                                                    </xsl:if>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:if test="$GetCLEHeaderVariable/ns32:Header/ns32:Message">
+                                                        <ns32:Message>
+                                                            <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:Message"/>
+                                                        </ns32:Message>
+                                                    </xsl:if>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                            <xsl:if test="$GetCLEHeaderVariable/ns32:Header/ns32:RenderID">
+                                                <ns32:RenderID>
+                                                    <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:RenderID"/>
+                                                </ns32:RenderID>
+                                            </xsl:if>
+                                            <xsl:if test="$GetCLEHeaderVariable/ns32:Header/ns32:DataEncoding">
+                                                <ns32:DataEncoding>
+                                                    <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:DataEncoding"/>
+                                                </ns32:DataEncoding>
+                                            </xsl:if>
+                                            <xsl:choose>
+                                                <xsl:when test="string-length($Mask/javaCodeActivityOutput/TransactionMaskedXML)>0">
+                                                    <xsl:if test="$Mask/javaCodeActivityOutput/TransactionMaskedXML">
+                                                        <ns32:Transaction>
+                                                            <xsl:value-of select="$Mask/javaCodeActivityOutput/TransactionMaskedXML"/>
+                                                        </ns32:Transaction>
+                                                    </xsl:if>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:if test="$GetCLEHeaderVariable/ns32:Header/ns32:Transaction">
+                                                        <ns32:Transaction>
+                                                            <xsl:value-of select="$GetCLEHeaderVariable/ns32:Header/ns32:Transaction"/>
+                                                        </ns32:Transaction>
+                                                    </xsl:if>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </ns32:Header>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <ns32:Header>
+                                            <ns32:ApplicationID>
+                                                <xsl:value-of select="if (string-length(ns32:ApplicationID) !=0 )then $Start/pfx:LogRequest/ns32:Header/ns32:ApplicationID&#xA;else&#xA;&quot;TIBCO&quot;"/>
+                                            </ns32:ApplicationID>
+                                            <ns32:ComponentName>
+                                                <xsl:value-of select="ns32:ComponentName"/>
+                                            </ns32:ComponentName>
+                                            <ns32:Hostname>
+                                                <xsl:value-of select="ns32:Hostname"/>
+                                            </ns32:Hostname>
+                                            <ns32:Timestamp>
+                                                <xsl:value-of select="ns32:Timestamp"/>
+                                            </ns32:Timestamp>
+                                            <ns32:TransactionDomain>
+                                                <xsl:value-of select="ns32:TransactionDomain"/>
+                                            </ns32:TransactionDomain>
+                                            <ns32:TransactionType>
+                                                <xsl:value-of select="ns32:TransactionType"/>
+                                            </ns32:TransactionType>
+                                            <ns32:TransactionID>
+                                                <xsl:value-of select="ns32:TransactionID"/>
+                                            </ns32:TransactionID>
+                                            <xsl:if test="ns32:CorrelationID">
+                                                <ns32:CorrelationID>
+                                                    <xsl:value-of select="ns32:CorrelationID"/>
+                                                </ns32:CorrelationID>
+                                            </xsl:if>
+                                            <xsl:if test="ns32:InterfaceID">
+                                                <ns32:InterfaceID>
+                                                    <xsl:value-of select="ns32:InterfaceID"/>
+                                                </ns32:InterfaceID>
+                                            </xsl:if>
+                                            <xsl:if test="ns32:Filename">
+                                                <ns32:Filename>
+                                                    <xsl:value-of select="ns32:Filename"/>
+                                                </ns32:Filename>
+                                            </xsl:if>
+                                            <xsl:choose>
+                                                <xsl:when test="string-length($Mask/javaCodeActivityOutput/MaskedMessageXML)>0">
+                                                    <ns32:Message>
+                                                        <xsl:value-of select="$Mask/javaCodeActivityOutput/MaskedMessageXML"/>
+                                                    </ns32:Message>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:if test="ns32:Message">
+                                                        <ns32:Message>
+                                                            <xsl:value-of select="ns32:Message"/>
+                                                        </ns32:Message>
+                                                    </xsl:if>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                            <xsl:if test="ns32:RenderID">
+                                                <ns32:RenderID>
+                                                    <xsl:value-of select="ns32:RenderID"/>
+                                                </ns32:RenderID>
+                                            </xsl:if>
+                                            <xsl:if test="ns32:DataEncoding">
+                                                <ns32:DataEncoding>
+                                                    <xsl:value-of select="ns32:DataEncoding"/>
+                                                </ns32:DataEncoding>
+                                            </xsl:if>
+                                            <xsl:choose>
+                                                <xsl:when test="string-length($Mask/javaCodeActivityOutput/TransactionMaskedXML)>0">
+                                                    <xsl:if test="$Mask/javaCodeActivityOutput/TransactionMaskedXML">
+                                                        <ns32:Transaction>
+                                                            <xsl:value-of select="$Mask/javaCodeActivityOutput/TransactionMaskedXML"/>
+                                                        </ns32:Transaction>
+                                                    </xsl:if>
+                                                </xsl:when>
+                                                <xsl:otherwise>
+                                                    <xsl:if test="ns32:Transaction">
+                                                        <ns32:Transaction>
+                                                            <xsl:value-of select="ns32:Transaction"/>
+                                                        </ns32:Transaction>
+                                                    </xsl:if>
+                                                </xsl:otherwise>
+                                            </xsl:choose>
+                                        </ns32:Header>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:for-each>
+                            <xsl:choose>
+                                <xsl:when test="exists(TimeDuration) and string-length(tib:trim(TimeDuration))>0">
+                                    <TimeDuration>
+                                        <xsl:value-of select="tib:timestamp()-TimeDuration"/>
+                                    </TimeDuration>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <TimeDuration>
+                                        <xsl:value-of select="0"/>
+                                    </TimeDuration>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <Category>
+                                <xsl:value-of select="Category"/>
+                            </Category>
+                            <Status>
+                                <xsl:value-of select="Status"/>
+                            </Status>
+                            <xsl:if test="FileSize">
+                                <FileSize>
+                                    <xsl:value-of select="FileSize"/>
+                                </FileSize>
+                            </xsl:if>
+                            <Audit>
+                                <xsl:value-of select="if(current()/FileSize!='') then current()/FileSize&#xA;else 1"/>
+                            </Audit>
+                        </pfx:LogRequest>
+                    </xsl:for-each>
+                </Body>
+            </ns1:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>820</pd:x>
+        <pd:y>186</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns12:ActivityInput>
+                <message>
+                    <xsl:value-of select="concat(&quot;StackTrace: &quot;,$_error/ns2:ErrorReport/StackTrace,&quot;&#xD;&#xA;&quot;,&quot;Unlogged Data&quot;,tib:render-xml($Start/pfx:LogRequest))"/>
+                </message>
+                <xsl:if test="$_error/ns2:ErrorReport/MsgCode">
+                    <msgCode>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                    </msgCode>
+                </xsl:if>
+            </ns12:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="NoLogs">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>371</pd:x>
+        <pd:y>375</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>336</pd:x>
+        <pd:y>223</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="AssignLogLevel">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>139</pd:x>
+        <pd:y>96</pd:y>
+        <config>
+            <variableName>logLevel</variableName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <level>
+                    <xsl:value-of select="if(contains(upper-case($_globalVariables/ns:GlobalVariables/CommonProcesses/Logging/Logging_Message/AllowedLogRoles),'DEBUG'))&#xA;then 'DEBUG,INFO,WARN,ERROR'&#xA;else if(contains(upper-case($_globalVariables/ns:GlobalVariables/CommonProcesses/Logging/Logging_Message/AllowedLogRoles),'INFO'))&#xA;then 'INFO,WARN,ERROR'&#xA;else if(contains(upper-case($_globalVariables/ns:GlobalVariables/CommonProcesses/Logging/Logging_Message/AllowedLogRoles),'WARN'))&#xA;then 'WARN,ERROR'&#xA;else 'ERROR'"/>
+                </level>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Mask">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>416</pd:x>
+        <pd:y>96</pd:y>
+        <config>
+            <fileName>Logging_Message_MaskingMask</fileName>
+            <packageName>CommonProcesses.LoggingProcess.Logging_Message_Masking</packageName>
+            <fullsource>package CommonProcesses.LoggingProcess.Logging_Message_Masking;
+import java.util.*;
+import java.io.*;
+public class Logging_Message_MaskingMask{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String[] SecretValue = null;
+	protected String[] MaskedValue = null;
+	protected String Message = "";
+	protected String Transaction = "";
+	protected String MaskedMessageXML = "";
+	protected String TransactionMaskedXML = "";
+	public String[] getSecretValue() {
+		return SecretValue;
+	}
+	public void setSecretValue(String[] val) {
+		SecretValue = val;
+	}
+	public String[] getMaskedValue() {
+		return MaskedValue;
+	}
+	public void setMaskedValue(String[] val) {
+		MaskedValue = val;
+	}
+	public String getMessage() {
+		return Message;
+	}
+	public void setMessage(String val) {
+		Message = val;
+	}
+	public String getTransaction() {
+		return Transaction;
+	}
+	public void setTransaction(String val) {
+		Transaction = val;
+	}
+	public String getMaskedMessageXML() {
+		return MaskedMessageXML;
+	}
+	public void setMaskedMessageXML(String val) {
+		MaskedMessageXML = val;
+	}
+	public String getTransactionMaskedXML() {
+		return TransactionMaskedXML;
+	}
+	public void setTransactionMaskedXML(String val) {
+		TransactionMaskedXML = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public Logging_Message_MaskingMask() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String[] SecretValue
+	In  : String[] MaskedValue
+	In  : String Message
+	In  : String Transaction
+	Out : String MaskedMessageXML
+	Out : String TransactionMaskedXML
+* Available Variables: DO NOT MODIFY *****/
+ int size = SecretValue.length;
+ for (int i = 0; i &lt; size; i++)
+{
+
+String SecretVal=SecretValue[i];
+String MaskVal=MaskedValue[i];
+if (SecretVal !="") 
+{
+Message=Message.replace (SecretVal,MaskVal);
+Transaction=Transaction.replace (SecretVal,MaskVal);
+}
+}
+MaskedMessageXML=Message;
+TransactionMaskedXML=Transaction;
+
+
+}
+}
+</fullsource>
+            <outputData>
+                <row>
+                    <fieldName>MaskedMessageXML</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>TransactionMaskedXML</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <inputData>
+                <row>
+                    <fieldName>SecretValue</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>repeating</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>MaskedValue</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>repeating</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>Message</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>Transaction</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>Logging_Message_MaskingMask</name>
+                    <byteCode>yv66vgAAADMAPgkACgAuCQAKAC8JAAoAMAkACgAxCQAKADIJAAoAMwoACwA0CAA1CgA2ADcHADgHADkBAAtTZWNyZXRWYWx1ZQEAE1tMamF2YS9sYW5nL1N0cmluZzsBAAtNYXNrZWRWYWx1ZQEAB01lc3NhZ2UBABJMamF2YS9sYW5nL1N0cmluZzsBAAtUcmFuc2FjdGlvbgEAEE1hc2tlZE1lc3NhZ2VYTUwBABRUcmFuc2FjdGlvbk1hc2tlZFhNTAEADmdldFNlY3JldFZhbHVlAQAVKClbTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEADnNldFNlY3JldFZhbHVlAQAWKFtMamF2YS9sYW5nL1N0cmluZzspVgEADmdldE1hc2tlZFZhbHVlAQAOc2V0TWFza2VkVmFsdWUBAApnZXRNZXNzYWdlAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAApzZXRNZXNzYWdlAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAOZ2V0VHJhbnNhY3Rpb24BAA5zZXRUcmFuc2FjdGlvbgEAE2dldE1hc2tlZE1lc3NhZ2VYTUwBABNzZXRNYXNrZWRNZXNzYWdlWE1MAQAXZ2V0VHJhbnNhY3Rpb25NYXNrZWRYTUwBABdzZXRUcmFuc2FjdGlvbk1hc2tlZFhNTAEABjxpbml0PgEAAygpVgEABmludm9rZQEADVN0YWNrTWFwVGFibGUBAApFeGNlcHRpb25zBwA6AQAKU291cmNlRmlsZQEAIExvZ2dpbmdfTWVzc2FnZV9NYXNraW5nTWFzay5qYXZhDAAMAA0MAA4ADQwADwAQDAARABAMABIAEAwAEwAQDAAmACcBAAAHADsMADwAPQEAUkNvbW1vblByb2Nlc3Nlcy9Mb2dnaW5nUHJvY2Vzcy9Mb2dnaW5nX01lc3NhZ2VfTWFza2luZy9Mb2dnaW5nX01lc3NhZ2VfTWFza2luZ01hc2sBABBqYXZhL2xhbmcvT2JqZWN0AQATamF2YS9sYW5nL0V4Y2VwdGlvbgEAEGphdmEvbGFuZy9TdHJpbmcBAAdyZXBsYWNlAQBEKExqYXZhL2xhbmcvQ2hhclNlcXVlbmNlO0xqYXZhL2xhbmcvQ2hhclNlcXVlbmNlOylMamF2YS9sYW5nL1N0cmluZzsAIQAKAAsAAAAGAAQADAANAAAABAAOAA0AAAAEAA8AEAAAAAQAEQAQAAAABAASABAAAAAEABMAEAAAAA4AAQAUABUAAQAWAAAAHQABAAEAAAAFKrQAAbAAAAABABcAAAAGAAEAAAANAAEAGAAZAAEAFgAAACIAAgACAAAABiortQABsQAAAAEAFwAAAAoAAgAAABAABQARAAEAGgAVAAEAFgAAAB0AAQABAAAABSq0AAKwAAAAAQAXAAAABgABAAAAEwABABsAGQABABYAAAAiAAIAAgAAAAYqK7UAArEAAAABABcAAAAKAAIAAAAWAAUAFwABABwAHQABABYAAAAdAAEAAQAAAAUqtAADsAAAAAEAFwAAAAYAAQAAABkAAQAeAB8AAQAWAAAAIgACAAIAAAAGKiu1AAOxAAAAAQAXAAAACgACAAAAHAAFAB0AAQAgAB0AAQAWAAAAHQABAAEAAAAFKrQABLAAAAABABcAAAAGAAEAAAAfAAEAIQAfAAEAFgAAACIAAgACAAAABiortQAEsQAAAAEAFwAAAAoAAgAAACIABQAjAAEAIgAdAAEAFgAAAB0AAQABAAAABSq0AAWwAAAAAQAXAAAABgABAAAAJQABACMAHwABABYAAAAiAAIAAgAAAAYqK7UABbEAAAABABcAAAAKAAIAAAAoAAUAKQABACQAHQABABYAAAAdAAEAAQAAAAUqtAAGsAAAAAEAFwAAAAYAAQAAACsAAQAlAB8AAQAWAAAAIgACAAIAAAAGKiu1AAaxAAAAAQAXAAAACgACAAAALgAFAC8AAQAmACcAAQAWAAAAWwACAAEAAAAnKrcAByoBtQABKgG1AAIqEgi1AAMqEgi1AAQqEgi1AAUqEgi1AAaxAAAAAQAXAAAAIgAIAAAAMQAEAAYACQAHAA4ACAAUAAkAGgAKACAACwAmADIAAQAoACcAAgAWAAAApgAEAAUAAABVKrQAAb48Az0cG6IAOiq0AAEcMk4qtAACHDI6BC0SCKUAHyoqtAADLRkEtgAJtQADKiq0AAQtGQS2AAm1AASEAgGn/8cqKrQAA7UABSoqtAAEtQAGsQAAAAIAFwAAAC4ACwAAADwABgA9AA0AQAAUAEEAHABCACIARAAwAEUAPgA9AEQASABMAEkAVABMACkAAAALAAP9AAgBATX6AAUAKgAAAAQAAQArAAEALAAAAAIALQ==</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xsl:for-each select="$Start/pfx:LogRequest/ns32:Header/ns32:AltKey">
+                    <SecretValue>
+                        <xsl:value-of select="$Start/pfx:LogRequest/ns32:Header/ns32:AltKey[ns32:AltKeyName=&quot;SecretValue&quot;]/ns32:AltKeyValue"/>
+                    </SecretValue>
+                </xsl:for-each>
+                <xsl:for-each select="$Start/pfx:LogRequest/ns32:Header/ns32:AltKey">
+                    <MaskedValue>
+                        <xsl:value-of select="$Start/pfx:LogRequest/ns32:Header/ns32:AltKey[ns32:AltKeyName=&quot;MaskedValue&quot;]/ns32:AltKeyValue"/>
+                    </MaskedValue>
+                </xsl:for-each>
+                <xsl:if test="$Start/pfx:LogRequest/ns32:Header/ns32:Message">
+                    <Message>
+                        <xsl:value-of select="$Start/pfx:LogRequest/ns32:Header/ns32:Message"/>
+                    </Message>
+                </xsl:if>
+                <xsl:if test="$Start/pfx:LogRequest/ns32:Header/ns32:Transaction">
+                    <Transaction>
+                        <xsl:value-of select="$Start/pfx:LogRequest/ns32:Header/ns32:Transaction"/>
+                    </Transaction>
+                </xsl:if>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null-1">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>443</pd:x>
+        <pd:y>228</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetCLEHeaderVariable</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:xpathDescription>Ignore Error</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52378</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS-Queue-Sender</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>Mask</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetCLEHeaderVariable</pd:from>
+        <pd:to>Mask</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>NoLogs</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>AssignLogLevel</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>AssignLogLevel</pd:from>
+        <pd:to>GetCLEHeaderVariable</pd:to>
+        <pd:xpathDescription>CheckLogging</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains(upper-case($logLevel/root/level),upper-case($Start/pfx:LogRequest/Category))
+or
+contains(upper-case($_globalVariables/ns:GlobalVariables/CommonProcesses/Logging/Logging_Message/AllowedLogRoles),upper-case($Start/pfx:LogRequest/Category))
+or tib:trim($Start/pfx:LogRequest/Category)=$_globalVariables/ns:GlobalVariables/CommonProcesses/Logging/Logging_Message/DefaultLogRole</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>AssignLogLevel</pd:from>
+        <pd:to>NoLogs</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Mask</pd:from>
+        <pd:to>JMS-Queue-Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Mask</pd:from>
+        <pd:to>Null-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null-1</pd:from>
+        <pd:to>JMS-Queue-Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

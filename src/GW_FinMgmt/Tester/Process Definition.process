@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/schemas/GW_FinMgmt/Tester/Schema.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.zain.com/ZESB/Services/ManageSharedData/Types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pfx2="http://xmlns.example.com/1550745596873" xmlns:pfx="http://xmlns.example.com/1470507344158">
+    <wsdl:import namespace="http://xmlns.example.com/1470507344158" location="/Tester/ManageShareDataUsageWsdl.wsdl"/>
+    <wsdl:import namespace="http://xmlns.example.com/1550745596873" location="/Tester/BalanceChkConcrt.wsdl"/>
+    <pd:name>Tester/Process Definition.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>165</pd:startX>
+    <pd:startY>83</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>450</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1470553386102</pd:targetNamespace>
+    <pd:activity name="SOAPRequestReply">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>319</pd:x>
+        <pd:y>70</pd:y>
+        <config>
+            <timeout>0</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx2:BalanceCheckPrepaid</service>
+            <servicePort>BalanceCheckEndpoint</servicePort>
+            <operation>BalanceCheck</operation>
+            <soapAction>/BusinessProcesses/Services/CRM/Query/BalanceCheck/Implementation/BalanceCheckPrepaid.serviceagent/BalanceCheckEndpoint/BalanceCheck</soapAction>
+            <endpointURL>http://localhost:7073/BusinessProcesses/Services/CRM/Query/BalanceCheck/Implementation/BalanceCheckPrepaid.serviceagent/BalanceCheckEndpoint</endpointURL>
+            <authScheme>NONE</authScheme>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <ns2:BalanceCheckRequest>
+                    <ns2:ListOfCustomers>
+                        <ns2:Customer>
+                            <ns2:CustomerId>
+                                <xsl:value-of select="'6200069744'"/>
+                            </ns2:CustomerId>
+                        </ns2:Customer>
+                    </ns2:ListOfCustomers>
+                </ns2:BalanceCheckRequest>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SOAPRequestReply</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/CustomerComplaint" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:typ="http://www.zain.com/ZESB/Services/CustomerComplaint/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://www.zain.com/ZESB/Services/CustomerComplaint">
+    <wsdl:types>
+        <xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ParamList">
+                <xs:choice maxOccurs="unbounded" minOccurs="0">
+                    <xs:element maxOccurs="unbounded" name="StringParam" type="com:StringParam"/>
+                    <xs:element maxOccurs="unbounded" name="BooleanParam" type="com:BooleanParam"/>
+                    <xs:element maxOccurs="unbounded" name="IntParam" type="com:IntParam"/>
+                    <xs:element maxOccurs="unbounded" name="LongParam" type="com:LongParam"/>
+                    <xs:element maxOccurs="unbounded" name="FloatParam" type="com:FloatParam"/>
+                    <xs:element maxOccurs="unbounded" name="DecimalParam" type="com:DecimalParam"/>
+                    <xs:element maxOccurs="unbounded" name="DoubleParam" type="com:DoubleParam"/>
+                    <xs:element maxOccurs="unbounded" name="DateParam" type="com:DateParam"/>
+                    <xs:element maxOccurs="unbounded" name="DateTimeParam" type="com:DateTimeParam"/>
+                </xs:choice>
+            </xs:complexType>
+            <xs:complexType name="StringParam">
+                <xs:simpleContent>
+                    <xs:extension base="xs:string">
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                    </xs:extension>
+                </xs:simpleContent>
+            </xs:complexType>
+            <xs:complexType name="DecimalParam">
+                <xs:simpleContent>
+                    <xs:extension base="xs:decimal">
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                    </xs:extension>
+                </xs:simpleContent>
+            </xs:complexType>
+            <xs:complexType name="BooleanParam">
+                <xs:simpleContent>
+                    <xs:extension base="xs:boolean">
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                    </xs:extension>
+                </xs:simpleContent>
+            </xs:complexType>
+            <xs:complexType name="IntParam">
+                <xs:simpleContent>
+                    <xs:extension base="xs:int">
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                    </xs:extension>
+                </xs:simpleContent>
+            </xs:complexType>
+            <xs:complexType name="LongParam">
+                <xs:simpleContent>
+                    <xs:extension base="xs:long">
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                    </xs:extension>
+                </xs:simpleContent>
+            </xs:complexType>
+            <xs:complexType name="FloatParam">
+                <xs:simpleContent>
+                    <xs:extension base="xs:float">
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                    </xs:extension>
+                </xs:simpleContent>
+            </xs:complexType>
+            <xs:complexType name="DoubleParam">
+                <xs:simpleContent>
+                    <xs:extension base="xs:double">
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                    </xs:extension>
+                </xs:simpleContent>
+            </xs:complexType>
+            <xs:complexType name="DateParam">
+                <xs:simpleContent>
+                    <xs:extension base="xs:date">
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                    </xs:extension>
+                </xs:simpleContent>
+            </xs:complexType>
+            <xs:complexType name="DateTimeParam">
+                <xs:simpleContent>
+                    <xs:extension base="xs:dateTime">
+                        <xs:attribute name="name" type="xs:string" use="required"/>
+                    </xs:extension>
+                </xs:simpleContent>
+            </xs:complexType>
+        </xs:schema>
+        <xs:schema xmlns:typ="http://www.zain.com/ZESB/Services/CustomerComplaint/Types" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/CustomerComplaint/Types">
+            <xs:simpleType name="StatusType">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="New"/>
+                    <xs:enumeration value="Assigned"/>
+                    <xs:enumeration value="InProgress"/>
+                    <xs:enumeration value="Pending"/>
+                    <xs:enumeration value="Resolved"/>
+                    <xs:enumeration value="Closed"/>
+                    <xs:enumeration value="Cancelled"/>
+                    <xs:enumeration value="ReOpened"/>
+                    <xs:enumeration value="FollowUp"/>
+                    <xs:enumeration value="Escalated"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="UpdateStatusType">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="ReOpened"/>
+                    <xs:enumeration value="FollowUp"/>
+                    <xs:enumeration value="Escalated"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="ReportedSourceType">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Contact Center"/>
+                    <xs:enumeration value="IVR"/>
+                    <xs:enumeration value="Branches"/>
+                    <xs:enumeration value="Phone"/>
+                    <xs:enumeration value="Website"/>
+                    <xs:enumeration value="MobileApp"/>
+                    <xs:enumeration value="Email"/>
+                    <xs:enumeration value="SMS"/>
+                    <xs:enumeration value="Web"/>
+                    <xs:enumeration value="Chat"/>
+                    <xs:enumeration value="Bot"/>
+                    <xs:enumeration value="Kiosk"/>
+                    <xs:enumeration value="Bulk"/>
+                    <xs:enumeration value="Other"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="ClosureSourceType">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Phone"/>
+                    <xs:enumeration value="Website"/>
+                    <xs:enumeration value="MobileApp"/>
+                    <xs:enumeration value="Email"/>
+                    <xs:enumeration value="SMS"/>
+                    <xs:enumeration value="Web"/>
+                    <xs:enumeration value="Agent"/>
+                    <xs:enumeration value="Chat"/>
+                    <xs:enumeration value="Bot"/>
+                    <xs:enumeration value="Kiosk"/>
+                    <xs:enumeration value="Auto"/>
+                    <xs:enumeration value="Other"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="Msisdn">
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="7"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:complexType name="AssignedToType">
+                <xs:sequence>
+                    <xs:element name="Group" type="xs:string"/>
+                    <xs:element name="Assignee" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="CategorizationType">
+                <xs:sequence>
+                    <xs:element name="IssueType" type="xs:string"/>
+                    <xs:element name="MainCategory" type="xs:string"/>
+                    <xs:element name="SubCategory" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="TicketElement">
+                <xs:sequence>
+                    <xs:element name="TicketNo" nillable="false" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Type" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Categorization" type="typ:CategorizationType"/>
+                    <xs:element minOccurs="0" name="Severity" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Summary" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Description" type="xs:string"/>
+                    <xs:element minOccurs="1" name="Status" type="typ:StatusType"/>
+                    <xs:element minOccurs="0" name="AssignedTo" type="typ:AssignedToType"/>
+                    <xs:element minOccurs="0" name="CreationDate" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="ExpectedResolutionDate" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="ReportedSource" type="typ:ReportedSourceType"/>
+                    <xs:element minOccurs="0" name="ClosureSource" type="typ:ClosureSourceType"/>
+                    <xs:element minOccurs="0" name="Params" type="com:ParamList"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="CreateTicketInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="ReportedSource" nillable="false" type="typ:ReportedSourceType"/>
+                        <xs:element name="Msisdn" nillable="false" type="typ:Msisdn"/>
+                        <xs:element name="TicketCategorization" type="typ:CategorizationType"/>
+                        <xs:element name="Description" nillable="false" type="xs:string"/>
+                        <xs:element minOccurs="0" name="ContactNumber" type="xs:string"/>
+                        <xs:element minOccurs="0" name="Params" type="com:ParamList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="CreateTicketOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="TicketNo" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UpdateTicketInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="TicketNo" type="xs:string"/>
+                        <xs:element name="Status" type="typ:UpdateStatusType"/>
+                        <xs:element minOccurs="0" name="Comments" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UpdateTicketOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Result" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetTicketInfoInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="TicketNo" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetTicketInfoOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Msisdn" type="typ:Msisdn"/>
+                        <xs:element minOccurs="1" name="Ticket" type="typ:TicketElement"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetSubscriberTicketsInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Msisdn" nillable="false" type="typ:Msisdn"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetSubscriberTicketsOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="1" name="TicketstList">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Ticket" type="typ:TicketElement"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetCategorizationsInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Language" nillable="false" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetCategorizationsOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="1" name="CategorizationList">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Categorization" type="typ:CategorizationType"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="CreateTicketRequest">
+        <wsdl:part element="typ:CreateTicketInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="CreateTicketResponse">
+        <wsdl:part element="typ:CreateTicketOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="UpdateTicketRequest">
+        <wsdl:part element="typ:UpdateTicketInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="UpdateTicketResponse">
+        <wsdl:part element="typ:UpdateTicketOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="GetTicketInfoRequest">
+        <wsdl:part element="typ:GetTicketInfoInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="GetTicketInfoResponse">
+        <wsdl:part element="typ:GetTicketInfoOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="GetSubscriberTicketsRequest">
+        <wsdl:part element="typ:GetSubscriberTicketsInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="GetSubscriberTicketsResponse">
+        <wsdl:part element="typ:GetSubscriberTicketsOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="GetCategorizationsRequest">
+        <wsdl:part element="typ:GetCategorizationsInput" name="request"/>
+    </wsdl:message>
+    <wsdl:message name="GetCategorizationsResponse">
+        <wsdl:part element="typ:GetCategorizationsOutput" name="response"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part element="com:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:portType name="CustomerComplaintPort">
+        <wsdl:operation name="CreateTicket">
+            <wsdl:input message="tns:CreateTicketRequest"/>
+            <wsdl:output message="tns:CreateTicketResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="UpdateTicket">
+            <wsdl:input message="tns:UpdateTicketRequest"/>
+            <wsdl:output message="tns:UpdateTicketResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetTicketInfo">
+            <wsdl:input message="tns:GetTicketInfoRequest"/>
+            <wsdl:output message="tns:GetTicketInfoResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetSubscriberTickets">
+            <wsdl:input message="tns:GetSubscriberTicketsRequest"/>
+            <wsdl:output message="tns:GetSubscriberTicketsResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetCategorizations">
+            <wsdl:input message="tns:GetCategorizationsRequest"/>
+            <wsdl:output message="tns:GetCategorizationsResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CustomerComplaintBinding" type="tns:CustomerComplaintPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="CreateTicket">
+            <soap:operation soapAction="CreateTicket"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="UpdateTicket">
+            <soap:operation soapAction="UpdateTicket"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetTicketInfo">
+            <soap:operation soapAction="GetTicketInfo"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetSubscriberTickets">
+            <soap:operation soapAction="GetSubscriberTickets"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetCategorizations">
+            <soap:operation soapAction="GetCategorizations"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="CustomerComplaint">
+        <wsdl:port binding="tns:CustomerComplaintBinding" name="CustomerComplaintPort">
+            <soap:address location="some_endpoint"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

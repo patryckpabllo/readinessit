@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx2="http://www.siebel.com/xml/CBiO2PortOutNotificationReqIO" xmlns:format="java://MSISDNFormatter" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortRequest.xsd">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortRequest.xsd" schemaLocation="/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortRequest.xsd"/>
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2PortOutNotificationReqIO" schemaLocation="/BusinessSchemas/Services/Provisioning/FinalBillNotification/ListOfCbio2finalbillnotificationreqio.xsd"/>
+    <pd:name>Tester/Sender.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>425</pd:endX>
+    <pd:endY>67</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1469097125625</pd:targetNamespace>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>301</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/MNPOperations/SendFinalBillNotification/Request_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <InDataxsdString ref="pfx2:SiebelMessage"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <Body>
+                    <pfx2:SiebelMessage>
+                        <pfx2:ListOfCbio2finalbillnotificationreqio>
+                            <pfx2:ServiceRequest>
+                                <pfx2:NPOrderId>
+                                    <xsl:value-of select="12345678901234"/>
+                                </pfx2:NPOrderId>
+                                <pfx2:SenderId>
+                                    <xsl:value-of select="04"/>
+                                </pfx2:SenderId>
+                                <pfx2:ThresholdAmount>
+                                    <xsl:value-of select="10"/>
+                                </pfx2:ThresholdAmount>
+                                <pfx2:ValidationMSISDN>
+                                    <xsl:value-of select="96599006553"/>
+                                </pfx2:ValidationMSISDN>
+                                <pfx2:FinalSettlement>
+                                    <xsl:value-of select="'N'"/>
+                                </pfx2:FinalSettlement>
+                                <pfx2:ListOfCbio2Mnp>
+                                    <pfx2:MSISDNLists>
+                                        <pfx2:MSISDN>
+                                            <xsl:value-of select="96597000006"/>
+                                        </pfx2:MSISDN>
+                                    </pfx2:MSISDNLists>
+                                    <pfx2:MSISDNLists>
+                                        <pfx2:MSISDN>
+                                            <xsl:value-of select="96597000007"/>
+                                        </pfx2:MSISDN>
+                                    </pfx2:MSISDNLists>
+                                    <pfx2:MSISDNLists>
+                                        <pfx2:MSISDN>
+                                            <xsl:value-of select="96597000198"/>
+                                        </pfx2:MSISDN>
+                                    </pfx2:MSISDNLists>
+                                </pfx2:ListOfCbio2Mnp>
+                            </pfx2:ServiceRequest>
+                        </pfx2:ListOfCbio2finalbillnotificationreqio>
+                    </pfx2:SiebelMessage>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESCommonError/SESCommonErrorSchema.xsd">
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESCommonError/SESCommonErrorSchema.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/AppleiWatchSESCommonError/SESCommonErrorSchema.xsd"/>
+    <pd:name>Services/EOM/NotifySES/HelperProcess/ParseSESError.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="ErrString" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <xsl:if test="$ParseSESErr/root/errorCode">
+                <errorCode>
+                    <xsl:value-of select="$ParseSESErr/root/errorCode"/>
+                </errorCode>
+            </xsl:if>
+            <errorMsg>
+                <xsl:value-of select="$ParseSESErr/root/errorMsg"/>
+            </errorMsg>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="errorMsg" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>677</pd:endX>
+    <pd:endY>65</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1597587040103</pd:targetNamespace>
+    <pd:activity name="ParseSESErr">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>486</pd:x>
+        <pd:y>67</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>false</validateOutput>
+            <term>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="errorCode" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="errorMsg" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </term>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JSON_XML/javaCodeActivityOutput/xmlOut"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JSON_XML">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>293</pd:x>
+        <pd:y>66</pd:y>
+        <config>
+            <fileName>ParseSESErrorJSON_XML</fileName>
+            <packageName>Services.EOM.NotifySES.HelperProcess.ParseSESError</packageName>
+            <fullsource>package Services.EOM.NotifySES.HelperProcess.ParseSESError;
+import java.util.*;
+import java.io.*;
+import org.json.JSONObject;
+import org.json.XML;
+
+public class ParseSESErrorJSON_XML{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String jsonIn = "";
+	protected String xmlIn = "";
+	protected String xmlOut = "";
+	protected String jsonOut = "";
+	public String getjsonIn() {
+		return jsonIn;
+	}
+	public void setjsonIn(String val) {
+		jsonIn = val;
+	}
+	public String getxmlIn() {
+		return xmlIn;
+	}
+	public void setxmlIn(String val) {
+		xmlIn = val;
+	}
+	public String getxmlOut() {
+		return xmlOut;
+	}
+	public void setxmlOut(String val) {
+		xmlOut = val;
+	}
+	public String getjsonOut() {
+		return jsonOut;
+	}
+	public void setjsonOut(String val) {
+		jsonOut = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ParseSESErrorJSON_XML() {
+	}
+	public void invoke() throws Exception {
+	String xmlOt="";
+	String jsonOt="";
+	if(getjsonIn()!=null)
+	{
+		JSONObject jObj = new JSONObject(getjsonIn());
+		xmlOt=XML.toString(jObj);
+                xmlOt="&lt;root&gt;" + xmlOt + "&lt;/root&gt;";
+		setxmlOut(xmlOt);
+	}
+
+	if(getxmlIn()!=null)
+	{
+		JSONObject jObj = XML.toJSONObject(getxmlIn());
+		setjsonOut(jObj.toString());
+	}
+/* Available Variables: DO NOT MODIFY
+	In  : String jsonIn
+	In  : String xmlIn
+	Out : String xmlOut
+	Out : String jsonOut
+* Available Variables: DO NOT MODIFY *****/
+
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>jsonIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>xmlIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>xmlOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>jsonOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>ParseSESErrorJSON_XML</name>
+                    <byteCode>yv66vgAAADMAUQkAFgAyCQAWADMJABYANAkAFgA1CgAXADYIADcKABYAOAcAOQoACAA6CgA7ADwHAD0KAAsANggAPgoACwA/CABACgALAEEKABYAQgoAFgBDCgA7AEQKAAgAQQoAFgBFBwBGBwBHAQAGanNvbkluAQASTGphdmEvbGFuZy9TdHJpbmc7AQAFeG1sSW4BAAZ4bWxPdXQBAAdqc29uT3V0AQAJZ2V0anNvbkluAQAUKClMamF2YS9sYW5nL1N0cmluZzsBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQAJc2V0anNvbkluAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAIZ2V0eG1sSW4BAAhzZXR4bWxJbgEACWdldHhtbE91dAEACXNldHhtbE91dAEACmdldGpzb25PdXQBAApzZXRqc29uT3V0AQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQANU3RhY2tNYXBUYWJsZQcASAEACkV4Y2VwdGlvbnMHAEkBAApTb3VyY2VGaWxlAQAaUGFyc2VTRVNFcnJvckpTT05fWE1MLmphdmEMABgAGQwAGgAZDAAbABkMABwAGQwAKQAqAQAADAAdAB4BABNvcmcvanNvbi9KU09OT2JqZWN0DAApACIHAEoMAEsATAEAF2phdmEvbGFuZy9TdHJpbmdCdWlsZGVyAQAGPHJvb3Q+DABNAE4BAAc8L3Jvb3Q+DABLAB4MACYAIgwAIwAeDABPAFAMACgAIgEASFNlcnZpY2VzL0VPTS9Ob3RpZnlTRVMvSGVscGVyUHJvY2Vzcy9QYXJzZVNFU0Vycm9yL1BhcnNlU0VTRXJyb3JKU09OX1hNTAEAEGphdmEvbGFuZy9PYmplY3QBABBqYXZhL2xhbmcvU3RyaW5nAQATamF2YS9sYW5nL0V4Y2VwdGlvbgEADG9yZy9qc29uL1hNTAEACHRvU3RyaW5nAQAmKExqYXZhL2xhbmcvT2JqZWN0OylMamF2YS9sYW5nL1N0cmluZzsBAAZhcHBlbmQBAC0oTGphdmEvbGFuZy9TdHJpbmc7KUxqYXZhL2xhbmcvU3RyaW5nQnVpbGRlcjsBAAx0b0pTT05PYmplY3QBACkoTGphdmEvbGFuZy9TdHJpbmc7KUxvcmcvanNvbi9KU09OT2JqZWN0OwAhABYAFwAAAAQABAAYABkAAAAEABoAGQAAAAQAGwAZAAAABAAcABkAAAAKAAEAHQAeAAEAHwAAAB0AAQABAAAABSq0AAGwAAAAAQAgAAAABgABAAAADgABACEAIgABAB8AAAAiAAIAAgAAAAYqK7UAAbEAAAABACAAAAAKAAIAAAARAAUAEgABACMAHgABAB8AAAAdAAEAAQAAAAUqtAACsAAAAAEAIAAAAAYAAQAAABQAAQAkACIAAQAfAAAAIgACAAIAAAAGKiu1AAKxAAAAAQAgAAAACgACAAAAFwAFABgAAQAlAB4AAQAfAAAAHQABAAEAAAAFKrQAA7AAAAABACAAAAAGAAEAAAAaAAEAJgAiAAEAHwAAACIAAgACAAAABiortQADsQAAAAEAIAAAAAoAAgAAAB0ABQAeAAEAJwAeAAEAHwAAAB0AAQABAAAABSq0AASwAAAAAQAgAAAABgABAAAAIAABACgAIgABAB8AAAAiAAIAAgAAAAYqK7UABLEAAAABACAAAAAKAAIAAAAjAAUAJAABACkAKgABAB8AAABJAAIAAQAAAB0qtwAFKhIGtQABKhIGtQACKhIGtQADKhIGtQAEsQAAAAEAIAAAABoABgAAACYABAAJAAoACgAQAAsAFgAMABwAJwABACsAKgACAB8AAACmAAMABAAAAFQSBkwSBk0qtgAHxgAyuwAIWSq2AAe3AAlOLbgACky7AAtZtwAMEg22AA4rtgAOEg+2AA62ABBMKiu2ABEqtgASxgATKrYAErgAE04qLbYAFLYAFbEAAAACACAAAAAuAAsAAAApAAMAKgAGACsADQAtABkALgAeAC8ANwAwADwAMwBDADUASwA2AFMAPwAsAAAADAAC/QA8BwAtBwAtFgAuAAAABAABAC8AAQAwAAAAAgAx</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <jsonIn>
+                    <xsl:value-of select="$Start/root/ErrString"/>
+                </jsonIn>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>JSON_XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JSON_XML</pd:from>
+        <pd:to>ParseSESErr</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseSESErr</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

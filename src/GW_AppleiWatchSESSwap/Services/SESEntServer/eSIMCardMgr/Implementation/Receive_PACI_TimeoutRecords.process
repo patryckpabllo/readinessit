@@ -1,0 +1,767 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pfx="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:pfx2="http://www.siebel.com/xml/CBiO2TremblantFinalOrderResIO" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/Common/NumReservResponse.xsd" xmlns:pfx4="http://www.siebel.com/xml/CBiO2SendSMS" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.zain.com/ZESB/Services/QueryPACIStatusBiometricsResponse.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns1="http://www.zain.com/ZESB/Services/QueryPACIStatusBiometricsRequest.xsd" xmlns:ns4="http://www.tibco.com/pe/EngineTypes" xmlns:ns3="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns13="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns12="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns14="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EntitleServer/EOM_NotifySES.xsd">
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2TremblantFinalOrderResIO" schemaLocation="/Services/SESEntServer/Resources/XSD/CRM_TremblantFinalOrderRes/CBiO2TremblantFinalOrderResIO.xsd"/>
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2SendSMS" schemaLocation="/BusinessSchemas/Services/Applications/CRM/Update/ListOfCbio2sendsms.xsd"/>
+    <pd:name>Services/SESEntServer/eSIMCardMgr/Implementation/Receive_PACI_TimeoutRecords.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>124</pd:x>
+        <pd:y>254</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/SES/PACIGW/PACI_Timeout_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1848</pd:endX>
+    <pd:endY>260</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1641231132864</pd:targetNamespace>
+    <pd:activity name="Call_UnblockNumber">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>651</pd:x>
+        <pd:y>254</pd:y>
+        <config>
+            <processName>/Services/SESEntServer/eSIMCardMgr/HelperProcesses/ESI_Call_UnblockNumber.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <Number>
+                    <xsl:value-of select="$ParseDBRecords/Record/SEC_MSISDN"/>
+                </Number>
+                <TransactionId>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                </TransactionId>
+                <SourceSystem>
+                    <xsl:value-of select="'TIBCO'"/>
+                </SourceSystem>
+                <StartTimeStamp>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>1346</pd:x>
+        <pd:y>551</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="UpdateStatus_To_PACI-ACK_InDB">
+        <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+        <pd:x>887</pd:x>
+        <pd:y>457</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/QueryTimeout%%</timeout>
+            <commit>false</commit>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>UPDATE t_ses_trans_rec SET status = 'PACI-ACK', RECORD_FLAG='N'  WHERE ESB_ID = ?</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>ESB_ID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+        </config>
+        <pd:inputBindings>
+            <jdbcUpdateActivityInput>
+                <ESB_ID>
+                    <xsl:choose>
+                        <xsl:when test="exists($ParseDBRecords/Record/ESB_ID)">
+                            <xsl:value-of select="$ParseDBRecords/Record/ESB_ID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ESB_ID>
+            </jdbcUpdateActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSReceiverError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>128</pd:x>
+        <pd:y>125</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns12:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonErrors/JMSErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                </messageCode>
+            </ns12:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Error_Msg-Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1850</pd:x>
+        <pd:y>554</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/PACIGW/TimerProcess/ComponentName_PACINonExpired"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <xsl:if test="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID">
+                        <ns22:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns22:TransactionID>
+                    </xsl:if>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Transaction>
+                        <xsl:value-of select="concat(tib:render-xml($_error),'&#xA;&#xA;','Parse DB Records error->','&#xA;',tib:render-xml($_error_ParseDBRecords/ActivityErrors),'&#xA;&#xA;','Error in JDBC Update Record_Flag to Y-->','&#xA;',tib:render-xml($_error_UpdateFlagTo_Y/ActivityErrors),'&#xA;&#xA;','JMS Queue sender error when sending message to CRM on Queue->','&#xA;',tib:render-xml($_error_Send-Msg-to-CRM/ActivityErrors),'&#xA;&#xA;','Error in JDBC Update Status to PACI-ACK(This activity execute only if UnblockNumber or NotifySES call process return handeled exception)','&#xA;',tib:render-xml($_error_UpdateStatus_To_PACI-ACK_InDB/ActivityErrors),'&#xA;&#xA;','JDBC Update Status to PACI-ACK(This activity execute only in case of any error occured)-->','&#xA;',$UpdateStatus_To_PACI-ACK/jdbcUpdateActivityOutput/noOfUpdates,'&#xA;&#xA;',tib:render-xml($Catch/exceptiondata))"/>
+                    </ns22:Transaction>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-In">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>126</pd:x>
+        <pd:y>451</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/PACIGW/TimerProcess/ComponentName_PACIExpired"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1670</pd:x>
+        <pd:y>259</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns13:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/PACIGW/TimerProcess/ComponentName_PACIExpired"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns4:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Transaction>
+                        <xsl:value-of select="if(exists($Send-Msg-to-CRM/ns:aEmptyOutputClass/ns:MessageID) and string-length($Send-Msg-to-CRM/ns:aEmptyOutputClass/ns:MessageID)>0)&#xA;then concat('Msg sent to CRM:-','&#xA;',tib:render-xml($Cancel_watchAddition/pfx2:CBiO2TremblantFinalOrderResIO),'&#xA;&#xA;','JMS Queue Sender MessageID (for msg sent to CRM)->','&#xA;',$Send-Msg-to-CRM/ns:aEmptyOutputClass/ns:MessageID,'&#xA;&#xA;','Expired DB Records picked by DB Pollar service->','&#xA;',tib:render-xml($ParseDBRecords/Record),'&#xA;&#xA;','&#xA;&#xA;','Unblock Number Response->','&#xA;',tib:render-xml($Call_UnblockNumber/pfx3:numReservResponse),'&#xA;&#xA;','Notify SES response->','&#xA;',tib:render-xml($NotifySES/root),'&#xA;&#xA;','JDBC Update Record_Flag to Y response->','&#xA;',$UpdateFlagTo_Y/jdbcUpdateActivityOutput/noOfUpdates,'&#xA;&#xA;','SMS message sent to queue','&#xA;',tib:render-xml($SMS_Mapper/pfx4:SiebelMessage),'&#xA;&#xA;','JMS Queue Sender MessageID (for SMS msg sent on queue)->','&#xA;',$SMS_Sent_On_Queue/ns:aEmptyOutputClass/ns:MessageID)&#xA;else concat('Error occured | Msg not sent to CRM, Please check detail below-','&#xA;&#xA;','Expired DB Records picked by DB Pollar service->','&#xA;',tib:render-xml($ParseDBRecords/Record),'&#xA;&#xA;','&#xA;&#xA;','Message prepared for sending to CRM on queue->','&#xA;',tib:render-xml($Cancel_watchAddition/pfx2:CBiO2TremblantFinalOrderResIO),'&#xA;&#xA;','Unblock Number Response->','&#xA;',tib:render-xml($Call_UnblockNumber/pfx3:numReservResponse),'&#xA;&#xA;','Notify SES response->','&#xA;',tib:render-xml($NotifySES/root))"/>
+                    </ns22:Transaction>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns13:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="NotifySES">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>882</pd:x>
+        <pd:y>254</pd:y>
+        <config>
+            <processName>/Services/SESEntServer/eSIMCardMgr/HelperProcesses/SES_Helper_Process.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns14:NotifyUserDataReq>
+                    <ns14:SERVICE>
+                        <xsl:value-of select="'multi-sim'"/>
+                    </ns14:SERVICE>
+                    <ns14:TRADE_TYPE>
+                        <xsl:value-of select="'1'"/>
+                    </ns14:TRADE_TYPE>
+                    <ns14:MAIN_USER>
+                        <ns14:MSISDN>
+                            <xsl:value-of select="$ParseDBRecords/Record/PRM_MSISDN"/>
+                        </ns14:MSISDN>
+                        <ns14:IMSI>
+                            <xsl:value-of select="$ParseDBRecords/Record/PRIM_IMSI"/>
+                        </ns14:IMSI>
+                        <ns14:ICCID>
+                            <xsl:value-of select="$ParseDBRecords/Record/PRIM_ICCID"/>
+                        </ns14:ICCID>
+                    </ns14:MAIN_USER>
+                    <ns14:ATTACH_USERS>
+                        <ns14:MSISDN>
+                            <xsl:value-of select="$ParseDBRecords/Record/SEC_MSISDN"/>
+                        </ns14:MSISDN>
+                        <ns14:IMSI>
+                            <xsl:value-of select="$ParseDBRecords/Record/SEC_IMSI"/>
+                        </ns14:IMSI>
+                        <ns14:ICCID>
+                            <xsl:value-of select="substring($ParseDBRecords/Record/SEC_ICCID,1, $_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/callBackSES/iccid_length)"/>
+                        </ns14:ICCID>
+                        <ns14:STATUS>
+                            <xsl:value-of select="'3'"/>
+                        </ns14:STATUS>
+                        <ns14:EID>
+                            <xsl:value-of select="$ParseDBRecords/Record/SEC_EID"/>
+                        </ns14:EID>
+                    </ns14:ATTACH_USERS>
+                </ns14:NotifyUserDataReq>
+                <TransactionID>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                </TransactionID>
+                <SourceSystem>
+                    <xsl:value-of select="'SES'"/>
+                </SourceSystem>
+                <Operation>
+                    <xsl:value-of select="'ADD'"/>
+                </Operation>
+                <StartTimeStamp>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </StartTimeStamp>
+                <SES_ID>
+                    <xsl:value-of select="$ParseDBRecords/Record/SES_ID"/>
+                </SES_ID>
+                <xsl:if test="$ParseDBRecords/Record/ESB_ID">
+                    <ESB_ID>
+                        <xsl:value-of select="$ParseDBRecords/Record/ESB_ID"/>
+                    </ESB_ID>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseDBRecords">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>288</pd:x>
+        <pd:y>254</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term>
+                <xsd:element name="Record" minOccurs="0">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="SES_ID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ESB_ID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="PRM_MSISDN" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="PRIM_IMSI" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="PRIM_ICCID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="SEC_MSISDN" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="SEC_IMSI" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="SEC_ICCID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="SEC_EID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="TRX_TYPE" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="STATUS" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="TIME_STAMP" type="xsd:dateTime" minOccurs="0"/>
+                            <xsd:element name="RECORD_FLAG" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </term>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Cancel_watchAddition">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>485</pd:x>
+        <pd:y>254</pd:y>
+        <config>
+            <element ref="pfx2:CBiO2TremblantFinalOrderResIO"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:CBiO2TremblantFinalOrderResIO>
+                <pfx2:CBiO2AsyncOrderInputs>
+                    <pfx2:Operation>
+                        <xsl:value-of select="'Cancel'"/>
+                    </pfx2:Operation>
+                    <xsl:if test="$ParseDBRecords/Record/SEC_MSISDN">
+                        <pfx2:MSISDN>
+                            <xsl:value-of select="$ParseDBRecords/Record/SEC_MSISDN"/>
+                        </pfx2:MSISDN>
+                    </xsl:if>
+                    <pfx2:OrderSubmittedDate>
+                        <xsl:value-of select="tib:format-date('MM/dd/yyyy',tib:parse-date(&quot;yyyy-MM-dd&quot;,(current-date())))"/>
+                    </pfx2:OrderSubmittedDate>
+                    <pfx2:UserName>
+                        <xsl:value-of select="'SES'"/>
+                    </pfx2:UserName>
+                    <pfx2:Source>
+                        <xsl:value-of select="'SES'"/>
+                    </pfx2:Source>
+                    <pfx2:TransactionId>
+                        <xsl:value-of select="$ParseDBRecords/Record/ESB_ID"/>
+                    </pfx2:TransactionId>
+                </pfx2:CBiO2AsyncOrderInputs>
+            </pfx2:CBiO2TremblantFinalOrderResIO>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send Msg to CRM">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>1185</pd:x>
+        <pd:y>254</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <DeliveryDelay>0</DeliveryDelay>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <destinationQueue>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/triggerSubscriptionActivation/ExternalQueue_TrembOrderResCancel"/>
+                </destinationQueue>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($Cancel_watchAddition/pfx2:CBiO2TremblantFinalOrderResIO)"/>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="UpdateStatus_To_PACI-ACK">
+        <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+        <pd:x>1563</pd:x>
+        <pd:y>551</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/QueryTimeout%%</timeout>
+            <commit>false</commit>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>UPDATE t_ses_trans_rec SET status = 'PACI-ACK', RECORD_FLAG='N'  WHERE ESB_ID = ?</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>ESB_ID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+        </config>
+        <pd:inputBindings>
+            <jdbcUpdateActivityInput>
+                <ESB_ID>
+                    <xsl:choose>
+                        <xsl:when test="exists($ParseDBRecords/Record/ESB_ID)">
+                            <xsl:value-of select="$ParseDBRecords/Record/ESB_ID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ESB_ID>
+            </jdbcUpdateActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParsingDBRecordsError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>289</pd:x>
+        <pd:y>123</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns12:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonErrors/ParsingErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonErrors/ParsingErrorCode"/>
+                </messageCode>
+            </ns12:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>654</pd:x>
+        <pd:y>459</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="UpdateFlagTo_Y">
+        <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+        <pd:x>1033</pd:x>
+        <pd:y>256</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/QueryTimeout%%</timeout>
+            <commit>false</commit>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>UPDATE t_ses_trans_rec SET RECORD_FLAG = 'Y' WHERE ESB_ID = ?</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>ESB_ID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+        </config>
+        <pd:inputBindings>
+            <jdbcUpdateActivityInput>
+                <ESB_ID>
+                    <xsl:choose>
+                        <xsl:when test="exists($ParseDBRecords/Record/ESB_ID)">
+                            <xsl:value-of select="$ParseDBRecords/Record/ESB_ID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ESB_ID>
+            </jdbcUpdateActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SMS_Sent_On_Queue">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>1506</pd:x>
+        <pd:y>258</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <DeliveryDelay>0</DeliveryDelay>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <destinationQueue>
+                    <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/PACIGW/TimerProcess/SMS_GW_Request_Queue"/>
+                </destinationQueue>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($SMS_Mapper/pfx4:SiebelMessage)"/>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SMS_Mapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1333</pd:x>
+        <pd:y>256</pd:y>
+        <config>
+            <element ref="pfx4:SiebelMessage"/>
+        </config>
+        <pd:inputBindings>
+            <pfx4:SiebelMessage>
+                <pfx4:ListOfCbio2sendsms>
+                    <pfx4:Cbio2sendsms>
+                        <pfx4:SMSText>
+                            <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/PACIGW/TimerProcess/SMS_Text"/>
+                        </pfx4:SMSText>
+                        <xsl:if test="$ParseDBRecords/Record/PRM_MSISDN">
+                            <pfx4:To>
+                                <xsl:value-of select="$ParseDBRecords/Record/PRM_MSISDN"/>
+                            </pfx4:To>
+                        </xsl:if>
+                        <pfx4:Channel>
+                            <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/BusinessProcesses/Services/SES/PACIGW/TimerProcess/SMS_Channel"/>
+                        </pfx4:Channel>
+                        <xsl:if test="$ParseDBRecords/Record/PRM_MSISDN">
+                            <pfx4:SubscriptionNo>
+                                <xsl:value-of select="$ParseDBRecords/Record/PRM_MSISDN"/>
+                            </pfx4:SubscriptionNo>
+                        </xsl:if>
+                    </pfx4:Cbio2sendsms>
+                </pfx4:ListOfCbio2sendsms>
+            </pfx4:SiebelMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Call_UnblockNumber</pd:from>
+        <pd:to>NotifySES</pd:to>
+        <pd:xpathDescription>Success</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>JMSReceiverError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>Log_Msg-In</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send Msg to CRM</pd:from>
+        <pd:to>SMS_Mapper</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-In</pd:from>
+        <pd:to>ParseDBRecords</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-Out</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>UpdateStatus_To_PACI-ACK_InDB</pd:from>
+        <pd:to>Log_Msg-Out</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Cancel_watchAddition</pd:from>
+        <pd:to>Call_UnblockNumber</pd:to>
+        <pd:xpathDescription>Unblock number for order cancel</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>NotifySES</pd:from>
+        <pd:to>UpdateFlagTo_Y</pd:to>
+        <pd:xpathDescription>Success</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$NotifySES/root/ns14:NotifyUserDataRes/ns14:ErrorResponse/ns14:Error_SourceErrCode='0'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_UnblockNumber</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:xpathDescription>ErrorResponse</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52378</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Call_UnblockNumber/pfx3:numReservResponse/pfx:ErrorResponse/pfx:Error_SourceErrCode!=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseDBRecords</pd:from>
+        <pd:to>Cancel_watchAddition</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>NotifySES</pd:from>
+        <pd:to>UpdateStatus_To_PACI-ACK_InDB</pd:to>
+        <pd:xpathDescription>Error response</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65485</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>UpdateStatus_To_PACI-ACK</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>UpdateStatus_To_PACI-ACK</pd:from>
+        <pd:to>Log_Error_Msg-Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Error_Msg-Out</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseDBRecords</pd:from>
+        <pd:to>ParsingDBRecordsError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65485</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>UpdateStatus_To_PACI-ACK_InDB</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>UpdateFlagTo_Y</pd:from>
+        <pd:to>Send Msg to CRM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SMS_Sent_On_Queue</pd:from>
+        <pd:to>Log_Msg-Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SMS_Mapper</pd:from>
+        <pd:to>SMS_Sent_On_Queue</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:pfx11="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pfx10="http://www.tibco.com/CommonLE/namespace/Common" xmlns:pfx="http://www.tibco.com/unique/default/namespace/Exception" xmlns:ns2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns4="http://www.tibco.com/CommonLE2/Private/Common" xmlns:ns3="http://www.tibco.com/CommonLE2/namespace/Public/Common" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx5="http://www.tibco.com/CommonLE2/namespace/Log" xmlns:pfx4="http://www.tibco.com/CommonLE2/namespace/Exception" xmlns:pfx3="http://www.tibco.com/CommonLE/namespace/Custom" xmlns:pfx2="http://www.tibco.com/pe/EngineTypes" xmlns:pfx9="http://www.tibco.com/CommonLE2/namespace/private/Common" xmlns:pfx8="http://www.tibco.com/pe/DeployedVarsType" xmlns:pfx7="http://www.tibco.com/CommonLE2/namespace/LogRequest" xmlns:pfx6="http://www.tibco.com/CommonLE2/namespace/Public/Logging" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.tibco.com/unique/default/namespace/Exception" schemaLocation="/Shared Resources/Schema Definitions/Common/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE/namespace/Custom" schemaLocation="/Shared Resources/Schema Definitions/Custom/Error.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" schemaLocation="/SharedResources/SchemaDefinitions/Public/Logging/LogRequest.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/private/Common" schemaLocation="/SharedResources/SchemaDefinitions/Private/Common/LocalExceptions.xsd"/>
+    <wsdl:import namespace="http://www.tibco.com/CommonLE2/namespace/LogRequest" location="/SharedResources/WSDL/Core/Handle_Log_Request.wsdl"/>
+    <pd:name>Logging/Logic/HandleLogRequest.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="LogRequest" type="xsd:string"/>
+    </pd:startType>
+    <pd:startX>26</pd:startX>
+    <pd:startY>75</pd:startY>
+    <pd:returnBindings>
+        <pfx7:Dummy/>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endX>427</pd:endX>
+    <pd:endY>75</pd:endY>
+    <pd:errorSchemas>
+        <DBError ref="pfx9:DBError"/>
+        <IDNotFound ref="pfx9:IDNotFound"/>
+        <XMLError ref="pfx9:XMLError"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1284170257906</pd:targetNamespace>
+    <pd:activity name="Catch ID not Found">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>547</pd:x>
+        <pd:y>175</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <fault>localname=IDNotFound namespace=http://www.tibco.com/CommonLE2/namespace/private/Common</fault>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Save Log Record">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>266</pd:x>
+        <pd:y>75</pd:y>
+        <config>
+            <processName>/Logging/DataAccess/Oracle/SaveLogRecord.process</processName>
+            <processNameXPath>concat("/Logging/DataAccess/",$_globalVariables/pfx8:GlobalVariables/Database/MIG_DatabaseType,"/SaveLogRecord.process")</processNameXPath>
+        </config>
+        <pd:inputBindings>
+            <xsl:copy-of select="$Parse-LogRequest/pfx11:LogRequest"/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse LogRequest">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>137</pd:x>
+        <pd:y>75</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx11:LogRequest"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Start/LogRequest"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>137</pd:x>
+        <pd:y>175</pd:y>
+        <config>
+            <faultName>XMLError</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/pfx8:GlobalVariables/Exceptions/Common/Messages/XMLValidationError"/>
+                </message>
+                <xsl:if test="$_error/pfx2:ErrorReport/MsgCode">
+                    <messageCode>
+                        <xsl:value-of select="$_error/pfx2:ErrorReport/MsgCode"/>
+                    </messageCode>
+                </xsl:if>
+                <data>
+                    <pfx9:XMLError>
+                        <pfx9:Message>
+                            <xsl:value-of select="$_globalVariables/pfx8:GlobalVariables/Exceptions/Common/Messages/XMLValidationError"/>
+                        </pfx9:Message>
+                        <xsl:if test="$_error/pfx2:ErrorReport/MsgCode">
+                            <pfx9:Code>
+                                <xsl:value-of select="$_error/pfx2:ErrorReport/MsgCode"/>
+                            </pfx9:Code>
+                        </xsl:if>
+                    </pfx9:XMLError>
+                </data>
+            </ns2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch XML Schema Error">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>280</pd:x>
+        <pd:y>183</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <fault>localname=XMLError namespace=http://www.tibco.com/CommonLE2/namespace/private/Common</fault>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Raise Error Request Exception">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>418</pd:x>
+        <pd:y>183</pd:y>
+        <config>
+            <processName>/Common/Logic/RaiseErrorRequestException.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns4:ErrorRequest>
+                <ns4:RequestType>
+                    <xsl:value-of select="$_globalVariables/pfx8:GlobalVariables/LogService/LogRequestType"/>
+                </ns4:RequestType>
+                <xsl:choose>
+                    <xsl:when test="exists($Catch-ID-not-Found/pfx9:IDNotFound/pfx9:ApplicationIDNotFound)">
+                        <ns4:Message>
+                            <xsl:value-of select="$Catch-ID-not-Found/pfx9:IDNotFound/pfx9:ApplicationIDNotFound/pfx9:Message"/>
+                        </ns4:Message>
+                    </xsl:when>
+                    <xsl:when test="exists($Catch-ID-not-Found/pfx9:IDNotFound/pfx9:InterfaceIDNotFound)">
+                        <ns4:Message>
+                            <xsl:value-of select="$Catch-ID-not-Found/pfx9:IDNotFound/pfx9:InterfaceIDNotFound/pfx9:Message"/>
+                        </ns4:Message>
+                    </xsl:when>
+                    <xsl:when test="exists($Catch-ID-not-Found/pfx9:IDNotFound/pfx9:RenderIDNotFound)">
+                        <ns4:Message>
+                            <xsl:value-of select="$Catch-ID-not-Found/pfx9:IDNotFound/pfx9:RenderIDNotFound/pfx9:Message"/>
+                        </ns4:Message>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <ns4:Message>
+                            <xsl:value-of select="$Catch-XML-Schema-Error/pfx9:XMLError/pfx9:Message"/>
+                        </ns4:Message>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <ns4:xmlRequestString>
+                    <xsl:value-of select="$Start/LogRequest"/>
+                </ns4:xmlRequestString>
+            </ns4:ErrorRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Parse LogRequest</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Save Log Record</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse LogRequest</pd:from>
+        <pd:to>Save Log Record</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse LogRequest</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65485</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Raise Error Request Exception</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch XML Schema Error</pd:from>
+        <pd:to>Raise Error Request Exception</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch ID not Found</pd:from>
+        <pd:to>Raise Error Request Exception</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

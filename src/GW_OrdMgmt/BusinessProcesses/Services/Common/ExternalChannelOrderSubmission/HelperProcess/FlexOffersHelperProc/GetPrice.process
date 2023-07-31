@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns2="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderRes.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns3="http://www.tibco.com/pe/EngineTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <pd:name>BusinessProcesses/Services/Common/ExternalChannelOrderSubmission/HelperProcess/FlexOffersHelperProc/GetPrice.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="P_PRODID_IN" type="xsd:string"/>
+                    <xsd:element name="P_DATAINGB_IN" type="xsd:string"/>
+                    <xsd:element name="P_INTERNATIONALMINUTES_IN" type="xsd:string"/>
+                    <xsd:element name="P_LOCALMINUTES_IN" type="xsd:string"/>
+                    <xsd:element name="P_ONNETMINUTES_IN" type="xsd:string"/>
+                    <xsd:element name="P_SOCIALMEDIA_IN" type="xsd:string"/>
+                    <xsd:element name="P_WHATSAPP_IN" type="xsd:string"/>
+                    <xsd:element name="P_YOUTUBE_IN" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>81</pd:startX>
+    <pd:startY>68</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <xsl:if test="not(($GetPriceSPCall/resultSet/outputSet/P_TOTALPRICE_OUT/@xsi:nil=(&quot;true&quot;)) or ($GetPriceSPCall/resultSet/outputSet/P_TOTALPRICE_OUT/@xsi:nil=(&quot;1&quot;)))">
+                <P_TOTAL_PRICE>
+                    <xsl:value-of select="$GetPriceSPCall/resultSet/outputSet/P_TOTALPRICE_OUT"/>
+                </P_TOTAL_PRICE>
+            </xsl:if>
+            <xsl:if test="not(($GetPriceSPCall/resultSet/outputSet/P_ERRORCODE_OUT/@xsi:nil=(&quot;true&quot;)) or ($GetPriceSPCall/resultSet/outputSet/P_ERRORCODE_OUT/@xsi:nil=(&quot;1&quot;)))">
+                <P_ERRORCODE_OUT>
+                    <xsl:value-of select="$GetPriceSPCall/resultSet/outputSet/P_ERRORCODE_OUT"/>
+                </P_ERRORCODE_OUT>
+            </xsl:if>
+            <xsl:if test="not(($GetPriceSPCall/resultSet/outputSet/P_ERRORMSG_OUT/@xsi:nil=(&quot;true&quot;)) or ($GetPriceSPCall/resultSet/outputSet/P_ERRORMSG_OUT/@xsi:nil=(&quot;1&quot;)))">
+                <P_ERRORMSG_OUT>
+                    <xsl:value-of select="$GetPriceSPCall/resultSet/outputSet/P_ERRORMSG_OUT"/>
+                </P_ERRORMSG_OUT>
+            </xsl:if>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="P_TOTAL_PRICE" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="P_ERRORCODE_OUT" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="P_ERRORMSG_OUT" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>644</pd:endX>
+    <pd:endY>73</pd:endY>
+    <pd:errorSchemas>
+        <ErrorSchema ref="ns2:CreateOrderRes"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1580190639682</pd:targetNamespace>
+    <pd:activity name="GetPriceSPCall">
+        <pd:type>com.tibco.plugin.jdbc.JDBCCallActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCCallActivity</pd:resourceType>
+        <pd:x>298</pd:x>
+        <pd:y>69</pd:y>
+        <config>
+            <timeout>%%BusinessProcesses/Services/Common/ExternalChannel/FlexiOrder/TimeOutCheckTobeFlexiOfferSP%%</timeout>
+            <maxRows>0</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/External/SeibelLOVConnection.sharedjdbc</jdbcSharedConfig>
+            <ProcedureName>ZAINKW_GET_FLEXI_PRICE_SP</ProcedureName>
+            <oraObjects/>
+            <oraTables/>
+            <parameterTypes>
+                <parameter>
+                    <colName>P_PRODID_IN</colName>
+                    <colType>1</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_DATAINGB_IN</colName>
+                    <colType>1</colType>
+                    <dataType>2</dataType>
+                    <typeName>NUMBER</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_INTERNATIONALMINUTES_IN</colName>
+                    <colType>1</colType>
+                    <dataType>2</dataType>
+                    <typeName>NUMBER</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_LOCALMINUTES_IN</colName>
+                    <colType>1</colType>
+                    <dataType>2</dataType>
+                    <typeName>NUMBER</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_ONNETMINUTES_IN</colName>
+                    <colType>1</colType>
+                    <dataType>2</dataType>
+                    <typeName>NUMBER</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_SOCIALMEDIA_IN</colName>
+                    <colType>1</colType>
+                    <dataType>2</dataType>
+                    <typeName>NUMBER</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_WHATSAPP_IN</colName>
+                    <colType>1</colType>
+                    <dataType>2</dataType>
+                    <typeName>NUMBER</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_YOUTUBE_IN</colName>
+                    <colType>1</colType>
+                    <dataType>2</dataType>
+                    <typeName>NUMBER</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_TOTALPRICE_OUT</colName>
+                    <colType>4</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_ERRORCODE_OUT</colName>
+                    <colType>4</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_ERRORMSG_OUT</colName>
+                    <colType>4</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+            </parameterTypes>
+        </config>
+        <pd:inputBindings>
+            <inputs>
+                <inputSet>
+                    <P_PRODID_IN>
+                        <xsl:value-of select="$Start/root/P_PRODID_IN"/>
+                    </P_PRODID_IN>
+                    <P_DATAINGB_IN>
+                        <xsl:value-of select="$Start/root/P_DATAINGB_IN"/>
+                    </P_DATAINGB_IN>
+                    <P_INTERNATIONALMINUTES_IN>
+                        <xsl:value-of select="$Start/root/P_INTERNATIONALMINUTES_IN"/>
+                    </P_INTERNATIONALMINUTES_IN>
+                    <P_LOCALMINUTES_IN>
+                        <xsl:value-of select="$Start/root/P_LOCALMINUTES_IN"/>
+                    </P_LOCALMINUTES_IN>
+                    <P_ONNETMINUTES_IN>
+                        <xsl:value-of select="$Start/root/P_ONNETMINUTES_IN"/>
+                    </P_ONNETMINUTES_IN>
+                    <P_SOCIALMEDIA_IN>
+                        <xsl:value-of select="$Start/root/P_SOCIALMEDIA_IN"/>
+                    </P_SOCIALMEDIA_IN>
+                    <P_WHATSAPP_IN>
+                        <xsl:value-of select="$Start/root/P_WHATSAPP_IN"/>
+                    </P_WHATSAPP_IN>
+                    <P_YOUTUBE_IN>
+                        <xsl:value-of select="$Start/root/P_YOUTUBE_IN"/>
+                    </P_YOUTUBE_IN>
+                </inputSet>
+            </inputs>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_GetPriceSPCall_Response">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>488</pd:x>
+        <pd:y>73</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_ORDER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($GetPriceSPCall/resultSet/outputSet)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CheckTobeFlexiOfferSPCallError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>141</pd:x>
+        <pd:y>245</pd:y>
+        <config>
+            <faultName>ErrorSchema</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns1:ActivityInput>
+                <xsl:choose>
+                    <xsl:when test="exists($GetPriceSPCall/resultSet/outputSet/P_ERRORCODE_OUT)&#xA;and&#xA;$GetPriceSPCall/resultSet/outputSet/P_ERRORCODE_OUT!=0">
+                        <message>
+                            <xsl:value-of select="$GetPriceSPCall/resultSet/outputSet/P_ERRORMSG_OUT"/>
+                        </message>
+                        <messageCode>
+                            <xsl:value-of select="$GetPriceSPCall/resultSet/outputSet/P_ERRORCODE_OUT"/>
+                        </messageCode>
+                        <data>
+                            <ns2:CreateOrderRes>
+                                <ns2:errorCode>
+                                    <xsl:value-of select="$GetPriceSPCall/resultSet/outputSet/P_ERRORCODE_OUT"/>
+                                </ns2:errorCode>
+                                <ns2:errorDescription>
+                                    <xsl:value-of select="$GetPriceSPCall/resultSet/outputSet/P_ERRORMSG_OUT"/>
+                                </ns2:errorDescription>
+                            </ns2:CreateOrderRes>
+                        </data>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <message>
+                            <xsl:value-of select="$_error/ns3:ErrorReport/Msg"/>
+                        </message>
+                        <messageCode>
+                            <xsl:value-of select="$_error/ns3:ErrorReport/MsgCode"/>
+                        </messageCode>
+                        <data>
+                            <ns2:CreateOrderRes>
+                                <ns2:errorCode>
+                                    <xsl:value-of select="$_error/ns3:ErrorReport/MsgCode"/>
+                                </ns2:errorCode>
+                                <ns2:errorDescription>
+                                    <xsl:value-of select="$_error/ns3:ErrorReport/Msg"/>
+                                </ns2:errorDescription>
+                            </ns2:CreateOrderRes>
+                        </data>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </ns1:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_CGetPriceSPCall_Response-1">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>215</pd:x>
+        <pd:y>169</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/ExternalChannel/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_ORDER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns3:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Message>
+                        <xsl:value-of select="concat(tib:render-xml($_error_GetPriceSPCall),&#xA;tib:render-xml($GetPriceSPCall))"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Join">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>86</pd:x>
+        <pd:y>171</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetPriceSPCall</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetPriceSPCall</pd:from>
+        <pd:to>Log_GetPriceSPCall_Response</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_GetPriceSPCall_Response</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetPriceSPCall</pd:from>
+        <pd:to>Log_CGetPriceSPCall_Response-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CGetPriceSPCall_Response-1</pd:from>
+        <pd:to>CheckTobeFlexiOfferSPCallError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetPriceSPCall</pd:from>
+        <pd:to>Join</pd:to>
+        <pd:xpathDescription>OtherError</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-26317</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$GetPriceSPCall/resultSet/outputSet/P_ERRORCODE_OUT!=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Join</pd:from>
+        <pd:to>Log_CGetPriceSPCall_Response-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-13261</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

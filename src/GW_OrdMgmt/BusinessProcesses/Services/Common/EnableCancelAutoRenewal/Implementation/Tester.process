@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx="http://www.siebel.com/xml/CBiO2AutoRenewalCancelReqIO">
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.siebel.com/xml/CBiO2AutoRenewalCancelReqIO" schemaLocation="/BusinessSchemas/Services/Applications/CRM/Transaction/ListOfCbio2autorenewalcancelreqio.xsd"/>
+    <pd:name>BusinessProcesses/Services/Common/EnableCancelAutoRenewal/Implementation/Tester.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>96</pd:startX>
+    <pd:startY>52</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>572</pd:endX>
+    <pd:endY>62</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1486586899323</pd:targetNamespace>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>375</pd:x>
+        <pd:y>69</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Common/EnableCancelAutoRenewal/AsyncExternalRequestQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/External/CRMtoGW_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($Map-Data/pfx:SiebelMessage)"/>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>253</pd:x>
+        <pd:y>87</pd:y>
+        <config>
+            <element ref="pfx:SiebelMessage"/>
+        </config>
+        <pd:inputBindings>
+            <pfx:SiebelMessage>
+                <pfx:ListOfCbio2autorenewalcancelreqio>
+                    <pfx:AssetMgmt-Asset>
+                        <pfx:Id>
+                            <xsl:value-of select="'7103'"/>
+                        </pfx:Id>
+                        <pfx:AutoRenewEnabled>
+                            <xsl:value-of select="1"/>
+                        </pfx:AutoRenewEnabled>
+                        <pfx:ProductId>
+                            <xsl:value-of select="'1024'"/>
+                        </pfx:ProductId>
+                        <pfx:SubscriberNumber>
+                            <xsl:value-of select="'93330011'"/>
+                        </pfx:SubscriberNumber>
+                    </pfx:AssetMgmt-Asset>
+                </pfx:ListOfCbio2autorenewalcancelreqio>
+            </pfx:SiebelMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

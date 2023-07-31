@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s0="urn:INTG-REMEDY-CSA-OBW-TICKET-UPDATE" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="urn:INTG-REMEDY-CSA-OBW-TICKET-UPDATE">
+    <wsdl:types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="urn:INTG-REMEDY-CSA-OBW-TICKET-UPDATE">
+            <xsd:element name="AddingActivity" type="s0:InputMapping1"/>
+            <xsd:complexType name="InputMapping1">
+                <xsd:sequence>
+                    <xsd:element name="Txt_IssueID" type="xsd:string"/>
+                    <xsd:element name="Txt_Worklog" type="xsd:string"/>
+                    <xsd:element name="Txt_Activity_Name" nillable="true" type="s0:Txt_Activity_NameType"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:simpleType name="Txt_Activity_NameType">
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="Reopen"/>
+                    <xsd:enumeration value="Follow Up"/>
+                    <xsd:enumeration value="Escalation Follow Up"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:element name="AddingActivityResponse" type="s0:OutputMapping1"/>
+            <xsd:complexType name="OutputMapping1">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" name="Response" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="AuthenticationInfo" type="s0:AuthenticationInfo"/>
+            <xsd:complexType name="AuthenticationInfo">
+                <xsd:sequence>
+                    <xsd:element name="userName" type="xsd:string"/>
+                    <xsd:element name="password" type="xsd:string"/>
+                    <xsd:element minOccurs="0" name="authentication" type="xsd:string"/>
+                    <xsd:element minOccurs="0" name="locale" type="xsd:string"/>
+                    <xsd:element minOccurs="0" name="timeZone" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="AddingActivitySoapOut">
+        <wsdl:part element="s0:AddingActivityResponse" name="parameters">      </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="AddingActivitySoapIn">
+        <wsdl:part element="s0:AddingActivity" name="parameters">      </wsdl:part>
+    </wsdl:message>
+    <wsdl:message name="ARAuthenticate">
+        <wsdl:part element="s0:AuthenticationInfo" name="parameters">      </wsdl:part>
+    </wsdl:message>
+    <wsdl:portType name="PortPortType">
+        <wsdl:operation name="AddingActivity">
+            <wsdl:input message="s0:AddingActivitySoapIn">       </wsdl:input>
+            <wsdl:output message="s0:AddingActivitySoapOut">       </wsdl:output>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="PortSoapBinding" type="s0:PortPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="AddingActivity">
+            <soap:operation soapAction="urn:INTG-REMEDY-CSA-OBW-TICKET-UPDATE/AddingActivity" style="document"/>
+            <wsdl:input>
+                <soap:header message="s0:ARAuthenticate" part="parameters" use="literal">            </soap:header>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="INTG-REMEDY-CSA-OBW-TICKET-UPDATEService">
+        <wsdl:port binding="s0:PortSoapBinding" name="PortSoap">
+            <soap:address location="http://itsmwebdev:8080/arsys/services/ARService?server=ITSMappDev&amp;webService=INTG-REMEDY-CSA-OBW-TICKET-UPDATE"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

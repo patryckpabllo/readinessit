@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch0="http://lhsgroup.com/lhsws/money" xmlns:sch1="http://lhsgroup.com/lhsws/svlany" xmlns:sch2="http://ericsson.com/services/ws_CIL_5/sessionchange" xmlns:sch3="http://ericsson.com/services/ws_CIL_5/cardencryptioncreate" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ericsson.com/services/ws_CIL_5" targetNamespace="http://ericsson.com/services/ws_CIL_5">
+  <wsdl:types>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lhsws="http://lhsgroup.com/lhsws/money" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://lhsgroup.com/lhsws/money"><xs:complexType name="money"><xs:sequence><xs:element name="amount" type="xs:double"/><xs:element name="currency" type="xs:string"/></xs:sequence></xs:complexType></xs:schema>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lhsws="http://lhsgroup.com/lhsws/svlany" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://lhsgroup.com/lhsws/svlany"><xs:complexType name="svlany"><xs:sequence><xs:element name="content" type="xs:string"/></xs:sequence></xs:complexType></xs:schema>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsi="http://ericsson.com/services/ws_CIL_5/sessionchange" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CIL_5/sessionchange"><xs:complexType name="valuesListpartRequest"><xs:all><xs:element name="key" type="xs:string"><xs:annotation><xs:documentation>
+													<![CDATA[<p> Name of the value that shall be changed. See release dependent documentation for supported keys</p>]]>
+											</xs:documentation></xs:annotation></xs:element><xs:element name="value" type="xs:string"><xs:annotation><xs:documentation>
+													<![CDATA[<p>New value for a named value.</p>]]>
+											</xs:documentation></xs:annotation></xs:element></xs:all></xs:complexType><xs:complexType name="valuesRequest"><xs:sequence><xs:element maxOccurs="unbounded" name="item" type="wsi:valuesListpartRequest"/></xs:sequence></xs:complexType><xs:complexType name="sessionChangeRequest"><xs:all><xs:annotation><xs:documentation>
+						<![CDATA[<p>
+						
+						</p>]]>
+				</xs:documentation></xs:annotation><xs:element minOccurs="0" name="values" type="wsi:valuesRequest"/></xs:all></xs:complexType></xs:schema>
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:sessionchange="http://ericsson.com/services/ws_CIL_5/sessionchange" xmlns:wsi="http://ericsson.com/services/ws_CIL_5/cardencryptioncreate" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CIL_5/cardencryptioncreate"><xs:import namespace="http://ericsson.com/services/ws_CIL_5/sessionchange"/><xs:element name="cardEncryptionCreateRequest" type="wsi:cardEncryptionCreateRequest"/><xs:element name="cardEncryptionCreateResponse" type="wsi:cardEncryptionCreateResponse"/><xs:complexType name="cardEncryptionCreateResponse"><xs:all><xs:element minOccurs="0" name="encrypted" type="xs:string"><xs:annotation><xs:documentation>
+							<![CDATA[<p>Encrypted Card number</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element minOccurs="0" name="original" type="xs:string"><xs:annotation><xs:documentation>
+							<![CDATA[<p>Original Card number</p>]]>
+					</xs:documentation></xs:annotation></xs:element></xs:all></xs:complexType><xs:complexType name="inputAttributes"><xs:all><xs:element name="cardno" type="xs:string"><xs:annotation><xs:documentation>
+							<![CDATA[<p>Original Card number for encryption OR encrypted card number for decryption</p>]]>
+					</xs:documentation></xs:annotation></xs:element><xs:element name="action" type="xs:string"><xs:annotation><xs:documentation>
+							<![CDATA[<p>Identify encryption or decryption process. 'e'-encrypt ; 'd'-decrypt</p>]]>
+					</xs:documentation></xs:annotation></xs:element></xs:all></xs:complexType><xs:complexType name="cardEncryptionCreateRequest"><xs:all><xs:element minOccurs="0" name="inputAttributes" type="wsi:inputAttributes"/><xs:element minOccurs="0" name="sessionChangeRequest" type="sessionchange:sessionChangeRequest"/></xs:all></xs:complexType></xs:schema>
+  </wsdl:types>
+  <wsdl:message name="cardEncryptionCreateRequest">
+    <wsdl:part element="sch3:cardEncryptionCreateRequest" name="cardEncryptionCreateRequest">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="cardEncryptionCreateResponse">
+    <wsdl:part element="sch3:cardEncryptionCreateResponse" name="cardEncryptionCreateResponse">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="CardEncryptionCreateService">
+    <wsdl:operation name="cardEncryptionCreate">
+      <wsdl:input message="tns:cardEncryptionCreateRequest" name="cardEncryptionCreateRequest">
+    </wsdl:input>
+      <wsdl:output message="tns:cardEncryptionCreateResponse" name="cardEncryptionCreateResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CardEncryptionCreateServiceSoap11" type="tns:CardEncryptionCreateService">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="cardEncryptionCreate">
+      <soap:operation soapAction=""/>
+      <wsdl:input name="cardEncryptionCreateRequest">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="cardEncryptionCreateResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="CardEncryptionCreateService">
+    <wsdl:port binding="tns:CardEncryptionCreateServiceSoap11" name="CardEncryptionCreateServiceSoap11">
+      <soap:address location="http://10.103.23.91:20103/wsi/services"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,1243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns5="http://schemas.ericsson.com/cai3g1.2/" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:pfx="http://www.huawei.com/CDM/ES/" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://ericsson.com/services/ws_CMI_5/sessionchange" xmlns:ns3="http://ericsson.com/services/ws_CMI_5/storagemediumdetailsread" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://schemas.ericsson.com/ema/UserProvisioning/SPGSV/" xmlns:pfx2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.huawei.com/CDM/ES/" schemaLocation="/Resources/WSDL/EntitleServer/soap.wsdl"/>
+    <pd:name>Services/eSIMProv/eSIMProvOperationImpl/eSIMCardMgrImpl/OperationImp/eSIMCardMgrImpl.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx:eSIMCardMgrRequest"/>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>26</pd:startX>
+    <pd:startY>158</pd:startY>
+    <pd:returnBindings>
+        <pfx:eSIMCardMgrResponse>
+            <pfx:RESULT_CODE>
+                <xsl:value-of select="0"/>
+            </pfx:RESULT_CODE>
+            <pfx:RESULT_DESC>
+                <xsl:value-of select="&quot;SUCCESS&quot;"/>
+            </pfx:RESULT_DESC>
+            <xsl:copy-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER"/>
+            <xsl:for-each select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS">
+                <pfx:ATTACH_USERS>
+                    <xsl:choose>
+                        <xsl:when test="exists($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN)&#xA;and &#xA;string-length(tib:trim($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN))>0">
+                            <pfx:MSISDN>
+                                <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN"/>
+                            </pfx:MSISDN>
+                        </xsl:when>
+                        <xsl:when test="not(exists($QueryMoreData-1/resultSet/Record))&#xA; or count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])=0">
+                            <pfx:MSISDN>
+                                <xsl:value-of select="concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,'01')"/>
+                            </pfx:MSISDN>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <pfx:MSISDN>
+                                <xsl:value-of select="concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&#xA;'0',&#xA;count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])+1)"/>
+                            </pfx:MSISDN>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <pfx:IMSI>
+                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:imsi"/>
+                    </pfx:IMSI>
+                    <pfx:ICCID>
+                        <xsl:value-of select="pfx:ICCID"/>
+                    </pfx:ICCID>
+                </pfx:ATTACH_USERS>
+            </xsl:for-each>
+        </pfx:eSIMCardMgrResponse>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:eSIMCardMgrResponse"/>
+    <pd:endX>986</pd:endX>
+    <pd:endY>159</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1539231524072</pd:targetNamespace>
+    <pd:activity name="CAI3GCallEMA">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>383</pd:x>
+        <pd:y>235</pd:y>
+        <config>
+            <processName>/Services/eSIMProv/ComHelpProc/CAI3GCallEMA.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns5:Set>
+                    <ns5:MOType>
+                        <xsl:value-of select="&quot;Subscription@http://schemas.ericsson.com/ema/UserProvisioning/SPGSV/&quot;"/>
+                    </ns5:MOType>
+                    <ns5:MOId>
+                        <xsl:choose>
+                            <xsl:when test="not(exists($QueryMoreData-1/resultSet/Record))&#xA; or count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])=0">
+                                <pfx3:actionid>
+                                    <xsl:value-of select="&quot;HSS APPLE ADD 1ST SEC DEV&quot;"/>
+                                </pfx3:actionid>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <pfx3:actionid>
+                                    <xsl:value-of select="&quot;HSS APPLE ADD 2ND SEC DEV&quot;"/>
+                                </pfx3:actionid>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </ns5:MOId>
+                    <ns5:MOAttributes>
+                        <pfx3:setSubscription>
+                            <xsl:choose>
+                                <xsl:when test="not(exists($QueryMoreData-1/resultSet/Record))&#xA; or count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])=0">
+                                    <xsl:attribute name="actionid">
+                                        <xsl:value-of select="&quot;HSS APPLE ADD 1ST SEC DEV&quot;"/>
+                                    </xsl:attribute>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="actionid">
+                                        <xsl:value-of select="&quot;HSS APPLE ADD 2ND SEC DEV&quot;"/>
+                                    </xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <xsl:choose>
+                                <xsl:when test="starts-with($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN, &quot;+&quot;)">
+                                    <pfx3:isdn>
+                                        <xsl:value-of select="substring-after($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN, &quot;+&quot;)"/>
+                                    </pfx3:isdn>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <pfx3:isdn>
+                                        <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN"/>
+                                    </pfx3:isdn>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <pfx3:imsi>
+                                <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:IMSI"/>
+                            </pfx3:imsi>
+                            <pfx3:transno>
+                                <xsl:value-of select="tib:timestamp()"/>
+                            </pfx3:transno>
+                            <pfx3:prepost_paid>
+                                <xsl:value-of select="&quot;PREP&quot;"/>
+                            </pfx3:prepost_paid>
+                            <pfx3:profile>
+                                <xsl:value-of select="&quot;ProfileID1&quot;"/>
+                            </pfx3:profile>
+                            <pfx3:ordernumber>
+                                <xsl:value-of select="concat(&quot;iWatch&quot;,tib:timestamp())"/>
+                            </pfx3:ordernumber>
+                            <pfx3:srvname>
+                                <xsl:value-of select="&quot; APPLEDEV&quot;"/>
+                            </pfx3:srvname>
+                            <pfx3:kivalue>
+                                <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:ki"/>
+                            </pfx3:kivalue>
+                            <xsl:choose>
+                                <xsl:when test="starts-with($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN, &quot;+&quot;)">
+                                    <xsl:choose>
+                                        <xsl:when test="exists($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN)&#xA;and &#xA;string-length(tib:trim($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN))>0">
+                                            <pfx3:add_isdn>
+                                                <xsl:value-of select="substring-after($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN, &quot;+&quot;)"/>
+                                            </pfx3:add_isdn>
+                                        </xsl:when>
+                                        <xsl:when test="not(exists($QueryMoreData-1/resultSet/Record))&#xA; or count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])=0">
+                                            <pfx3:add_isdn>
+                                                <xsl:value-of select="substring-after(concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,'01'), &quot;+&quot;)"/>
+                                            </pfx3:add_isdn>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <pfx3:add_isdn>
+                                                <xsl:value-of select="substring-after(concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&#xA;'0',&#xA;count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])+1),&quot;+&quot;)"/>
+                                            </pfx3:add_isdn>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:choose>
+                                        <xsl:when test="exists($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN)&#xA;and &#xA;string-length(tib:trim($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN))>0">
+                                            <pfx3:add_isdn>
+                                                <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN"/>
+                                            </pfx3:add_isdn>
+                                        </xsl:when>
+                                        <xsl:when test="not(exists($QueryMoreData-1/resultSet/Record))&#xA; or count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])=0">
+                                            <pfx3:add_isdn>
+                                                <xsl:value-of select="concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,'01')"/>
+                                            </pfx3:add_isdn>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <pfx3:add_isdn>
+                                                <xsl:value-of select="(concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&#xA;'0',&#xA;count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])+1))"/>
+                                            </pfx3:add_isdn>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <pfx3:add_imsi>
+                                <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:imsi"/>
+                            </pfx3:add_imsi>
+                            <xsl:if test="1=2{-- Need not to be passed, parameter requested not to be mapped from EMA Side--}">
+                                <xsl:choose>
+                                    <xsl:when test="not(exists($QueryMoreData-1/resultSet/Record))&#xA; or count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])=0">
+                                        <pfx3:active_sim_sequence>
+                                            <xsl:value-of select="1"/>
+                                        </pfx3:active_sim_sequence>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <pfx3:active_sim_sequence>
+                                            <xsl:value-of select="count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])+1"/>
+                                        </pfx3:active_sim_sequence>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:if>
+                        </pfx3:setSubscription>
+                    </ns5:MOAttributes>
+                </ns5:Set>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TransactionID>
+                <StartTimestamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimestamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="InsertPrimary">
+        <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+        <pd:x>562</pd:x>
+        <pd:y>72</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <commit>false</commit>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/Resources/Connection/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>Insert into TIBCOAPP.T_MAIN_USER (MSISDN,ICCID,IMSI,IMPI,IMPU,SMS_NOTIFICATION) values (?,?,?,?,?,?)
+</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>MSISDN</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>ICCID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>IMSI</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>IMPI</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>IMPU</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>SMS_NOTIFICATION</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+        </config>
+        <pd:inputBindings>
+            <jdbcUpdateActivityInput>
+                <xsl:choose>
+                    <xsl:when test="starts-with($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN, &quot;+&quot;)">
+                        <MSISDN>
+                            <xsl:value-of select="substring-after($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&quot;+&quot;)"/>
+                        </MSISDN>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <MSISDN>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN"/>
+                        </MSISDN>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <ICCID>
+                    <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:ICCID"/>
+                </ICCID>
+                <IMSI>
+                    <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:IMSI"/>
+                </IMSI>
+                <IMPI>
+                    <xsl:value-of select="&quot;&quot;"/>
+                </IMPI>
+                <IMPU>
+                    <xsl:value-of select="&quot;&quot;"/>
+                </IMPU>
+                <SMS_NOTIFICATION>
+                    <xsl:value-of select="0"/>
+                </SMS_NOTIFICATION>
+            </jdbcUpdateActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="InsertSecondary">
+        <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+        <pd:x>657</pd:x>
+        <pd:y>158</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <commit>false</commit>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/Resources/Connection/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>Insert into TIBCOAPP.T_ATTACH_USERS (PRIMARY_MSISDN,SECONDARY_MSISDN,ICCID,IMSI,STATUS,EID,IMPU,IMPI,TERMINAL_TYPE,VOICE,SIMULTANEOUS_RINGING,NICKNAME) values (?,?,?,?,?,?,?,?,?,?,?,?)
+</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>PRIMARY_MSISDN</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>SECONDARY_MSISDN</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>ICCID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>IMSI</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>STATUS</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>EID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>IMPU</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>IMPI</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>TERMINAL_TYPE</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>VOICE</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>SIMULTANEOUS_RINGING</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>NICKNAME</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+        </config>
+        <pd:inputBindings>
+            <jdbcUpdateActivityInput>
+                <xsl:choose>
+                    <xsl:when test="starts-with($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&quot;+&quot;)">
+                        <PRIMARY_MSISDN>
+                            <xsl:value-of select="substring-after($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&quot;+&quot;)"/>
+                        </PRIMARY_MSISDN>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <PRIMARY_MSISDN>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN"/>
+                        </PRIMARY_MSISDN>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:choose>
+                    <xsl:when test="starts-with($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN, &quot;+&quot;)">
+                        <xsl:choose>
+                            <xsl:when test="exists($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN)&#xA;and &#xA;string-length(tib:trim($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN))>0">
+                                <SECONDARY_MSISDN>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(substring-after($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN,&quot;+&quot;))">
+                                            <xsl:value-of select="substring-after($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN,&quot;+&quot;)"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </SECONDARY_MSISDN>
+                            </xsl:when>
+                            <xsl:when test="not(exists($QueryMoreData-1/resultSet/Record))&#xA; or count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])=0">
+                                <SECONDARY_MSISDN>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(substring-after(concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,'01'),&quot;+&quot;))">
+                                            <xsl:value-of select="substring-after(concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,'01'),&quot;+&quot;)"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </SECONDARY_MSISDN>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <SECONDARY_MSISDN>
+                                    <xsl:choose>
+                                        <xsl:when test="exists(substring-after(concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&#xA;'0',&#xA;count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])+1),&quot;+&quot;))">
+                                            <xsl:value-of select="substring-after(concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&#xA;'0',&#xA;count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])+1),&quot;+&quot;)"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </SECONDARY_MSISDN>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:choose>
+                            <xsl:when test="exists($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN)&#xA;and &#xA;string-length(tib:trim($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN))>0">
+                                <SECONDARY_MSISDN>
+                                    <xsl:choose>
+                                        <xsl:when test="exists($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN)">
+                                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </SECONDARY_MSISDN>
+                            </xsl:when>
+                            <xsl:when test="not(exists($QueryMoreData-1/resultSet/Record))&#xA; or count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])=0">
+                                <SECONDARY_MSISDN>
+                                    <xsl:choose>
+                                        <xsl:when test="exists((concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,'01')))">
+                                            <xsl:value-of select="(concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,'01'))"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </SECONDARY_MSISDN>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <SECONDARY_MSISDN>
+                                    <xsl:choose>
+                                        <xsl:when test="exists((concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&#xA;'0',&#xA;count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])+1)))">
+                                            <xsl:value-of select="(concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&#xA;'0',&#xA;count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])+1))"/>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
+                                </SECONDARY_MSISDN>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <ICCID>
+                    <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:ICCID"/>
+                </ICCID>
+                <IMSI>
+                    <xsl:choose>
+                        <xsl:when test="exists($ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:imsi)">
+                            <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:imsi"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </IMSI>
+                <STATUS>
+                    <xsl:value-of select="1"/>
+                </STATUS>
+                <EID>
+                    <xsl:choose>
+                        <xsl:when test="exists($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:EID)">
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:EID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </EID>
+                <IMPU>
+                    <xsl:value-of select="&quot;&quot;"/>
+                </IMPU>
+                <IMPI>
+                    <xsl:value-of select="&quot;&quot;"/>
+                </IMPI>
+                <TERMINAL_TYPE>
+                    <xsl:value-of select="&quot;&quot;"/>
+                </TERMINAL_TYPE>
+                <VOICE>
+                    <xsl:value-of select="0"/>
+                </VOICE>
+                <SIMULTANEOUS_RINGING>
+                    <xsl:value-of select="0"/>
+                </SIMULTANEOUS_RINGING>
+                <NICKNAME>
+                    <xsl:choose>
+                        <xsl:when test="exists($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:NICKNAME)">
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:NICKNAME"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </NICKNAME>
+            </jdbcUpdateActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-In">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>124</pd:x>
+        <pd:y>158</pd:y>
+        <config>
+            <processName>/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/eSIMProv/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:IMSI"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx:eSIMCardMgrRequest)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>907</pd:x>
+        <pd:y>158</pd:y>
+        <config>
+            <processName>/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/eSIMProv/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:IMSI"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx:eSIMCardMgrRequest)"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="concat(tib:render-xml($QueryMoreData-1),tib:render-xml($InsertSecondary))"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="NotifyUserData">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>383</pd:x>
+        <pd:y>70</pd:y>
+        <config>
+            <processName>/Services/eSIMProv/ComHelpProc/NotifyUserData.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx:notifyUserDataRequest>
+                    <pfx:SERVICE>
+                        <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                    </pfx:SERVICE>
+                    <xsl:choose>
+                        <xsl:when test="string-length(tib:trim($Start/root/pfx:eSIMCardMgrRequest/pfx:TRADE_TYPE))>0">
+                            <pfx:TRADE_TYPE>
+                                <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:TRADE_TYPE"/>
+                            </pfx:TRADE_TYPE>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <pfx:TRADE_TYPE>
+                                <xsl:value-of select="1"/>
+                            </pfx:TRADE_TYPE>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <pfx:MAIN_USER>
+                        <pfx:MSISDN>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN"/>
+                        </pfx:MSISDN>
+                        <pfx:IMSI>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:IMSI"/>
+                        </pfx:IMSI>
+                        <pfx:ICCID>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:ICCID"/>
+                        </pfx:ICCID>
+                    </pfx:MAIN_USER>
+                    <pfx:ATTACH_USERS>
+                        <xsl:choose>
+                            <xsl:when test="exists($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN)&#xA;and &#xA;string-length(tib:trim($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN))>0">
+                                <pfx:MSISDN>
+                                    <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN"/>
+                                </pfx:MSISDN>
+                            </xsl:when>
+                            <xsl:when test="not(exists($QueryMoreData-1/resultSet/Record))&#xA; or count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])=0">
+                                <pfx:MSISDN>
+                                    <xsl:value-of select="concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,'01')"/>
+                                </pfx:MSISDN>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <pfx:MSISDN>
+                                    <xsl:value-of select="concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&#xA;'0',&#xA;count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])+1)"/>
+                                </pfx:MSISDN>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                        <pfx:IMSI>
+                            <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:imsi"/>
+                        </pfx:IMSI>
+                        <pfx:ICCID>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:ICCID"/>
+                        </pfx:ICCID>
+                        <pfx:STATUS>
+                            <xsl:value-of select="3"/>
+                        </pfx:STATUS>
+                        <pfx:EID>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:EID"/>
+                        </pfx:EID>
+                        <pfx:TEMINAL_TYPE>
+                            <xsl:value-of select="exists($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN)&#xA;and &#xA;string-length(tib:trim($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN))>0"/>
+                        </pfx:TEMINAL_TYPE>
+                        <pfx:IMPI>
+                            <xsl:value-of select="not(exists($QueryMoreData-1/resultSet/Record))&#xA; or count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])=0"/>
+                        </pfx:IMPI>
+                        <pfx:IMPU>
+                            <xsl:value-of select="count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])"/>
+                        </pfx:IMPU>
+                    </pfx:ATTACH_USERS>
+                </pfx:notifyUserDataRequest>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TransactionID>
+                <StartTimestamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimestamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="NotifyUserDataFinal">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>784</pd:x>
+        <pd:y>159</pd:y>
+        <config>
+            <processName>/Services/eSIMProv/ComHelpProc/NotifyUserData.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx:notifyUserDataRequest>
+                    <pfx:SERVICE>
+                        <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                    </pfx:SERVICE>
+                    <xsl:choose>
+                        <xsl:when test="string-length(tib:trim($Start/root/pfx:eSIMCardMgrRequest/pfx:TRADE_TYPE))>0">
+                            <pfx:TRADE_TYPE>
+                                <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:TRADE_TYPE"/>
+                            </pfx:TRADE_TYPE>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <pfx:TRADE_TYPE>
+                                <xsl:value-of select="1"/>
+                            </pfx:TRADE_TYPE>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <pfx:MAIN_USER>
+                        <pfx:MSISDN>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN"/>
+                        </pfx:MSISDN>
+                        <pfx:IMSI>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:IMSI"/>
+                        </pfx:IMSI>
+                        <pfx:ICCID>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:ICCID"/>
+                        </pfx:ICCID>
+                    </pfx:MAIN_USER>
+                    <xsl:for-each select="$QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0]">
+                        <pfx:ATTACH_USERS>
+                            <pfx:MSISDN>
+                                <xsl:value-of select="SECONDARY_MSISDN"/>
+                            </pfx:MSISDN>
+                            <pfx:IMSI>
+                                <xsl:value-of select="SECIMSI"/>
+                            </pfx:IMSI>
+                            <pfx:ICCID>
+                                <xsl:value-of select="SECICCD"/>
+                            </pfx:ICCID>
+                            <pfx:STATUS>
+                                <xsl:value-of select="1"/>
+                            </pfx:STATUS>
+                            <pfx:EID>
+                                <xsl:value-of select="SECEID"/>
+                            </pfx:EID>
+                            <xsl:if test="SECTERMINAL_TYPE">
+                                <pfx:TEMINAL_TYPE>
+                                    <xsl:value-of select="SECTERMINAL_TYPE"/>
+                                </pfx:TEMINAL_TYPE>
+                            </xsl:if>
+                            <pfx:IMPI>
+                                <xsl:value-of select="SECIMPI"/>
+                            </pfx:IMPI>
+                            <pfx:IMPU>
+                                <xsl:value-of select="SECIMPU"/>
+                            </pfx:IMPU>
+                        </pfx:ATTACH_USERS>
+                    </xsl:for-each>
+                    <xsl:for-each select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS[1]">
+                        <pfx:ATTACH_USERS>
+                            <xsl:choose>
+                                <xsl:when test="exists($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN)&#xA;and &#xA;string-length(tib:trim($Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN))>0">
+                                    <pfx:MSISDN>
+                                        <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:MSISDN"/>
+                                    </pfx:MSISDN>
+                                </xsl:when>
+                                <xsl:when test="not(exists($QueryMoreData-1/resultSet/Record))&#xA; or count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])=0">
+                                    <pfx:MSISDN>
+                                        <xsl:value-of select="concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,'01')"/>
+                                    </pfx:MSISDN>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <pfx:MSISDN>
+                                        <xsl:value-of select="concat($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&#xA;'0',&#xA;count($QueryMoreData-1/resultSet/Record[string-length(tib:trim(SECONDARY_MSISDN))>0])+1)"/>
+                                    </pfx:MSISDN>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <pfx:IMSI>
+                                <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:imsi"/>
+                            </pfx:IMSI>
+                            <pfx:ICCID>
+                                <xsl:value-of select="pfx:ICCID"/>
+                            </pfx:ICCID>
+                            <pfx:STATUS>
+                                <xsl:value-of select="1"/>
+                            </pfx:STATUS>
+                            <pfx:EID>
+                                <xsl:value-of select="pfx:EID"/>
+                            </pfx:EID>
+                        </pfx:ATTACH_USERS>
+                    </xsl:for-each>
+                </pfx:notifyUserDataRequest>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TransactionID>
+                <StartTimestamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimestamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="-">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>487</pd:x>
+        <pd:y>158</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="QueryMoreData-1">
+        <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+        <pd:description>Query more attach user to send final notify request </pd:description>
+        <pd:x>224</pd:x>
+        <pd:y>71</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/LoginTimeout%%</timeout>
+            <commit>false</commit>
+            <maxRows>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/Maxrows%%</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/Resources/Connection/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>Select MU.MSISDN,MU.IMSI,MU.ICCID,MU.IMPU,MU.IMPI,
+AU.SECONDARY_MSISDN SECONDARY_MSISDN ,
+AU.IMSI SECIMSI,
+AU.ICCID SECICCD,
+AU.EID SECEID,
+AU.STATUS SECSTSTUS,
+AU.TERMINAL_TYPE SECTERMINAL_TYPE,
+AU.IMPU SECIMPU,
+AU.IMPI SECIMPI,
+AU.NICKNAME SECNICKNAME
+ from T_MAIN_USER MU,T_ATTACH_USERS AU where MU.IMSI=? and MU.MSISDN =? and MU.ICCID=? and MU.MSISDN=AU.PRIMARY_MSISDN(+)</statement>
+            <wizardData/>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>IMSI</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>PRIMARY_MSISDN</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>PRIMARY_ICCID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+            <oraObjects/>
+            <oraTables/>
+            <QueryOutputCachedSchemaColumns>MSISDN</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>IMSI</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>ICCID</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>IMPU</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>IMPI</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SECONDARY_MSISDN</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SECIMSI</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SECICCD</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SECEID</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SECSTSTUS</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SECTERMINAL_TYPE</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SECIMPU</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SECIMPI</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>SECNICKNAME</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+        </config>
+        <pd:inputBindings>
+            <jdbcQueryActivityInput>
+                <IMSI>
+                    <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:IMSI"/>
+                </IMSI>
+                <xsl:choose>
+                    <xsl:when test="starts-with($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN, &quot;+&quot;)">
+                        <PRIMARY_MSISDN>
+                            <xsl:value-of select="substring-after($Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN,&quot;+&quot;)"/>
+                        </PRIMARY_MSISDN>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <PRIMARY_MSISDN>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:MSISDN"/>
+                        </PRIMARY_MSISDN>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <PRIMARY_ICCID>
+                    <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:MAIN_USER/pfx:ICCID"/>
+                </PRIMARY_ICCID>
+            </jdbcQueryActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ESI_StorageMediumDetailsRead">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>223</pd:x>
+        <pd:y>235</pd:y>
+        <config>
+            <processName>/Services/eSIMProv/ComHelpProc/ESI_StorageMediumDetailsRead.process</processName>
+        </config>
+        <pd:inputBindings>
+            <group>
+                <ns3:storageMediumDetailsReadRequest>
+                    <ns3:sessionChangeRequest>
+                        <ns4:values>
+                            <ns4:item>
+                                <ns4:key>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/BSCS/sessionChangeRequest/Key"/>
+                                </ns4:key>
+                                <ns4:value>
+                                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/BSCS/sessionChangeRequest/VAlue"/>
+                                </ns4:value>
+                            </ns4:item>
+                        </ns4:values>
+                    </ns3:sessionChangeRequest>
+                    <ns3:inputAttributes>
+                        <ns3:smserialno>
+                            <xsl:value-of select="$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:ICCID"/>
+                        </ns3:smserialno>
+                    </ns3:inputAttributes>
+                </ns3:storageMediumDetailsReadRequest>
+                <TrackingId>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TrackingId>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+            </group>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="+">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>313</pd:x>
+        <pd:y>156</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="GenErrStorageMedRead">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>340</pd:x>
+        <pd:y>337</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <xsl:if test="$ESI_StorageMediumDetailsRead/root/Error/ErrorMsg">
+                    <message>
+                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/Error/ErrorMsg"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$ESI_StorageMediumDetailsRead/root/Error/ErrorCode">
+                    <messageCode>
+                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/Error/ErrorCode"/>
+                    </messageCode>
+                </xsl:if>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ICCID-Err">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>75</pd:x>
+        <pd:y>34</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="concat(&quot;ICCID &quot;,$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:ICCID,&quot; already attached&quot;)"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="&quot;TIBCO_Err&quot;"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GenErrCai3G">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>500</pd:x>
+        <pd:y>324</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$CAI3GCallEMA/ns5:SetResponse/ns5:MOAttributes/pfx3:setResponseSubscription/pfx3:respDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$CAI3GCallEMA/ns5:SetResponse/ns5:MOAttributes/pfx3:setResponseSubscription/pfx3:respCode"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>686</pd:x>
+        <pd:y>73</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>800</pd:x>
+        <pd:y>72</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </message>
+                <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                    <messageCode>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                    </messageCode>
+                </xsl:if>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log_Msg-In</pd:to>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-In</pd:from>
+        <pd:to>QueryMoreData-1</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>NotifyUserData</pd:from>
+        <pd:to>-</pd:to>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CAI3GCallEMA</pd:from>
+        <pd:to>-</pd:to>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>InsertPrimary</pd:from>
+        <pd:to>InsertSecondary</pd:to>
+        <pd:xpathDescription>Success</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>NotifyUserDataFinal</pd:from>
+        <pd:to>Log_Msg-Out</pd:to>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-Out</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>QueryMoreData-1</pd:from>
+        <pd:to>+</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>InsertSecondary</pd:from>
+        <pd:to>NotifyUserDataFinal</pd:to>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>-</pd:from>
+        <pd:to>InsertPrimary</pd:to>
+        <pd:xpathDescription>NewEntrty</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>not(exists($QueryMoreData-1/resultSet/Record))or count($QueryMoreData-1/resultSet/Record)=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>-</pd:from>
+        <pd:to>InsertSecondary</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-In</pd:from>
+        <pd:to>ESI_StorageMediumDetailsRead</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ESI_StorageMediumDetailsRead</pd:from>
+        <pd:to>+</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>+</pd:from>
+        <pd:to>NotifyUserData</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>+</pd:from>
+        <pd:to>CAI3GCallEMA</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ESI_StorageMediumDetailsRead</pd:from>
+        <pd:to>GenErrStorageMedRead</pd:to>
+        <pd:xpathDescription>NoDataFound</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-39373</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>exists($ESI_StorageMediumDetailsRead/root/Error)</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>QueryMoreData-1</pd:from>
+        <pd:to>ICCID-Err</pd:to>
+        <pd:xpathDescription>Aalready Attched</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-39373</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>count($QueryMoreData-1/resultSet/Record[SECICCD=$Start/root/pfx:eSIMCardMgrRequest/pfx:ATTACH_USERS/pfx:ICCID])&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CAI3GCallEMA</pd:from>
+        <pd:to>GenErrCai3G</pd:to>
+        <pd:xpathDescription>Err</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-26215</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$CAI3GCallEMA/ns5:SetResponse/ns5:MOAttributes/pfx3:setResponseSubscription/pfx3:respCode!=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>InsertPrimary</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>InsertSecondary</pd:to>
+        <pd:xpathDescription>UniqueConstraintIgnore</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains($_error/ns1:ErrorReport/StackTrace,"unique constraint")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:label>
+        <pd:name>Label</pd:name>
+        <pd:description>Uniqueu Key contraint to be overlooked as during testing it was found that 
+Manual insertioni n primary table is required.</pd:description>
+        <pd:x>1088</pd:x>
+        <pd:y>56</pd:y>
+        <pd:width>433</pd:width>
+        <pd:height>57</pd:height>
+        <pd:fontName>Dialog.plain-plain-10</pd:fontName>
+        <pd:fontColor>-16777216</pd:fontColor>
+        <pd:color>-1</pd:color>
+        <pd:type>solid</pd:type>
+        <pd:thickness>0</pd:thickness>
+        <pd:fade>true</pd:fade>
+    </pd:label>
+</pd:ProcessDefinition>

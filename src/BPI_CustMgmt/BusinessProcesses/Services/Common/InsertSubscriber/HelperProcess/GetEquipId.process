@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <pd:name>BusinessProcesses/Services/Common/InsertSubscriber/HelperProcess/GetEquipId.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="TableEquipId" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="TableEquipId" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="ChannelCode" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="ChannelCode" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>27</pd:startX>
+    <pd:startY>99</pd:startY>
+    <pd:returnBindings>
+        <Output>
+            <xsl:if test="string-length($Start/root/ChannelCode[($Index/root/Index)-1]/ChannelCode)>0">
+                <DeviceId>
+                    <DeviceId>
+                        <xsl:value-of select="$Start/root/ChannelCode[($Index/root/Index)-1]/ChannelCode"/>
+                    </DeviceId>
+                    <PrimaryDevice>
+                        <xsl:value-of select="'Y'"/>
+                    </PrimaryDevice>
+                </DeviceId>
+            </xsl:if>
+            <xsl:for-each select="$SecIndex/root/SecIndex">
+                <DeviceId>
+                    <DeviceId>
+                        <xsl:value-of select="$Start/root/ChannelCode[number(current()/SecIndex)]/ChannelCode"/>
+                    </DeviceId>
+                    <PrimaryDevice>
+                        <xsl:value-of select="'N'"/>
+                    </PrimaryDevice>
+                </DeviceId>
+            </xsl:for-each>
+            <EquipId>
+                <xsl:value-of select="$EquipId/root/EquipId"/>
+            </EquipId>
+        </Output>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="Output">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="DeviceId" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="DeviceId" type="xsd:string"/>
+                                <xsd:element name="PrimaryDevice" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="EquipId" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>1185</pd:endX>
+    <pd:endY>115</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables>
+        <Index>
+            <xsd:element name="root">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="Index" type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </Index>
+        <SecIndex>
+            <xsd:element name="root">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="SecIndex" minOccurs="0" maxOccurs="unbounded">
+                            <xsd:complexType>
+                                <xsd:sequence>
+                                    <xsd:element name="SecIndex" type="xsd:int"/>
+                                </xsd:sequence>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </SecIndex>
+        <EquipId>
+            <xsd:element name="root">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="EquipId" type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </EquipId>
+    </pd:processVariables>
+    <pd:targetNamespace>http://xmlns.example.com/1512574967238</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>564</pd:x>
+        <pd:y>20</pd:y>
+        <pd:width>292</pd:width>
+        <pd:height>163</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$Start/root/ChannelCode</pd:over>
+            <pd:iterationElementSlot>Code</pd:iterationElementSlot>
+            <pd:indexSlot>i</pd:indexSlot>
+            <pd:activityOutputName/>
+            <pd:accumulateOutput>false</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>GetEquipId</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetIndex</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetEquipId</pd:from>
+            <pd:to>GetIndex</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="GetEquipId">
+            <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+            <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+            <pd:x>644</pd:x>
+            <pd:y>94</pd:y>
+            <config>
+                <variableName>EquipId</variableName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <xsl:choose>
+                        <xsl:when test="exists($Start/root/TableEquipId[TableEquipId=$Code/ChannelCode/ChannelCode]) and $EquipId/root/EquipId=0">
+                            <EquipId>
+                                <xsl:value-of select="$Code/ChannelCode/ChannelCode"/>
+                            </EquipId>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:if test="$EquipId/root/EquipId">
+                                <EquipId>
+                                    <xsl:value-of select="$EquipId/root/EquipId"/>
+                                </EquipId>
+                            </xsl:if>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GetIndex">
+            <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+            <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+            <pd:x>757</pd:x>
+            <pd:y>95</pd:y>
+            <config>
+                <variableName>Index</variableName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <xsl:choose>
+                        <xsl:when test="contains($Code/ChannelCode/ChannelCode,'SMR') and $Index/root/Index=0">
+                            <Index>
+                                <xsl:value-of select="$i"/>
+                            </Index>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:if test="$Index/root/Index">
+                                <Index>
+                                    <xsl:value-of select="$Index/root/Index"/>
+                                </Index>
+                            </xsl:if>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="InitializeIndex">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>130</pd:x>
+        <pd:y>111</pd:y>
+        <config>
+            <variableName>Index</variableName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <Index>
+                    <xsl:value-of select="0"/>
+                </Index>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="InitializeEquipId">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>231</pd:x>
+        <pd:y>106</pd:y>
+        <config>
+            <variableName>EquipId</variableName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <EquipId>
+                    <xsl:value-of select="0"/>
+                </EquipId>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="InitializeSecIndex">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>383</pd:x>
+        <pd:y>105</pd:y>
+        <config>
+            <variableName>SecIndex</variableName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <SecIndex>
+                    <SecIndex>
+                        <xsl:value-of select="0"/>
+                    </SecIndex>
+                </SecIndex>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetSecIndex">
+        <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+        <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+        <pd:x>1003</pd:x>
+        <pd:y>93</pd:y>
+        <config>
+            <variableName>SecIndex</variableName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:for-each select="$Start/root/ChannelCode">
+                    <xsl:if test="contains(current()/ChannelCode,'SEC')">
+                        <SecIndex>
+                            <SecIndex>
+                                <xsl:value-of select="position() - 1"/>
+                            </SecIndex>
+                        </SecIndex>
+                    </xsl:if>
+                </xsl:for-each>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>InitializeIndex</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>GetSecIndex</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>InitializeIndex</pd:from>
+        <pd:to>InitializeEquipId</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>InitializeEquipId</pd:from>
+        <pd:to>InitializeSecIndex</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>InitializeSecIndex</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetSecIndex</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

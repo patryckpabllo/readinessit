@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:ns1="http://www.zain.com/ZESB/Types/Common" xmlns:tns="http://xmlns.example.com/1451073576082" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns0="http://www.zain.com/ZESB/Services/GetDataUsage/Types" xmlns:jms="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:jndi="http://www.tibco.com/namespaces/ws/2004/soap/apis/jndi" name="Untitled" targetNamespace="http://xmlns.example.com/1451073576082">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Services/GetDataUsage/Types" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:import namespace="http://www.zain.com/ZESB/Types/Common"/>
+            <xs:import namespace="http://www.zain.com/ZESB/Types/Common"/>
+            <xs:simpleType name="MSISDN">
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="7"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:complexType name="QuotaType">
+                <xs:sequence>
+                    <xs:element name="ID" type="xs:string"/>
+                    <xs:element name="Used" type="xs:long"/>
+                    <xs:element name="Remaining" type="xs:long"/>
+                    <xs:element name="Threshold" type="xs:long"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetDataUsageInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="MSISDN" type="ns0:MSISDN"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetDataUsageOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="IMSI" type="xs:string"/>
+                        <xs:element name="Service" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="ID" type="xs:string"/>
+                                    <xs:element name="Type" type="xs:string" minOccurs="0"/>
+                                    <xs:element name="BillingStartDate" type="xs:dateTime"/>
+                                    <xs:element name="BillingEndDate" type="xs:dateTime"/>
+                                    <xs:element name="Quotas">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Quota" type="ns0:QuotaType" maxOccurs="unbounded"/>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="DowngradeDate" type="xs:dateTime" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:import namespace="http://www.zain.com/ZESB/Services/GetDataUsage/Types"/>
+            <xs:import namespace="http://www.zain.com/ZESB/Services/GetDataUsage/Types"/>
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+                        <xs:element name="detail" type="xs:string" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="GetDataUsage">
+        <wsdl:port name="GetDataUsageEndpoint" binding="tns:GetDataUsageEndpointBinding">
+            <soap:address location=""/>
+            <jms:connectionFactory>QueueConnectionFactory</jms:connectionFactory>
+            <jms:targetAddress destination="queue">queue.sample</jms:targetAddress>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="GetDataUsage">
+        <wsdl:operation name="GetDataUsage">
+            <wsdl:input message="tns:GetDataUsageRequest"/>
+            <wsdl:output message="tns:GetDataUsageResponse"/>
+            <wsdl:fault name="fault" message="tns:FaultMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="GetDataUsageEndpointBinding" type="tns:GetDataUsage">
+        <soap:binding style="document" transport="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS"/>
+        <jms:binding messageFormat="Text"/>
+        <wsdl:operation name="GetDataUsage">
+            <soap:operation style="document" soapAction="GetDataUsage"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="GetDataUsageRequest">
+        <wsdl:part name="request" element="ns0:GetDataUsageInput"/>
+    </wsdl:message>
+    <wsdl:message name="GetDataUsageResponse">
+        <wsdl:part name="response" element="ns0:GetDataUsageOutput"/>
+    </wsdl:message>
+    <wsdl:message name="FaultMessage">
+        <wsdl:part name="fault" element="ns1:FaultType"/>
+    </wsdl:message>
+</wsdl:definitions>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zain.com/ZESB/Services/SmsService" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:typ="http://www.zain.com/ZESB/Services/SmsService/Types" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://www.zain.com/ZESB/Services/SmsService">
+	<wsdl:types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/SmsService/Types">
+			<xs:complexType name="GatewayUser">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="CustomerID" type="xs:int"/>
+					<xs:element minOccurs="0" maxOccurs="1" name="Name" type="xs:string"/>
+					<xs:element minOccurs="0" maxOccurs="1" name="Password" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="SendSms">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="1" name="User" type="typ:GatewayUser"/>
+						<xs:element minOccurs="1" maxOccurs="1" name="From" type="xs:string"/>
+						<xs:element minOccurs="1" maxOccurs="1" name="To" type="xs:string"/>
+						<xs:element minOccurs="1" maxOccurs="1" name="Language" type="xs:string"/>
+						<xs:element minOccurs="1" maxOccurs="1" name="Text" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SendSmsResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="1" name="Result" type="xs:string"/>
+						<xs:element minOccurs="0" maxOccurs="1" name="TransactionID" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="SendSmsInput">
+		<wsdl:part name="parameters" element="typ:SendSms"/>
+	</wsdl:message>
+	<wsdl:message name="SendSmsOutput">
+		<wsdl:part name="parameters" element="typ:SendSmsResponse"/>
+	</wsdl:message>
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType"/>
+	</wsdl:message>
+	<wsdl:portType name="SmsServicePort">
+		<wsdl:operation name="SendSms">
+			<wsdl:input message="tns:SendSmsInput"/>
+			<wsdl:output message="tns:SendSmsOutput"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="SmsServiceBinding" type="tns:SmsServicePort">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="SendSms">
+			<soap:operation soapAction="SendSms" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="SmsService">
+		<wsdl:port name="SmsServicePort" binding="tns:SmsServiceBinding">
+			<soap:address location="/ZESB/SmsService"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

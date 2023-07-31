@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <pd:name>Test/Process Definition (3).process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="param" type="xsd:string"/>
+                    <xsd:element name="paramTwo" type="xsd:string"/>
+                    <xsd:element name="paramThree" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <param>
+                <xsl:value-of select="string($Map-Data/root/param)"/>
+            </param>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="param" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>594</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1597383621866</pd:targetNamespace>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>286</pd:x>
+        <pd:y>64</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="param" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="param1" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="P2" type="xsd:string"/>
+                                                    <xsd:element name="P1" type="xsd:string"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="param2">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="param" type="xsd:string"/>
+                                                    <xsd:element name="param1" type="xsd:string"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <param>
+                    <param1>
+                        <P2>
+                            <xsl:value-of select="1"/>
+                        </P2>
+                        <P1>
+                            <xsl:value-of select="2"/>
+                        </P1>
+                    </param1>
+                    <param2>
+                        <param>
+                            <xsl:value-of select="3"/>
+                        </param>
+                        <param1>
+                            <xsl:value-of select="4"/>
+                        </param1>
+                    </param2>
+                </param>
+                <param>
+                    <param1>
+                        <P2>
+                            <xsl:value-of select="1"/>
+                        </P2>
+                        <P1>
+                            <xsl:value-of select="2"/>
+                        </P1>
+                    </param1>
+                    <param2>
+                        <param>
+                            <xsl:value-of select="3"/>
+                        </param>
+                        <param1>
+                            <xsl:value-of select="4"/>
+                        </param1>
+                    </param2>
+                </param>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="XML_JSON">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>409</pd:x>
+        <pd:y>64</pd:y>
+        <config>
+            <fileName>ProcessDefinition3XML_JSON</fileName>
+            <packageName>Test.ProcessDefinition3</packageName>
+            <fullsource>package Test.ProcessDefinition3;
+import java.util.*;
+import java.io.*;
+import org.json.JSONObject;
+import org.json.XML;
+import org.json.JSONML;
+import org.json.JSONArray;
+
+public class ProcessDefinition3XML_JSON{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String jsonIn = "";
+	protected String xmlIn = "";
+	protected String xmlOut = "";
+	protected String jsonOut = "";
+	public String getjsonIn() {
+		return jsonIn;
+	}
+	public void setjsonIn(String val) {
+		jsonIn = val;
+	}
+	public String getxmlIn() {
+		return xmlIn;
+	}
+	public void setxmlIn(String val) {
+		xmlIn = val;
+	}
+	public String getxmlOut() {
+		return xmlOut;
+	}
+	public void setxmlOut(String val) {
+		xmlOut = val;
+	}
+	public String getjsonOut() {
+		return jsonOut;
+	}
+	public void setjsonOut(String val) {
+		jsonOut = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ProcessDefinition3XML_JSON() {
+	}
+	public void invoke() throws Exception {
+	String xmlOt="";
+	String jsonOt="";
+        System.out.println("XML to JSON***********************************");
+	JSONObject jObj1 = XML.toJSONObject(getxmlIn());
+        JSONArray jsonArray = jObj1.getJSONObject("/").getJSONArray("param");
+              jsonArray.remove(0);
+
+
+   	System.out.println(JSONObject.quote(jObj1.toString()));
+		//jsonOut=jObj1.toString();
+//jsonOut = jsonOut.replaceAll(":\\s([d]+)", ": \"$1\"");
+                setjsonOut(jObj1.toString());
+
+/* Available Variables: DO NOT MODIFY
+	In  : String jsonIn
+	In  : String xmlIn
+	Out : String xmlOut
+	Out : String jsonOut
+* Available Variables: DO NOT MODIFY *****/
+
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>jsonIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>xmlIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>xmlOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>jsonOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>ProcessDefinition3XML_JSON</name>
+                    <byteCode>yv66vgAAADMAWwkAFAAuCQAUAC8JABQAMAkAFAAxCgAVADIIADMJADQANQgANgoANwA4CgAUADkKADoAOwgAPAoAPQA+CAA/CgA9AEAKAEEAQgoAPQBDCgA9AEQKABQARQcARgcARwEABmpzb25JbgEAEkxqYXZhL2xhbmcvU3RyaW5nOwEABXhtbEluAQAGeG1sT3V0AQAHanNvbk91dAEACWdldGpzb25JbgEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEACXNldGpzb25JbgEAFShMamF2YS9sYW5nL1N0cmluZzspVgEACGdldHhtbEluAQAIc2V0eG1sSW4BAAlnZXR4bWxPdXQBAAlzZXR4bWxPdXQBAApnZXRqc29uT3V0AQAKc2V0anNvbk91dAEABjxpbml0PgEAAygpVgEABmludm9rZQEACkV4Y2VwdGlvbnMHAEgBAApTb3VyY2VGaWxlAQAfUHJvY2Vzc0RlZmluaXRpb24zWE1MX0pTT04uamF2YQwAFgAXDAAYABcMABkAFwwAGgAXDAAnACgBAAAHAEkMAEoASwEALlhNTCB0byBKU09OKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioHAEwMAE0AIAwAIQAcBwBODABPAFABAAEvBwBRDABSAFABAAVwYXJhbQwAUwBUBwBVDABWAFcMAFgAHAwAWQBaDAAmACABADJUZXN0L1Byb2Nlc3NEZWZpbml0aW9uMy9Qcm9jZXNzRGVmaW5pdGlvbjNYTUxfSlNPTgEAEGphdmEvbGFuZy9PYmplY3QBABNqYXZhL2xhbmcvRXhjZXB0aW9uAQAQamF2YS9sYW5nL1N5c3RlbQEAA291dAEAFUxqYXZhL2lvL1ByaW50U3RyZWFtOwEAE2phdmEvaW8vUHJpbnRTdHJlYW0BAAdwcmludGxuAQAMb3JnL2pzb24vWE1MAQAMdG9KU09OT2JqZWN0AQApKExqYXZhL2xhbmcvU3RyaW5nOylMb3JnL2pzb24vSlNPTk9iamVjdDsBABNvcmcvanNvbi9KU09OT2JqZWN0AQANZ2V0SlNPTk9iamVjdAEADGdldEpTT05BcnJheQEAKChMamF2YS9sYW5nL1N0cmluZzspTG9yZy9qc29uL0pTT05BcnJheTsBABJvcmcvanNvbi9KU09OQXJyYXkBAAZyZW1vdmUBABUoSSlMamF2YS9sYW5nL09iamVjdDsBAAh0b1N0cmluZwEABXF1b3RlAQAmKExqYXZhL2xhbmcvU3RyaW5nOylMamF2YS9sYW5nL1N0cmluZzsAIQAUABUAAAAEAAQAFgAXAAAABAAYABcAAAAEABkAFwAAAAQAGgAXAAAACgABABsAHAABAB0AAAAdAAEAAQAAAAUqtAABsAAAAAEAHgAAAAYAAQAAABAAAQAfACAAAQAdAAAAIgACAAIAAAAGKiu1AAGxAAAAAQAeAAAACgACAAAAEwAFABQAAQAhABwAAQAdAAAAHQABAAEAAAAFKrQAArAAAAABAB4AAAAGAAEAAAAWAAEAIgAgAAEAHQAAACIAAgACAAAABiortQACsQAAAAEAHgAAAAoAAgAAABkABQAaAAEAIwAcAAEAHQAAAB0AAQABAAAABSq0AAOwAAAAAQAeAAAABgABAAAAHAABACQAIAABAB0AAAAiAAIAAgAAAAYqK7UAA7EAAAABAB4AAAAKAAIAAAAfAAUAIAABACUAHAABAB0AAAAdAAEAAQAAAAUqtAAEsAAAAAEAHgAAAAYAAQAAACIAAQAmACAAAQAdAAAAIgACAAIAAAAGKiu1AASxAAAAAQAeAAAACgACAAAAJQAFACYAAQAnACgAAQAdAAAASQACAAEAAAAdKrcABSoSBrUAASoSBrUAAioSBrUAAyoSBrUABLEAAAABAB4AAAAaAAYAAAAoAAQACwAKAAwAEAANABYADgAcACkAAQApACgAAgAdAAAAeAACAAUAAABAEgZMEgZNsgAHEgi2AAkqtgAKuAALTi0SDLYADRIOtgAPOgQZBAO2ABBXsgAHLbYAEbgAErYACSottgARtgATsQAAAAEAHgAAACYACQAAACsAAwAsAAYALQAOAC4AFgAvACMAMAAqADMANwA2AD8APwAqAAAABAABACsAAQAsAAAAAgAt</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xmlIn>
+                    <xsl:value-of select="tib:render-xml($Map-Data/root)&#xA;{--substring-before(substring-after((tib:render-xml($Map-Data/root)), &quot;&lt;root>&quot;), &quot;&lt;/root>&quot;) --}"/>
+                </xmlIn>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>XML_JSON</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>XML_JSON</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

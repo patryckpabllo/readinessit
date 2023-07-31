@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pfx16="http://www.tibco.com/pe/CheckpointSchema" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns101="http://www.tibco.com/namespaces/tnt/plugins/file" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns02="www.tibco.com/plugin/Sleep" xmlns:ns20="http://xmlns.zain.com/BSS/ESB/CDM/Base" xmlns:pfx5="QMS" xmlns:pfx4="http://www.zain.com/ZESB/Services/NetworkProfile/Types" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.huawei.com/HSS" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pfx9="http://www.tibco.com/pe/DeployedVarsType" xmlns:pfx6="http://www.zain.com/ZESB/Services/Query/QueueManagement.xsd" xmlns:pfx52="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns15="http://xmlns.tibco.com/encodings/mime" xmlns:ns9="http://schemas.tibco.com/bw/plugins/http/5.0/httpExceptions" xmlns:format="java://MSISDNFormatter" xmlns:ns12="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns13="http://tibco.com/namespaces/tnt/plugins/soap" xmlns:pfx71="http://www.tibco.com/pe/SignalInActivitySchema" xmlns:ns7="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns10="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions" xmlns:pfx="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns8="http://www.tibco.com/pe/EngineTypes" xmlns:ns2="pfx53" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="pfx54" xmlns:ns0="http://xml.apache.org/axis/wsdd/providers/java" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" schemaLocation="/CDM/ZainKWFault.xsd"/>
+    <xsd:import namespace="QMS" schemaLocation="/BusinessWSDLS/Services/WSDLS/QueueManagement/QueueManagementService.wsdl"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/Query/QueueManagement.xsd" schemaLocation="/BusinessSchemas/Services/Query/QueueManagement/QueueManagement.xsd"/>
+    <wsdl:import namespace="QMS" location="/BusinessWSDLS/Services/WSDLS/QueueManagement/QueueManagementService.wsdl"/>
+    <pd:name>BusinessProcesses/Services/QueueManagement/HelperProcess/QueueManagement.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="group">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="CustomerString" type="xsd:string"/>
+                    <xsd:element name="TrackingId" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>97</pd:startX>
+    <pd:startY>188</pd:startY>
+    <pd:returnBindings>
+        <xsl:copy-of select="$MapOutput/root"/>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:choice>
+                    <xsd:element ref="pfx6:QueueManagementResponse"/>
+                    <xsd:element ref="pfx52:ErrorResponse"/>
+                </xsd:choice>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>1653</pd:endX>
+    <pd:endY>191</pd:endY>
+    <pd:errorSchemas>
+        <ErrorSchema ref="pfx52:ErrorResponse"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1323154311057</pd:targetNamespace>
+    <pd:activity name="Log_In">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>446</pd:x>
+        <pd:y>190</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx:LogRequest>
+                <pfx2:Header>
+                    <pfx2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx2:ApplicationID>
+                    <pfx2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/BusinessProcesses/Services/Common/HuaweiHLR/ComponentName"/>
+                    </pfx2:ComponentName>
+                    <pfx2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </pfx2:Hostname>
+                    <pfx2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx2:Timestamp>
+                    <pfx2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </pfx2:TransactionDomain>
+                    <pfx2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns8:ProcessContext/ProcessId))"/>
+                    </pfx2:TransactionType>
+                    <pfx2:TransactionID>
+                        <xsl:value-of select="$Start/group/TrackingId"/>
+                    </pfx2:TransactionID>
+                    <pfx2:Filename>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/Deployment"/>
+                    </pfx2:Filename>
+                    <pfx2:Message>
+                        <xsl:value-of select="tib:render-xml($CDMToNative/root/Request)"/>
+                    </pfx2:Message>
+                </pfx2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/group/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </pfx:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1057</pd:x>
+        <pd:y>196</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx:LogRequest>
+                <pfx2:Header>
+                    <pfx2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx2:ApplicationID>
+                    <pfx2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/BusinessProcesses/Services/Common/HuaweiHLR/ComponentName"/>
+                    </pfx2:ComponentName>
+                    <pfx2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </pfx2:Hostname>
+                    <pfx2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx2:Timestamp>
+                    <pfx2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </pfx2:TransactionDomain>
+                    <pfx2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns8:ProcessContext/ProcessId))"/>
+                    </pfx2:TransactionType>
+                    <pfx2:TransactionID>
+                        <xsl:value-of select="$Start/group/TrackingId"/>
+                    </pfx2:TransactionID>
+                    <pfx2:Filename>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/Deployment"/>
+                    </pfx2:Filename>
+                    <pfx2:Message>
+                        <xsl:value-of select="tib:render-xml($HTTP_Request_CallTicket/RequestActivityOutput/asciiContent)"/>
+                    </pfx2:Message>
+                </pfx2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/group/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </pfx:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CDMToNative">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>280</pd:x>
+        <pd:y>192</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="pfx5:CallTicket"/>
+                            <xsd:element name="Request" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx5:CallTicket>
+                    <pfx5:counterID>
+                        <xsl:value-of select="0"/>
+                    </pfx5:counterID>
+                    <pfx5:EmpID>
+                        <xsl:value-of select="0"/>
+                    </pfx5:EmpID>
+                    <pfx5:BranchID>
+                        <xsl:value-of select="0"/>
+                    </pfx5:BranchID>
+                </pfx5:CallTicket>
+                <Request>
+                    <xsl:value-of select="concat(&quot;&lt;soapenv:Envelope xmlns:soapenv=&quot;,'&quot;',&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;,'&quot;',&quot; xmlns:qms=&quot;,'&quot;',&quot;QMS&quot;,'&quot;',&quot;>&lt;soapenv:Header/>&lt;soapenv:Body>&lt;qms:CallTicket>&lt;qms:counterID>&quot;,$ParseInput/pfx6:QueueManagementRequest/pfx6:CounterID,&quot;&lt;/qms:counterID>&lt;qms:EmpID>&quot;,$ParseInput/pfx6:QueueManagementRequest/pfx6:EmpID,&quot;&lt;/qms:EmpID>&lt;qms:BranchID>&quot;,$ParseInput/pfx6:QueueManagementRequest/pfx6:BranchID,&quot;&lt;/qms:BranchID>&lt;/qms:CallTicket>&lt;/soapenv:Body>&lt;/soapenv:Envelope>&quot;)"/>
+                </Request>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>522</pd:x>
+        <pd:y>1</pd:y>
+        <pd:width>436</pd:width>
+        <pd:height>370</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>errorLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:indexSlot>iError</pd:indexSlot>
+            <pd:errorCondition>$iError=$_globalVariables/pfx9:GlobalVariables/CommonProcesses/ErrorHandling/Retry/MaxRetryCount</pd:errorCondition>
+            <pd:suspendAfterErrorRetry>false</pd:suspendAfterErrorRetry>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>HTTP_Request_CallTicket</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Null</pd:from>
+            <pd:to>end</pd:to>
+            <pd:xpathDescription>otherwise</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>HTTP_Request_CallTicket</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Null</pd:from>
+            <pd:to>Sleep</pd:to>
+            <pd:xpathDescription>Timeout</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-3394816</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>exists($_error_HTTP_Request_CallTicket/ActivityErrors/ns10:ActivityTimedOutException)
+or
+exists($_error_HTTP_Request_CallTicket/ActivityErrors/ns9:HttpCommunicationException)
+or
+exists($_error_HTTP_Request_CallTicket/ActivityErrors/ns9:HttpServerException)
+or
+exists($_error_HTTP_Request_CallTicket/ActivityErrors/ns9:HttpClientException)</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Sleep</pd:from>
+            <pd:to>GenerateTechnicalError</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>HTTP_Request_CallTicket</pd:from>
+            <pd:to>Null</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-65536</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Sleep">
+            <pd:type>com.tibco.plugin.timer.SleepActivity</pd:type>
+            <pd:resourceType>ae.activities.sleep</pd:resourceType>
+            <pd:x>902</pd:x>
+            <pd:y>302</pd:y>
+            <config/>
+            <pd:inputBindings>
+                <ns02:SleepInputSchema>
+                    <IntervalInMillisec>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/BusinessProcesses/Common/ErrorHandling/RetryInterval"/>
+                    </IntervalInMillisec>
+                </ns02:SleepInputSchema>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Null">
+            <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+            <pd:resourceType>ae.activities.null</pd:resourceType>
+            <pd:x>705</pd:x>
+            <pd:y>203</pd:y>
+            <config/>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="GenerateTechnicalError">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>598</pd:x>
+            <pd:y>306</pd:y>
+            <config>
+                <faultName>ErrorSchema</faultName>
+            </config>
+            <pd:inputBindings>
+                <ns:ActivityInput>
+                    <data>
+                        <pfx52:ErrorResponse>
+                            <pfx52:Error_SourceSystem>
+                                <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/BusinessProcesses/Services/Common/HuaweiHLR/SourceTIBCO"/>
+                            </pfx52:Error_SourceSystem>
+                            <pfx52:Error_SourceErrCode>
+                                <xsl:value-of select="$_error/ns8:ErrorReport/MsgCode"/>
+                            </pfx52:Error_SourceErrCode>
+                            <pfx52:Error_SourceErrDesc>
+                                <xsl:value-of select="$_error/ns8:ErrorReport/Msg"/>
+                            </pfx52:Error_SourceErrDesc>
+                        </pfx52:ErrorResponse>
+                    </data>
+                </ns:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="HTTP_Request_CallTicket">
+            <pd:type>com.tibco.plugin.http.client.HttpRequestActivity</pd:type>
+            <pd:resourceType>httppalette.httpRequest</pd:resourceType>
+            <pd:x>735</pd:x>
+            <pd:y>71</pd:y>
+            <config>
+                <inputOutputVersion>5.3.0</inputOutputVersion>
+                <newMimeSupport>true</newMimeSupport>
+                <authScheme>NONE</authScheme>
+                <InputHeaders>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="Accept" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Accept-Charset" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Accept-Encoding" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Cookie" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </InputHeaders>
+                <OutputHeaders>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="Allow" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Length" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Content-Encoding" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Date" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                                <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </OutputHeaders>
+            </config>
+            <pd:inputBindings>
+                <RequestActivityInput>
+                    <Host>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/BusinessProcesses/Services/Common/QueueManagement/Host"/>
+                    </Host>
+                    <Method>
+                        <xsl:value-of select="&quot;POST&quot;"/>
+                    </Method>
+                    <RequestURI>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/BusinessProcesses/Services/Common/QueueManagement/RequestURI"/>
+                    </RequestURI>
+                    <PostData>
+                        <xsl:value-of select="$CDMToNative/root/Request"/>
+                    </PostData>
+                    <Timeout>
+                        <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/BusinessProcesses/Services/Common/QueueManagement/HTTPTimeout"/>
+                    </Timeout>
+                    <Headers>
+                        <Content-Type>
+                            <xsl:value-of select="&quot;text/xml&quot;"/>
+                        </Content-Type>
+                    </Headers>
+                </RequestActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="GenerateTimeOutError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>396</pd:x>
+        <pd:y>333</pd:y>
+        <config>
+            <faultName>ErrorSchema</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <data>
+                    <xsl:copy-of select="$_error_GenerateTechnicalError/pfx52:ErrorResponse"/>
+                </data>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>1105</pd:x>
+        <pd:y>315</pd:y>
+        <config>
+            <faultName>ErrorSchema</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <data>
+                    <pfx52:ErrorResponse>
+                        <pfx52:Error_SourceSystem>
+                            <xsl:value-of select="$_globalVariables/pfx9:GlobalVariables/BusinessProcesses/Services/Common/HuaweiHLR/SourceTIBCO"/>
+                        </pfx52:Error_SourceSystem>
+                        <pfx52:Error_SourceErrCode>
+                            <xsl:value-of select="$_error/ns8:ErrorReport/MsgCode"/>
+                        </pfx52:Error_SourceErrCode>
+                        <pfx52:Error_SourceErrDesc>
+                            <xsl:value-of select="$_error/ns8:ErrorReport/Msg"/>
+                        </pfx52:Error_SourceErrDesc>
+                    </pfx52:ErrorResponse>
+                </data>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="MapOutput">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1455</pd:x>
+        <pd:y>188</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:choice>
+                            <xsd:element ref="pfx6:QueueManagementResponse"/>
+                            <xsd:element ref="pfx52:ErrorResponse"/>
+                        </xsd:choice>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx6:QueueManagementResponse>
+                    <xsl:for-each select="$Parse-XML/Table">
+                        <pfx6:Item>
+                            <xsl:if test="QueueID">
+                                <pfx6:QueueID>
+                                    <xsl:value-of select="QueueID"/>
+                                </pfx6:QueueID>
+                            </xsl:if>
+                            <xsl:if test="Number">
+                                <pfx6:TicketNumber>
+                                    <xsl:value-of select="Number"/>
+                                </pfx6:TicketNumber>
+                            </xsl:if>
+                            <xsl:if test="TaskName">
+                                <pfx6:TaskName>
+                                    <xsl:value-of select="TaskName"/>
+                                </pfx6:TaskName>
+                            </xsl:if>
+                            <xsl:if test="MobileNo">
+                                <pfx6:MobileNumber>
+                                    <xsl:value-of select="MobileNo"/>
+                                </pfx6:MobileNumber>
+                            </xsl:if>
+                            <xsl:if test="QBranchID">
+                                <pfx6:QueueBranchID>
+                                    <xsl:value-of select="QBranchID"/>
+                                </pfx6:QueueBranchID>
+                            </xsl:if>
+                            <xsl:if test="Passport">
+                                <pfx6:PassportNumber>
+                                    <xsl:value-of select="Passport"/>
+                                </pfx6:PassportNumber>
+                            </xsl:if>
+                        </pfx6:Item>
+                    </xsl:for-each>
+                </pfx6:QueueManagementResponse>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseInput">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>180</pd:x>
+        <pd:y>300</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx6:QueueManagementRequest"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$Start/group/CustomerString"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>1311</pd:x>
+        <pd:y>44</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>false</validateOutput>
+            <term>
+                <xsd:element name="Table" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="QueueID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Number" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="TaskName" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Color" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="EstimatedTime" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="QueueSize" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="AvailableAgents" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="serviceID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="MobileNo" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Passport" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="SurveyTransID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="QBranchID" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </term>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="concat('&lt;Table>',$Map-Data/Response)"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1198</pd:x>
+        <pd:y>192</pd:y>
+        <config>
+            <element>
+                <xsd:element name="Response" type="xsd:string"/>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <Response>
+                <xsl:value-of select="substring-before(substring-after($HTTP_Request_CallTicket/RequestActivityOutput/asciiContent,'&lt;Table diffgr:id=&quot;Table1&quot; msdata:rowOrder=&quot;0&quot;>'),'&lt;/NewDataSet>')"/>
+            </Response>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ParseInput</pd:to>
+        <pd:lineType>Straight</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CDMToNative</pd:from>
+        <pd:to>Log_In</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_In</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>Log_Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>GenerateTimeOutError</pd:to>
+        <pd:xpathDescription>TimeOutError</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:xpathDescription>Communication Exception</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>exists($_error_HTTP_Request_CallTicket/ActivityErrors/ns9:HttpClientException)
+or
+exists($_error_HTTP_Request_CallTicket/ActivityErrors/ns9:HttpServerException)
+or
+exists($_error_HTTP_Request_CallTicket/ActivityErrors/ns9:HttpCommunicationException)</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapOutput</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseInput</pd:from>
+        <pd:to>CDMToNative</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>MapOutput</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Out</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:xpathDescription>RecordExists</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>string-length($Map-Data/Response)&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>MapOutput</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

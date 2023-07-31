@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zain.com/ZESB/Services/QueueManagement" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:typ="http://www.zain.com/ZESB/Services/QueueManagement/Types" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://www.zain.com/ZESB/Services/QueueManagement">
+	<wsdl:types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/QueueManagement/Types">
+			<xs:complexType name="BasicRequestType">
+				<xs:sequence>
+					<xs:element name="BranchId" type="xs:int" nillable="false"/>
+					<xs:element name="CounterId" type="xs:int" nillable="false"/>
+					<xs:element name="UserId" type="xs:int" nillable="false"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="BasicResponseType">
+				<xs:sequence>
+					<xs:element name="Result" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="TicketBasicType">
+				<xs:sequence>
+					<xs:element name="TicketNo" type="xs:string"/>
+					<xs:element name="RequestedService" type="xs:string"/>
+					<xs:element name="Msisdn" type="xs:string" minOccurs="0"/>
+					<xs:element name="PassportNo" type="xs:string" minOccurs="0"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="TicketInfo">
+				<xs:complexContent>
+					<xs:extension base="typ:TicketBasicType">
+						<xs:sequence>
+							<xs:element name="TicketPrintTime" type="xs:dateTime"/>
+							<xs:element name="TicketCallTime" type="xs:dateTime" minOccurs="0"/>
+							<xs:element name="QueueCloseTime" type="xs:dateTime" minOccurs="0"/>
+						</xs:sequence>
+					</xs:extension>
+				</xs:complexContent>
+			</xs:complexType>
+			<xs:element name="CallTicketRequest" type="typ:BasicRequestType"/>
+			<xs:element name="CallTicketResponse" type="typ:TicketBasicType"/>
+			<xs:element name="RecallTicketRequest" type="typ:BasicRequestType"/>
+			<xs:element name="RecallTicketResponse" type="typ:BasicResponseType"/>
+			<xs:element name="SkipTicketRequest" type="typ:BasicRequestType"/>
+			<xs:element name="SkipTicketResponse" type="typ:BasicResponseType"/>
+			<xs:element name="TakeBreakRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UserId" type="xs:int" nillable="false"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="TakeBreakResponse" type="typ:BasicResponseType"/>
+			<xs:element name="EndBreakRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UserId" type="xs:int" nillable="false"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="EndBreakResponse" type="typ:BasicResponseType"/>
+			<xs:element name="GetTicketInfoRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="TicketNo" type="xs:int" nillable="false"/>
+						<xs:element name="CounterId" type="xs:int" nillable="false"/>
+						<xs:element name="UserId" type="xs:int" nillable="false"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetTicketInfoResponse" type="typ:TicketInfo"/>
+			<xs:element name="GetUserInfoRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UserId" type="xs:int" nillable="false"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetUserInfoResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="UserName" type="xs:string"/>
+						<xs:element name="FullName" type="xs:string"/>
+						<xs:element name="Mobile" type="xs:string"/>
+						<xs:element name="Email" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetQueueStatisticsRequest" type="typ:BasicRequestType"/>
+			<xs:element name="GetQueueStatisticsResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Served" type="xs:int"/>
+						<xs:element name="Waiting" type="xs:int"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="CallTicketInput">
+		<wsdl:part name="parameters" element="typ:CallTicketRequest"/>
+	</wsdl:message>
+	<wsdl:message name="CallTicketOutput">
+		<wsdl:part name="parameters" element="typ:CallTicketResponse"/>
+	</wsdl:message>
+	<wsdl:message name="RecallTicketInput">
+		<wsdl:part name="parameters" element="typ:RecallTicketRequest"/>
+	</wsdl:message>
+	<wsdl:message name="RecallTicketOutput">
+		<wsdl:part name="parameters" element="typ:RecallTicketResponse"/>
+	</wsdl:message>
+	<wsdl:message name="SkipTicketInput">
+		<wsdl:part name="parameters" element="typ:SkipTicketRequest"/>
+	</wsdl:message>
+	<wsdl:message name="SkipTicketOutput">
+		<wsdl:part name="parameters" element="typ:SkipTicketResponse"/>
+	</wsdl:message>
+	<wsdl:message name="TakeBreakInput">
+		<wsdl:part name="parameters" element="typ:TakeBreakRequest"/>
+	</wsdl:message>
+	<wsdl:message name="TakeBreakOutput">
+		<wsdl:part name="parameters" element="typ:TakeBreakResponse"/>
+	</wsdl:message>
+	<wsdl:message name="EndBreakInput">
+		<wsdl:part name="parameters" element="typ:EndBreakRequest"/>
+	</wsdl:message>
+	<wsdl:message name="EndBreakOutput">
+		<wsdl:part name="parameters" element="typ:EndBreakResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetTicketInfoInput">
+		<wsdl:part name="parameters" element="typ:GetTicketInfoRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetTicketInfoOutput">
+		<wsdl:part name="parameters" element="typ:GetTicketInfoResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetUserInfoInput">
+		<wsdl:part name="parameters" element="typ:GetUserInfoRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetUserInfoOutput">
+		<wsdl:part name="parameters" element="typ:GetUserInfoResponse"/>
+	</wsdl:message>
+	<wsdl:message name="GetQueueStatisticsInput">
+		<wsdl:part name="parameters" element="typ:GetQueueStatisticsRequest"/>
+	</wsdl:message>
+	<wsdl:message name="GetQueueStatisticsOutput">
+		<wsdl:part name="parameters" element="typ:GetQueueStatisticsResponse"/>
+	</wsdl:message>
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType"/>
+	</wsdl:message>
+	<wsdl:portType name="QueueManagementPort">
+		<wsdl:operation name="CallTicket">
+			<wsdl:input message="tns:CallTicketInput"/>
+			<wsdl:output message="tns:CallTicketOutput"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="RecallTicket">
+			<wsdl:input message="tns:RecallTicketInput"/>
+			<wsdl:output message="tns:RecallTicketOutput"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="SkipTicket">
+			<wsdl:input message="tns:SkipTicketInput"/>
+			<wsdl:output message="tns:SkipTicketOutput"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="TakeBreak">
+			<wsdl:input message="tns:TakeBreakInput"/>
+			<wsdl:output message="tns:TakeBreakOutput"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="EndBreak">
+			<wsdl:input message="tns:EndBreakInput"/>
+			<wsdl:output message="tns:EndBreakOutput"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetTicketInfo">
+			<wsdl:input message="tns:GetTicketInfoInput"/>
+			<wsdl:output message="tns:GetTicketInfoOutput"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetUserInfo">
+			<wsdl:input message="tns:GetUserInfoInput"/>
+			<wsdl:output message="tns:GetUserInfoOutput"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetQueueStatistics">
+			<wsdl:input message="tns:GetQueueStatisticsInput"/>
+			<wsdl:output message="tns:GetQueueStatisticsOutput"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="QueueManagementBinding" type="tns:QueueManagementPort">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="CallTicket">
+			<soap:operation soapAction="CallTicket" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="RecallTicket">
+			<soap:operation soapAction="RecallTicket" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="SkipTicket">
+			<soap:operation soapAction="SkipTicket" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="TakeBreak">
+			<soap:operation soapAction="TakeBreak" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="EndBreak">
+			<soap:operation soapAction="EndBreak" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="GetTicketInfo">
+			<soap:operation soapAction="GetTicketInfo" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="GetUserInfo">
+			<soap:operation soapAction="GetUserInfo" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="GetQueueStatistics">
+			<soap:operation soapAction="GetQueueStatistics" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="QueueManagement">
+		<wsdl:port name="QueueManagementPort" binding="tns:QueueManagementBinding">
+			<soap:address location="/ZESB/QueueManagement"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

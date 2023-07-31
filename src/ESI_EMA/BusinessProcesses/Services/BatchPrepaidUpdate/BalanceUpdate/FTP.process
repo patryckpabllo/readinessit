@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <pd:name>BusinessProcesses/Services/BatchPrepaidUpdate/BalanceUpdate/FTP.process</pd:name>
+    <pd:description>Put the File on EMA Server and then get the Response file from the EMA Server.</pd:description>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="LocalFileName" type="xsd:string"/>
+                    <xsd:element name="RemoteFileName" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>107</pd:startX>
+    <pd:startY>59</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>558</pd:endX>
+    <pd:endY>56</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1468736063237</pd:targetNamespace>
+    <pd:activity name="Java Code">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>313</pd:x>
+        <pd:y>60</pd:y>
+        <config>
+            <fullsource>package BusinessProcesses.Services.BatchPrepaidUpdate.BalanceUpdate.FTP;
+import java.util.*;
+import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+public class FTPJavaCode{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String SFTPHOSTIn = "";
+	protected String SFTPUSERIn = "";
+	protected String SFTPPASSIn = "";
+	protected String SFTPWORKINGDIRIn = "";
+	protected String fileNameIn = "";
+	protected int SFTPPORTIn = 0;
+	public String getSFTPHOSTIn() {
+		return SFTPHOSTIn;
+	}
+	public void setSFTPHOSTIn(String val) {
+		SFTPHOSTIn = val;
+	}
+	public String getSFTPUSERIn() {
+		return SFTPUSERIn;
+	}
+	public void setSFTPUSERIn(String val) {
+		SFTPUSERIn = val;
+	}
+	public String getSFTPPASSIn() {
+		return SFTPPASSIn;
+	}
+	public void setSFTPPASSIn(String val) {
+		SFTPPASSIn = val;
+	}
+	public String getSFTPWORKINGDIRIn() {
+		return SFTPWORKINGDIRIn;
+	}
+	public void setSFTPWORKINGDIRIn(String val) {
+		SFTPWORKINGDIRIn = val;
+	}
+	public String getfileNameIn() {
+		return fileNameIn;
+	}
+	public void setfileNameIn(String val) {
+		fileNameIn = val;
+	}
+	public int getSFTPPORTIn() {
+		return SFTPPORTIn;
+	}
+	public void setSFTPPORTIn(int val) {
+		SFTPPORTIn = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public FTPJavaCode() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String SFTPHOSTIn
+	In  : String SFTPUSERIn
+	In  : String SFTPPASSIn
+	In  : String SFTPWORKINGDIRIn
+	In  : String fileNameIn
+	In  : int SFTPPORTIn
+* Available Variables: DO NOT MODIFY *****/
+/**
+ * TODO Put here a description of what this class does.
+ *
+ * @author ejmnoqb.
+ *         Created Jul 26, 2016.
+ */
+	@SuppressWarnings("javadoc")
+        String SFTPHOST = SFTPHOSTIn;
+        int SFTPPORT = SFTPPORTIn;
+        String SFTPUSER = SFTPUSERIn;
+        String SFTPPASS = SFTPPASSIn;
+        String SFTPWORKINGDIR = SFTPWORKINGDIRIn ;// "/var/sog/BatchHandler/Users/testbatch/BatchJob";
+        String fileName= fileNameIn;
+
+        Session session = null;
+        Channel channel = null;
+        ChannelSftp channelSftp = null;
+        System.out.println("preparing the host information for sftp.");
+        try {
+            JSch jsch = new JSch();
+            session = jsch.getSession(SFTPUSER, SFTPHOST, SFTPPORT);
+            session.setPassword(SFTPPASS);
+            java.util.Properties config = new java.util.Properties();
+            config.put("StrictHostKeyChecking", "no");
+            session.setConfig(config);
+            session.connect();
+            System.out.println("Host connected.");
+            channel = session.openChannel("sftp");
+            channel.connect();
+            System.out.println("sftp channel opened and connected.");
+            channelSftp = (ChannelSftp) channel;
+            System.out.println("1.");
+
+            channelSftp.cd(SFTPWORKINGDIR);
+            System.out.println("2.");
+            File f = new File(fileName);
+            System.out.println("3." + fileName);
+            channelSftp.put(new FileInputStream(f), f.getName());
+            System.out.println("4.");
+            //log.info("File transfered successfully to host.");
+        } catch (Exception ex) {
+             System.out.println("Exception found while tranfer the response.");
+        }
+        finally{
+
+            channelSftp.exit();
+            System.out.println("sftp Channel exited.");
+            channel.disconnect();
+            System.out.println("Channel disconnected.");
+            session.disconnect();
+            System.out.println("Host Session disconnected.");
+        }
+    }  
+}
+</fullsource>
+            <fileName>FTPJavaCode</fileName>
+            <packageName>BusinessProcesses.Services.BatchPrepaidUpdate.BalanceUpdate.FTP</packageName>
+            <inputData>
+                <row>
+                    <fieldName>SFTPHOSTIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>SFTPUSERIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>SFTPPASSIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>SFTPWORKINGDIRIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>fileNameIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>SFTPPORTIn</fieldName>
+                    <fieldType>int</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>FTPJavaCode</name>
+                    <byteCode>yv66vgAAADMArgkANABeCQA0AF8JADQAYAkANABhCQA0AGIJADQAYwoANQBkCABlCQBmAGcIAGgKAGkAagcAawoADABkCgAMAGwKAG0AbgcAbwoAEABkCABwCABxCgAQAHIKAG0AcwoAbQB0CAB1CAB2CgBtAHcKAHgAdAgAeQcAeggAewoAHAB8CAB9BwB+CgAgAH8HAIAKACIAZAgAgQoAIgCCCgAiAIMHAIQKACcAhQoAIACGCgAcAIcIAIgKABwAiQgAigoAeACLCACMCgBtAIsIAI0HAI4IAI8HAJAHAJEBAApTRlRQSE9TVEluAQASTGphdmEvbGFuZy9TdHJpbmc7AQAKU0ZUUFVTRVJJbgEAClNGVFBQQVNTSW4BABBTRlRQV09SS0lOR0RJUkluAQAKZmlsZU5hbWVJbgEAClNGVFBQT1JUSW4BAAFJAQANZ2V0U0ZUUEhPU1RJbgEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEADXNldFNGVFBIT1NUSW4BABUoTGphdmEvbGFuZy9TdHJpbmc7KVYBAA1nZXRTRlRQVVNFUkluAQANc2V0U0ZUUFVTRVJJbgEADWdldFNGVFBQQVNTSW4BAA1zZXRTRlRQUEFTU0luAQATZ2V0U0ZUUFdPUktJTkdESVJJbgEAE3NldFNGVFBXT1JLSU5HRElSSW4BAA1nZXRmaWxlTmFtZUluAQANc2V0ZmlsZU5hbWVJbgEADWdldFNGVFBQT1JUSW4BAAMoKUkBAA1zZXRTRlRQUE9SVEluAQAEKEkpVgEABjxpbml0PgEAAygpVgEABmludm9rZQEADVN0YWNrTWFwVGFibGUHAJAHAJIHAJMHAJQHAHoHAI4HAJUBAApFeGNlcHRpb25zAQAKU291cmNlRmlsZQEAEEZUUEphdmFDb2RlLmphdmEMADYANwwAOAA3DAA5ADcMADoANwwAOwA3DAA8AD0MAFAAUQEAAAcAlgwAlwCYAQAocHJlcGFyaW5nIHRoZSBob3N0IGluZm9ybWF0aW9uIGZvciBzZnRwLgcAmQwAmgBDAQAUY29tL2pjcmFmdC9qc2NoL0pTY2gMAJsAnAcAkwwAnQBDAQAUamF2YS91dGlsL1Byb3BlcnRpZXMBABVTdHJpY3RIb3N0S2V5Q2hlY2tpbmcBAAJubwwAngCfDACgAKEMAKIAUQEAD0hvc3QgY29ubmVjdGVkLgEABHNmdHAMAKMApAcAlAEAInNmdHAgY2hhbm5lbCBvcGVuZWQgYW5kIGNvbm5lY3RlZC4BABtjb20vamNyYWZ0L2pzY2gvQ2hhbm5lbFNmdHABAAIxLgwApQBDAQACMi4BAAxqYXZhL2lvL0ZpbGUMAFAAQwEAF2phdmEvbGFuZy9TdHJpbmdCdWlsZGVyAQACMy4MAKYApwwAqAA/AQAXamF2YS9pby9GaWxlSW5wdXRTdHJlYW0MAFAAqQwAqgA/DACeAKsBAAI0LgwArABRAQAUc2Z0cCBDaGFubmVsIGV4aXRlZC4MAK0AUQEAFUNoYW5uZWwgZGlzY29ubmVjdGVkLgEAGkhvc3QgU2Vzc2lvbiBkaXNjb25uZWN0ZWQuAQATamF2YS9sYW5nL0V4Y2VwdGlvbgEAK0V4Y2VwdGlvbiBmb3VuZCB3aGlsZSB0cmFuZmVyIHRoZSByZXNwb25zZS4BAEtCdXNpbmVzc1Byb2Nlc3Nlcy9TZXJ2aWNlcy9CYXRjaFByZXBhaWRVcGRhdGUvQmFsYW5jZVVwZGF0ZS9GVFAvRlRQSmF2YUNvZGUBABBqYXZhL2xhbmcvT2JqZWN0AQAQamF2YS9sYW5nL1N0cmluZwEAF2NvbS9qY3JhZnQvanNjaC9TZXNzaW9uAQAXY29tL2pjcmFmdC9qc2NoL0NoYW5uZWwBABNqYXZhL2xhbmcvVGhyb3dhYmxlAQAQamF2YS9sYW5nL1N5c3RlbQEAA291dAEAFUxqYXZhL2lvL1ByaW50U3RyZWFtOwEAE2phdmEvaW8vUHJpbnRTdHJlYW0BAAdwcmludGxuAQAKZ2V0U2Vzc2lvbgEAQChMamF2YS9sYW5nL1N0cmluZztMamF2YS9sYW5nL1N0cmluZztJKUxjb20vamNyYWZ0L2pzY2gvU2Vzc2lvbjsBAAtzZXRQYXNzd29yZAEAA3B1dAEAOChMamF2YS9sYW5nL09iamVjdDtMamF2YS9sYW5nL09iamVjdDspTGphdmEvbGFuZy9PYmplY3Q7AQAJc2V0Q29uZmlnAQAZKExqYXZhL3V0aWwvUHJvcGVydGllczspVgEAB2Nvbm5lY3QBAAtvcGVuQ2hhbm5l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</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <SFTPHOSTIn>
+                    <xsl:value-of select="&quot;10.103.23.94&quot;"/>
+                </SFTPHOSTIn>
+                <SFTPUSERIn>
+                    <xsl:value-of select="&quot;testbatch&quot;"/>
+                </SFTPUSERIn>
+                <SFTPPASSIn>
+                    <xsl:value-of select="&quot;testbatch&quot;"/>
+                </SFTPPASSIn>
+                <SFTPWORKINGDIRIn>
+                    <xsl:value-of select="&quot;/var/sog/BatchHandler/Users/testbatch/BatchJob&quot;"/>
+                </SFTPWORKINGDIRIn>
+                <fileNameIn>
+                    <xsl:value-of select="&quot;C:\Vivek\Work\ZainKuwait\Documents\BatchUpdate\Input\Cia3GxmlRequestGeneratedByTIBCO_27July.XML&quot;"/>
+                </fileNameIn>
+                <SFTPPORTIn>
+                    <xsl:value-of select="22"/>
+                </SFTPPORTIn>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Java Code</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java Code</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

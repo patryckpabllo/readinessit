@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:tns="http://www.zain.com/ZESB/Services/ERP" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:typ="http://www.zain.com/ZESB/Services/ERP/Types" targetNamespace="http://www.zain.com/ZESB/Services/ERP">
+    <wsdl:types>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/ERP/Types">
+            <xs:element name="UpdateShopReq">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="storeCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="shopName" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element minOccurs="0" name="city" type="xs:string"/>
+                        <xs:element minOccurs="0" name="streetAddr" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UpdateShopRes">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="result" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UpdateitemRes">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="item">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element minOccurs="0" name="itemCode" type="xs:string"/>
+                                    <xs:element minOccurs="0" name="status" type="xs:string"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UpdateItemReq">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="item">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="itemCode" type="xs:string"/>
+                                    <xs:element name="ERPItemCode" type="xs:string"/>
+                                    <xs:element minOccurs="0" name="description" type="xs:string"/>
+                                    <xs:element minOccurs="0" name="itemSubType" type="xs:string"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="UpdateShopRequest">
+        <wsdl:part element="typ:UpdateShopReq" name="UpdateShopReq"/>
+    </wsdl:message>
+    <wsdl:message name="UpdateShopResponse">
+        <wsdl:part element="typ:UpdateShopRes" name="UpdateShopRes"/>
+    </wsdl:message>
+    <wsdl:message name="UpdateItemResponse">
+        <wsdl:part element="typ:UpdateitemRes" name="UpdateItemRes"/>
+    </wsdl:message>
+    <wsdl:message name="UpdateItemRequest">
+        <wsdl:part element="typ:UpdateItemReq" name="UpdateItemReq"/>
+    </wsdl:message>
+    <wsdl:message name="Fault">
+        <wsdl:part element="com:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:portType name="UpdateItemShopPort">
+        <wsdl:operation name="UpdateItem">
+            <wsdl:input message="tns:UpdateItemRequest"/>
+            <wsdl:output message="tns:UpdateItemResponse"/>
+            <wsdl:fault message="tns:Fault" name="fault1"/>
+        </wsdl:operation>
+        <wsdl:operation name="UpdateShop">
+            <wsdl:input message="tns:UpdateShopRequest"/>
+            <wsdl:output message="tns:UpdateShopResponse"/>
+            <wsdl:fault message="tns:Fault" name="fault1"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="UpdateItemShopPortEndPointBinding" type="tns:UpdateItemShopPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="UpdateItem">
+            <soap:operation soapAction="UpdateItem"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="UpdateShop">
+            <soap:operation soapAction="UpdateShop"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault1">
+                <soap:fault name="fault1" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ERP_UpdateItem_UpdateShop">
+        <wsdl:port binding="tns:UpdateItemShopPortEndPointBinding" name="UpdateItemShopPortEndPoint">
+            <soap:address location="http://iapi-test.kw.zain.com/UAT/SOAP/UpdateERP"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <pd:name>Test/Process Definition (4).process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <param>
+                <xsl:value-of select="translate($XML_JSON-1/javaCodeActivityOutput/jsonOut, &quot; &quot;, &quot;&quot;)"/>
+            </param>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="param" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>500</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1598441488315</pd:targetNamespace>
+    <pd:activity name="XML_JSON-1">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>285</pd:x>
+        <pd:y>63</pd:y>
+        <config>
+            <fileName>ProcessDefinition4XML_JSON1</fileName>
+            <packageName>Test.ProcessDefinition4</packageName>
+            <fullsource>package Test.ProcessDefinition4;
+import java.util.*;
+import java.io.*;
+import org.json.JSONObject;
+import org.json.XML;
+import org.json.JSONArray;
+
+public class ProcessDefinition4XML_JSON1{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String jsonIn = "";
+	protected String xmlIn = "";
+	protected String xmlOut = "";
+	protected String jsonOut = "";
+	public String getjsonIn() {
+		return jsonIn;
+	}
+	public void setjsonIn(String val) {
+		jsonIn = val;
+	}
+	public String getxmlIn() {
+		return xmlIn;
+	}
+	public void setxmlIn(String val) {
+		xmlIn = val;
+	}
+	public String getxmlOut() {
+		return xmlOut;
+	}
+	public void setxmlOut(String val) {
+		xmlOut = val;
+	}
+	public String getjsonOut() {
+		return jsonOut;
+	}
+	public void setjsonOut(String val) {
+		jsonOut = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public ProcessDefinition4XML_JSON1() {
+	}
+	public void invoke() throws Exception {
+	String xmlOt="";
+	String jsonOt="";
+	if(getjsonIn()!=null &amp; getjsonIn()!="")
+	{
+		JSONObject jObj = new JSONObject(getjsonIn());
+		xmlOt=XML.toString(jObj);
+		setxmlOut(xmlOt);
+	}
+
+	if(getxmlIn()!=null &amp; getxmlIn()!="")
+	{
+		System.out.println("XML to JSON***********************************");
+		JSONObject jObj1 = XML.toJSONObject(getxmlIn());
+JSONArray jsonArray = jObj1.getJSONObject("Items").getJSONArray("Item");	
+ jsonArray.remove(0);	
+setjsonOut((jObj1.toString()));
+	}
+/* Available Variables: DO NOT MODIFY
+	In  : String jsonIn
+	In  : String xmlIn
+	Out : String xmlOut
+	Out : String jsonOut
+* Available Variables: DO NOT MODIFY *****/
+
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>jsonIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>xmlIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>xmlOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>jsonOut</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>ProcessDefinition4XML_JSON1</name>
+                    <byteCode>yv66vgAAADMAZAkAGAA1CQAYADYJABgANwkAGAA4CgAZADkIADoKABgAOwcAPAoACAA9CgA+AD8KABgAQAoAGABBCQBCAEMIAEQKAEUARgoAPgBHCABICgAIAEkIAEoKAAgASwoATABNCgAIAE4KABgATwcAUAcAUQEABmpzb25JbgEAEkxqYXZhL2xhbmcvU3RyaW5nOwEABXhtbEluAQAGeG1sT3V0AQAHanNvbk91dAEACWdldGpzb25JbgEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEACXNldGpzb25JbgEAFShMamF2YS9sYW5nL1N0cmluZzspVgEACGdldHhtbEluAQAIc2V0eG1sSW4BAAlnZXR4bWxPdXQBAAlzZXR4bWxPdXQBAApnZXRqc29uT3V0AQAKc2V0anNvbk91dAEABjxpbml0PgEAAygpVgEABmludm9rZQEADVN0YWNrTWFwVGFibGUHAFIHAFABAApFeGNlcHRpb25zBwBTAQAKU291cmNlRmlsZQEAIFByb2Nlc3NEZWZpbml0aW9uNFhNTF9KU09OMS5qYXZhDAAaABsMABwAGwwAHQAbDAAeABsMACsALAEAAAwAHwAgAQATb3JnL2pzb24vSlNPTk9iamVjdAwAKwAkBwBUDABVAFYMACgAJAwAJQAgBwBXDABYAFkBAC5YTUwgdG8gSlNPTioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqBwBaDABbACQMAFwAXQEABUl0ZW1zDABeAF0BAARJdGVtDABfAGAHAGEMAGIAYwwAVQAgDAAqACQBADNUZXN0L1Byb2Nlc3NEZWZpbml0aW9uNC9Qcm9jZXNzRGVmaW5pdGlvbjRYTUxfSlNPTjEBABBqYXZhL2xhbmcvT2JqZWN0AQAQamF2YS9sYW5nL1N0cmluZwEAE2phdmEvbGFuZy9FeGNlcHRpb24BAAxvcmcvanNvbi9YTUwBAAh0b1N0cmluZwEAJihMamF2YS9sYW5nL09iamVjdDspTGphdmEvbGFuZy9TdHJpbmc7AQAQamF2YS9sYW5nL1N5c3RlbQEAA291dAEAFUxqYXZhL2lvL1ByaW50U3RyZWFtOwEAE2phdmEvaW8vUHJpbnRTdHJlYW0BAAdwcmludGxuAQAMdG9KU09OT2JqZWN0AQApKExqYXZhL2xhbmcvU3RyaW5nOylMb3JnL2pzb24vSlNPTk9iamVjdDsBAA1nZXRKU09OT2JqZWN0AQAMZ2V0SlNPTkFycmF5AQAoKExqYXZhL2xhbmcvU3RyaW5nOylMb3JnL2pzb24vSlNPTkFycmF5OwEAEm9yZy9qc29uL0pTT05BcnJheQEABnJlbW92ZQEAFShJKUxqYXZhL2xhbmcvT2JqZWN0OwAhABgAGQAAAAQABAAaABsAAAAEABwAGwAAAAQAHQAbAAAABAAeABsAAAAKAAEAHwAgAAEAIQAAAB0AAQABAAAABSq0AAGwAAAAAQAiAAAABgABAAAADwABACMAJAABACEAAAAiAAIAAgAAAAYqK7UAAbEAAAABACIAAAAKAAIAAAASAAUAEwABACUAIAABACEAAAAdAAEAAQAAAAUqtAACsAAAAAEAIgAAAAYAAQAAABUAAQAmACQAAQAhAAAAIgACAAIAAAAGKiu1AAKxAAAAAQAiAAAACgACAAAAGAAFABkAAQAnACAAAQAhAAAAHQABAAEAAAAFKrQAA7AAAAABACIAAAAGAAEAAAAbAAEAKAAkAAEAIQAAACIAAgACAAAABiortQADsQAAAAEAIgAAAAoAAgAAAB4ABQAfAAEAKQAgAAEAIQAAAB0AAQABAAAABSq0AASwAAAAAQAiAAAABgABAAAAIQABACoAJAABACEAAAAiAAIAAgAAAAYqK7UABLEAAAABACIAAAAKAAIAAAAkAAUAJQABACsALAABACEAAABJAAIAAQAAAB0qtwAFKhIGtQABKhIGtQACKhIGtQADKhIGtQAEsQAAAAEAIgAAABoABgAAACcABAAKAAoACwAQAAwAFgANABwAKAABAC0ALAACACEAAAENAAMABQAAAIUSBkwSBk0qtgAHxgAHBKcABAMqtgAHEgalAAcEpwAEA36ZABm7AAhZKrYAB7cACU4tuAAKTCortgALKrYADMYABwSnAAQDKrYADBIGpQAHBKcABAN+mQAvsgANEg62AA8qtgAMuAAQTi0SEbYAEhITtgAUOgQZBAO2ABVXKi22ABa2ABexAAAAAgAiAAAANgANAAAAKgADACsABgAsACQALgAwAC8ANQAwADoAMwBYADUAYAA2AGgANwB1ADgAfAA5AIQAQgAuAAAAOgAK/QARBwAvBwAvQAFMAf8AAAADBwAwBwAvBwAvAAIBARkKQAFMAf8AAAADBwAwBwAvBwAvAAIBAS8AMQAAAAQAAQAyAAEAMwAAAAIANA==</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <xmlIn>
+                    <xsl:value-of select="&quot;&lt;Items xmlns:json='http://james.newtonking.com/projects/json' >&#xA;             &lt;Item>&#xA;                &lt;Name>name&lt;/Name>&#xA;                 &lt;Detail>detail&lt;/Detail>    &#xA;            &lt;/Item>&#xA;            &lt;/Items>&quot;"/>
+                </xmlIn>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>XML_JSON-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>XML_JSON-1</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

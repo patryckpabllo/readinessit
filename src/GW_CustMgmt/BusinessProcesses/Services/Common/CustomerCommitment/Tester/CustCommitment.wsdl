@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:tns="http://www.zain.com/ZESB/Services/CustomerCommitment" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:ns0="http://www.zain.com/ZESB/Types/Common" xmlns:jms="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS" xmlns:soap1="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:jndi="http://www.tibco.com/namespaces/ws/2004/soap/apis/jndi" name="Untitled" targetNamespace="http://www.zain.com/ZESB/Services/CustomerCommitment">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Services/CustomerCommitment" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:import namespace="http://www.zain.com/ZESB/Types/Common"/>
+            <xs:simpleType name="ActionType">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Install"/>
+                    <xs:enumeration value="Disconnect"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="MSISDN">
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="8"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="NonEmptyString">
+                <xs:restriction base="xs:string">
+                    <xs:minLength value="1"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:element name="CommitmentDetailsInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="SubscriberNumber" type="tns:MSISDN">
+                            <xs:annotation>
+                                <xs:documentation>The subscriber number to retrieve commitment details for.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="CommitmentDetailsOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Commitment" minOccurs="0" maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation>Represents a single commitment.</xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="Service" type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation>Service code associated with the commitment.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="Description" type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation>Brief description of the service/commitment.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="Type" type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation>Commitment’s type.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="Period" type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation>Commitment’s entire period (months).</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="DisconnectionFee" type="xs:decimal">
+                                        <xs:annotation>
+                                            <xs:documentation>The penalty fee to be applied if the commitment is terminated.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="StartDate" type="xs:date">
+                                        <xs:annotation>
+                                            <xs:documentation>Commitment’s start date.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="EndDate" type="xs:date">
+                                        <xs:annotation>
+                                            <xs:documentation>Commitment’s end date.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="DaysLeft" type="xs:integer">
+                                        <xs:annotation>
+                                            <xs:documentation>Number of days left for the commitment.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="MonthsLeft" type="xs:decimal">
+                                        <xs:annotation>
+                                            <xs:documentation>Approximate number of months left for the commitment.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="SimulateInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="SubscriberNumber" type="tns:MSISDN">
+                            <xs:annotation>
+                                <xs:documentation>The subscriber number to simulate the order on.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="Action" type="tns:ActionType">
+                            <xs:annotation>
+                                <xs:documentation>The order’s action.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="EquipID" type="tns:NonEmptyString">
+                            <xs:annotation>
+                                <xs:documentation>The service code to perform the action for.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="SimulateOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Type" type="xs:string" minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation>The type of the commitment.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="Period" type="xs:dateTime" minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation>The period in months of the commitment.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="CommitmentAmount" type="xs:decimal" minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation>The commitment total amount.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="DisconnectionFee" type="xs:decimal">
+                            <xs:annotation>
+                                <xs:documentation>The penalty fee to be applied if the commitment is terminated.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" attributeFormDefault="unqualified">
+            <xs:import namespace="http://www.zain.com/ZESB/Services/CustomerCommitment"/>
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+                        <xs:element name="detail" type="xs:string" minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:service name="CustomerCommitment">
+        <wsdl:port name="CustomerCommitmentHTTP" binding="tns:CustomerCommitmentHTTPBinding">
+            <soap:address location="http://localhost:7073/ESB/SOAP/CustomerCommitment"/>
+        </wsdl:port>
+        <wsdl:port name="CustomerCommitment" binding="tns:CustomerCommitmentBinding">
+            <soap:address location=""/>
+            <jms:connectionFactory>QueueConnectionFactory</jms:connectionFactory>
+            <jms:targetAddress destination="queue">CBIO.BSS.DOM_ESB.GW.QUERY.CUSTOMERCOMMITMENT.SVC.Q.EXT.REQ</jms:targetAddress>
+        </wsdl:port>
+    </wsdl:service>
+    <wsdl:portType name="CustomerCommitmentPort">
+        <wsdl:operation name="CommitmentDetails">
+            <wsdl:input message="tns:CommitmentDetailsRequest"/>
+            <wsdl:output message="tns:CommitmentDetailsResponse"/>
+            <wsdl:fault name="fault" message="tns:FaultMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="Simulate">
+            <wsdl:input message="tns:SimulateRequest"/>
+            <wsdl:output message="tns:SimulateResponse"/>
+            <wsdl:fault name="fault" message="tns:FaultMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="CustomerCommitmentHTTPBinding" type="tns:CustomerCommitmentPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="CommitmentDetails">
+            <soap:operation style="document" soapAction="CommitmentDetails"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="Simulate">
+            <soap:operation style="document" soapAction="Simulate"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="parameter"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="parameter"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="CustomerCommitmentBinding" type="tns:CustomerCommitmentPort">
+        <soap:binding style="document" transport="http://www.tibco.com/namespaces/ws/2004/soap/binding/JMS"/>
+        <jms:binding messageFormat="Text"/>
+        <wsdl:operation name="CommitmentDetails">
+            <soap:operation style="document" soapAction="CommitmentDetails"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="request"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="response"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="Simulate">
+            <soap:operation style="document" soapAction="Simulate"/>
+            <wsdl:input>
+                <soap:body use="literal" parts="parameter"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" parts="parameter"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault use="literal" name="fault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:message name="CommitmentDetailsRequest">
+        <wsdl:part name="request" element="tns:CommitmentDetailsInput"/>
+    </wsdl:message>
+    <wsdl:message name="CommitmentDetailsResponse">
+        <wsdl:part name="response" element="tns:CommitmentDetailsOutput"/>
+    </wsdl:message>
+    <wsdl:message name="FaultMessage">
+        <wsdl:part name="fault" element="ns0:FaultType"/>
+    </wsdl:message>
+    <wsdl:message name="SimulateRequest">
+        <wsdl:part name="parameter" element="tns:SimulateInput"/>
+    </wsdl:message>
+    <wsdl:message name="SimulateResponse">
+        <wsdl:part name="parameter" element="tns:SimulateOutput"/>
+    </wsdl:message>
+</wsdl:definitions>

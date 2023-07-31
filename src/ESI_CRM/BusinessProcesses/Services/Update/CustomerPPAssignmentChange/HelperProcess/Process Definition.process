@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pfx="http://siebel.com/CustomUI" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:pfx2="http://www.ericsson.com/Mozaic/BusinessSchemas/Query/GetBalanceInfoReq.xsd" xmlns:ns="http://www.siebel.com/xml/CBiO2%20Customer%20Creation%20IO" xmlns:ns2="http://tibco.com/namespaces/tnt/plugins/soap">
+    <wsdl:import namespace="http://siebel.com/CustomUI" location="/BusinessWSDLS/Services/CRM/CBiO2DemographicUpdateWS_05022016.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Update/CustomerPPAssignmentChange/HelperProcess/Process Definition.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>450</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1462530193016</pd:targetNamespace>
+    <pd:activity name="SOAPRequestReply">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>292</pd:x>
+        <pd:y>58</pd:y>
+        <config>
+            <timeout>0</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx:CBiO2DemographicUpdateWS</service>
+            <servicePort>CBiO2_spcDemographic_spcUpdate_spcWorkflow</servicePort>
+            <operation>updatedemographicInfo</operation>
+            <soapAction>document/http://siebel.com/CustomUI:updatedemographicInfo</soapAction>
+            <endpointURL>http://10.103.23.115:7777/eai_anon_enu/start.swe?SWEExtCmd=Execute&amp;SWEExtSource=SecureWebService&amp;WSSOAP=1</endpointURL>
+            <authScheme>BASIC</authScheme>
+            <requireBasicAuth>true</requireBasicAuth>
+            <basicHttpAuthIdentity>/CommonResources/Identities/CRM_Identity.id</basicHttpAuthIdentity>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <pfx:updatedemographicInfo_Input>
+                    <pfx:OperationType>
+                        <xsl:value-of select="'UPDATE'"/>
+                    </pfx:OperationType>
+                    <ns:ListOfCbio2CustomerCreationIo>
+                        <ns:Account>
+                            <ns:Id>
+                                <xsl:value-of select="'12345'"/>
+                            </ns:Id>
+                        </ns:Account>
+                    </ns:ListOfCbio2CustomerCreationIo>
+                </pfx:updatedemographicInfo_Input>
+                <ns2:_configData>
+                    <TransportProperties>
+                        <Headers>
+                            <Accept-Encoding>
+                                <xsl:value-of select="&quot;&quot;"/>
+                            </Accept-Encoding>
+                        </Headers>
+                    </TransportProperties>
+                </ns2:_configData>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SOAPRequestReply</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

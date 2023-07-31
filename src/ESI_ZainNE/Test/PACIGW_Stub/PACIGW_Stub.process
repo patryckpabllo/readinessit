@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <pd:name>Test/PACIGW_Stub/PACIGW_Stub.process</pd:name>
+    <pd:startName>HTTP Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <Response>
+                <xsl:value-of select="'{&#xA;    &quot;Operation&quot;: &quot;QR&quot;,&#xA;    &quot;ServiceDescriptionEn&quot;: &quot;ServiceDescriptionEn&quot;,&#xA;    &quot;ServiceDescriptionAr&quot;: &quot;ServiceDescriptionAr&quot;,&#xA;    &quot;AuthenticationReasonAr&quot;: &quot;AuthenticationReasonAr&quot;,&#xA;    &quot;AuthenticationReasonEn&quot;: &quot;AuthenticationReasonEn&quot;,&#xA;    &quot;RequestId&quot;: &quot;requestid&quot;,&#xA;    &quot;ChannelName&quot;: &quot;channelName&quot;,&#xA;    &quot;CallBackURL&quot;: &quot;http://call-back.com&quot;&#xA;}'"/>
+            </Response>
+        </root>
+    </pd:returnBindings>
+    <pd:starter name="HTTP Receiver">
+        <pd:type>com.tibco.plugin.http.HTTPEventSource</pd:type>
+        <pd:resourceType>httppalette.httpEventSource</pd:resourceType>
+        <pd:x>105</pd:x>
+        <pd:y>71</pd:y>
+        <config>
+            <outputMode>String</outputMode>
+            <defaultEncoding>ISO8859_1</defaultEncoding>
+            <inputOutputVersion>5.3.0</inputOutputVersion>
+            <newMimeSupport>true</newMimeSupport>
+            <sharedChannel>/Test/PACIGW_Stub/HTTP Connection.sharedhttp</sharedChannel>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Accept" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Charset" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Encoding" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Length" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Connection" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>591</pd:endX>
+    <pd:endY>70</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1628687096304</pd:targetNamespace>
+    <pd:activity name="Send HTTP Response">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>424</pd:x>
+        <pd:y>68</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <asciiContent>
+                    <xsl:value-of select="$Map-Data/root/Response"/>
+                </asciiContent>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>262</pd:x>
+        <pd:y>68</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Response" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:choose>
+                    <xsl:when test="$HTTP-Receiver/ProcessStarterOutput/Method=$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PACIAuthentication/GetPACIAuthentication/Method">
+                        <Response>
+                            <xsl:value-of select="'{&#xA;    &quot;status&quot;: &quot;Success&quot;,&#xA;    &quot;QRcode&quot;: &quot;/9j/4A...&quot;,&#xA;    &quot;QRcodeFileType&quot;: &quot;image/jpeg&quot;&#xA;}'"/>
+                        </Response>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <Response>
+                            <xsl:value-of select="'{&#xA;    &quot;RequestID&quot;: &quot;44f33e96-967b-486d-876b-9c05a5843298&quot;,&#xA;    &quot;Status&quot;: &quot;UserAccepted&quot;,&#xA;    &quot;UserInfo&quot;: {&#xA;        &quot;CivilID&quot;: &quot;2950*********&quot;,&#xA;        &quot;FullNameAr&quot;: &quot;عبد الرحمن علي عابر البذالي&quot;,&#xA;        &quot;FullNameEn&quot;: &quot;ABDULRAHMAN ALI ABER ALBATHALI&quot;,&#xA;        &quot;BirthDate&quot;: &quot;1995-03-09T00:00:00&quot;,&#xA;        &quot;Gender&quot;: &quot;M&quot;,&#xA;        &quot;EmailAddress&quot;: null,&#xA;        &quot;MobileNumber&quot;: null,&#xA;        &quot;NationalityEn&quot;: &quot;KWT&quot;,&#xA;        &quot;NationalityAr&quot;: &quot;كويتي&quot;,&#xA;        &quot;NationalityFlag&quot;: null,&#xA;        &quot;BloodGroup&quot;: null,&#xA;        &quot;Photo&quot;: &quot;/9j/4AAQSkZJRgABAgAAAQABAAD...&quot;,&#xA;        &quot;CardExpiryDate&quot;: &quot;2024-11-17T00:00:00&quot;,&#xA;        &quot;GovData&quot;: null,&#xA;        &quot;Address&quot;: {&#xA;            &quot;Governerate&quot;: &quot;الجهراء&quot;,&#xA;            &quot;Area&quot;: &quot;الجهراء&quot;,&#xA;            &quot;PaciBuildingNumber&quot;: &quot;15****&quot;,&#xA;            &quot;BuildingType&quot;: null,&#xA;            &quot;FloorNumber&quot;: &quot;&quot;,&#xA;            &quot;BuildingNumber&quot;: &quot;3***&quot;,&#xA;            &quot;BlockNumber&quot;: &quot;99&quot;,&#xA;            &quot;UnitNumber&quot;: &quot;&quot;,&#xA;            &quot;StreetName&quot;: &quot;الشارع الثانى جاده 2&quot;,&#xA;            &quot;UnitType&quot;: &quot;منزل&quot;&#xA;        },&#xA;        &quot;DocumentNumber&quot;: &quot;A23*****&quot;,&#xA;        &quot;ProfessionDetails&quot;: &quot;&quot;,&#xA;        &quot;ResidencyType&quot;: &quot;&quot;&#xA;    }&#xA;}'"/>
+                        </Response>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>Send HTTP Response</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send HTTP Response</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>HTTP Receiver</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

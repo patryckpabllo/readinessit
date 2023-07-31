@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:tns="http://www.zain.com/ZESB/Services/UsageManagement" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:typ="http://www.zain.com/ZESB/Services/UsageManagement/Types" targetNamespace="http://www.zain.com/ZESB/Services/UsageManagement">
+    <wsdl:types>
+        <xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/UsageManagement/Types">
+            <xs:simpleType name="BucketUnit">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Time"/>
+                    <xs:enumeration value="Volume"/>
+                    <xs:enumeration value="Monetary"/>
+                    <xs:enumeration value="Events"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:simpleType name="SettingPeriod">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Current"/>
+                    <xs:enumeration value="Forever"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:complexType name="UsageBucket">
+                <xs:sequence>
+                    <xs:element maxOccurs="1" minOccurs="1" name="BucketType" type="xs:string"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="BucketValue" type="xs:long"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="BucketUnit" type="typ:BucketUnit"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="SettingPeriod" type="typ:SettingPeriod"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="UsageSpecs">
+                <xs:sequence>
+                    <xs:choice>
+                        <xs:element name="OfferID" type="xs:string"/>
+                        <xs:element name="ServiceCode" type="xs:string"/>
+                    </xs:choice>
+                    <xs:element maxOccurs="unbounded" minOccurs="1" name="UsageSpecs" type="typ:UsageBucket"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="UsageDetails">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="1" name="UsageDetails" type="typ:UsageSpecs"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="UpdateUsageInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="1" name="MSISDN" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="1" name="UsageDetails" type="typ:UsageDetails"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="UpdateUsageOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="1" name="Status" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="UpdateUsageRequest">
+        <wsdl:part element="typ:UpdateUsageInput" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="UpdateUsageResponse">
+        <wsdl:part element="typ:UpdateUsageOutput" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part element="com:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:portType name="UsageManagementPort">
+        <wsdl:operation name="UpdateUsage">
+            <wsdl:input message="tns:UpdateUsageRequest"/>
+            <wsdl:output message="tns:UpdateUsageResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="UsageManagementBinding" type="tns:UsageManagementPort">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="UpdateUsage">
+            <soap:operation soapAction="UpdateUsage" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="UsageManagement">
+        <wsdl:port binding="tns:UsageManagementBinding" name="UsageManagementPort">
+            <soap:address location="/ZESB/UsageManagement"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

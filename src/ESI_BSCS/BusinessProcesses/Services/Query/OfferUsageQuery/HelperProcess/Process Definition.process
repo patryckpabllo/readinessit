@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/Query/OfferUsageQuery/Schema/OfferUsageQueryOutput.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/Query/OfferUsageQuery/Schema/OfferUsageQueryOutput.xsd" schemaLocation="/BusinessProcesses/Services/Query/OfferUsageQuery/Schema/OfferUsageQueryOutput.xsd"/>
+    <pd:name>BusinessProcesses/Services/Query/OfferUsageQuery/HelperProcess/Process Definition.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>779</pd:endX>
+    <pd:endY>88</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1480247504993</pd:targetNamespace>
+    <pd:activity name="JDBC Call Procedure">
+        <pd:type>com.tibco.plugin.jdbc.JDBCCallActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCCallActivity</pd:resourceType>
+        <pd:x>291</pd:x>
+        <pd:y>111</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <maxRows>100</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/External/BSCSDBConnection.sharedjdbc</jdbcSharedConfig>
+            <catalog>BSCS_USAGE_QUERY_PKG</catalog>
+            <ProcedureName>ZAINKW_ESB_OFFER_USAG_QUERY_SP</ProcedureName>
+            <oraObjects/>
+            <oraTables/>
+            <parameterTypes>
+                <parameter>
+                    <colName>P_MSISDN_IN</colName>
+                    <colType>1</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_CONTRACTID_IN</colName>
+                    <colType>1</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_RESULT_OUT</colName>
+                    <colType>3</colType>
+                    <dataType>-10</dataType>
+                    <typeName>REF CURSOR</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_ERRORCODE_OUT</colName>
+                    <colType>4</colType>
+                    <dataType>2</dataType>
+                    <typeName>NUMBER</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_ERRORMSG_OUT</colName>
+                    <colType>4</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+            </parameterTypes>
+        </config>
+        <pd:inputBindings>
+            <inputs>
+                <inputSet>
+                    <P_MSISDN_IN>
+                        <xsl:value-of select="'96599195290'"/>
+                    </P_MSISDN_IN>
+                    <P_CONTRACTID_IN xsi:nil="true"/>
+                </inputSet>
+            </inputs>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>465</pd:x>
+        <pd:y>106</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx:Resultsets"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JDBC-Call-Procedure/resultSet/UnresolvedResultsets"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>627</pd:x>
+        <pd:y>109</pd:y>
+        <config>
+            <element ref="pfx:Resultsets"/>
+        </config>
+        <pd:inputBindings>
+            <Resultsets>
+                <ResultSet1>
+                    <xsl:for-each-group select="$Parse-XML/Resultsets/ResultSet1/Record1" group-by="concat(ACCOUNT_ID,OFFER_ID)">
+                        <Record1>
+                            <ACCOUNT_ID>
+                                <xsl:copy-of select="ACCOUNT_ID/@xsi:nil"/>
+                                <xsl:value-of select="ACCOUNT_ID"/>
+                            </ACCOUNT_ID>
+                            <OFFER_ID>
+                                <xsl:copy-of select="OFFER_ID/@xsi:nil"/>
+                                <xsl:value-of select="OFFER_ID"/>
+                            </OFFER_ID>
+                            <PEAK_DURATION>
+                                <xsl:copy-of select="current-group()[string-length(PEAK_DURATION)>0]/PEAK_DURATION/@xsi:nil"/>
+                                <xsl:value-of select="current-group()[string-length(PEAK_DURATION)>0]/PEAK_DURATION"/>
+                            </PEAK_DURATION>
+                            <OFF_PEAK_DURATION>
+                                <xsl:copy-of select="current-group()[string-length(OFF_PEAK_DURATION)>0]/OFF_PEAK_DURATION/@xsi:nil"/>
+                                <xsl:value-of select="current-group()[string-length(OFF_PEAK_DURATION)>0]/OFF_PEAK_DURATION"/>
+                            </OFF_PEAK_DURATION>
+                            <ON_NET_DURATION>
+                                <xsl:copy-of select="current-group()[string-length(ON_NET_DURATION)>0]/ON_NET_DURATION/@xsi:nil"/>
+                                <xsl:value-of select="current-group()[string-length(ON_NET_DURATION)>0]/ON_NET_DURATION"/>
+                            </ON_NET_DURATION>
+                            <OFF_NET_DURATION>
+                                <xsl:copy-of select="current-group()[string-length(OFF_NET_DURATION)>0]/OFF_NET_DURATION/@xsi:nil"/>
+                                <xsl:value-of select="current-group()[string-length(OFF_NET_DURATION)>0]/OFF_NET_DURATION"/>
+                            </OFF_NET_DURATION>
+                            <START_DATE>
+                                <xsl:copy-of select="START_DATE/@xsi:nil"/>
+                                <xsl:value-of select="START_DATE"/>
+                            </START_DATE>
+                            <END_DATE>
+                                <xsl:copy-of select="END_DATE/@xsi:nil"/>
+                                <xsl:value-of select="END_DATE"/>
+                            </END_DATE>
+                        </Record1>
+                    </xsl:for-each-group>
+                </ResultSet1>
+            </Resultsets>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>JDBC Call Procedure</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JDBC Call Procedure</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

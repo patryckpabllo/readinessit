@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" schemaLocation="/CDM/ZainKWFault.xsd"/>
+    <pd:name>BusinessProcesses/Services/Common/SalesOrderExt/HelperProcess/CheckProductAndPrice.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="Checkprice" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="Amount" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ProductCode" type="xsd:string"/>
+                    <xsd:element name="Record" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="PART_NUM" type="xsd:string"/>
+                                <xsd:element name="X_CBIO2_ERP_ITEM_CODE" type="xsd:string"/>
+                                <xsd:element name="NAME" type="xsd:string"/>
+                                <xsd:element name="ROWID" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>219</pd:startX>
+    <pd:startY>54</pd:startY>
+    <pd:returnBindings>
+        <pfx:ErrorResponse>
+            <pfx:Error_SourceSystem>
+                <xsl:value-of select="&quot;CRM&quot;"/>
+            </pfx:Error_SourceSystem>
+            <pfx:Error_SourceErrCode>
+                <xsl:value-of select="if(count($Start/root/Record[$Start/root/ProductCode=$Start/root/Record/PART_NUM])>0)&#xA;then&#xA;0&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/CashSales/CheckProductValCode"/>
+            </pfx:Error_SourceErrCode>
+            <pfx:Error_SourceErrDesc>
+                <xsl:value-of select="if(count($Start/root/Record[$Start/root/ProductCode=$Start/root/Record/PART_NUM])>0)&#xA;then&#xA;&quot;Success&quot;&#xA;else&#xA;concat($_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/CashSales/CheckProductValDesc,&quot;-&quot;,$Start/root/ProductCode)"/>
+            </pfx:Error_SourceErrDesc>
+            <xsl:if test="$Start/root/Record[PART_NUM=../ProductCode]/ROWID">
+                <pfx:Error_Additional_Desc1>
+                    <xsl:value-of select="$Start/root/Record[PART_NUM=../ProductCode]/ROWID"/>
+                </pfx:Error_Additional_Desc1>
+            </xsl:if>
+            <pfx:Error_Additional_Desc2>
+                <xsl:value-of select="$Start/root/ProductCode"/>
+            </pfx:Error_Additional_Desc2>
+        </pfx:ErrorResponse>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:ErrorResponse"/>
+    <pd:endX>441</pd:endX>
+    <pd:endY>52</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1497695225909</pd:targetNamespace>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

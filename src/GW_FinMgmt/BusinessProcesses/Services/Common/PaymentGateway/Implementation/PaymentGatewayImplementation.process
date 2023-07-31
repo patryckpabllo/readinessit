@@ -1,0 +1,699 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns14="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns15="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlPfx="http://xmlns.example.com/1450253296761" xmlns:ns5="http://xmlns.zain.com/BSS/ESB/CDM/Base" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns6="http://www.ericsson.com/Mozaic/BusinessSchemas/SOAP/XSDs/Fault.xsd" xmlns:ns13="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx="http://xmlns.example.com/1453468233904" xmlns:ns7="http://www.tibco.com/schemas/GW_FinMgmt/BusinessProcesses/Services/Common/PaymentGateway/Implementation/PaymentGatewayInput.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetUsageDetails.xsd" xmlns:ns3="http://www.zain.com/ZESB/Services/Query/GetUsageDetails.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://www.tibco.com/schemas/GW_FinMgmt/BusinessProcesses/Services/Common/PaymentGateway/Implementation/Schema.xsd">
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/Query/GetUsageDetails.xsd" schemaLocation="/BusinessSchemas/Services/Applications/Common/Query/GetUsageDetails/GetUsageDetails.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/GW_FinMgmt/BusinessProcesses/Services/Common/PaymentGateway/Implementation/Schema.xsd" schemaLocation="/BusinessSchemas/Services/Provisioning/PaymentGateway/PaymentGatewayOutput.xsd"/>
+    <wsdl:import namespace="http://xmlns.example.com/1450253296761" location="/BusinessWSDLS/Services/TIBCO/GetUsageDetailsAbstract.wsdl"/>
+    <wsdl:import namespace="http://xmlns.example.com/1453468233904" location="/BusinessProcesses/Services/Common/PaymentGateway/Implementation/PaymentGateway.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/PaymentGateway/Implementation/PaymentGatewayImplementation.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType wsMsgRef="pfx:PaymentGatewayInput"/>
+    <pd:startX>105</pd:startX>
+    <pd:startY>239</pd:startY>
+    <pd:returnBindings>
+        <pfx:PaymentGatewayOutput>
+            <Output>
+                <xsl:copy-of select="$CDMToNativeResponse/pfx2:PaymentGatewayOutput"/>
+            </Output>
+        </pfx:PaymentGatewayOutput>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType wsMsgRef="pfx:PaymentGatewayOutput"/>
+    <pd:endX>1237</pd:endX>
+    <pd:endY>181</pd:endY>
+    <pd:errorSchemas>
+        <Schema1 wsMsgRef="pfx:PaymentgatewayFault"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1450342523273</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>342</pd:x>
+        <pd:y>75</pd:y>
+        <pd:width>777</pd:width>
+        <pd:height>321</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>simpleGroup</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>GetTransactionID</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogOut</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>GetTransactionID</pd:from>
+            <pd:to>LogIn</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>BPI_Call</pd:from>
+            <pd:to>CDMToNativeResponse</pd:to>
+            <pd:xpathDescription>Success</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>BPI_Call</pd:from>
+            <pd:to>ErrorESI_Call</pd:to>
+            <pd:xpathDescription>ErrorExists</pd:xpathDescription>
+            <pd:lineType>Straight</pd:lineType>
+            <pd:lineColor>-52429</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>LogIn</pd:from>
+            <pd:to>BPI_Call</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CDMToNativeResponse</pd:from>
+            <pd:to>LogOut</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>BPI_Call</pd:from>
+            <pd:to>ErrorBPIResponse</pd:to>
+            <pd:xpathDescription>ErrorResponse</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-52429</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$BPI_Call/pfx2:PaymentGatewayOutput/pfx2:Response/pfx2:ResponseCode!='0'
+and string-length($BPI_Call/pfx2:PaymentGatewayOutput/pfx2:Response/pfx2:ResponseDescription)&gt;0</pd:xpath>
+        </pd:transition>
+        <pd:activity name="LogIn">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>575</pd:x>
+            <pd:y>159</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+                <spawn>false</spawn>
+            </config>
+            <pd:inputBindings>
+                <ns12:LogRequest>
+                    <ns2:Header>
+                        <ns2:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns2:ApplicationID>
+                        <ns2:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PaymentGateway/ComponentName"/>
+                        </ns2:ComponentName>
+                        <ns2:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns2:Hostname>
+                        <ns2:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns2:Timestamp>
+                        <ns2:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                        </ns2:TransactionDomain>
+                        <ns2:TransactionType>
+                            <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                        </ns2:TransactionType>
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                        <ns2:Filename>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                        </ns2:Filename>
+                        <ns2:Message>
+                            <xsl:value-of select="tib:render-xml($Start/pfx:PaymentGatewayInput/Input/ns7:PaymentGatewayInput)"/>
+                        </ns2:Message>
+                    </ns2:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_REQ_RECV"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns12:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="LogOut">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>995</pd:x>
+            <pd:y>159</pd:y>
+            <config>
+                <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+                <spawn>false</spawn>
+            </config>
+            <pd:inputBindings>
+                <ns12:LogRequest>
+                    <ns2:Header>
+                        <ns2:ApplicationID>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                        </ns2:ApplicationID>
+                        <ns2:ComponentName>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PaymentGateway/ComponentName"/>
+                        </ns2:ComponentName>
+                        <ns2:Hostname>
+                            <xsl:value-of select="BW:getHostName()"/>
+                        </ns2:Hostname>
+                        <ns2:Timestamp>
+                            <xsl:value-of select="current-dateTime()"/>
+                        </ns2:Timestamp>
+                        <ns2:TransactionDomain>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                        </ns2:TransactionDomain>
+                        <ns2:TransactionType>
+                            <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                        </ns2:TransactionType>
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                        <ns2:Filename>
+                            <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                        </ns2:Filename>
+                        <ns2:Message>
+                            <xsl:value-of select="tib:render-xml($CDMToNativeResponse/pfx2:PaymentGatewayOutput)"/>
+                        </ns2:Message>
+                    </ns2:Header>
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                    </Category>
+                    <Status>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_RES_SENT"/>
+                    </Status>
+                    <Audit>
+                        <xsl:value-of select="0"/>
+                    </Audit>
+                </ns12:LogRequest>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="BPI_Call">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>709</pd:x>
+            <pd:y>161</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Common/PaymentGateway/HelperProcess/BPI_Call_PaymentGateway.process</processName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <xsl:for-each select="$Start/pfx:PaymentGatewayInput/Input/ns7:PaymentGatewayInput">
+                        <ns7:PaymentGatewayInput>
+                            <xsl:if test="ns7:CustomerID">
+                                <ns7:CustomerID>
+                                    <xsl:value-of select="ns7:CustomerID"/>
+                                </ns7:CustomerID>
+                            </xsl:if>
+                            <xsl:if test="ns7:MSISDN">
+                                <ns7:MSISDN>
+                                    <xsl:value-of select="ns7:MSISDN"/>
+                                </ns7:MSISDN>
+                            </xsl:if>
+                            <ns7:amount>
+                                <xsl:value-of select="ns7:amount"/>
+                            </ns7:amount>
+                            <xsl:if test="ns7:transactionReference">
+                                <ns7:transactionReference>
+                                    <xsl:value-of select="ns7:transactionReference"/>
+                                </ns7:transactionReference>
+                            </xsl:if>
+                            <ns7:merchantID>
+                                <xsl:value-of select="'1'"/>
+                            </ns7:merchantID>
+                            <ns7:AccessCode>
+                                <xsl:value-of select="'1'"/>
+                            </ns7:AccessCode>
+                            <xsl:for-each select="ns7:CardDetails">
+                                <ns7:CardDetails>
+                                    <xsl:if test="ns7:creditCardNumber">
+                                        <ns7:creditCardNumber>
+                                            <xsl:value-of select="ns7:creditCardNumber"/>
+                                        </ns7:creditCardNumber>
+                                    </xsl:if>
+                                    <xsl:if test="ns7:CreditCardCompanyName">
+                                        <ns7:CreditCardCompanyName>
+                                            <xsl:value-of select="ns7:CreditCardCompanyName"/>
+                                        </ns7:CreditCardCompanyName>
+                                    </xsl:if>
+                                    <xsl:if test="ns7:expirationDate">
+                                        <ns7:expirationDate>
+                                            <xsl:value-of select="ns7:expirationDate"/>
+                                        </ns7:expirationDate>
+                                    </xsl:if>
+                                    <xsl:if test="ns7:ExpirationMonth">
+                                        <ns7:ExpirationMonth>
+                                            <xsl:value-of select="ns7:ExpirationMonth"/>
+                                        </ns7:ExpirationMonth>
+                                    </xsl:if>
+                                    <xsl:if test="ns7:ExpirationYear">
+                                        <ns7:ExpirationYear>
+                                            <xsl:value-of select="ns7:ExpirationYear"/>
+                                        </ns7:ExpirationYear>
+                                    </xsl:if>
+                                    <xsl:if test="ns7:nameOnCard">
+                                        <ns7:nameOnCard>
+                                            <xsl:value-of select="ns7:nameOnCard"/>
+                                        </ns7:nameOnCard>
+                                    </xsl:if>
+                                    <xsl:if test="ns7:authorizationCode">
+                                        <ns7:authorizationCode>
+                                            <xsl:value-of select="ns7:authorizationCode"/>
+                                        </ns7:authorizationCode>
+                                    </xsl:if>
+                                    <xsl:if test="ns7:creditCardType">
+                                        <ns7:creditCardType>
+                                            <xsl:value-of select="ns7:creditCardType"/>
+                                        </ns7:creditCardType>
+                                    </xsl:if>
+                                </ns7:CardDetails>
+                            </xsl:for-each>
+                        </ns7:PaymentGatewayInput>
+                    </xsl:for-each>
+                    <TransactionId>
+                        <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                    </TransactionId>
+                    <StartTimeStamp>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="GetTransactionID">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>461</pd:x>
+            <pd:y>158</pd:y>
+            <config>
+                <processName>/CommonProcesses/Utilities/GUID.process</processName>
+            </config>
+            <pd:inputBindings/>
+        </pd:activity>
+        <pd:activity name="ErrorESI_Call">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>635</pd:x>
+            <pd:y>303</pd:y>
+            <config>
+                <faultName>Schema1</faultName>
+            </config>
+            <pd:inputBindings>
+                <ns13:ActivityInput>
+                    <data>
+                        <pfx:PaymentgatewayFault>
+                            <Fault>
+                                <ns6:ExceptionRequest>
+                                    <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                                        <code>
+                                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                                        </code>
+                                    </xsl:if>
+                                    <description>
+                                        <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                                    </description>
+                                </ns6:ExceptionRequest>
+                            </Fault>
+                        </pfx:PaymentgatewayFault>
+                    </data>
+                </ns13:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="CDMToNativeResponse">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>843</pd:x>
+            <pd:y>154</pd:y>
+            <config>
+                <element ref="pfx2:PaymentGatewayOutput"/>
+            </config>
+            <pd:inputBindings>
+                <xsl:copy-of select="$BPI_Call/pfx2:PaymentGatewayOutput"/>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="ErrorBPIResponse">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>769</pd:x>
+            <pd:y>303</pd:y>
+            <config>
+                <faultName>Schema1</faultName>
+            </config>
+            <pd:inputBindings>
+                <ns13:ActivityInput>
+                    <data>
+                        <pfx:PaymentgatewayFault>
+                            <Fault>
+                                <ns6:ExceptionRequest>
+                                    <xsl:if test="$BPI_Call/pfx2:PaymentGatewayOutput/pfx2:Response/pfx2:ResponseCode">
+                                        <code>
+                                            <xsl:value-of select="$BPI_Call/pfx2:PaymentGatewayOutput/pfx2:Response/pfx2:ResponseCode"/>
+                                        </code>
+                                    </xsl:if>
+                                    <xsl:if test="$BPI_Call/pfx2:PaymentGatewayOutput/pfx2:Response/pfx2:ResponseDescription">
+                                        <description>
+                                            <xsl:value-of select="$BPI_Call/pfx2:PaymentGatewayOutput/pfx2:Response/pfx2:ResponseDescription"/>
+                                        </description>
+                                    </xsl:if>
+                                    <xsl:if test="$BPI_Call/pfx2:PaymentGatewayOutput/pfx2:Response/pfx2:ResponseRefernces/pfx2:Reference[pfx2:Name='Source']/pfx2:Value">
+                                        <sourceSystem>
+                                            <xsl:value-of select="$BPI_Call/pfx2:PaymentGatewayOutput/pfx2:Response/pfx2:ResponseRefernces/pfx2:Reference[pfx2:Name='Source']/pfx2:Value"/>
+                                        </sourceSystem>
+                                    </xsl:if>
+                                </ns6:ExceptionRequest>
+                            </Fault>
+                        </pfx:PaymentgatewayFault>
+                    </data>
+                </ns13:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>570</pd:x>
+        <pd:y>517</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PaymentGateway/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                    </xsl:if>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($ErrorHandler/ns14:ExceptionRequest)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <xsl:if test="$GetTransactionID/GUID/StartTimeStamp">
+                    <TimeDuration>
+                        <xsl:value-of select="$GetTransactionID/GUID/StartTimeStamp"/>
+                    </TimeDuration>
+                </xsl:if>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/GW/GW_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>167</pd:x>
+        <pd:y>513</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns14:ExceptionRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/PaymentGateway/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <xsl:if test="$GetTransactionID/GUID/TransactionID">
+                        <ns2:TransactionID>
+                            <xsl:value-of select="$GetTransactionID/GUID/TransactionID"/>
+                        </ns2:TransactionID>
+                    </xsl:if>
+                </ns2:Header>
+                <xsl:choose xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                    <xsl:when test="exists($_error_ErrorESI_Call/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/code)">
+                        <ExceptionCode>
+                            <xsl:value-of select="$_error_ErrorESI_Call/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/code"/>
+                        </ExceptionCode>
+                    </xsl:when>
+                    <xsl:when test="exists($_error_ErrorBPIResponse/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/code)">
+                        <ExceptionCode>
+                            <xsl:value-of select="$_error_ErrorBPIResponse/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/code"/>
+                        </ExceptionCode>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <ExceptionCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </ExceptionCode>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:choose xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                    <xsl:when test="exists($_error_ErrorBPIResponse/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/description)">
+                        <StackTrace>
+                            <xsl:value-of select="if(contains($_error_ErrorBPIResponse/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/description,'|'))&#xA;then substring-after($_error_ErrorBPIResponse/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/description,'|')&#xA;else $_error_ErrorBPIResponse/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/description"/>
+                        </StackTrace>
+                    </xsl:when>
+                    <xsl:when test="exists($_error_ErrorESI_Call/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/description)">
+                        <xsl:if test="$_error_ErrorESI_Call/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/description">
+                            <StackTrace>
+                                <xsl:value-of select="$_error_ErrorESI_Call/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/description"/>
+                            </StackTrace>
+                        </xsl:if>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <StackTrace>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                        </StackTrace>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </ns14:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>931</pd:x>
+        <pd:y>517</pd:y>
+        <config>
+            <faultName>Schema1</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns13:ActivityInput>
+                <data>
+                    <pfx:PaymentgatewayFault>
+                        <Fault>
+                            <ns6:ExceptionRequest>
+                                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorSourceErrCode">
+                                    <code>
+                                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrCode"/>
+                                    </code>
+                                </xsl:if>
+                                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorSourceErrDesc">
+                                    <description>
+                                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrDesc"/>
+                                    </description>
+                                </xsl:if>
+                                <xsl:if test="$ErrorResponseMapFromEOM/root/ErrorSourceSystem">
+                                    <sourceSystem>
+                                        <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceSystem"/>
+                                    </sourceSystem>
+                                </xsl:if>
+                            </ns6:ExceptionRequest>
+                        </Fault>
+                    </pfx:PaymentgatewayFault>
+                </data>
+            </ns13:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>281</pd:x>
+        <pd:y>595</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns15:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                </message>
+                <msgCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </msgCode>
+            </ns15:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SendErrorContext">
+        <pd:type>com.tibco.ae.tools.palettes.servicepalette.SetContextActivity</pd:type>
+        <pd:resourceType>service.activity.setContext</pd:resourceType>
+        <pd:x>734</pd:x>
+        <pd:y>517</pd:y>
+        <config>
+            <variableConfig>/CommonResources/Context/Internal/EAIFaultContext.contextResource</variableConfig>
+            <showResult>true</showResult>
+        </config>
+        <pd:inputBindings>
+            <Fault>
+                <faultcode>
+                    <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrCode"/>
+                </faultcode>
+                <faultstring>
+                    <xsl:value-of select="$ErrorResponseMapFromEOM/root/ErrorSourceErrDesc"/>
+                </faultstring>
+                <faultfactor>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                </faultfactor>
+            </Fault>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorResponseMapFromEOM">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>336</pd:x>
+        <pd:y>514</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/ErrorResponseMapFromEOM.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <SourceSystem>
+                    <xsl:value-of select="if(string-length($_error_ErrorBPIResponse/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/sourceSystem)>0)&#xA;then $_error_ErrorBPIResponse/pfx:PaymentgatewayFault/Fault/ns6:ExceptionRequest/sourceSystem&#xA;else 'TIBCO'"/>
+                </SourceSystem>
+                <ChannelType>
+                    <xsl:value-of select="'Internal'"/>
+                </ChannelType>
+                <ResponseCode>
+                    <xsl:value-of select="$ErrorHandler/ns14:ExceptionRequest/ExceptionCode"/>
+                </ResponseCode>
+                <xsl:if test="$ErrorHandler/ns14:ExceptionRequest/StackTrace">
+                    <ResponseDescription>
+                        <xsl:value-of select="$ErrorHandler/ns14:ExceptionRequest/StackTrace"/>
+                    </ResponseDescription>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-3407872</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>ErrorResponseMapFromEOM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>SendErrorContext</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SendErrorContext</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-3407872</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorResponseMapFromEOM</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

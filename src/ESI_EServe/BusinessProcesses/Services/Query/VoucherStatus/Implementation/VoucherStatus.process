@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:pfx14="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/VoucherStatusRequest.xsd" xmlns:ns="http://www.tibco.com/pe/CheckpointSchema" xmlns:pfx13="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Transaction/VoucherOnDemandReq.xsd" xmlns:pfx12="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Transaction/RechargeReq.xsd" xmlns:pfx11="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:pfx10="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:pfx5="http://xmlns.zain.jo.org/CDM/CustomerAndOrder" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx3="http://www.tibco.com/ns/no_namespace_schema_location/CustomerAndOrder.xsd" xmlns:pfx2="http://www.ericsson.com/EAI/SchemaDefinitions/CDM/customerAccount" xmlns:pfx9="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx8="http://www.siebel.com/xml/MOZ1%20Serv%20Account%20Creation%20Res" xmlns:pfx7="http://www.tibco.com/ns/no_namespace_schema_location/CDM/CDM.xsd" xmlns:pfx6="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns14="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/VoucherStatusResponse.xsd" xmlns:ns9="http://www.ericsson.com/CDM/telecom/Response" xmlns:ns12="http://www.ericsson.com/CDM/telecom/Resource" xmlns:ns5="http://www.ericsson.com/CDM/telecom/Header" xmlns:ns13="http://www.ericsson.com/CDM/telecom/FAF" xmlns:ns6="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Transaction/RechargeRes.xsd" xmlns:ns7="http://www.ericsson.com/CDM/telecom/Subscriber" xmlns:pfx="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns10="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Transaction/VoucherOnDemandRes.xsd" xmlns:ns8="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariable/Internal/ResponseCodes.xsd" xmlns:ns11="http://www.ericsson.com/CDM/telecom/Voucher" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns3="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.ericsson.com/EAI/SchemaDefinitions/CDM/customerAccount" schemaLocation="/CDM/customerAccount.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/CustomerAndOrder.xsd" schemaLocation="/CustomerAndOrder.xsd"/>
+    <xsd:import namespace="http://xmlns.zain.jo.org/CDM/CustomerAndOrder"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/BusinessSchemas/Common/CLE/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" schemaLocation="/CDM/CDM.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Transaction/RechargeReq.xsd" schemaLocation="/BusinessSchemas/Services/Transaction/PrepaidRecharge/RechargeReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Transaction/RechargeRes.xsd" schemaLocation="/BusinessSchemas/Services/Transaction/PrepaidRecharge/RechargeRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Transaction/VoucherOnDemandReq.xsd" schemaLocation="/BusinessSchemas/Services/Transaction/VoucherOnDemand/VoucherOnDemandReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Transaction/VoucherOnDemandRes.xsd" schemaLocation="/BusinessSchemas/Services/Transaction/VoucherOnDemand/VoucherOnDemandRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/VoucherStatusRequest.xsd" schemaLocation="/BusinessSchemas/Services/Query/VoucherStatus/VoucherStatusRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/VoucherStatusResponse.xsd" schemaLocation="/BusinessSchemas/Services/Query/VoucherStatus/VoucherStatusResponse.xsd"/>
+    <pd:name>BusinessProcesses/Services/Query/VoucherStatus/Implementation/VoucherStatus.process</pd:name>
+    <pd:startName>VoucherStatus_Request</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="VoucherStatus_Request">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>117</pd:x>
+        <pd:y>164</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>%%BusinessProcesses/CommonSettings/JMSReceiver/MaxSessions%%</maxSessions>
+                <destination>CBIO.BSS.DOM_ESB.GW.QUERY.VOUCHER_STATUS.SVC.Q.INT.REQ</destination>
+                <receiverTimeout>%%BusinessProcesses/CommonSettings/JMSTimeOuts/Timeout_Medium_Wait%%</receiverTimeout>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1033</pd:endX>
+    <pd:endY>164</pd:endY>
+    <pd:errorSchemas>
+        <ErrorSchema ref="pfx4:ExceptionRequest"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1323152787082</pd:targetNamespace>
+    <pd:activity name="CallESERV">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>634</pd:x>
+        <pd:y>163</pd:y>
+        <config>
+            <processNameXPath/>
+            <processName>/BusinessProcesses/Services/Query/VoucherStatus/HelperProcess/VoucherStatusProcess.process</processName>
+        </config>
+        <pd:inputBindings>
+            <group>
+                <ReqString>
+                    <xsl:value-of select="$VoucherStatus_Request/pfx:ActivityOutput/Body"/>
+                </ReqString>
+                <TrackingId>
+                    <xsl:value-of select="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/TransactionID"/>
+                </TrackingId>
+                <StartTimeStamp>
+                    <xsl:value-of select="if(exists($VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </StartTimeStamp>
+            </group>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>270</pd:x>
+        <pd:y>274</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>457</pd:x>
+        <pd:y>273</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:coercions>
+            <pd:coercion xpath="$Catch/exceptiondata/*" element="pfx4:ExceptionRequest"/>
+        </pd:coercions>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="exists($Catch/exceptiondata/pfx4:ExceptionRequest/StackTrace)">
+                    <xsl:copy-of select="$Catch/exceptiondata/pfx4:ExceptionRequest"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <pfx4:ExceptionRequest>
+                        <pfx6:Header>
+                            <pfx6:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </pfx6:ApplicationID>
+                            <pfx6:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/Deployment"/>
+                            </pfx6:ComponentName>
+                            <pfx6:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </pfx6:Hostname>
+                            <pfx6:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </pfx6:Timestamp>
+                            <pfx6:TransactionType>
+                                <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                            </pfx6:TransactionType>
+                            <pfx6:TransactionID>
+                                <xsl:value-of select="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/TransactionID"/>
+                            </pfx6:TransactionID>
+                            <pfx6:Message>
+                                <xsl:value-of select="tib:render-xml($_error/ns1:ErrorReport)"/>
+                            </pfx6:Message>
+                            <pfx6:DataEncoding>
+                                <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/DataEncoding/STRING"/>
+                            </pfx6:DataEncoding>
+                        </pfx6:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                        </ExceptionCode>
+                        <StackTrace>
+                            <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                        </StackTrace>
+                        <NotificationChannel>
+                            <xsl:value-of select="&quot;INTERNAL&quot;"/>
+                        </NotificationChannel>
+                    </pfx4:ExceptionRequest>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="AuditErrLogOUT">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1032</pd:x>
+        <pd:y>273</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns2:LogRequest>
+                <pfx6:Header>
+                    <pfx6:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx6:ApplicationID>
+                    <pfx6:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/Deployment"/>
+                    </pfx6:ComponentName>
+                    <pfx6:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </pfx6:Hostname>
+                    <pfx6:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx6:Timestamp>
+                    <pfx6:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </pfx6:TransactionType>
+                    <xsl:if test="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/TransactionID">
+                        <pfx6:TransactionID>
+                            <xsl:value-of select="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/TransactionID"/>
+                        </pfx6:TransactionID>
+                    </xsl:if>
+                    <pfx6:Message>
+                        <xsl:value-of select="tib:render-xml($CLE_To_CDM/ns14:VoucherStatusResponse)"/>
+                    </pfx6:Message>
+                    <pfx6:DataEncoding>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/DataEncoding/STRING"/>
+                    </pfx6:DataEncoding>
+                </pfx6:Header>
+                <TimeDuration>
+                    <xsl:value-of select="if(exists($VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns2:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSReceiverError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>117</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <faultName>ErrorSchema</faultName>
+        </config>
+        <pd:inputBindings>
+            <pfx9:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                </message>
+                <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                    <messageCode>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                    </messageCode>
+                </xsl:if>
+                <data>
+                    <pfx4:ExceptionRequest>
+                        <pfx6:Header>
+                            <pfx6:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </pfx6:ApplicationID>
+                            <pfx6:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/Deployment"/>
+                            </pfx6:ComponentName>
+                            <pfx6:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </pfx6:Hostname>
+                            <pfx6:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </pfx6:Timestamp>
+                            <pfx6:TransactionType>
+                                <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                            </pfx6:TransactionType>
+                            <pfx6:Message>
+                                <xsl:value-of select="tib:render-xml($_error/ns1:ErrorReport)"/>
+                            </pfx6:Message>
+                            <pfx6:DataEncoding>
+                                <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/DataEncoding/STRING"/>
+                            </pfx6:DataEncoding>
+                        </pfx6:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                        </ExceptionCode>
+                        <StackTrace>
+                            <xsl:value-of select="tib:render-xml($_error/ns1:ErrorReport)"/>
+                        </StackTrace>
+                        <Custom>
+                            <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonErrors/JMSReceiveErrorDesc"/>
+                        </Custom>
+                    </pfx4:ExceptionRequest>
+                </data>
+            </pfx9:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CLE_To_CDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>610</pd:x>
+        <pd:y>273</pd:y>
+        <config>
+            <element ref="ns14:VoucherStatusResponse"/>
+        </config>
+        <pd:inputBindings>
+            <ns14:VoucherStatusResponse>
+                <pfx11:Response>
+                    <ResponseCode>
+                        <xsl:value-of select="$ErrorHandler/pfx4:ExceptionRequest/ExceptionCode"/>
+                    </ResponseCode>
+                    <xsl:if test="$ErrorHandler/pfx4:ExceptionRequest/StackTrace">
+                        <ResponseDescription>
+                            <xsl:value-of select="$ErrorHandler/pfx4:ExceptionRequest/StackTrace"/>
+                        </ResponseDescription>
+                    </xsl:if>
+                    <ResponseRefernces>
+                        <Reference>
+                            <Name>
+                                <xsl:value-of select="&quot;INTERNAL&quot;"/>
+                            </Name>
+                            <Value>
+                                <xsl:value-of select="&quot;INTERNAL&quot;"/>
+                            </Value>
+                        </Reference>
+                    </ResponseRefernces>
+                </pfx11:Response>
+            </ns14:VoucherStatusResponse>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseReqXML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>283</pd:x>
+        <pd:y>162</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx14:VoucherStatusRequest"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$VoucherStatus_Request/pfx:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetResCodeVar">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>445</pd:x>
+        <pd:y>162</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/ResponseCodes.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>547</pd:x>
+        <pd:y>41</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Reply to JMS Message">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>899</pd:x>
+        <pd:y>171</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>RELIABLE_DELIVERY</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>VoucherStatus_Request</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <InDataxsdString ref="ns14:VoucherStatusResponse"/>
+        </config>
+        <pd:inputBindings>
+            <pfx:ActivityInput>
+                <xsl:if test="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/TransactionID">
+                    <JMSCorrelationID>
+                        <xsl:value-of select="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/TransactionID"/>
+                    </JMSCorrelationID>
+                </xsl:if>
+                <OtherProperties>
+                    <TransactionID>
+                        <xsl:value-of select="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TransactionID>
+                    <xsl:if test="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/ReplyToEngineID">
+                        <ReplyToEngineID>
+                            <xsl:value-of select="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/ReplyToEngineID"/>
+                        </ReplyToEngineID>
+                    </xsl:if>
+                    <xsl:if test="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/ReplyToDeploymentName">
+                        <ReplyToDeploymentName>
+                            <xsl:value-of select="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/ReplyToDeploymentName"/>
+                        </ReplyToDeploymentName>
+                    </xsl:if>
+                    <xsl:if test="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/StartTimeStamp">
+                        <StartTimeStamp>
+                            <xsl:value-of select="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </StartTimeStamp>
+                    </xsl:if>
+                    <xsl:if test="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/CorrelationId">
+                        <CorrelationId>
+                            <xsl:value-of select="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties/CorrelationId"/>
+                        </CorrelationId>
+                    </xsl:if>
+                </OtherProperties>
+                <Body>
+                    <xsl:copy-of select="$CallESERV/ns14:VoucherStatusResponse"/>
+                </Body>
+            </pfx:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply-Error-Message">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>809</pd:x>
+        <pd:y>271</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>RELIABLE_DELIVERY</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>VoucherStatus_Request</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <InDataxsdString ref="ns14:VoucherStatusResponse"/>
+        </config>
+        <pd:inputBindings>
+            <pfx:ActivityInput>
+                <xsl:copy-of select="$VoucherStatus_Request/pfx:ActivityOutput/OtherProperties"/>
+                <Body>
+                    <xsl:copy-of select="$CLE_To_CDM/ns14:VoucherStatusResponse"/>
+                </Body>
+            </pfx:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>VoucherStatus_Request</pd:from>
+        <pd:to>ParseReqXML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>CLE_To_CDM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>AuditErrLogOUT</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>VoucherStatus_Request</pd:from>
+        <pd:to>JMSReceiverError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-3407668</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_To_CDM</pd:from>
+        <pd:to>Reply-Error-Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseReqXML</pd:from>
+        <pd:to>GetResCodeVar</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetResCodeVar</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>CallESERV</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetResCodeVar</pd:from>
+        <pd:to>CallESERV</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply to JMS Message</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallESERV</pd:from>
+        <pd:to>Reply to JMS Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply-Error-Message</pd:from>
+        <pd:to>AuditErrLogOUT</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

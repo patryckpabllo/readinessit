@@ -1,0 +1,687 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/file" xmlns:pfx5="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/BatchPrepaidUpdate/Resources/SOBH.xsd" xmlns:pfx3="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/BatchPrepaidUpdate/BalanceUpdate/SOBH.xsd" xmlns:pfx2="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/BatchPrepaidUpdate/SOBH.xsd" xmlns:pfx="http://www.tibco.com/ns/no_namespace_schema_location/BatchPrepaidUpdate/SOBH.xsd" xmlns:pfx7="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/BatchPrepaidUpdate/Resources/cai3gbh.xsd" xmlns:pfx6="http://www.tibco.com/pe/WriteToLogActivitySchema">
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/BatchPrepaidUpdate/Resources/SOBH.xsd" schemaLocation="/BusinessProcesses/Services/BatchPrepaidUpdate/Resources/SOBH.xsd"/>
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/BatchPrepaidUpdate/Resources/cai3gbh.xsd" schemaLocation="/BusinessProcesses/Services/BatchPrepaidUpdate/Resources/cai3gbh.xsd"/>
+    <pd:name>BusinessProcesses/Services/BatchPrepaidUpdate/ExpiryDateUpdate/BatchMainAccExpDateUpdateAbsoluteNRelative.process</pd:name>
+    <pd:startName>File Poller</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings>
+        <CAI3GBH>
+            <config>
+                <url>
+                    <xsl:value-of select="&quot;http://127.0.0.1:8998&quot;"/>
+                </url>
+                <ns>
+                    <xsl:value-of select="&quot;http://schemas.ericsson.com/cai3g1.2/&quot;"/>
+                </ns>
+                <user>
+                    <xsl:value-of select="&quot;tibcotest&quot;"/>
+                </user>
+                <passwd>
+                    <xsl:value-of select="&quot;#00022330303031727163726D61606772&quot;"/>
+                </passwd>
+            </config>
+            <Request>
+                <xsl:for-each select="$AccmCommand/AccumulatedOutput/CAI3GBH/Request/Command">
+                    <Command>
+                        <Operation>
+                            <xsl:value-of select="Operation"/>
+                        </Operation>
+                        <xsl:for-each select="Ranges">
+                            <Ranges>
+                                <xsl:for-each select="variable">
+                                    <variable>
+                                        <name>
+                                            <xsl:value-of select="name"/>
+                                        </name>
+                                        <start>
+                                            <xsl:value-of select="start"/>
+                                        </start>
+                                        <stop>
+                                            <xsl:value-of select="stop"/>
+                                        </stop>
+                                    </variable>
+                                </xsl:for-each>
+                            </Ranges>
+                        </xsl:for-each>
+                        <xsl:for-each select="Parameters">
+                            <Parameters>
+                                <xsl:for-each select="Param">
+                                    <Param>
+                                        <xsl:attribute name="name">
+                                            <xsl:value-of select="@name"/>
+                                        </xsl:attribute>
+                                        <xsl:value-of select="."/>
+                                    </Param>
+                                </xsl:for-each>
+                            </Parameters>
+                        </xsl:for-each>
+                    </Command>
+                </xsl:for-each>
+            </Request>
+        </CAI3GBH>
+    </pd:returnBindings>
+    <pd:starter name="File Poller">
+        <pd:type>com.tibco.plugin.file.FileEventSource</pd:type>
+        <pd:resourceType>ae.activities.FileEventSourceResource</pd:resourceType>
+        <pd:x>39</pd:x>
+        <pd:y>81</pd:y>
+        <config>
+            <pollInterval>%%BusinessProcesses/Services/BatchAdjustments/ExpiryDateUpdate/PollingInterval%%</pollInterval>
+            <createEvent>true</createEvent>
+            <modifyEvent>true</modifyEvent>
+            <deleteEvent>true</deleteEvent>
+            <mode>files-and-directories</mode>
+            <encoding>text</encoding>
+            <sortby>File Name</sortby>
+            <sortorder>descending</sortorder>
+            <fileName>%%BusinessProcesses/Services/BatchAdjustments/ExpiryDateUpdate/RequestFileName%%</fileName>
+            <encodingUsed>ASCII</encodingUsed>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx4:CAI3GBH"/>
+    <pd:endX>930</pd:endX>
+    <pd:endY>87</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1468571872036</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>254</pd:x>
+        <pd:y>1</pd:y>
+        <pd:width>236</pd:width>
+        <pd:height>150</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$Parse-Data/Output/Rows/root</pd:over>
+            <pd:iterationElementSlot>Rows</pd:iterationElementSlot>
+            <pd:indexSlot>i</pd:indexSlot>
+            <pd:outSlot>AccmCommand</pd:outSlot>
+            <pd:activityOutputName>Map Data</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Map Data</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Map Data</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Map Data">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>363</pd:x>
+            <pd:y>83</pd:y>
+            <config>
+                <element ref="pfx7:CAI3GBH"/>
+            </config>
+            <pd:inputBindings>
+                <CAI3GBH>
+                    <config>
+                        <url>
+                            <xsl:value-of select="&quot;&quot;"/>
+                        </url>
+                        <ns>
+                            <xsl:value-of select="&quot;&quot;"/>
+                        </ns>
+                        <user>
+                            <xsl:value-of select="&quot;tibcotest&quot;"/>
+                        </user>
+                        <passwd>
+                            <xsl:value-of select="&quot;#00022330303031727163726D61606772&quot;"/>
+                        </passwd>
+                    </config>
+                    <Request>
+                        <Command>
+                            <Operation>
+                                <xsl:value-of select="&quot;Set&quot;"/>
+                            </Operation>
+                            <Parameters>
+                                <Param>
+                                    <xsl:attribute name="name">
+                                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/strMOType"/>
+                                    </xsl:attribute>
+                                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/MOType"/>
+                                </Param>
+                                <xsl:choose>
+                                    <xsl:when test="string-length(tib:trim($Rows/root/ACCOUNT_ID)) > 0">
+                                        <xsl:choose>
+                                            <xsl:when test="tib:trim($Rows/root/ADJUSTMENTTYPE)=&quot;A&quot;">
+                                                <Param>
+                                                    <xsl:attribute name="name">
+                                                        <xsl:value-of select="&quot;MOId&quot;"/>
+                                                    </xsl:attribute>
+                                                    <xsl:value-of select="'&lt;![CDATA[&lt;actionid>SERI CSAIR SUB DAABEXPIRY&lt;/actionid>]]>'"/>
+                                                </Param>
+                                                <Param>
+                                                    <xsl:attribute name="name">
+                                                        <xsl:value-of select="&quot;MOAttributes&quot;"/>
+                                                    </xsl:attribute>
+                                                    <xsl:value-of select="concat('&lt;![CDATA[&#xA;&lt;setSubscription actionid=&quot;SERI CSAIR SUB DAABEXPIRY&quot; xmlns=&quot;http://schemas.ericsson.com/ema/UserProvisioning/CSSV2/&quot;> &#xA;&lt;msisdn>',$Rows/root/SUBNO,'&lt;/msisdn> &#xA;&lt;actionid>SERI CSAIR SUB DAABEXPIRY&lt;/actionid>&#xA;&lt;prepost_paid>PREP&lt;/prepost_paid>&#xA;&lt;daid>',$Rows/root/ACCOUNT_ID,'&lt;/daid>&#xA;&lt;orderNumber>',$Rows/root/RECORDNO,'&lt;/orderNumber> &#xA;&lt;subscriberNumberNAI>1&lt;/subscriberNumberNAI>&#xA;&lt;expireyDate>', $Rows/root/DATEORDAYS,'&lt;/expireyDate>'&#xA;,'&lt;/setSubscription> &#xA;]]>')"/>
+                                                </Param>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <Param>
+                                                    <xsl:attribute name="name">
+                                                        <xsl:value-of select="&quot;MOId&quot;"/>
+                                                    </xsl:attribute>
+                                                    <xsl:value-of select="'&lt;![CDATA[&lt;actionid>SERI CSAIR SUB DARELEXPIRY&lt;/actionid>]]>'"/>
+                                                </Param>
+                                                <Param>
+                                                    <xsl:attribute name="name">
+                                                        <xsl:value-of select="&quot;MOAttributes&quot; {-- Not Possible --}"/>
+                                                    </xsl:attribute>
+                                                    <xsl:value-of select="concat('&lt;![CDATA[ &#xA;&lt;setSubscription actionid=&quot;SERI CSAIR SUB DARELEXPIRY&quot; xmlns=&quot;http://schemas.ericsson.com/ema/UserProvisioning/CSSV2/&quot;> &#xA;&lt;msisdn>',$Rows/root/SUBNO,'&lt;/msisdn>&#xA;&lt;actionid>SERI CSAIR SUB DARELEXPIRY&lt;/actionid> &#xA;&lt;prepost_paid>PREP&lt;/prepost_paid>&#xA;&lt;davalue>',$Rows/root/DATEORDAYS,'&lt;/davalue>&#xA;&lt;daid>',$Rows/root/ACCOUNT_ID,'&lt;/daid>&#xA;&lt;orderNumber>',$Rows/root/RECORDNO,'&lt;/orderNumber>&#xA;&lt;subscriberNumberNAI>1&lt;/subscriberNumberNAI>&#xA;&lt;/setSubscription> &#xA;]]>')"/>
+                                                </Param>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:choose>
+                                            <xsl:when test="tib:trim($Rows/root/ADJUSTMENTTYPE)=&quot;R&quot;">
+                                                <Param>
+                                                    <xsl:attribute name="name">
+                                                        <xsl:value-of select="&quot;MOId&quot;"/>
+                                                    </xsl:attribute>
+                                                    <xsl:value-of select="'&lt;![CDATA[&lt;actionid>SERI CSAIR SUB MARELEXPIRY&lt;/actionid>]]>'"/>
+                                                </Param>
+                                                <Param>
+                                                    <xsl:attribute name="name">
+                                                        <xsl:value-of select="&quot;MOAttributes&quot;"/>
+                                                    </xsl:attribute>
+                                                    <xsl:value-of select="concat('&lt;![CDATA[&#xA;&lt;setSubscription actionid=&quot;SERI CSAIR SUB MARELEXPIRY&quot; xmlns=&quot;http://schemas.ericsson.com/ema/UserProvisioning/CSSV2/&quot;> &#xA;&lt;msisdn>',$Rows/root/SUBNO,'&lt;/msisdn> &#xA;&lt;actionid>SERI CSAIR SUB MARELEXPIRY&lt;/actionid> &#xA;&lt;prepost_paid>PREP&lt;/prepost_paid>&#xA;&lt;expieryDays>',$Rows/root/DATEORDAYS,'&lt;/expieryDays> &#xA;&lt;orderNumber>1&lt;/orderNumber>&#xA;&lt;subscriberNumberNAI>1&lt;/subscriberNumberNAI>&#xA;&lt;/setSubscription>&#xA;]]>'&#xA;)"/>
+                                                </Param>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <Param>
+                                                    <xsl:attribute name="name">
+                                                        <xsl:value-of select="&quot;MOId&quot;"/>
+                                                    </xsl:attribute>
+                                                    <xsl:value-of select="&quot;&lt;![CDATA[&lt;actionid>SERI CSAIR SUB MAABEXPIRY&lt;/actionid>]]>&quot;"/>
+                                                </Param>
+                                                <Param>
+                                                    <xsl:attribute name="name">
+                                                        <xsl:value-of select="&quot;MOAttributes&quot;"/>
+                                                    </xsl:attribute>
+                                                    <xsl:value-of select="concat('&lt;![CDATA[&#xA;&lt;setSubscription actionid=&quot;SERI CSAIR SUB MAABEXPIRY&quot; xmlns=&quot;http://schemas.ericsson.com/ema/UserProvisioning/CSSV2/&quot;> &#xA;&lt;msisdn>',$Rows/root/SUBNO,'&lt;/msisdn>&#xA;&lt;actionid>SERI CSAIR SUB MAABEXPIRY&lt;/actionid> &#xA;&lt;prepost_paid>PREP&lt;/prepost_paid>  &#xA;&lt;expireyDate>', $Rows/root/DATEORDAYS,'&lt;/expireyDate> &#xA;&lt;orderNumber>',$Rows/root/RECORDNO,'&lt;/orderNumber> &#xA;&lt;subscriberNumberNAI>1&lt;/subscriberNumberNAI>&#xA;&lt;/setSubscription> &#xA;]]>'&#xA;)"/>
+                                                </Param>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </Parameters>
+                        </Command>
+                    </Request>
+                </CAI3GBH>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="Map-Data-1">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>541</pd:x>
+        <pd:y>80</pd:y>
+        <config>
+            <element ref="pfx7:CAI3GBH"/>
+        </config>
+        <pd:inputBindings>
+            <CAI3GBH>
+                <config>
+                    <url>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/IP"/>
+                    </url>
+                    <ns>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/ns"/>
+                    </ns>
+                    <user>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/UserName"/>
+                    </user>
+                    <passwd>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/Password"/>
+                    </passwd>
+                </config>
+                <Request>
+                    <xsl:copy-of select="$AccmCommand/AccumulatedOutput/CAI3GBH/Request/Command"/>
+                </Request>
+            </CAI3GBH>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse Data">
+        <pd:type>com.tibco.plugin.parse.ParseActivity</pd:type>
+        <pd:resourceType>ae.activities.ParseActivity</pd:resourceType>
+        <pd:x>158</pd:x>
+        <pd:y>82</pd:y>
+        <config>
+            <InputType>String</InputType>
+            <Encoding>ISO8859_1</Encoding>
+            <ParseSharedConfig>/BusinessProcesses/Services/BatchPrepaidUpdate/Resources/ExpUpdateDataFormat.sharedparse</ParseSharedConfig>
+            <SpecifyStartRecord>false</SpecifyStartRecord>
+            <ContinueonError>true</ContinueonError>
+        </config>
+        <pd:inputBindings>
+            <Input>
+                <text>
+                    <xsl:value-of select="$File-Poller/ns:EventSourceOuputTextClass/fileContent/textContent"/>
+                </text>
+                <noOfRecords>
+                    <xsl:value-of select="-1"/>
+                </noOfRecords>
+                <SkipHeaderCharacters>
+                    <xsl:value-of select="51"/>
+                </SkipHeaderCharacters>
+            </Input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Write File">
+        <pd:type>com.tibco.plugin.file.FileWriteActivity</pd:type>
+        <pd:resourceType>ae.activities.FileWriteActivity</pd:resourceType>
+        <pd:x>710</pd:x>
+        <pd:y>86</pd:y>
+        <config>
+            <encoding>text</encoding>
+            <compressFile>None</compressFile>
+            <append>false</append>
+            <createMissingDirectories>true</createMissingDirectories>
+        </config>
+        <pd:inputBindings>
+            <ns:WriteActivityInputTextClass>
+                <fileName>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/ExpiryDateUpdate/RequestFileForEMA"/>
+                </fileName>
+                <textContent>
+                    <xsl:value-of select="$Java-Code/javaCodeActivityOutput/out_var_1"/>
+                </textContent>
+            </ns:WriteActivityInputTextClass>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>370</pd:x>
+        <pd:y>304</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <pfx6:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                </message>
+                <xsl:if test="$_error/ns2:ErrorReport/MsgCode">
+                    <msgCode>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                    </msgCode>
+                </xsl:if>
+            </pfx6:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Java Code">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>622</pd:x>
+        <pd:y>81</pd:y>
+        <config>
+            <fileName>BatchMainAccExpDateUpdateAbsoluteNRelativeJavaCode</fileName>
+            <packageName>BusinessProcesses.Services.BatchPrepaidUpdate.ExpiryDateUpdate.BatchMainAccExpDateUpdateAbsoluteNRelative</packageName>
+            <fullsource>package BusinessProcesses.Services.BatchPrepaidUpdate.ExpiryDateUpdate.BatchMainAccExpDateUpdateAbsoluteNRelative;
+import java.util.*;
+import java.io.*;
+public class BatchMainAccExpDateUpdateAbsoluteNRelativeJavaCode{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String in_var_1 = "";
+	protected String out_var_1 = "";
+	public String getin_var_1() {
+		return in_var_1;
+	}
+	public void setin_var_1(String val) {
+		in_var_1 = val;
+	}
+	public String getout_var_1() {
+		return out_var_1;
+	}
+	public void setout_var_1(String val) {
+		out_var_1 = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public BatchMainAccExpDateUpdateAbsoluteNRelativeJavaCode() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String in_var_1
+	Out : String out_var_1
+* Available Variables: DO NOT MODIFY *****/
+
+in_var_1 =in_var_1.replace("&amp;lt;","&lt;");
+out_var_1=in_var_1.replace("&amp;gt;","&gt;");
+out_var_1=out_var_1.replace("UTF-8","iso-8859-1");
+}
+}
+</fullsource>
+            <inputData>
+                <row>
+                    <fieldName>in_var_1</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <outputData>
+                <row>
+                    <fieldName>out_var_1</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>BatchMainAccExpDateUpdateAbsoluteNRelativeJavaCode</name>
+                    <byteCode>yv66vgAAADMAMgkADAAgCQAMACEKAA0AIggAIwgAJAgAJQoAJgAnCAAoCAApCAAqCAArBwAsBwAtAQAIaW5fdmFyXzEBABJMamF2YS9sYW5nL1N0cmluZzsBAAlvdXRfdmFyXzEBAAtnZXRpbl92YXJfMQEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEAC3NldGluX3Zhcl8xAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAMZ2V0b3V0X3Zhcl8xAQAMc2V0b3V0X3Zhcl8xAQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQAKRXhjZXB0aW9ucwcALgEAClNvdXJjZUZpbGUBADdCYXRjaE1haW5BY2NFeHBEYXRlVXBkYXRlQWJzb2x1dGVOUmVsYXRpdmVKYXZhQ29kZS5qYXZhDAAOAA8MABAADwwAGQAaAQAAAQAEJmx0OwEAATwHAC8MADAAMQEABCZndDsBAAE+AQAFVVRGLTgBAAppc28tODg1OS0xAQCcQnVzaW5lc3NQcm9jZXNzZXMvU2VydmljZXMvQmF0Y2hQcmVwYWlkVXBkYXRlL0V4cGlyeURhdGVVcGRhdGUvQmF0Y2hNYWluQWNjRXhwRGF0ZVVwZGF0ZUFic29sdXRlTlJlbGF0aXZlL0JhdGNoTWFpbkFjY0V4cERhdGVVcGRhdGVBYnNvbHV0ZU5SZWxhdGl2ZUphdmFDb2RlAQAQamF2YS9sYW5nL09iamVjdAEAE2phdmEvbGFuZy9FeGNlcHRpb24BABBqYXZhL2xhbmcvU3RyaW5nAQAHcmVwbGFjZQEARChMamF2YS9sYW5nL0NoYXJTZXF1ZW5jZTtMamF2YS9sYW5nL0NoYXJTZXF1ZW5jZTspTGphdmEvbGFuZy9TdHJpbmc7ACEADAANAAAAAgAEAA4ADwAAAAQAEAAPAAAABgABABEAEgABABMAAAAdAAEAAQAAAAUqtAABsAAAAAEAFAAAAAYAAQAAAAkAAQAVABYAAQATAAAAIgACAAIAAAAGKiu1AAGxAAAAAQAUAAAACgACAAAADAAFAA0AAQAXABIAAQATAAAAHQABAAEAAAAFKrQAArAAAAABABQAAAAGAAEAAAAPAAEAGAAWAAEAEwAAACIAAgACAAAABiortQACsQAAAAEAFAAAAAoAAgAAABIABQATAAEAGQAaAAEAEwAAADUAAgABAAAAESq3AAMqEgS1AAEqEgS1AAKxAAAAAQAUAAAAEgAEAAAAFQAEAAYACgAHABAAFgABABsAGgACABMAAABSAAQAAQAAAC4qKrQAARIFEga2AAe1AAEqKrQAARIIEgm2AAe1AAIqKrQAAhIKEgu2AAe1AAKxAAAAAQAUAAAAEgAEAAAAHQAPAB4AHgAfAC0AIAAcAAAABAABAB0AAQAeAAAAAgAf</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <in_var_1>
+                    <xsl:value-of select="tib:render-xml($Map-Data-1/CAI3GBH,false(),true())"/>
+                </in_var_1>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SFTP">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>807</pd:x>
+        <pd:y>87</pd:y>
+        <config>
+            <fullsource>package BusinessProcesses.Services.BatchPrepaidUpdate.ExpiryDateUpdate.BatchMainAccExpDateUpdateAbsoluteNRelative;
+import java.util.*;
+import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.Session;
+public class BatchMainAccExpDateUpdateAbsoluteNRelativeSFTP{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected String SFTPHOSTIn = "";
+	protected String SFTPUSERIn = "";
+	protected String SFTPPASSIn = "";
+	protected String SFTPWORKINGDIRIn = "";
+	protected String fileNameIn = "";
+	protected int SFTPPORTIn = 0;
+	public String getSFTPHOSTIn() {
+		return SFTPHOSTIn;
+	}
+	public void setSFTPHOSTIn(String val) {
+		SFTPHOSTIn = val;
+	}
+	public String getSFTPUSERIn() {
+		return SFTPUSERIn;
+	}
+	public void setSFTPUSERIn(String val) {
+		SFTPUSERIn = val;
+	}
+	public String getSFTPPASSIn() {
+		return SFTPPASSIn;
+	}
+	public void setSFTPPASSIn(String val) {
+		SFTPPASSIn = val;
+	}
+	public String getSFTPWORKINGDIRIn() {
+		return SFTPWORKINGDIRIn;
+	}
+	public void setSFTPWORKINGDIRIn(String val) {
+		SFTPWORKINGDIRIn = val;
+	}
+	public String getfileNameIn() {
+		return fileNameIn;
+	}
+	public void setfileNameIn(String val) {
+		fileNameIn = val;
+	}
+	public int getSFTPPORTIn() {
+		return SFTPPORTIn;
+	}
+	public void setSFTPPORTIn(int val) {
+		SFTPPORTIn = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public BatchMainAccExpDateUpdateAbsoluteNRelativeSFTP() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	In  : String SFTPHOSTIn
+	In  : String SFTPUSERIn
+	In  : String SFTPPASSIn
+	In  : String SFTPWORKINGDIRIn
+	In  : String fileNameIn
+	In  : int SFTPPORTIn
+* Available Variables: DO NOT MODIFY *****/
+/**
+ * TODO Put here a description of what this class does.
+ *
+ * @author ejmnoqb.
+ *         Created Jul 26, 2016.
+ */
+	@SuppressWarnings("javadoc")
+        String SFTPHOST = SFTPHOSTIn;
+        int SFTPPORT = SFTPPORTIn;
+        String SFTPUSER = SFTPUSERIn;
+        String SFTPPASS = SFTPPASSIn;
+        String SFTPWORKINGDIR = SFTPWORKINGDIRIn ;// "/var/sog/BatchHandler/Users/testbatch/BatchJob";
+        String fileName= fileNameIn;
+
+        Session session = null;
+        Channel channel = null;
+        ChannelSftp channelSftp = null;
+        System.out.println("preparing the host information for sftp.");
+        try {
+            JSch jsch = new JSch();
+            session = jsch.getSession(SFTPUSER, SFTPHOST, SFTPPORT);
+            session.setPassword(SFTPPASS);
+            java.util.Properties config = new java.util.Properties();
+            config.put("StrictHostKeyChecking", "no");
+            session.setConfig(config);
+            session.connect();
+            System.out.println("Host connected.");
+            channel = session.openChannel("sftp");
+            channel.connect();
+            System.out.println("sftp channel opened and connected.");
+            channelSftp = (ChannelSftp) channel;
+            System.out.println("1.");
+
+            channelSftp.cd(SFTPWORKINGDIR);
+            System.out.println("2.");
+            File f = new File(fileName);
+            System.out.println("3." + fileName);
+            channelSftp.put(new FileInputStream(f), f.getName());
+            System.out.println("4.");
+            //log.info("File transfered successfully to host.");
+        } catch (Exception ex) {
+             System.out.println("Exception found while tranfer the response.");
+        }
+        finally{
+
+            channelSftp.exit();
+            System.out.println("sftp Channel exited.");
+            channel.disconnect();
+            System.out.println("Channel disconnected.");
+            session.disconnect();
+            System.out.println("Host Session disconnected.");
+        }
+    }  
+}
+</fullsource>
+            <fileName>BatchMainAccExpDateUpdateAbsoluteNRelativeSFTP</fileName>
+            <packageName>BusinessProcesses.Services.BatchPrepaidUpdate.ExpiryDateUpdate.BatchMainAccExpDateUpdateAbsoluteNRelative</packageName>
+            <javaArchive/>
+            <inputData>
+                <row>
+                    <fieldName>SFTPHOSTIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>SFTPUSERIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>SFTPPASSIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>SFTPWORKINGDIRIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>fileNameIn</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>SFTPPORTIn</fieldName>
+                    <fieldType>int</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </inputData>
+            <byteCode>
+                <class>
+                    <name>BatchMainAccExpDateUpdateAbsoluteNRelativeSFTP</name>
+                    <byteCode>yv66vgAAADMArgkANABeCQA0AF8JADQAYAkANABhCQA0AGIJADQAYwoANQBkCABlCQBmAGcIAGgKAGkAagcAawoADABkCgAMAGwKAG0AbgcAbwoAEABkCABwCABxCgAQAHIKAG0AcwoAbQB0CAB1CAB2CgBtAHcKAHgAdAgAeQcAeggAewoAHAB8CAB9BwB+CgAgAH8HAIAKACIAZAgAgQoAIgCCCgAiAIMHAIQKACcAhQoAIACGCgAcAIcIAIgKABwAiQgAigoAeACLCACMCgBtAIsIAI0HAI4IAI8HAJAHAJEBAApTRlRQSE9TVEluAQASTGphdmEvbGFuZy9TdHJpbmc7AQAKU0ZUUFVTRVJJbgEAClNGVFBQQVNTSW4BABBTRlRQV09SS0lOR0RJUkluAQAKZmlsZU5hbWVJbgEAClNGVFBQT1JUSW4BAAFJAQANZ2V0U0ZUUEhPU1RJbgEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAEQ29kZQEAD0xpbmVOdW1iZXJUYWJsZQEADXNldFNGVFBIT1NUSW4BABUoTGphdmEvbGFuZy9TdHJpbmc7KVYBAA1nZXRTRlRQVVNFUkluAQANc2V0U0ZUUFVTRVJJbgEADWdldFNGVFBQQVNTSW4BAA1zZXRTRlRQUEFTU0luAQATZ2V0U0ZUUFdPUktJTkdESVJJbgEAE3NldFNGVFBXT1JLSU5HRElSSW4BAA1nZXRmaWxlTmFtZUluAQANc2V0ZmlsZU5hbWVJbgEADWdldFNGVFBQT1JUSW4BAAMoKUkBAA1zZXRTRlRQUE9SVEluAQAEKEkpVgEABjxpbml0PgEAAygpVgEABmludm9rZQEADVN0YWNrTWFwVGFibGUHAJAHAJIHAJMHAJQHAHoHAI4HAJUBAApFeGNlcHRpb25zAQAKU291cmNlRmlsZQEAM0JhdGNoTWFpbkFjY0V4cERhdGVVcGRhdGVBYnNvbHV0ZU5SZWxhdGl2ZVNGVFAuamF2YQwANgA3DAA4ADcMADkANwwAOgA3DAA7ADcMADwAPQwAUABRAQAABwCWDACXAJgBAChwcmVwYXJpbmcgdGhlIGhvc3QgaW5mb3JtYXRpb24gZm9yIHNmdHAuBwCZDACaAEMBABRjb20vamNyYWZ0L2pzY2gvSlNjaAwAmwCcBwCTDACdAEMBABRqYXZhL3V0aWwvUHJvcGVydGllcwEAFVN0cmljdEhvc3RLZXlDaGVja2luZwEAAm5vDACeAJ8MAKAAoQwAogBRAQAPSG9zdCBjb25uZWN0ZWQuAQAEc2Z0cAwAowCkBwCUAQAic2Z0cCBjaGFubmVsIG9wZW5lZCBhbmQgY29ubmVjdGVkLgEAG2NvbS9qY3JhZnQvanNjaC9DaGFubmVsU2Z0cAEAAjEuDAClAEMBAAIyLgEADGphdmEvaW8vRmlsZQwAUABDAQAXamF2YS9sYW5nL1N0cmluZ0J1aWxkZXIBAAIzLgwApgCnDACoAD8BABdqYXZhL2lvL0ZpbGVJbnB1dFN0cmVhbQwAUACpDACqAD8MAJ4AqwEAAjQuDACsAFEBABRzZnRwIENoYW5uZWwgZXhpdGVkLgwArQBRAQAVQ2hhbm5lbCBkaXNjb25uZWN0ZWQuAQAaSG9zdCBTZXNzaW9uIGRpc2Nvbm5lY3RlZC4BABNqYXZhL2xhbmcvRXhjZXB0aW9uAQArRXhjZXB0aW9uIGZvdW5kIHdoaWxlIHRyYW5mZXIgdGhlIHJlc3BvbnNlLgEAmEJ1c2luZXNzUHJvY2Vzc2VzL1NlcnZpY2VzL0JhdGNoUHJlcGFpZFVwZGF0ZS9FeHBpcnlEYXRlVXBkYXRlL0JhdGNoTWFpbkFjY0V4cERhdGVVcGRhdGVBYnNvbHV0ZU5SZWxhdGl2ZS9CYXRjaE1haW5BY2NFeHBEYXRlVXBkYXRlQWJzb2x1dGVOUmVsYXRpdmVTRlRQAQAQamF2YS9sYW5nL09iamVjdAEAEGphdmEvbGFuZy9TdHJpbmcBABdjb20vamNyYWZ0L2pzY2gvU2Vzc2lvbgEAF2NvbS9qY3JhZnQvanNjaC9DaGFubmVsAQATamF2YS9sYW5nL1Rocm93YWJsZQEAEGphdmEvbGFuZy9TeXN0ZW0BAANvdXQBABVMamF2YS9pby9QcmludFN0cmVhbTsBABNqYXZhL2lvL1ByaW50U3RyZWFtAQAHcHJpbnRsbgEACmdldFNlc3Npb24BAEAoTGphdmEvbGFuZy9TdHJpbmc7TGphdmEvbGFuZy9TdHJpbmc7SSlMY29tL2pjcmFmdC9qc2NoL1Nlc3Npb247AQALc2V0UGFzc3dvcmQBAANwdXQBADgoTGphdmEv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</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings>
+            <javaCodeActivityInput>
+                <SFTPHOSTIn>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/IP"/>
+                </SFTPHOSTIn>
+                <SFTPUSERIn>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/UserName"/>
+                </SFTPUSERIn>
+                <SFTPPASSIn>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/Password"/>
+                </SFTPPASSIn>
+                <SFTPWORKINGDIRIn>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/SFTPWorkingDirectory"/>
+                </SFTPWORKINGDIRIn>
+                <fileNameIn>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/BatchAdjustments/ExpiryDateUpdate/RequestFileForEMA"/>
+                </fileNameIn>
+            </javaCodeActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>File Poller</pd:from>
+        <pd:to>Parse Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse Data</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>Map-Data-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Write File</pd:from>
+        <pd:to>SFTP</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map-Data-1</pd:from>
+        <pd:to>Java Code</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse Data</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map-Data-1</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Write File</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Java Code</pd:from>
+        <pd:to>Write File</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SFTP</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SFTP</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

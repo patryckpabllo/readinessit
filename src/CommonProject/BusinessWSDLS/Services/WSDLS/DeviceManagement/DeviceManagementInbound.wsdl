@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/DeviceManagement" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:typ="http://www.zain.com/ZESB/Services/DeviceManagement/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://www.zain.com/ZESB/Services/DeviceManagement">
+    <wsdl:types>
+        <xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/DeviceManagement/Types">
+            <xs:simpleType name="Service">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="MMS"/>
+                    <xs:enumeration value="GPRS"/>
+                    <xs:enumeration value="ALL"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:complexType name="DeviceInfo">
+                <xs:sequence>
+                    <xs:element minOccurs="1" name="Manufacturer" type="xs:string"/>
+                    <xs:element minOccurs="1" name="Model" type="xs:string"/>
+                    <xs:element minOccurs="1" name="SerialNo" type="xs:string"/>
+                    <xs:element minOccurs="1" name="DeviceId" type="xs:int"/>
+                    <xs:element minOccurs="1" name="GroupId" type="xs:int"/>
+                    <xs:element minOccurs="0" name="Status" type="xs:string"/>
+                    <xs:element minOccurs="0" name="OperatingSystem" type="xs:string"/>
+                    <xs:element minOccurs="0" name="HomeNetwork" type="xs:string"/>
+                    <xs:element minOccurs="0" name="CurrentNetwork" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Coverage" type="xs:string"/>
+                    <xs:element minOccurs="0" name="Location" type="xs:string"/>
+                    <xs:element minOccurs="0" name="SignalStrength" type="xs:string"/>
+                    <xs:element minOccurs="0" name="BatteryStrength" type="xs:string"/>
+                    <xs:element minOccurs="0" name="LastUpdateDate" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="SendSettingsRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="1" name="Msisdn" type="xs:string"/>
+                        <xs:element maxOccurs="1" minOccurs="1" name="Service" type="typ:Service"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="SendSettingsResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="1" name="RequestId" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="QueryDeviceRequest">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="1" name="Msisdn" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="QueryDeviceResponse">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="DeviceInformation" type="typ:DeviceInfo"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="SendSettingsRequest">
+        <wsdl:part element="typ:SendSettingsRequest" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="SendSettingsResponse">
+        <wsdl:part element="typ:SendSettingsResponse" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="QueryDeviceRequest">
+        <wsdl:part element="typ:QueryDeviceRequest" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="QueryDeviceResponse">
+        <wsdl:part element="typ:QueryDeviceResponse" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part element="com:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:portType name="DeviceManagementPort">
+        <wsdl:operation name="SendSettings">
+            <wsdl:input message="tns:SendSettingsRequest"/>
+            <wsdl:output message="tns:SendSettingsResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="QueryDevice">
+            <wsdl:input message="tns:QueryDeviceRequest"/>
+            <wsdl:output message="tns:QueryDeviceResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="DeviceManagementBinding" type="tns:DeviceManagementPort">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="SendSettings">
+            <soap:operation soapAction="SendSettings" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="QueryDevice">
+            <soap:operation soapAction="QueryDevice" style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="DeviceManagement">
+        <wsdl:port binding="tns:DeviceManagementBinding" name="DeviceManagementPort">
+            <soap:address location="/ZESB/DeviceManagement"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

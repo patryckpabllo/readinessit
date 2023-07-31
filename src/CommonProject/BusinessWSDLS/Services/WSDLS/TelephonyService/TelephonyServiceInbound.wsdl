@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/TelephonyService/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="TelephonyService" targetNamespace="http://www.zain.com/ZESB/Services/TelephonyService/">
+    <wsdl:types>
+        <xsd:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+            <xsd:element name="FaultType">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="type" type="xsd:string"/>
+                        <xsd:element name="code" type="xsd:string"/>
+                        <xsd:element name="description" type="xsd:string"/>
+                        <xsd:element name="sourceSystem" type="xsd:string"/>
+                        <xsd:element name="extErrorCode" type="xsd:string" minOccurs="0"/>
+                        <xsd:element name="detail" type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+        <xsd:schema targetNamespace="http://www.zain.com/ZESB/Services/TelephonyService/">
+            <xsd:element name="PlaceCallInput">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="CallerExtension" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="DestinationNumber" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="IsExternal" type="xsd:boolean" maxOccurs="1" minOccurs="1">
+						</xsd:element>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="PlaceCallOutput">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="Result" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="EndCallInput">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="CallerExtension" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="EndCallOutput">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="Result" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="PlaceCallRequest">
+        <wsdl:part name="parameters" element="tns:PlaceCallInput"/>
+    </wsdl:message>
+    <wsdl:message name="PlaceCallResponse">
+        <wsdl:part name="parameters" element="tns:PlaceCallOutput"/>
+    </wsdl:message>
+    <wsdl:message name="EndCallRequest">
+        <wsdl:part name="parameters" element="tns:EndCallInput"/>
+    </wsdl:message>
+    <wsdl:message name="EndCallResponse">
+        <wsdl:part name="parameters" element="tns:EndCallOutput"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part name="fault" element="com:FaultType"/>
+    </wsdl:message>
+    <wsdl:portType name="TelephonyServicePort">
+        <wsdl:operation name="PlaceCall">
+            <wsdl:input message="tns:PlaceCallRequest"/>
+            <wsdl:output message="tns:PlaceCallResponse"/>
+            <wsdl:fault name="fault" message="tns:faultMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="EndCall">
+            <wsdl:input message="tns:EndCallRequest"/>
+            <wsdl:output message="tns:EndCallResponse"/>
+            <wsdl:fault name="fault" message="tns:faultMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="TelephonyServiceBinding" type="tns:TelephonyServicePort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="PlaceCall">
+            <soap:operation soapAction="PlaceCall"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="EndCall">
+            <soap:operation soapAction="EndCall"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="TelephonyService">
+        <wsdl:port name="TelephonyServicePort" binding="tns:TelephonyServiceBinding">
+            <soap:address location="/ZESB/TelephonyService"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

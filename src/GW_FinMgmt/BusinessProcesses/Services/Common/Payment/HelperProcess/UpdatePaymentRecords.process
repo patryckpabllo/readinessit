@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <pd:name>BusinessProcesses/Services/Common/Payment/HelperProcess/UpdatePaymentRecords.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>88</pd:x>
+        <pd:y>75</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Common/Payment/TIBCODBQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <OutDataxsdString>
+                <xsd:element name="Payment_Records">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="CONTRACTID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="MSISDN" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="MULTI_MSISDN" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="USERNAME" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="TRANSACTIONID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="TRANS_REF" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="AMOUNT" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="PAY_METHOD" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="TRANSACTION_TYPE" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="REQUEST_STATUS" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="RECEIPTNO" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="AUTH_FLAG" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="CARD_TYPE" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="MERCHANT_ID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="TERMINAL_ID" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="AUTH_CODE_SOURCE" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="CARD_NUMBER" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="CARD_EXPIRY" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="TRANSACTION_REF" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="SHOP_TRANS_REF" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="AUTH_RECEIPT" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="AUTH_AMOUNT" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ACQ_RES_CODE" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="SETMENT_DATE" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ISSUE_BANK" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="AUTH_RESP_CODE" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="AUTH_NUMBER" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="BANK" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="CHEQUE_NUMBER" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ACCOUNT_NUMBER" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ISSUE_DATE" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="ORDERINFO" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="AUTH_STATUS" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </OutDataxsdString>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>565</pd:endX>
+    <pd:endY>78</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1526290069337</pd:targetNamespace>
+    <pd:activity name="JDBC Update">
+        <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
+        <pd:x>315</pd:x>
+        <pd:y>77</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <commit>false</commit>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+            <statement>Insert into Payment_RECORDS ( 
+CONTRACTID,           
+MSISDN,               
+MULTI_MSISDN,         
+USERNAME,             
+TRANSACTIONID,        
+TRANS_REF,        
+AMOUNT,               
+PAY_METHOD,           
+TRANSACTION_TYPE,     
+REQUEST_STATUS,       
+RECEIPTNO,            
+AUTH_FLAG,            
+CARD_TYPE,            
+MERCHANT_ID,          
+TERMINAL_ID,          
+AUTH_CODE_SOURCE,     
+CARD_NUMBER,          
+CARD_EXPIRY,          
+TRANSACTION_REF,      
+SHOP_TRANS_REF,       
+AUTH_RECEIPT,         
+AUTH_AMOUNT, 
+ORDERINFO,
+ACQ_RES_CODE,         
+SETMENT_DATE,         
+ISSUE_BANK,           
+AUTH_RESP_CODE,               
+AUTH_NUMBER,          
+BANK,                 
+CHEQUE_NUMBER,        
+ACCOUNT_NUMBER,       
+ISSUE_DATE ) VALUES  (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>CONTRACTID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>MSISDN</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>MULTI_MSISDN</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>USERNAME</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>TRANSACTIONID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>TRANS_REF</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>AMOUNT</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>PAY_METHOD</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>TRANSACTION_TYPE</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>REQUEST_STATUS</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>RECEIPTNO</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>AUTH_FLAG</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>CARD_TYPE</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>MERCHANT_ID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>TERMINAL_ID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>AUTH_CODE_SOURCE</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>CARD_NUMBER</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>CARD_EXPIRY</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>TRANSACTION_REF</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>AUTH_RESP_CODE</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>SHOP_TRANS_REF</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>AUTH_RECEIPT</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>AUTH_ID</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>ACQ_RES_CODE</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>SETMENT_DATE</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>ISSUE_BANK</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>AUTH_NUMBER</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>BANK</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>CHEQUE_NUMBER</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>ACCOUNT_NUMBER</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>ISSUE_DATE</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+                <parameter>
+                    <parameterName>ORDERINFO</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+        </config>
+        <pd:inputBindings>
+            <jdbcUpdateActivityInput>
+                <CONTRACTID>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/CONTRACTID)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/CONTRACTID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </CONTRACTID>
+                <MSISDN>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/MSISDN)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/MSISDN"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </MSISDN>
+                <MULTI_MSISDN>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/MULTI_MSISDN)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/MULTI_MSISDN"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </MULTI_MSISDN>
+                <USERNAME>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/USERNAME)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/USERNAME"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </USERNAME>
+                <TRANSACTIONID>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/TRANSACTIONID)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/TRANSACTIONID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </TRANSACTIONID>
+                <TRANS_REF>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/TRANS_REF)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/TRANS_REF"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </TRANS_REF>
+                <AMOUNT>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AMOUNT)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AMOUNT"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </AMOUNT>
+                <PAY_METHOD>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/PAY_METHOD)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/PAY_METHOD"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </PAY_METHOD>
+                <TRANSACTION_TYPE>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/TRANSACTION_TYPE)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/TRANSACTION_TYPE"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </TRANSACTION_TYPE>
+                <REQUEST_STATUS>
+                    <xsl:choose>
+                        <xsl:when test="exists(if($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/REQUEST_STATUS  = 'SUCCESS')&#xA;then&#xA;&quot;Successful&quot;&#xA;else if($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/REQUEST_STATUS = 'PARTIALLY SUCCESS')&#xA;then&#xA;&quot;PartiallySuccessful&quot;&#xA;else if($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/REQUEST_STATUS = 'Failed')&#xA;then&#xA;&quot;Failed&quot;&#xA;else&#xA;&quot;NotFound&quot;)">
+                            <xsl:value-of select="if($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/REQUEST_STATUS  = 'SUCCESS')&#xA;then&#xA;&quot;Successful&quot;&#xA;else if($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/REQUEST_STATUS = 'PARTIALLY SUCCESS')&#xA;then&#xA;&quot;PartiallySuccessful&quot;&#xA;else if($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/REQUEST_STATUS = 'Failed')&#xA;then&#xA;&quot;Failed&quot;&#xA;else&#xA;&quot;NotFound&quot;"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </REQUEST_STATUS>
+                <RECEIPTNO>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/RECEIPTNO)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/RECEIPTNO"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </RECEIPTNO>
+                <AUTH_FLAG>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_FLAG)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_FLAG"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </AUTH_FLAG>
+                <CARD_TYPE>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/CARD_TYPE)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/CARD_TYPE"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </CARD_TYPE>
+                <MERCHANT_ID>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/MERCHANT_ID)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/MERCHANT_ID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </MERCHANT_ID>
+                <TERMINAL_ID>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/TERMINAL_ID)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/TERMINAL_ID"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </TERMINAL_ID>
+                <AUTH_CODE_SOURCE>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_CODE_SOURCE)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_CODE_SOURCE"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </AUTH_CODE_SOURCE>
+                <CARD_NUMBER>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/CARD_NUMBER)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/CARD_NUMBER"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </CARD_NUMBER>
+                <CARD_EXPIRY>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/CARD_EXPIRY)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/CARD_EXPIRY"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </CARD_EXPIRY>
+                <TRANSACTION_REF>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/TRANSACTION_REF)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/TRANSACTION_REF"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </TRANSACTION_REF>
+                <AUTH_RESP_CODE>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_RESP_CODE)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_RESP_CODE"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </AUTH_RESP_CODE>
+                <SHOP_TRANS_REF>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/SHOP_TRANS_REF)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/SHOP_TRANS_REF"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </SHOP_TRANS_REF>
+                <AUTH_RECEIPT>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_RECEIPT)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_RECEIPT"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </AUTH_RECEIPT>
+                <AUTH_ID>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_NUMBER)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_NUMBER"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </AUTH_ID>
+                <ACQ_RES_CODE>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/ACQ_RES_CODE)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/ACQ_RES_CODE"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ACQ_RES_CODE>
+                <SETMENT_DATE>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/SETMENT_DATE)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/SETMENT_DATE"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </SETMENT_DATE>
+                <ISSUE_BANK>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/ISSUE_BANK)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/ISSUE_BANK"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ISSUE_BANK>
+                <AUTH_NUMBER>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_NUMBER)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/AUTH_NUMBER"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </AUTH_NUMBER>
+                <BANK>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/BANK)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/BANK"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </BANK>
+                <CHEQUE_NUMBER>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/CHEQUE_NUMBER)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/CHEQUE_NUMBER"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </CHEQUE_NUMBER>
+                <ACCOUNT_NUMBER>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/ACCOUNT_NUMBER)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/ACCOUNT_NUMBER"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ACCOUNT_NUMBER>
+                <ISSUE_DATE>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/ISSUE_DATE)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/ISSUE_DATE"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ISSUE_DATE>
+                <ORDERINFO>
+                    <xsl:choose>
+                        <xsl:when test="exists($JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/ORDERINFO)">
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/Payment_Records/ORDERINFO"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ORDERINFO>
+            </jdbcUpdateActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>320</pd:x>
+        <pd:y>189</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>JDBC Update</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JDBC Update</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JDBC Update</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65485</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65485</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

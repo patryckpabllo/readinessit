@@ -1,0 +1,1190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:format="java://MSISDNFormatter" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pfx="http://www.zain.com/ZESB/Services/UsageManagement/Types" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetOffersRequest.xsd" xmlns:ns0="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.zain.com/ZESB/Types/Common" xmlns:pfx2="http://www.ericsson.com/CDM/telecom/canonicaldatamodel">
+    <xsd:import namespace="http://www.zain.com/ZESB/Types/Common" schemaLocation="/BusinessWSDLS/Services/TIBCO/UsageManagement.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Update/UpdateUsage/Implementation/SetUsageReceiver.process</pd:name>
+    <pd:startName>UpdateUsageReceiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="UpdateUsageReceiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>147</pd:x>
+        <pd:y>184</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Update/UpdateUsage/BPI_Req_Q%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1562</pd:endX>
+    <pd:endY>194</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://www.zain.com/ZESB/Services/UsageManagement</pd:targetNamespace>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>410</pd:x>
+        <pd:y>272</pd:y>
+        <pd:width>126</pd:width>
+        <pd:height>140</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$Parse-XML/pfx:UpdateUsageInput/pfx:UsageDetails/pfx:UsageDetails</pd:over>
+            <pd:iterationElementSlot>usage</pd:iterationElementSlot>
+            <pd:indexSlot>i</pd:indexSlot>
+            <pd:outSlot>ouput</pd:outSlot>
+            <pd:activityOutputName>Map Data</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>Map Data</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Map Data</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="Map Data">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>472</pd:x>
+            <pd:y>347</pd:y>
+            <config>
+                <element>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="DAGroup" minOccurs="0">
+                                    <xsd:complexType>
+                                        <xsd:sequence>
+                                            <xsd:element name="DA" minOccurs="0" maxOccurs="unbounded">
+                                                <xsd:complexType>
+                                                    <xsd:sequence>
+                                                        <xsd:element name="id" type="xsd:string"/>
+                                                        <xsd:element name="Vlaue" type="xsd:string"/>
+                                                        <xsd:element name="Type" type="xsd:string"/>
+                                                        <xsd:element name="OfferID" type="xsd:string"/>
+                                                    </xsd:sequence>
+                                                </xsd:complexType>
+                                            </xsd:element>
+                                        </xsd:sequence>
+                                    </xsd:complexType>
+                                </xsd:element>
+                                <xsd:element name="UTGroup" minOccurs="0">
+                                    <xsd:complexType>
+                                        <xsd:sequence>
+                                            <xsd:element name="UT" minOccurs="0" maxOccurs="unbounded">
+                                                <xsd:complexType>
+                                                    <xsd:sequence>
+                                                        <xsd:element name="id" type="xsd:string"/>
+                                                        <xsd:element name="Value" type="xsd:string"/>
+                                                        <xsd:element name="OfferID" type="xsd:string"/>
+                                                    </xsd:sequence>
+                                                </xsd:complexType>
+                                            </xsd:element>
+                                        </xsd:sequence>
+                                    </xsd:complexType>
+                                </xsd:element>
+                                <xsd:element name="UAGroup" minOccurs="0">
+                                    <xsd:complexType>
+                                        <xsd:sequence>
+                                            <xsd:element name="UA" minOccurs="0" maxOccurs="unbounded">
+                                                <xsd:complexType>
+                                                    <xsd:sequence>
+                                                        <xsd:element name="ID" type="xsd:string"/>
+                                                        <xsd:element name="Value" type="xsd:string"/>
+                                                    </xsd:sequence>
+                                                </xsd:complexType>
+                                            </xsd:element>
+                                        </xsd:sequence>
+                                    </xsd:complexType>
+                                </xsd:element>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </element>
+            </config>
+            <pd:inputBindings>
+                <xsl:choose>
+                    <xsl:when test="string-length($usage/pfx:UsageDetails/pfx:ServiceCode)>0">
+                        <root>
+                            <DAGroup>
+                                <xsl:for-each select="$usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/UpdateUsage/BucketTime&#xA; or pfx:BucketType=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/UpdateUsage/BucketSMS &#xA;or pfx:BucketType=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/UpdateUsage/BucketTimeInt&#xA; or pfx:BucketType=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/UpdateUsage/BucketSMSInt ]">
+                                    <xsl:variable name="var" select="current()/pfx:BucketValue"/>
+                                    <xsl:variable name="var2" select="$usage/pfx:UsageDetails/pfx:ServiceCode"/>
+                                    <xsl:variable name="var3" select="current()/pfx:BucketType"/>
+                                    <xsl:for-each select="$GetVariable/UsageSpecs/UsageSpec[Service_Code=$var2 and Bucket_Type= $var3]">
+                                        <xsl:choose>
+                                            <xsl:when test="current()/use_alter_da='Y'">
+                                                <DA>
+                                                    <id>
+                                                        <xsl:value-of select="current()/Bucket_DA1"/>
+                                                    </id>
+                                                    <Vlaue>
+                                                        <xsl:value-of select="0"/>
+                                                    </Vlaue>
+                                                    <Type>
+                                                        <xsl:value-of select="if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Time' ]) then&#xA;0&#xA;else if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Money' ]) then&#xA;1&#xA;else&#xA;6"/>
+                                                    </Type>
+                                                    <OfferID>
+                                                        <xsl:value-of select="current()/Offer_ID"/>
+                                                    </OfferID>
+                                                </DA>
+                                                <DA>
+                                                    <id>
+                                                        <xsl:value-of select="current()/Bucket_Alter_DA"/>
+                                                    </id>
+                                                    <Vlaue>
+                                                        <xsl:value-of select="$var"/>
+                                                    </Vlaue>
+                                                    <Type>
+                                                        <xsl:value-of select="if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Time' ]) then&#xA;0&#xA;else if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Money' ]) then&#xA;1&#xA;else&#xA;6"/>
+                                                    </Type>
+                                                    <OfferID>
+                                                        <xsl:value-of select="current()/Offer_ID"/>
+                                                    </OfferID>
+                                                </DA>
+                                                <xsl:if test="string-length(current()/Bucket_DA2)>0">
+                                                    <DA>
+                                                        <id>
+                                                            <xsl:value-of select="current()/Bucket_DA2"/>
+                                                        </id>
+                                                        <Vlaue>
+                                                            <xsl:value-of select="0"/>
+                                                        </Vlaue>
+                                                        <Type>
+                                                            <xsl:value-of select="if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Time' ]) then&#xA;0&#xA;else if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Money' ]) then&#xA;1&#xA;else&#xA;6"/>
+                                                        </Type>
+                                                        <OfferID>
+                                                            <xsl:value-of select="current()/Offer_ID"/>
+                                                        </OfferID>
+                                                    </DA>
+                                                </xsl:if>
+                                                <xsl:if test="string-length(current()/Bucket_DA3)>0">
+                                                    <DA>
+                                                        <id>
+                                                            <xsl:value-of select="current()/Bucket_DA3"/>
+                                                        </id>
+                                                        <Vlaue>
+                                                            <xsl:value-of select="0"/>
+                                                        </Vlaue>
+                                                        <Type>
+                                                            <xsl:value-of select="if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Time' ]) then&#xA;0&#xA;else if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Money' ]) then&#xA;1&#xA;else&#xA;6"/>
+                                                        </Type>
+                                                        <OfferID>
+                                                            <xsl:value-of select="current()/Offer_ID"/>
+                                                        </OfferID>
+                                                    </DA>
+                                                </xsl:if>
+                                                <xsl:if test="string-length(current()/Bucket_DA4)>0">
+                                                    <DA>
+                                                        <id>
+                                                            <xsl:value-of select="current()/Bucket_DA4"/>
+                                                        </id>
+                                                        <Vlaue>
+                                                            <xsl:value-of select="0"/>
+                                                        </Vlaue>
+                                                        <Type>
+                                                            <xsl:value-of select="if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Time' ]) then&#xA;0&#xA;else if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Money' ]) then&#xA;1&#xA;else&#xA;6"/>
+                                                        </Type>
+                                                        <OfferID>
+                                                            <xsl:value-of select="current()/Offer_ID"/>
+                                                        </OfferID>
+                                                    </DA>
+                                                </xsl:if>
+                                            </xsl:when>
+                                            <xsl:otherwise>
+                                                <DA>
+                                                    <id>
+                                                        <xsl:value-of select="current()/Bucket_DA1"/>
+                                                    </id>
+                                                    <Vlaue>
+                                                        <xsl:value-of select="$var"/>
+                                                    </Vlaue>
+                                                    <Type>
+                                                        <xsl:value-of select="if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Time' ]) then&#xA;0&#xA;else if ($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType='Money' ]) then&#xA;1&#xA;else&#xA;6"/>
+                                                    </Type>
+                                                    <OfferID>
+                                                        <xsl:value-of select="current()/Offer_ID"/>
+                                                    </OfferID>
+                                                </DA>
+                                            </xsl:otherwise>
+                                        </xsl:choose>
+                                    </xsl:for-each>
+                                </xsl:for-each>
+                            </DAGroup>
+                            <UTGroup>
+                                <xsl:for-each select="$usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:BucketType=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/UpdateUsage/BucketData]">
+                                    <xsl:variable name="var" select="current()/pfx:BucketValue"/>
+                                    <xsl:variable name="var4" select="$usage/pfx:UsageDetails/pfx:ServiceCode"/>
+                                    <xsl:variable name="var5" select="current()/pfx:BucketType"/>
+                                    <xsl:for-each select="$GetVariable/UsageSpecs/UsageSpec[Service_Code=$var4 and Bucket_Type=$var5]">
+                                        <UT>
+                                            <id>
+                                                <xsl:value-of select="current()/Bucket_UT"/>
+                                            </id>
+                                            <Value>
+                                                <xsl:value-of select="$var"/>
+                                            </Value>
+                                            <OfferID>
+                                                <xsl:value-of select="current()/Offer_ID"/>
+                                            </OfferID>
+                                        </UT>
+                                    </xsl:for-each>
+                                </xsl:for-each>
+                            </UTGroup>
+                            <UAGroup>
+                                <xsl:for-each select="$usage/pfx:UsageDetails/pfx:UsageSpecs">
+                                    <xsl:variable name="var" select="../pfx:ServiceCode"/>
+                                    <xsl:variable name="var2" select="current()/pfx:BucketValue"/>
+                                    <xsl:variable name="var6" select="current()/pfx:BucketType"/>
+                                    <xsl:for-each select="$GetVariable/UsageSpecs/UsageSpec[Service_Code = $var and Bucket_Type = $var6]">
+                                        <UA>
+                                            <ID>
+                                                <xsl:value-of select="current()/Current_ua"/>
+                                            </ID>
+                                            <Value>
+                                                <xsl:value-of select="if (current()/Current_ua_UOM='MB') then&#xA;$var2 div 1024 div 1024&#xA;else&#xA;$var2"/>
+                                            </Value>
+                                        </UA>
+                                    </xsl:for-each>
+                                </xsl:for-each>
+                                <xsl:choose>
+                                    <xsl:when test="string-length($usage/pfx:UsageDetails/pfx:UsageSpecs[pfx:SettingPeriod=$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/UpdateUsage/SettingPeriod]) >0">
+                                        <xsl:variable name="var7" select="$usage/pfx:UsageDetails/pfx:ServiceCode"/>
+                                        <xsl:variable name="var8" select="$usage/pfx:UsageDetails/pfx:UsageSpecs/pfx:BucketType"/>
+                                        <xsl:for-each select="$GetVariable/UsageSpecs/UsageSpec[Service_Code=$var7 and Bucket_Type=$var8]">
+                                            <UA>
+                                                <ID>
+                                                    <xsl:value-of select="current()/Forever_ua"/>
+                                                </ID>
+                                                <Value>
+                                                    <xsl:value-of select="current()/Forever_ua_value"/>
+                                                </Value>
+                                            </UA>
+                                        </xsl:for-each>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <xsl:variable name="var9" select="$usage/pfx:UsageDetails/pfx:ServiceCode"/>
+                                        <xsl:variable name="var10" select="$usage/pfx:UsageDetails/pfx:UsageSpecs/pfx:BucketType"/>
+                                        <xsl:for-each select="$GetVariable/UsageSpecs/UsageSpec[Service_Code=$var9 and Bucket_Type=$var10]">
+                                            <UA>
+                                                <ID>
+                                                    <xsl:value-of select="current()/Forever_ua"/>
+                                                </ID>
+                                                <Value>
+                                                    <xsl:value-of select="0"/>
+                                                </Value>
+                                            </UA>
+                                        </xsl:for-each>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                            </UAGroup>
+                        </root>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <root/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:group name="Group (1)">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>607</pd:x>
+        <pd:y>262</pd:y>
+        <pd:width>261</pd:width>
+        <pd:height>260</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>ifThenElse</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>CallChargingDA</pd:to>
+            <pd:xpathDescription>DA</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>count($MapCaller/root/DAGroup/DA/id)&gt;0</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CallChargingDA</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CallChargingDA</pd:from>
+            <pd:to>Generate Error</pd:to>
+            <pd:xpathDescription>Error</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$CallChargingDA/Response/Status!='Success'</pd:xpath>
+        </pd:transition>
+        <pd:activity name="CallChargingDA">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>727</pd:x>
+            <pd:y>355</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Update/UpdateUsage/HelperProcess/CallChargingDA.process</processName>
+            </config>
+            <pd:inputBindings>
+                <Request>
+                    <Misdn>
+                        <xsl:value-of select="format:FormatMSISDN($Parse-XML/pfx:UpdateUsageInput/pfx:MSISDN, 8)"/>
+                    </Misdn>
+                    <Offers>
+                        <xsl:value-of select="''"/>
+                    </Offers>
+                    <xsl:copy-of select="$MapCaller/root/DAGroup"/>
+                    <transID>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                    </transID>
+                    <StartTime>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTime>
+                </Request>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Generate Error">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>733</pd:x>
+            <pd:y>463</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns0:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/DAErrorDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/DAErrorCode"/>
+                    </messageCode>
+                </ns0:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:group name="Group (2)">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>903</pd:x>
+        <pd:y>264</pd:y>
+        <pd:width>177</pd:width>
+        <pd:height>250</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>ifThenElse</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>CallChargingUT</pd:to>
+            <pd:xpathDescription>UT</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>count($MapCaller/root/UTGroup/UT/id)&gt;0</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CallChargingUT</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CallChargingUT</pd:from>
+            <pd:to>Generate-Error-1</pd:to>
+            <pd:xpathDescription>Error</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$CallChargingUT/Response/Status!='Success'</pd:xpath>
+        </pd:transition>
+        <pd:activity name="CallChargingUT">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>988</pd:x>
+            <pd:y>338</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Update/UpdateUsage/HelperProcess/CallChargingUT.process</processName>
+            </config>
+            <pd:inputBindings>
+                <Request>
+                    <Misdn>
+                        <xsl:value-of select="format:FormatMSISDN($Parse-XML/pfx:UpdateUsageInput/pfx:MSISDN, 8)"/>
+                    </Misdn>
+                    <Offers>
+                        <xsl:value-of select="''"/>
+                    </Offers>
+                    <xsl:copy-of select="$MapCaller/root/UTGroup"/>
+                    <transID>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                    </transID>
+                    <StartTime>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTime>
+                </Request>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Generate-Error-1">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>988</pd:x>
+            <pd:y>443</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns0:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/UTErrorDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="if (count($MapCaller/root/DAGroup/DA/id)>0) then&#xA;$_globalVariables/ns1:GlobalVariables/CommonErrors/UTErrorCodeFatal&#xA;else&#xA;$_globalVariables/ns1:GlobalVariables/CommonErrors/UTErrorCode"/>
+                    </messageCode>
+                </ns0:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:group name="Group (3)">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>1118</pd:x>
+        <pd:y>263</pd:y>
+        <pd:width>268</pd:width>
+        <pd:height>250</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>ifThenElse</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>CallChargingUA</pd:to>
+            <pd:xpathDescription>UA</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>count($MapCaller/root/UAGroup/UA/ID)&gt;0</pd:xpath>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CallChargingUA</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>otherwise</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CallChargingUA</pd:from>
+            <pd:to>Generate-Error-2</pd:to>
+            <pd:xpathDescription>Error</pd:xpathDescription>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>$CallChargingUA/Response/Status!='Success'</pd:xpath>
+        </pd:transition>
+        <pd:activity name="CallChargingUA">
+            <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+            <pd:resourceType>ae.process.subprocess</pd:resourceType>
+            <pd:x>1242</pd:x>
+            <pd:y>347</pd:y>
+            <config>
+                <processName>/BusinessProcesses/Services/Update/UpdateUsage/HelperProcess/CallChargingUA.process</processName>
+            </config>
+            <pd:inputBindings>
+                <Request>
+                    <Misdn>
+                        <xsl:value-of select="format:FormatMSISDN($Parse-XML/pfx:UpdateUsageInput/pfx:MSISDN, 8)"/>
+                    </Misdn>
+                    <Offers>
+                        <xsl:value-of select="''"/>
+                    </Offers>
+                    <xsl:copy-of select="$MapCaller/root/UAGroup"/>
+                    <transID>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                    </transID>
+                    <StartTime>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTime>
+                </Request>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Generate-Error-2">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>1250</pd:x>
+            <pd:y>458</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns0:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/UAErrorDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="if((count($MapCaller/root/DAGroup/DA/id)>0) or(count($MapCaller/root/UTGroup/UT/id)>0) )then&#xA;$_globalVariables/ns1:GlobalVariables/CommonErrors/UAErrorCodeFatal&#xA;else&#xA;$_globalVariables/ns1:GlobalVariables/CommonErrors/UAErrorCode"/>
+                    </messageCode>
+                </ns0:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>1442</pd:x>
+        <pd:y>537</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ESI_SDP_Call_GetOffer">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>726</pd:x>
+        <pd:y>188</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Update/UpdateUsage/HelperProcess/ESI_SDP_Call_GetOffer.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns3:GetOfferRequest>
+                    <ns3:GetOfferReq>
+                        <pfx2:BusinessMessageHeader>
+                            <ExternalTransactionID>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ExternalTransactionID>
+                            <ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </ApplicationID>
+                            <ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/UpdateUsage/ComponentName"/>
+                            </ComponentName>
+                            <Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </Hostname>
+                            <TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                            </TransactionDomain>
+                            <TransactionType>
+                                <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                            </TransactionType>
+                            <xsl:if test="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/TransactionID">
+                                <TransactionID>
+                                    <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                                </TransactionID>
+                            </xsl:if>
+                        </pfx2:BusinessMessageHeader>
+                        <pfx2:Subscriber>
+                            <ServiceNo>
+                                <xsl:value-of select="format:FormatMSISDN($Parse-XML/pfx:UpdateUsageInput/pfx:MSISDN, 8)"/>
+                            </ServiceNo>
+                        </pfx2:Subscriber>
+                    </ns3:GetOfferReq>
+                </ns3:GetOfferRequest>
+                <xsl:if test="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <xsl:if test="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/StartTimeStamp">
+                    <StartTimeStamp>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetVariable">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>467</pd:x>
+        <pd:y>184</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/USageSpecs.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="LogErr">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1562</pd:x>
+        <pd:y>415</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/UpdateUsage/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:InterfaceID>
+                        <xsl:value-of select="$Parse-XML/pfx:UpdateUsageInput/pfx:MSISDN"/>
+                    </ns22:InterfaceID>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($Map-Data-1/pfx3:FaultType)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>369</pd:x>
+        <pd:y>184</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/UpdateUsage/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:InterfaceID>
+                        <xsl:value-of select="$Parse-XML/pfx:UpdateUsageInput/pfx:MSISDN"/>
+                    </ns22:InterfaceID>
+                    <ns22:Message>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/Body"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>1452</pd:x>
+        <pd:y>194</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/UpdateUsage/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:InterfaceID>
+                        <xsl:value-of select="$Parse-XML/pfx:UpdateUsageInput/pfx:MSISDN"/>
+                    </ns22:InterfaceID>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($MapResponse/pfx:UpdateUsageOutput)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$UpdateUsageReceiver/ns:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map-Data-1">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1561</pd:x>
+        <pd:y>538</pd:y>
+        <config>
+            <element ref="pfx3:FaultType"/>
+        </config>
+        <pd:inputBindings>
+            <pfx3:FaultType>
+                <pfx3:type>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/Class"/>
+                </pfx3:type>
+                <pfx3:code>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                </pfx3:code>
+                <pfx3:description>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/Msg"/>
+                </pfx3:description>
+                <pfx3:sourceSystem>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Update/UpdateUsage/SourceSystem"/>
+                </pfx3:sourceSystem>
+                <xsl:if test="$_error/ns2:ErrorReport/MsgCode">
+                    <pfx3:extErrorCode>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                    </pfx3:extErrorCode>
+                </xsl:if>
+                <xsl:if test="$_error/ns2:ErrorReport/Msg">
+                    <pfx3:detail>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/Msg"/>
+                    </pfx3:detail>
+                </xsl:if>
+            </pfx3:FaultType>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="MapCaller">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>574</pd:x>
+        <pd:y>188</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="DAGroup" minOccurs="0">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="DA" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="id" type="xsd:string"/>
+                                                    <xsd:element name="Vlaue" type="xsd:string"/>
+                                                    <xsd:element name="Type" type="xsd:string"/>
+                                                    <xsd:element name="OfferID" type="xsd:string"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="UTGroup" minOccurs="0">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="UT" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="id" type="xsd:string"/>
+                                                    <xsd:element name="Value" type="xsd:string"/>
+                                                    <xsd:element name="OfferID" type="xsd:string"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="UAGroup" minOccurs="0">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="UA" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="ID" type="xsd:string"/>
+                                                    <xsd:element name="Value" type="xsd:string"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <DAGroup>
+                    <xsl:for-each select="$ouput/AccumulatedOutput/root/DAGroup/DA">
+                        <DA>
+                            <id>
+                                <xsl:value-of select="id"/>
+                            </id>
+                            <Vlaue>
+                                <xsl:value-of select="Vlaue"/>
+                            </Vlaue>
+                            <Type>
+                                <xsl:value-of select="Type"/>
+                            </Type>
+                            <OfferID>
+                                <xsl:value-of select="OfferID"/>
+                            </OfferID>
+                        </DA>
+                    </xsl:for-each>
+                </DAGroup>
+                <UTGroup>
+                    <xsl:for-each select="$ouput/AccumulatedOutput/root/UTGroup/UT">
+                        <UT>
+                            <id>
+                                <xsl:value-of select="id"/>
+                            </id>
+                            <Value>
+                                <xsl:value-of select="Value"/>
+                            </Value>
+                            <OfferID>
+                                <xsl:value-of select="OfferID"/>
+                            </OfferID>
+                        </UT>
+                    </xsl:for-each>
+                </UTGroup>
+                <UAGroup>
+                    <xsl:for-each-group select="$ouput/AccumulatedOutput/root/UAGroup/UA" group-by="ID">
+                        <UA>
+                            <ID>
+                                <xsl:value-of select="ID"/>
+                            </ID>
+                            <Value>
+                                <xsl:value-of select="Value"/>
+                            </Value>
+                        </UA>
+                    </xsl:for-each-group>
+                </UAGroup>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="MapResponse">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>1249</pd:x>
+        <pd:y>194</pd:y>
+        <config>
+            <element ref="pfx:UpdateUsageOutput"/>
+        </config>
+        <pd:inputBindings>
+            <pfx:UpdateUsageOutput>
+                <pfx:Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/Charging/Success"/>
+                </pfx:Status>
+            </pfx:UpdateUsageOutput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>266</pd:x>
+        <pd:y>184</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx:UpdateUsageInput"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$UpdateUsageReceiver/ns:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ReplyError">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>1561</pd:x>
+        <pd:y>310</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>UpdateUsageReceiver</EventSource>
+            </ConfigurableHeaders>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <JMSType>
+                    <xsl:value-of select="'ERROR'"/>
+                </JMSType>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($Map-Data-1/pfx3:FaultType)"/>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ReplySuccessRes">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>1354</pd:x>
+        <pd:y>194</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>UpdateUsageReceiver</EventSource>
+            </ConfigurableHeaders>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <JMSType>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Common/Charging/Success"/>
+                </JMSType>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($MapResponse/pfx:UpdateUsageOutput)"/>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>UpdateUsageReceiver</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>GetVariable</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetVariable</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:xpathDescription/>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>MapCaller</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapCaller</pd:from>
+        <pd:to>ESI_SDP_Call_GetOffer</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>count($GetVariable/UsageSpecs/UsageSpec[Service_Code=$Parse-XML/pfx:UpdateUsageInput/pfx:UsageDetails/pfx:UsageDetails/pfx:ServiceCode and Bucket_Type = $Parse-XML/pfx:UpdateUsageInput/pfx:UsageDetails/pfx:UsageDetails/pfx:UsageSpecs/pfx:BucketType and product_private='Y']) &gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReplySuccessRes</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ESI_SDP_Call_GetOffer</pd:from>
+        <pd:to>Group (1)</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group (1)</pd:from>
+        <pd:to>Group (2)</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group (3)</pd:from>
+        <pd:to>MapResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group (2)</pd:from>
+        <pd:to>Group (3)</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapCaller</pd:from>
+        <pd:to>Group (1)</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapResponse</pd:from>
+        <pd:to>ReplySuccessRes</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Map-Data-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map-Data-1</pd:from>
+        <pd:to>LogErr</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogErr</pd:from>
+        <pd:to>ReplyError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReplyError</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

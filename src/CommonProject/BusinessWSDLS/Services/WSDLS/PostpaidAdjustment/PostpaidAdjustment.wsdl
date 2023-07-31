@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zain.com/ZESB/Services/PostpaidAdjustment" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:typ="http://www.zain.com/ZESB/Services/PostpaidAdjustment/Types" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://www.zain.com/ZESB/Services/PostpaidAdjustment">
+	<wsdl:types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="ParamList">
+				<xs:choice maxOccurs="unbounded" minOccurs="0">
+					<xs:element maxOccurs="unbounded" name="StringParam" type="com:StringParam"/>
+					<xs:element maxOccurs="unbounded" name="BooleanParam" type="com:BooleanParam"/>
+					<xs:element maxOccurs="unbounded" name="IntParam" type="com:IntParam"/>
+					<xs:element maxOccurs="unbounded" name="LongParam" type="com:LongParam"/>
+					<xs:element maxOccurs="unbounded" name="FloatParam" type="com:FloatParam"/>
+					<xs:element maxOccurs="unbounded" name="DecimalParam" type="com:DecimalParam"/>
+					<xs:element maxOccurs="unbounded" name="DoubleParam" type="com:DoubleParam"/>
+					<xs:element maxOccurs="unbounded" name="DateParam" type="com:DateParam"/>
+					<xs:element maxOccurs="unbounded" name="DateTimeParam" type="com:DateTimeParam"/>
+				</xs:choice>
+			</xs:complexType>
+			<xs:complexType name="StringParam">
+				<xs:simpleContent>
+					<xs:extension base="xs:string">
+						<xs:attribute name="name" type="xs:string" use="required"/>
+					</xs:extension>
+				</xs:simpleContent>
+			</xs:complexType>
+			<xs:complexType name="DecimalParam">
+				<xs:simpleContent>
+					<xs:extension base="xs:decimal">
+						<xs:attribute name="name" type="xs:string" use="required"/>
+					</xs:extension>
+				</xs:simpleContent>
+			</xs:complexType>
+			<xs:complexType name="BooleanParam">
+				<xs:simpleContent>
+					<xs:extension base="xs:boolean">
+						<xs:attribute name="name" type="xs:string" use="required"/>
+					</xs:extension>
+				</xs:simpleContent>
+			</xs:complexType>
+			<xs:complexType name="IntParam">
+				<xs:simpleContent>
+					<xs:extension base="xs:int">
+						<xs:attribute name="name" type="xs:string" use="required"/>
+					</xs:extension>
+				</xs:simpleContent>
+			</xs:complexType>
+			<xs:complexType name="LongParam">
+				<xs:simpleContent>
+					<xs:extension base="xs:long">
+						<xs:attribute name="name" type="xs:string" use="required"/>
+					</xs:extension>
+				</xs:simpleContent>
+			</xs:complexType>
+			<xs:complexType name="FloatParam">
+				<xs:simpleContent>
+					<xs:extension base="xs:float">
+						<xs:attribute name="name" type="xs:string" use="required"/>
+					</xs:extension>
+				</xs:simpleContent>
+			</xs:complexType>
+			<xs:complexType name="DoubleParam">
+				<xs:simpleContent>
+					<xs:extension base="xs:double">
+						<xs:attribute name="name" type="xs:string" use="required"/>
+					</xs:extension>
+				</xs:simpleContent>
+			</xs:complexType>
+			<xs:complexType name="DateParam">
+				<xs:simpleContent>
+					<xs:extension base="xs:date">
+						<xs:attribute name="name" type="xs:string" use="required"/>
+					</xs:extension>
+				</xs:simpleContent>
+			</xs:complexType>
+			<xs:complexType name="DateTimeParam">
+				<xs:simpleContent>
+					<xs:extension base="xs:dateTime">
+						<xs:attribute name="name" type="xs:string" use="required"/>
+					</xs:extension>
+				</xs:simpleContent>
+			</xs:complexType>
+		</xs:schema>
+		<xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/PostpaidAdjustment/Types">
+			<xs:simpleType name="AccountType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Cash"/>
+					<xs:enumeration value="Payable Discount"/>
+					<xs:enumeration value="Cash Discount"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:complexType name="Account">
+				<xs:sequence>
+					<xs:element name="AccountNumber" type="xs:string" minOccurs="0"/>
+					<xs:element name="AccountType" type="typ:AccountType"/>
+					<xs:element name="RevenueCode" type="xs:string" minOccurs="0"/>
+					<xs:element name="Amount" type="xs:decimal"/>
+					<xs:element name="Currency" type="xs:string"/>
+					<xs:element name="ConversionRate" type="xs:decimal"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="AmountsToAdjust">
+				<xs:sequence>
+					<xs:element name="Accounts" type="typ:Account" minOccurs="1" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+	
+			<xs:simpleType name="AdjustmentType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Credit"/>
+					<xs:enumeration value="Debit"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:simpleType name="ReasonForRequest">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value=""/>
+					<xs:enumeration value="Advance payment"/>
+					<xs:enumeration value="Usage correction"/>
+					<xs:enumeration value="Fee correction"/>
+					<xs:enumeration value="Other, overridable"/>
+					<xs:enumeration value="Refunds"/>
+					<xs:enumeration value="Complaints"/>
+					<xs:enumeration value="Interim payment"/>
+					<xs:enumeration value="Prepaid amount"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="PostTransactionRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractId" type="xs:string"/>
+						<xs:element name="Msisdn" type="xs:string" minOccurs="0"/>
+						<xs:element name="AccountId" type="xs:long" minOccurs="0"/>
+						<xs:element name="InvoiceId" type="xs:string" minOccurs="0"/>
+						<xs:element name="BillCycleDay" type="xs:int" minOccurs="0"/>
+						<xs:element name="RequestId" type="xs:string" minOccurs="0"/>
+						<xs:element name="RequestDate" type="xs:dateTime" minOccurs="0"/>
+						<xs:element name="RequestedBy" type="xs:string" minOccurs="0"/>
+						<xs:element name="Amounts" type="typ:AmountsToAdjust"/>
+						<xs:element name="AdjustmentType" type="typ:AdjustmentType"/>
+						<xs:element name="Reason" type="typ:ReasonForRequest"/>
+						<xs:element name="Comments" type="xs:string" minOccurs="0"/>
+						<xs:element name="Status" type="xs:string"/>
+						<xs:element name="ReferenceId" type="xs:string"/>
+						<xs:element name="SourceTransactionId" type="xs:string"/>
+						<xs:element name="SourceTransactionNumber" type="xs:string" minOccurs="0"/>
+						<xs:element name="SourceTransactionType" type="xs:string" minOccurs="0"/>
+						<xs:element name="TransferToAccounting" type="xs:boolean" minOccurs="0"/>
+						<xs:element name="Params" type="com:ParamList" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PostTransactionResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Result" type="xs:string"/>
+						<xs:element name="TransactionID" type="xs:string" minOccurs="0"/>
+						<xs:element name="Params" type="com:ParamList" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="PostTransactionInput">
+		<wsdl:part name="parameters" element="typ:PostTransactionRequest"/>
+	</wsdl:message>
+	<wsdl:message name="PostTransactionOutput">
+		<wsdl:part name="parameters" element="typ:PostTransactionResponse"/>
+	</wsdl:message>
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType"/>
+	</wsdl:message>
+	<wsdl:portType name="PostpaidAdjustmentPort">
+		<wsdl:operation name="PostTransaction">
+			<wsdl:input message="tns:PostTransactionInput"/>
+			<wsdl:output message="tns:PostTransactionOutput"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="PostpaidAdjustmentBinding" type="tns:PostpaidAdjustmentPort">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="PostTransaction">
+			<soap:operation soapAction="PostTransaction" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="PostpaidAdjustment">
+		<wsdl:port name="PostpaidAdjustmentPort" binding="tns:PostpaidAdjustmentBinding">
+			<soap:address location="/ZESB/PostpaidAdjustment"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

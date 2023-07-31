@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:sch0="http://lhsgroup.com/lhsws/money" xmlns:sch1="http://lhsgroup.com/lhsws/svlany" xmlns:sch2="http://ericsson.com/services/ws_CIL_5/sessionchange" xmlns:sch3="http://ericsson.com/services/ws_CIL_5/diarrequestcreate" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ericsson.com/services/ws_CIL_5" targetNamespace="http://ericsson.com/services/ws_CIL_5">
+	<wsdl:types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lhsws="http://lhsgroup.com/lhsws/money" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://lhsgroup.com/lhsws/money">
+			<xs:complexType name="money">
+				<xs:sequence>
+					<xs:element name="amount" type="xs:double"/>
+					<xs:element name="currency" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:lhsws="http://lhsgroup.com/lhsws/svlany" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://lhsgroup.com/lhsws/svlany">
+			<xs:complexType name="svlany">
+				<xs:sequence>
+					<xs:element name="content" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsi="http://ericsson.com/services/ws_CIL_5/sessionchange" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CIL_5/sessionchange">
+			<xs:complexType name="valuesListpartRequest">
+				<xs:all>
+					<xs:element name="key" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p> Name of the value that shall be changed. See release dependent documentation for supported keys</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="value" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>New value for a named value.</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:all>
+			</xs:complexType>
+			<xs:complexType name="valuesRequest">
+				<xs:sequence>
+					<xs:element maxOccurs="unbounded" name="item" type="wsi:valuesListpartRequest"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="sessionChangeRequest">
+				<xs:all>
+					<xs:annotation>
+						<xs:documentation>
+							<![CDATA[<p></p>]]></xs:documentation>
+					</xs:annotation>
+					<xs:element minOccurs="0" name="values" type="wsi:valuesRequest"/>
+				</xs:all>
+			</xs:complexType>
+		</xs:schema>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:sessionchange="http://ericsson.com/services/ws_CIL_5/sessionchange" xmlns:wsi="http://ericsson.com/services/ws_CIL_5/diarrequestcreate" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://ericsson.com/services/ws_CIL_5/diarrequestcreate">
+			<xs:import namespace="http://ericsson.com/services/ws_CIL_5/sessionchange"/>
+			<xs:element name="diarRequestCreateRequest" type="wsi:diarRequestCreateRequest"/>
+			<xs:element name="diarRequestCreateResponse" type="wsi:diarRequestCreateResponse"/>
+			<xs:complexType name="diarRequestCreateResponse">
+				<xs:all>
+					<xs:annotation>
+						<xs:documentation>
+							<![CDATA[<p>Response Of DIAR Creation Request.</p>]]></xs:documentation>
+					</xs:annotation>
+					<xs:element minOccurs="0" name="isSuccess" type="xs:boolean">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>Response of API execution.	True: API execution was successful and DIAR request created successfully	False: API execution was not successful.</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="requestId" type="xs:long">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>Unique Identifier of the Request.</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:all>
+			</xs:complexType>
+			<xs:complexType name="inputAttributes">
+				<xs:all>
+					<xs:annotation>
+						<xs:documentation>
+							<![CDATA[<p>Input arguments</p>]]></xs:documentation>
+					</xs:annotation>
+					<xs:element name="requestId" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>Unique Identifier of the Request.</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="msisdn" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>Subscriber Number Without Country Code.</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="diarType" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>Type of DIAR Request	I: Immediate DIAR	S: Scheduled DIAR</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="diarExecutionDate" type="xs:dateTime">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>Execution DateTime of The DIAR Request in case request is of	Immediate type.</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="diarAddCondType" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>Type of Add Method, mandatory of scheduled DIAR addition	A:	Absolute, in case removal will be based on threshold amount of net	outstanding.	R: Relative, in case removal will be based on	percentage amount of	net Invoice.</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="diarAddCondAmount" type="xs:double">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>Threshold Amount of Add, mandatory of scheduled DIAR addition	In	case of removal based on threshold amount of net outstanding, the	amount will be considered	In case removal will be based on	percentage amount of net Invoice,	then the percentage will be	considered.</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="diarRemovalCondType" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>Type of Removal Method	A: Absolute, in case removal will be based	on threshold amount of net	outstanding.	R: Relative, in case removal	will be based on percentage amount of	net Invoice.</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element minOccurs="0" name="diarRemovalCondAmount" type="xs:double">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>Threshold Amount of Removal	In case of removal based on threshold	amount of net outstanding, the	amount will be considered	In case	removal will be based on percentage amount of net Invoice,	then the	percentage will be considered.</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="username" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>User Requesting the DIAR</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="source" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[<p>Source System Triggering The Request.</p>]]></xs:documentation>
+						</xs:annotation>
+					</xs:element>
+				</xs:all>
+			</xs:complexType>
+			<xs:complexType name="diarRequestCreateRequest">
+				<xs:all>
+					<xs:element minOccurs="0" name="inputAttributes" type="wsi:inputAttributes"/>
+					<xs:element minOccurs="0" name="sessionChangeRequest" type="sessionchange:sessionChangeRequest"/>
+				</xs:all>
+			</xs:complexType>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="diarRequestCreateRequest">
+		<wsdl:part element="sch3:diarRequestCreateRequest" name="diarRequestCreateRequest"/>
+	</wsdl:message>
+	<wsdl:message name="diarRequestCreateResponse">
+		<wsdl:part element="sch3:diarRequestCreateResponse" name="diarRequestCreateResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="DiarRequestCreateService">
+		<wsdl:operation name="diarRequestCreate">
+			<wsdl:input message="tns:diarRequestCreateRequest" name="diarRequestCreateRequest"/>
+			<wsdl:output message="tns:diarRequestCreateResponse" name="diarRequestCreateResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="DiarRequestCreateServiceSoap11" type="tns:DiarRequestCreateService">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="diarRequestCreate">
+			<soap:operation soapAction=""/>
+			<wsdl:input name="diarRequestCreateRequest">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="diarRequestCreateResponse">
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="DiarRequestCreateService">
+		<wsdl:port binding="tns:DiarRequestCreateServiceSoap11" name="DiarRequestCreateServiceSoap11">
+			<soap:address location="http://10.96.103.208:20103/wsi/services"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

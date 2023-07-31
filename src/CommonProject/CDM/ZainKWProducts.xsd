@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns:pr="http://xmlns.zain.com/BSS/ESB/CDM/Products"
+	 xmlns:bs="http://xmlns.zain.com/BSS/ESB/CDM/Base"
+	 targetNamespace="http://xmlns.zain.com/BSS/ESB/CDM/Products"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:import namespace="http://xmlns.zain.com/BSS/ESB/CDM/Base" schemaLocation="ZainKWBaseEntities.xsd"/>
+	<xs:element name="Product" type="pr:Product"/>
+	<xs:complexType name="Product">
+		<xs:annotation>
+			<xs:documentation>A ProductOffering procured by a Customer, or other interested Party playing a PartyRole. A Product is composed of one or more Service(s) and/or
+                Resource(s).</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="name" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>A word, term, or phrase by which the product is known and distinguished from other products.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="ProductId" type="xs:string" minOccurs="0"/>
+			<xs:element ref="pr:MarketCode" minOccurs="0"/>
+			<xs:element name="ProductCodes" type="pr:ProductCodes" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The Product Code defined by Order Management.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="description" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>An explanation of what the product is.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="productType" type="xs:string" minOccurs="0"/>
+			<xs:element name="productPaymentType" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Prepaid/Postpaid.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="PREPAID"/>
+						<xs:enumeration value="POSTPAID"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="status" type="xs:string" minOccurs="0"/>
+			<xs:element name="validFor" type="bs:TimePeriod" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>The period during which the product is
+                        applicable.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="isChargeable" type="xs:boolean" minOccurs="0"/>
+			<xs:element name="price" type="xs:double" minOccurs="0"/>
+			<xs:element name="tax" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="ProductCodes">
+		<xs:sequence>
+			<xs:element ref="pr:CRMProductCode" minOccurs="0"/>
+			<xs:element ref="pr:BillingProductCode" minOccurs="0"/>
+			<xs:element ref="pr:ChargingProductCode" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="CRMProductCode">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="productType" type="xs:string" minOccurs="0"/>
+				<xs:element name="productSubType" type="xs:string" minOccurs="0"/>
+				<xs:element name="parentProductcode" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="BillingProductCode">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="RatePlanCode" type="xs:string" minOccurs="0"/>
+				<xs:element name="ServicePackageCode" type="xs:string" minOccurs="0"/>
+				<xs:element name="ServiceCode" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ChargingProductCode">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="serviceClass" type="xs:string"/>
+				<xs:element name="ServiceClassName" type="xs:string"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:simpleType name="ServiceClass">
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+
+	<!--resources-->
+	<xs:complexType name="ResourceType">
+		<xs:annotation>
+			<xs:documentation>A resource can have both a physical or logical characteristics. A resource may also be an aggregation of other respources. It can have a specific configuration and behavior. They can be a part of the network topology.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ResourceID" type="xs:string"/>
+			<xs:element name="ResourceCategory" type="xs:string" minOccurs="0"/>
+			<xs:element name="ResourceGroupID" type="xs:string" minOccurs="0"/>
+			<xs:element name="ResourceGroupName" type="xs:string" minOccurs="0"/>
+			<xs:element name="CreationDateTime" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="ResourceStatus" type="xs:string" minOccurs="0"/>
+			<xs:element name="AggregatedResources" type="pr:ResourceType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Resource">
+		<xs:annotation>
+			<xs:documentation>A specific physical instance of a resourceType .</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="SerialNumber" type="xs:string"/>
+			<xs:element name="Code" type="xs:string"/>
+			<xs:element name="ExpiryDate" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="BatchId" type="xs:string" minOccurs="0"/>
+			<xs:element name="ResourceType" type="pr:ResourceType" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="InventoryItem">
+		<xs:complexContent>
+			<xs:extension base="pr:Resource">
+				<xs:sequence>
+					<xs:element ref="bs:Location"/>
+					<xs:element ref="pr:WarrantyInfo" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:element name="WarrantyInfo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Vendor" type="xs:string" minOccurs="0"/>
+				<xs:element name="WarrantyPeriod" type="bs:TimePeriod" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="ZainCustomerAssetInfo">
+		<xs:sequence>
+			<xs:element ref="bs:IMSI" minOccurs="0"/>
+			<xs:element ref="bs:PUK" minOccurs="0"/>
+			<xs:element name="SIMType" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="ZainCustomerAssetInfo" type="pr:ZainCustomerAssetInfo"/>
+	<xs:element name="MarketCode" type="xs:string"/>
+</xs:schema>

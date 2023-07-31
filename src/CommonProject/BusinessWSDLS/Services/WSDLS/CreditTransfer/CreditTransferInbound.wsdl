@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zain.com/ZESB/Services/CreditTransfer" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:typ="http://www.zain.com/ZESB/Services/CreditTransfer/Types" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://www.zain.com/ZESB/Services/CreditTransfer">
+	<wsdl:types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/CreditTransfer/Types">
+			<xs:simpleType name="MessageType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Ar"/>
+					<xs:enumeration value="En"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="ResetPinInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SubscriberNo" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="SendSms" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Language" type="typ:MessageType" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="ResetPinOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="NewPin" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Description" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="QuerySubscriberInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="1" maxOccurs="1" name="SubscriberNo" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>			
+			<xs:element name="QuerySubscriberOutput">
+				<xs:complexType>
+					<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="Type" type="xs:string"/>
+					<xs:element minOccurs="1" maxOccurs="1" name="Status" type="xs:string"/>
+					<xs:element minOccurs="1" maxOccurs="1" name="RegisteredOn" nillable="true" type="xs:dateTime"/>
+					<xs:element minOccurs="1" maxOccurs="1" name="DeletedOn" nillable="true" type="xs:dateTime"/>
+				</xs:sequence>
+			</xs:complexType>
+			</xs:element>
+			<xs:element name="TransferInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="1" maxOccurs="1" name="SubscriberNo" type="xs:string"/>
+						<xs:element minOccurs="1" maxOccurs="1" name="Receiver" type="xs:string" />
+						<xs:element minOccurs="1" maxOccurs="1" name="Amount" type="xs:decimal" />
+						<xs:element minOccurs="1" maxOccurs="1" name="Pin" type="xs:string" />							
+						<xs:element minOccurs="1" maxOccurs="1" name="SendSMS" type="xs:boolean" />
+						<xs:element minOccurs="1" maxOccurs="1" name="Language" type="typ:MessageType" />					
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>			
+			<xs:element name="TransferOutput">
+				<xs:complexType>
+					<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="Result" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			</xs:element>			
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="ResetPinRequest">
+		<wsdl:part name="parameters" element="typ:ResetPinInput"/>
+	</wsdl:message>
+	<wsdl:message name="ResetPinResponse">
+		<wsdl:part name="parameters" element="typ:ResetPinOutput"/>
+	</wsdl:message>
+	<wsdl:message name="QuerySubscriberRequest">
+		<wsdl:part name="parameters" element="typ:QuerySubscriberInput"/>
+	</wsdl:message>
+	<wsdl:message name="QuerySubscriberResponse">
+		<wsdl:part name="parameters" element="typ:QuerySubscriberOutput"/>
+	</wsdl:message>
+	<wsdl:message name="TransferRequest">
+		<wsdl:part name="parameters" element="typ:TransferInput"/>
+	</wsdl:message>
+	<wsdl:message name="TransferResponse">
+		<wsdl:part name="parameters" element="typ:TransferOutput"/>
+	</wsdl:message>	
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType"/>
+	</wsdl:message>
+	<wsdl:portType name="CreditTransferPort">
+		<wsdl:operation name="ResetPin">
+			<wsdl:input message="tns:ResetPinRequest"/>
+			<wsdl:output message="tns:ResetPinResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="QuerySubscriber">
+			<wsdl:input message="tns:QuerySubscriberRequest"/>
+			<wsdl:output message="tns:QuerySubscriberResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="Transfer">
+			<wsdl:input message="tns:TransferRequest"/>
+			<wsdl:output message="tns:TransferResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>				
+	</wsdl:portType>
+	<wsdl:binding name="CreditTransferBinding" type="tns:CreditTransferPort">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="ResetPin">
+			<soap:operation soapAction="ResetPin" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="QuerySubscriber">
+			<soap:operation soapAction="QuerySubscriber" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="Transfer">
+			<soap:operation soapAction="Transfer" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>				
+	</wsdl:binding>
+	<wsdl:service name="CreditTransfer">
+		<wsdl:port name="CreditTransferPort" binding="tns:CreditTransferBinding">
+			<soap:address location="/ZESB/CreditTransfer"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

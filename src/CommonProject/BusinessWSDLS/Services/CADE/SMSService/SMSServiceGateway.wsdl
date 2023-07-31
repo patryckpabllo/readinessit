@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://cade.ericsson.com/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="SMS_SenderService" targetNamespace="http://cade.ericsson.com/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://cade.ericsson.com/" elementFormDefault="unqualified" targetNamespace="http://cade.ericsson.com/" version="1.0">
+
+  <xs:element name="SMSRequester" type="tns:SMSRequester"/>
+
+  <xs:element name="SMSRequesterResponse" type="tns:SMSRequesterResponse"/>
+
+  <xs:element name="SMS_Submit" type="tns:SMS_Submit"/>
+
+  <xs:element name="SMS_SubmitResponse" type="tns:SMS_SubmitResponse"/>
+
+  <xs:complexType name="SMS_Submit">
+    <xs:sequence>
+      <xs:element name="SOURCE_ADDR" type="xs:string"/>
+      <xs:element name="DESTINATION_ADDR" type="xs:string"/>
+      <xs:element minOccurs="0" name="ALTERNATE_DESTINATION_ADDR" type="xs:string"/>
+      <xs:element name="SHORT_MESSAGE" type="xs:string"/>
+      <xs:element minOccurs="0" name="ORIGINATING_SYSTEM" type="xs:string"/>
+      <xs:element minOccurs="0" name="CONTRACT_ID" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SMS_SubmitResponse">
+    <xs:sequence>
+      <xs:element name="SMSSubmitResp" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SMSRequester">
+    <xs:sequence>
+      <xs:element name="SOURCE_ADDR" type="xs:string"/>
+      <xs:element name="DESTINATION_ADDR" type="xs:string"/>
+      <xs:element minOccurs="0" name="ALTERNATE_DESTINATION_ADDR" type="xs:string"/>
+      <xs:element name="SHORT_MESSAGE" type="xs:string"/>
+      <xs:element minOccurs="0" name="PREFERRED_START_TIME" type="xs:time"/>
+      <xs:element minOccurs="0" name="PREFERRED_END_TIME" type="xs:time"/>
+      <xs:element minOccurs="0" name="ORIGINATING_SYSTEM" type="xs:string"/>
+      <xs:element minOccurs="0" name="CONTRACT_ID" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SMSRequesterResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="SMSResp" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="SMSRequesterResponse">
+    <wsdl:part element="tns:SMSRequesterResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="SMSRequester">
+    <wsdl:part element="tns:SMSRequester" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="SMS_SubmitResponse">
+    <wsdl:part element="tns:SMS_SubmitResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="SMS_Submit">
+    <wsdl:part element="tns:SMS_Submit" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="SMS_Sender">
+    <wsdl:operation name="SMS_Submit">
+      <wsdl:input message="tns:SMS_Submit" name="SMS_Submit">
+    </wsdl:input>
+      <wsdl:output message="tns:SMS_SubmitResponse" name="SMS_SubmitResponse">
+    </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SMSRequester">
+      <wsdl:input message="tns:SMSRequester" name="SMSRequester">
+    </wsdl:input>
+      <wsdl:output message="tns:SMSRequesterResponse" name="SMSRequesterResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SMS_SenderServiceSoapBinding" type="tns:SMS_Sender">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="SMS_Submit">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="SMS_Submit">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="SMS_SubmitResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SMSRequester">
+      <soap:operation soapAction="soapsmsaction" style="document"/>
+      <wsdl:input name="SMSRequester">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="SMSRequesterResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SMS_SenderService">
+    <wsdl:port binding="tns:SMS_SenderServiceSoapBinding" name="SMS_SenderPort">
+      <soap:address location="http://localhost:8081/SMS_GATEWAY/SMS_Sender.yaws"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <pd:name>BusinessProcesses/Services/Common/NumberReservation/HelperProcess/CivilID_Validation.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="CivilID" type="xsd:string"/>
+    </pd:startType>
+    <pd:startX>84</pd:startX>
+    <pd:startY>110</pd:startY>
+    <pd:returnBindings>
+        <Result>
+            <xsl:value-of select="if(number(substring($Start/CivilID,12, 1))=(11 - ($Map-Data/civilid - (floor($Map-Data/civilid div 11)*11)))&#xA;and&#xA;string-length($Start/CivilID)=12&#xA;)&#xA;then&#xA;&quot;true&quot;&#xA;else&#xA;&quot;false&quot;"/>
+        </Result>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="Result" type="xsd:string"/>
+    </pd:endType>
+    <pd:endX>410</pd:endX>
+    <pd:endY>114</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1474383424341</pd:targetNamespace>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>241</pd:x>
+        <pd:y>112</pd:y>
+        <config>
+            <element>
+                <xsd:element name="civilid" type="xsd:string"/>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <civilid>
+                <xsl:value-of select="number(substring($Start/CivilID,1, 1)*2)&#xA;+&#xA;number(substring($Start/CivilID,2, 1)*1)&#xA;+&#xA;number(substring($Start/CivilID,3, 1)*6)&#xA;+&#xA;number(substring($Start/CivilID,4, 1)*3)&#xA;+&#xA;number(substring($Start/CivilID,5, 1)*7)&#xA;+&#xA;number(substring($Start/CivilID,6, 1)*9)&#xA;+&#xA;number(substring($Start/CivilID,7, 1)*10)&#xA;+&#xA;number(substring($Start/CivilID,8, 1)*5)&#xA;+&#xA;number(substring($Start/CivilID,9, 1)*8)&#xA;+&#xA;number(substring($Start/CivilID,10, 1)*4)&#xA;+&#xA;number(substring($Start/CivilID,11, 1)*2)"/>
+            </civilid>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zain.com/ZESB/Services/QueryDataSession" xmlns:typ="http://www.zain.com/ZESB/Services/QueryDataSession/Types" xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Services/QueryDataSession"  xmlns:xs="http://www.w3.org/2001/XMLSchema" >
+	<wsdl:types>
+		<xs:schema  targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema  targetNamespace="http://www.zain.com/ZESB/Services/QueryDataSession/Types" elementFormDefault="qualified">
+			<xs:complexType name="QueryByType">
+				<xs:sequence>
+					<xs:choice>
+						<xs:element name="IP" type="xs:string" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="Msisdn" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					</xs:choice>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="PropertyType">
+				<xs:sequence>
+					<xs:element name="Key" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="Value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="SessionPropertyList">
+				<xs:sequence>
+					<xs:element name="Property" type="typ:PropertyType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="QuerySessionInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="QueryBy" type="typ:QueryByType" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="QuerySessionOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SessionProperties" type="typ:SessionPropertyList"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="FaultMessage">
+		<wsdl:part name="parameter" element="com:FaultType"/>
+	</wsdl:message>
+	<wsdl:message name="QuerySessionRequest">
+		<wsdl:part name="parameter" element="typ:QuerySessionInput"/>
+	</wsdl:message>
+	<wsdl:message name="QuerySessionResponse">
+		<wsdl:part name="parameter" element="typ:QuerySessionOutput"/>
+	</wsdl:message>
+	<wsdl:portType name="QueryDataSessionPort">
+		<wsdl:operation name="QuerySession">
+			<wsdl:input message="tns:QuerySessionRequest"/>
+			<wsdl:output message="tns:QuerySessionResponse"/>
+			<wsdl:fault name="fault" message="tns:FaultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="QueryDataSessionBinding" type="tns:QueryDataSessionPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="QuerySession">
+			<soap:operation soapAction="QuerySession"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="QueryDataSession">
+		<wsdl:port name="QueryDataSessionPort" binding="tns:QueryDataSessionBinding">
+			<soap:address location="URL"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

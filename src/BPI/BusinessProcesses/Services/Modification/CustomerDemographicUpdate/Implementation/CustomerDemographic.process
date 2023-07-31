@@ -1,0 +1,1079 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:ns5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns6="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns7="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderRes.xsd" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns4="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderReq.xsd" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd">
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/BusinessSchemas/Services/Common/CLE/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderReq.xsd" schemaLocation="/BusinessSchemas/Services/Provisioning/CreateOrder/CreateOrderReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderRes.xsd" schemaLocation="/BusinessSchemas/Services/Provisioning/CreateOrder/CreateOrderRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerReq.xsd"/>
+    <pd:name>BusinessProcesses/Services/Modification/CustomerDemographicUpdate/Implementation/CustomerDemographic.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>82</pd:x>
+        <pd:y>121</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Modification/DemographicUpdate/BPI_Request_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1009</pd:endX>
+    <pd:endY>118</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442397282862</pd:targetNamespace>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>269</pd:x>
+        <pd:y>117</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx:ModifyCustomerreq"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_CustAddRead">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>408</pd:x>
+        <pd:y>118</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Modification/CustomerDemographicUpdate/HelperProcess/ESI_BSCS_CustomerAddressRead.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:copy-of select="$Parse-XML/pfx:ModifyCustomerreq"/>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                    <StartTimeStamp>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_CustDemography">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>658</pd:x>
+        <pd:y>121</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Modification/CustomerDemographicUpdate/HelperProcess/ESI_BSCS_UpdateDemography.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:copy-of select="$Map-Data/pfx:ModifyCustomerreq"/>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                    <StartTimeStamp>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply to JMS Message">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>890</pd:x>
+        <pd:y>127</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInput>
+                <OtherProperties>
+                    <TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TransactionID>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID">
+                        <ReplyToEngineID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID"/>
+                        </ReplyToEngineID>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName">
+                        <ReplyToDeploymentName>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName"/>
+                        </ReplyToDeploymentName>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                        <StartTimeStamp>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </StartTimeStamp>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/CorrelationId">
+                        <CorrelationId>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/CorrelationId"/>
+                        </CorrelationId>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionDetails">
+                        <TransactionDetails>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionDetails"/>
+                        </TransactionDetails>
+                    </xsl:if>
+                </OtherProperties>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($Call_CustDemography/ns5:ModifyCustomerres)"/>
+                </Body>
+            </ns3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSReceiverError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>85</pd:x>
+        <pd:y>242</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParsingError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>271</pd:x>
+        <pd:y>238</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>184</pd:x>
+        <pd:y>37</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Modification/DemographicUpdate/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($JMS-Queue-Receiver/ns3:ActivityOutput/Body)"/>
+                    </ns22:Message>
+                    <ns22:Transaction>
+                        <xsl:value-of select="tib:render-xml($JMS-Queue-Receiver/ns3:ActivityOutput/Body)"/>
+                    </ns22:Transaction>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>791</pd:x>
+        <pd:y>122</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Modification/DemographicUpdate/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml(concat($Call_CustAddRead/ns5:ModifyCustomerres,'---------------------------------------------------------------------------------------&#xA;-----------------------------------------------------------', $Map-Data/pfx:ModifyCustomerreq))"/>
+                    </ns22:Message>
+                    <ns22:Transaction>
+                        <xsl:value-of select="tib:render-xml($Call_CustDemography/ns5:ModifyCustomerres)"/>
+                    </ns22:Transaction>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>166</pd:x>
+        <pd:y>365</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>296</pd:x>
+        <pd:y>366</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ExceptionRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Modification/DemographicUpdate/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                        <ns22:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns22:TransactionID>
+                    </xsl:if>
+                    <ns22:Message>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/Body"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+                <xsl:if test="$_error/ns2:ErrorReport/StackTrace">
+                    <StackTrace>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                    </StackTrace>
+                </xsl:if>
+            </pfx2:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CLE_to_CDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>432</pd:x>
+        <pd:y>370</pd:y>
+        <config>
+            <element ref="ns5:ModifyCustomerres"/>
+        </config>
+        <pd:inputBindings>
+            <ns5:ModifyCustomerres>
+                <ns5:ModifyCustomerRes>
+                    <ns4:Response>
+                        <ResponseCode>
+                            <xsl:value-of select="$ErrorHandler/pfx2:ExceptionRequest/ExceptionCode"/>
+                        </ResponseCode>
+                        <xsl:if test="$ErrorHandler/pfx2:ExceptionRequest/StackTrace">
+                            <ResponseDescription>
+                                <xsl:value-of select="$ErrorHandler/pfx2:ExceptionRequest/StackTrace"/>
+                            </ResponseDescription>
+                        </xsl:if>
+                    </ns4:Response>
+                </ns5:ModifyCustomerRes>
+            </ns5:ModifyCustomerres>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>736</pd:x>
+        <pd:y>366</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Modification/DemographicUpdate/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </ns22:Filename>
+                    <ns22:Message>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/Body"/>
+                    </ns22:Message>
+                    <ns22:Transaction>
+                        <xsl:value-of select="tib:render-xml($CLE_to_CDM/ns5:ModifyCustomerres)"/>
+                    </ns22:Transaction>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <xsl:if test="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError">
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                    </Category>
+                </xsl:if>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>607</pd:x>
+        <pd:y>489</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns6:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                </message>
+                <xsl:if test="$_error/ns2:ErrorReport/MsgCode">
+                    <msgCode>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                    </msgCode>
+                </xsl:if>
+            </ns6:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GenerateError_CustAddRead">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>411</pd:x>
+        <pd:y>233</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="'Seq ID not comming from BSCS'"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="'11111'"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply-to-JMS-Message-1">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>600</pd:x>
+        <pd:y>370</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInput>
+                <OtherProperties>
+                    <TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TransactionID>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID">
+                        <ReplyToEngineID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID"/>
+                        </ReplyToEngineID>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName">
+                        <ReplyToDeploymentName>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName"/>
+                        </ReplyToDeploymentName>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                        <StartTimeStamp>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </StartTimeStamp>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/CorrelationId">
+                        <CorrelationId>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/CorrelationId"/>
+                        </CorrelationId>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionDetails">
+                        <TransactionDetails>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionDetails"/>
+                        </TransactionDetails>
+                    </xsl:if>
+                </OtherProperties>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($CLE_to_CDM/ns5:ModifyCustomerres)"/>
+                </Body>
+            </ns3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>536</pd:x>
+        <pd:y>34</pd:y>
+        <config>
+            <element ref="pfx:ModifyCustomerreq"/>
+        </config>
+        <pd:inputBindings>
+            <pfx:ModifyCustomerreq>
+                <pfx:ModifyCustomerReq>
+                    <ns4:ZainIndividualList>
+                        <ZainIndividual>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/gender">
+                                <gender>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/gender"/>
+                                </gender>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/maritalStatus">
+                                <maritalStatus>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/maritalStatus"/>
+                                </maritalStatus>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/nationality">
+                                <nationality>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/nationality"/>
+                                </nationality>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/profession">
+                                <profession>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/profession"/>
+                                </profession>
+                            </xsl:if>
+                            <xsl:if test="string-length($Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/DateofBirth)>0">
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/DateofBirth">
+                                    <DateofBirth>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/DateofBirth"/>
+                                    </DateofBirth>
+                                </xsl:if>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/idType">
+                                <idType>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/idType"/>
+                                </idType>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/CivilId">
+                                <CivilId>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/CivilId"/>
+                                </CivilId>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ResidencyType">
+                                <ResidencyType>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ResidencyType"/>
+                                </ResidencyType>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/Region">
+                                <Region>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/Region"/>
+                                </Region>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/language">
+                                <language>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/language"/>
+                                </language>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/sourceCustomerID">
+                                <sourceCustomerID>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/sourceCustomerID"/>
+                                </sourceCustomerID>
+                            </xsl:if>
+                            <IndividualName>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/AristocraticTitle">
+                                    <AristocraticTitle>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/AristocraticTitle"/>
+                                    </AristocraticTitle>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ArabicAristocraticTitle">
+                                    <ArabicAristocraticTitle>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ArabicAristocraticTitle"/>
+                                    </ArabicAristocraticTitle>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ArabicFullName">
+                                    <ArabicFullName>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ArabicFullName"/>
+                                    </ArabicFullName>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/givenNames">
+                                    <givenNames>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/givenNames"/>
+                                    </givenNames>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/legalName">
+                                    <legalName>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/legalName"/>
+                                    </legalName>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/FirstName">
+                                    <FirstName>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/FirstName"/>
+                                    </FirstName>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/SecondName">
+                                    <SecondName>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/SecondName"/>
+                                    </SecondName>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ThirdName">
+                                    <ThirdName>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ThirdName"/>
+                                    </ThirdName>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ArabicFirstName">
+                                    <ArabicFirstName>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ArabicFirstName"/>
+                                    </ArabicFirstName>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ArabicSecondName">
+                                    <ArabicSecondName>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ArabicSecondName"/>
+                                    </ArabicSecondName>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ArabicThirdName">
+                                    <ArabicThirdName>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/IndividualName/ArabicThirdName"/>
+                                    </ArabicThirdName>
+                                </xsl:if>
+                            </IndividualName>
+                            <xsl:for-each select="$Call_CustAddRead/ns5:ModifyCustomerres/ns5:ModifyCustomerRes/ns4:ZainAddress">
+                                <ZainAddress>
+                                    <xsl:if test="seqNumber">
+                                        <seqNumber>
+                                            <xsl:value-of select="seqNumber"/>
+                                        </seqNumber>
+                                    </xsl:if>
+                                    <xsl:if test="postalCode">
+                                        <postalCode>
+                                            <xsl:value-of select="postalCode"/>
+                                        </postalCode>
+                                    </xsl:if>
+                                    <ns4:ZainContact>
+                                        <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ZainContact[1]/eMailAddress">
+                                            <eMailAddress>
+                                                <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ZainContact[1]/eMailAddress"/>
+                                            </eMailAddress>
+                                        </xsl:if>
+                                        <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ZainContact[1]/faxContact">
+                                            <faxContact>
+                                                <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ZainContact[1]/faxContact"/>
+                                            </faxContact>
+                                        </xsl:if>
+                                        <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ZainContact[1]/homeContact">
+                                            <homeContact>
+                                                <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ZainContact[1]/homeContact"/>
+                                            </homeContact>
+                                        </xsl:if>
+                                        <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ZainContact[1]/workContact">
+                                            <workContact>
+                                                <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ZainContact[1]/workContact"/>
+                                            </workContact>
+                                        </xsl:if>
+                                    </ns4:ZainContact>
+                                </ZainAddress>
+                            </xsl:for-each>
+                            <ns4:CorporateInfo>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/ProsumerBase">
+                                    <ProsumerBase>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/ProsumerBase"/>
+                                    </ProsumerBase>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/TotalLines">
+                                    <TotalLines>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/TotalLines"/>
+                                    </TotalLines>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/VoiceBase">
+                                    <VoiceBase>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/VoiceBase"/>
+                                    </VoiceBase>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/EntityBase">
+                                    <EntityBase>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/EntityBase"/>
+                                    </EntityBase>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/M2MBase">
+                                    <M2MBase>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/M2MBase"/>
+                                    </M2MBase>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/MonthlyAverageRevenue">
+                                    <MonthlyAverageRevenue>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/MonthlyAverageRevenue"/>
+                                    </MonthlyAverageRevenue>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/AnnualAverageRevenue">
+                                    <AnnualAverageRevenue>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/AnnualAverageRevenue"/>
+                                    </AnnualAverageRevenue>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/KeyAccountManager">
+                                    <KeyAccountManager>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/KeyAccountManager"/>
+                                    </KeyAccountManager>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/Segment">
+                                    <Segment>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/Segment"/>
+                                    </Segment>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/SubCorporateSegment">
+                                    <SubCorporateSegment>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/ns4:CorporateInfo/SubCorporateSegment"/>
+                                    </SubCorporateSegment>
+                                </xsl:if>
+                            </ns4:CorporateInfo>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/BloodType">
+                                <BloodType>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/BloodType"/>
+                                </BloodType>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/Education">
+                                <Education>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/Education"/>
+                                </Education>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/Category">
+                                <Category>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainIndividualList/ZainIndividual[1]/Category"/>
+                                </Category>
+                            </xsl:if>
+                        </ZainIndividual>
+                    </ns4:ZainIndividualList>
+                    <ns4:ZainCustomerAccountList>
+                        <ZainCustomerAccount>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/accountStatus">
+                                <accountStatus>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/accountStatus"/>
+                                </accountStatus>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/creationDateTime">
+                                <creationDateTime>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/creationDateTime"/>
+                                </creationDateTime>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ID">
+                                <ID>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ID"/>
+                                </ID>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/name">
+                                <name>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/name"/>
+                                </name>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/parentAccountId">
+                                <parentAccountId>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/parentAccountId"/>
+                                </parentAccountId>
+                            </xsl:if>
+                            <ns4:EmployeeIdentifier>
+                                <EmployeeId>
+                                    <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ns4:EmployeeIdentifier/EmployeeId/ns4:systemName">
+                                        <ns4:systemName>
+                                            <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ns4:EmployeeIdentifier/EmployeeId/ns4:systemName"/>
+                                        </ns4:systemName>
+                                    </xsl:if>
+                                    <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ns4:EmployeeIdentifier/EmployeeId/ns4:value">
+                                        <ns4:value>
+                                            <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ns4:EmployeeIdentifier/EmployeeId/ns4:value"/>
+                                        </ns4:value>
+                                    </xsl:if>
+                                </EmployeeId>
+                                <xsl:if test="string-length($Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ns4:EmployeeIdentifier/IsEmployee)>0">
+                                    <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ns4:EmployeeIdentifier/IsEmployee">
+                                        <IsEmployee>
+                                            <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ns4:EmployeeIdentifier/IsEmployee"/>
+                                        </IsEmployee>
+                                    </xsl:if>
+                                </xsl:if>
+                            </ns4:EmployeeIdentifier>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/SourceofSignOff">
+                                <SourceofSignOff>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/SourceofSignOff"/>
+                                </SourceofSignOff>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/Salesagent">
+                                <Salesagent>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/Salesagent"/>
+                                </Salesagent>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/paymentResponsible">
+                                <paymentResponsible>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/paymentResponsible"/>
+                                </paymentResponsible>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/accountStatusChangeReason">
+                                <accountStatusChangeReason>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/accountStatusChangeReason"/>
+                                </accountStatusChangeReason>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/accountStatusChangeDate">
+                                <accountStatusChangeDate>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/accountStatusChangeDate"/>
+                                </accountStatusChangeDate>
+                            </xsl:if>
+                            <ZainCustomerPayment>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ZainCustomerPayment[1]/Currency">
+                                    <Currency>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ZainCustomerPayment[1]/Currency"/>
+                                    </Currency>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ZainCustomerPayment[1]/IncomeRange">
+                                    <IncomeRange>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ZainCustomerPayment[1]/IncomeRange"/>
+                                    </IncomeRange>
+                                </xsl:if>
+                                <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ZainCustomerPayment[1]/CreditNote">
+                                    <CreditNote>
+                                        <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/ZainCustomerPayment[1]/CreditNote"/>
+                                    </CreditNote>
+                                </xsl:if>
+                            </ZainCustomerPayment>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/AccountNumber">
+                                <AccountNumber>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/AccountNumber"/>
+                                </AccountNumber>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/PortIn">
+                                <PortIn>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/PortIn"/>
+                                </PortIn>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/PortOut">
+                                <PortOut>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/PortOut"/>
+                                </PortOut>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/Sector">
+                                <Sector>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:ZainCustomerAccountList/ZainCustomerAccount[1]/Sector"/>
+                                </Sector>
+                            </xsl:if>
+                        </ZainCustomerAccount>
+                    </ns4:ZainCustomerAccountList>
+                    <ns4:Organization>
+                        <OrganizationIdentification>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/companyName">
+                                <companyName>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/companyName"/>
+                                </companyName>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/CompanyNameEng">
+                                <CompanyNameEng>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/CompanyNameEng"/>
+                                </CompanyNameEng>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/SisterCompany">
+                                <SisterCompany>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/SisterCompany"/>
+                                </SisterCompany>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/OrganizationType">
+                                <OrganizationType>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/OrganizationType"/>
+                                </OrganizationType>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/Organizationsize">
+                                <Organizationsize>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/Organizationsize"/>
+                                </Organizationsize>
+                            </xsl:if>
+                            <xsl:if test="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/OrganizationCategory">
+                                <OrganizationCategory>
+                                    <xsl:value-of select="$Parse-XML/pfx:ModifyCustomerreq/pfx:ModifyCustomerReq/ns4:Organization/OrganizationIdentification/OrganizationCategory"/>
+                                </OrganizationCategory>
+                            </xsl:if>
+                        </OrganizationIdentification>
+                    </ns4:Organization>
+                </pfx:ModifyCustomerReq>
+            </pfx:ModifyCustomerreq>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Call_CustAddRead</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply to JMS Message</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>JMSReceiverError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>ParsingError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>Reply to JMS Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>CLE_to_CDM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_to_CDM</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_CustAddRead</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:xpathDescription>AdrSeqID exists</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>exists($Call_CustAddRead/ns5:ModifyCustomerres/ns5:ModifyCustomerRes/ns4:ZainAddress[1]/seqNumber) 
+and string-length($Call_CustAddRead/ns5:ModifyCustomerres/ns5:ModifyCustomerRes/ns4:ZainAddress[1]/seqNumber)&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_CustDemography</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_CustAddRead</pd:from>
+        <pd:to>GenerateError_CustAddRead</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_to_CDM</pd:from>
+        <pd:to>Reply-to-JMS-Message-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply-to-JMS-Message-1</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply-to-JMS-Message-1</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>Call_CustDemography</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

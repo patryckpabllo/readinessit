@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zain.com/ZESB/Services/EmailService" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:typ="http://www.zain.com/ZESB/Services/EmailService/Types" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://www.zain.com/ZESB/Services/EmailService">
+	<wsdl:types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/EmailService/Types">
+			<xs:simpleType name="MessageType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="text/plain"/>
+					<xs:enumeration value="text/html"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<!-- 
+			<xs:complexType name="NameAddress">
+				<xs:sequence>
+					<xs:element name="Name" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+					<xs:element name="Address" type="xs:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+				</xs:sequence>
+			</xs:complexType>
+			 -->
+			<xs:element name="SendEmailInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="From" type="xs:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+						<xs:element name="ReplyTo" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+						<xs:element name="To" type="xs:string" minOccurs="1" maxOccurs="unbounded" nillable="true"/>
+						<xs:element name="Cc" type="xs:string" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+						<xs:element name="Bcc" type="xs:string" minOccurs="0" maxOccurs="unbounded" nillable="true"/>
+						<xs:element name="Subject" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+						<xs:element name="Body" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+						<xs:element name="ContentType" type="typ:MessageType" minOccurs="1" maxOccurs="1" nillable="true"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="SendEmailOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="1" maxOccurs="1" name="Result" type="xs:string"/>
+						<xs:element minOccurs="1" maxOccurs="1" name="ResultText" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="SendEmailRequest">
+		<wsdl:part name="parameters" element="typ:SendEmailInput"/>
+	</wsdl:message>
+	<wsdl:message name="SendEmailResponse">
+		<wsdl:part name="parameters" element="typ:SendEmailOutput"/>
+	</wsdl:message>
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType"/>
+	</wsdl:message>
+	<wsdl:portType name="EmailServicePort">
+		<wsdl:operation name="SendEmail">
+			<wsdl:input message="tns:SendEmailRequest"/>
+			<wsdl:output message="tns:SendEmailResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="EmailServiceBinding" type="tns:EmailServicePort">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="SendEmail">
+			<soap:operation soapAction="SendEmail" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="EmailService">
+		<wsdl:port name="EmailServicePort" binding="tns:EmailServiceBinding">
+			<soap:address location="/ZESB/EmailService"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

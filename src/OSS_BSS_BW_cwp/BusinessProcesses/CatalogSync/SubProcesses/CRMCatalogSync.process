@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:ns2="http://www.siebel.com/xml/SWIProductIntegrationIO" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://xmlns.tibco.com/encodings/mime" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns4="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions" xmlns:ns3="http://schemas.tibco.com/bw/plugins/http/5.0/httpExceptions" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://www.tibco.com/schemas/OSS_BSS_BW_CATALOG/BusinessProcesses/CatalogSync/Resources/Schema/Schema.xsd" xmlns:pfx3="http://www.tibco.com/schemas/OSS_BSS_BW_CATALOG/BusinessProcesses/updateCatalog/Resources/Schema/Schema.xsd" xmlns:pfx2="http://www.conceptwave.com/products/pm" xmlns:ns5="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns6="http://siebel.com/webservices" xmlns:pfx="http://siebel.com/asi/V0">
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.tibco.com/schemas/OSS_BSS_BW_CATALOG/BusinessProcesses/updateCatalog/Resources/Schema/Schema.xsd" schemaLocation="/BusinessProcesses/CatalogSync/Resources/Schema/updateCatalog.xsd"/>
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.tibco.com/schemas/OSS_BSS_BW_CATALOG/BusinessProcesses/CatalogSync/Resources/Schema/Schema.xsd" schemaLocation="/BusinessProcesses/CatalogSync/Resources/Schema/CatalagSync.xsd"/>
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://www.conceptwave.com/products/pm"/>
+    <xs:import xmlns:xs="http://www.w3.org/2001/XMLSchema" namespace="http://siebel.com/asi/V0" schemaLocation="/SharedResources/WSDL/SWIProductImport.WSDL.wsdl"/>
+    <wsdl:import namespace="http://siebel.com/asi/V0" location="/SharedResources/WSDL/SWIProductImport.WSDL.wsdl"/>
+    <pd:name>BusinessProcesses/CatalogSync/SubProcesses/CRMCatalogSync.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings>
+        <xsl:copy-of select="$CatalogSync/outputMessage/pfx:SWIProductImportUpsert_Output"/>
+    </pd:returnBindings>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>65</pd:x>
+        <pd:y>71</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%Queues/CRMCatalog%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/SharedResources/Connection/JMS/JMS Connection.sharedjmscon</ConnectionReference>
+            <OutDataxsdString ref="pfx:SWIProductImportUpsert_Input"/>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:SWIProductImportUpsert_Output"/>
+    <pd:endX>821</pd:endX>
+    <pd:endY>71</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1447756044385</pd:targetNamespace>
+    <pd:activity name="CatalogSync">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>384</pd:x>
+        <pd:y>72</pd:y>
+        <config>
+            <timeout>%%HTTPConnection/CRMCatalog/TimeOut%%</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx:SWIProductImport</service>
+            <servicePort>SWIProductImport</servicePort>
+            <operation>SWIProductImportUpsert</operation>
+            <soapAction>document/http://siebel.com/asi/V0:SWIProductImportUpsert</soapAction>
+            <endpointURL>%%HTTPConnection/CRMCatalog/Url%%</endpointURL>
+            <authScheme>NONE</authScheme>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <xsl:copy-of select="$JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx:SWIProductImportUpsert_Input"/>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>30</pd:x>
+        <pd:y>168</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>677</pd:x>
+        <pd:y>71</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%Queues/EOCUpdateCatalog%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/SharedResources/Connection/JMS/JMS Connection.sharedjmscon</ConnectionReference>
+            <InDataxsdString ref="pfx3:catalogSyncResponse"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <JMSProperties/>
+                <Body>
+                    <pfx3:catalogSyncResponse>
+                        <xsl:for-each select="$CatalogSync/outputMessage/pfx:SWIProductImportUpsert_Output/ns2:ListOfProductImport/ns2:ProductIntegration/ns2:ListOfProductDefinition/ns2:ProductDefinition">
+                            <pfx3:response>
+                                <xsl:choose>
+                                    <xsl:when test="count($CatalogSync/outputMessage/pfx:SWIProductImportUpsert_Output/ns2:ListOfProductImport/ns2:ProductIntegration/ns2:ListOfProductDefinition/ns2:ProductDefinition)>0">
+                                        <pfx3:Result>
+                                            <xsl:value-of select="'OK'"/>
+                                        </pfx3:Result>
+                                    </xsl:when>
+                                    <xsl:otherwise>
+                                        <pfx3:Result>
+                                            <xsl:value-of select="'KO'"/>
+                                        </pfx3:Result>
+                                    </xsl:otherwise>
+                                </xsl:choose>
+                                <xsl:if test="ns2:Description">
+                                    <pfx3:Description>
+                                        <xsl:value-of select="ns2:Description"/>
+                                    </pfx3:Description>
+                                </xsl:if>
+                                <xsl:if test="../../ns2:ReleaseDate>0">
+                                    <pfx3:sync_timestamp>
+                                        <xsl:value-of select="upper-case(tib:format-dateTime('EEE MMM dd HH:mm:ss z  yyyy',  tib:parse-dateTime('MM/dd/yyyy', ../../ns2:ReleaseDate)))"/>
+                                    </pfx3:sync_timestamp>
+                                </xsl:if>
+                                <pfx3:ProductCode>
+                                    <xsl:value-of select="ns2:IntegrationId"/>
+                                </pfx3:ProductCode>
+                            </pfx3:response>
+                        </xsl:for-each>
+                    </pfx3:catalogSyncResponse>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMS-Error-Reply">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>349</pd:x>
+        <pd:y>168</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%Queues/EOCUpdateCatalog%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/SharedResources/Connection/JMS/JMS Connection.sharedjmscon</ConnectionReference>
+            <InDataxsdString ref="pfx3:catalogSyncResponse"/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <Body>
+                    <pfx3:catalogSyncResponse>
+                        <pfx3:response>
+                            <pfx3:Result>
+                                <xsl:value-of select="'KO'"/>
+                            </pfx3:Result>
+                            <xsl:choose>
+                                <xsl:when test="count($_error_CatalogSync/ActivityErrors/defaultFaultElement)>0">
+                                    <xsl:if test="$_error_CatalogSync/ActivityErrors/defaultFaultElement/faultstring">
+                                        <pfx3:Description>
+                                            <xsl:value-of select="$_error_CatalogSync/ActivityErrors/defaultFaultElement/faultstring"/>
+                                        </pfx3:Description>
+                                    </xsl:if>
+                                </xsl:when>
+                                <xsl:when test="count ($_error_CatalogSync/ActivityErrors/ns3:HttpClientException)>0 or count ($_error_CatalogSync/ActivityErrors/ns3:HttpServerException)>0">
+                                    <pfx3:Description>
+                                        <xsl:value-of select="'Error Comunication with CRM'"/>
+                                    </pfx3:Description>
+                                </xsl:when>
+                                <xsl:when test="$_error_CatalogSync/ActivityErrors/ns4:ActivityTimedOutException>0">
+                                    <pfx3:Description>
+                                        <xsl:value-of select="'CRM  Activity TimeOut'"/>
+                                    </pfx3:Description>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <pfx3:Description>
+                                        <xsl:value-of select="'Tibco Internal Error'"/>
+                                    </pfx3:Description>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                            <pfx3:ProductCode>
+                                <xsl:value-of select="&quot;&quot;"/>
+                            </pfx3:ProductCode>
+                        </pfx3:response>
+                    </pfx3:catalogSyncResponse>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogError">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>180</pd:x>
+        <pd:y>168</pd:y>
+        <config>
+            <processName>/SharedResources/CommonProcesses/writeToLog.process</processName>
+        </config>
+        <pd:inputBindings>
+            <msgBody>
+                <xsl:value-of select="concat('Log Error:', tib:render-xml($Catch/exceptiondata))"/>
+            </msgBody>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogInput">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>247</pd:x>
+        <pd:y>71</pd:y>
+        <config>
+            <processName>/SharedResources/CommonProcesses/writeToLog.process</processName>
+        </config>
+        <pd:inputBindings>
+            <msgBody>
+                <xsl:value-of select="concat('Input  Log CatalogCRM', tib:render-xml($JMS-Queue-Receiver/ns:ActivityOutput/Body/pfx:SWIProductImportUpsert_Input))"/>
+            </msgBody>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOutput">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>546</pd:x>
+        <pd:y>72</pd:y>
+        <config>
+            <processName>/SharedResources/CommonProcesses/writeToLog.process</processName>
+        </config>
+        <pd:inputBindings>
+            <msgBody>
+                <xsl:value-of select="concat('Log Output CRMCatalog', tib:render-xml($CatalogSync/outputMessage/pfx:SWIProductImportUpsert_Output))"/>
+            </msgBody>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Rethrow">
+        <pd:type>com.tibco.pe.core.RethrowActivity</pd:type>
+        <pd:resourceType>ae.activities.rethrow</pd:resourceType>
+        <pd:x>526</pd:x>
+        <pd:y>168</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>LogInput</pd:from>
+        <pd:to>CatalogSync</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CatalogSync</pd:from>
+        <pd:to>LogOutput</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>LogError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogError</pd:from>
+        <pd:to>JMS-Error-Reply</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>LogInput</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOutput</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS-Error-Reply</pd:from>
+        <pd:to>Rethrow</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

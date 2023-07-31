@@ -1,0 +1,1329 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns22="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pfx5="http://xmlns.zain.com/BSS/ESB/CDM/CustomerOrder" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/ContractResourceChangeRequest.xsd" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderReq.xsd" xmlns:pfx2="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx6="http://xmlns.zain.com/BSS/ESB/CDM/ModifyCustomerOrder" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:ns9="http://xmlns.zain.com/BSS/ESB/CDM/Base" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" xmlns:ns13="http://xmlns.zain.com/BSS/ESB/CDM/Products" xmlns:ns6="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" xmlns:ns7="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderRes.xsd" xmlns:ns10="http://xmlns.zain.com/BSS/ESB/CDM/Customer" xmlns:ns11="http://xmlns.zain.com/BSS/ESB/CDM/Finance" xmlns:ns8="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/ContractResourceChangeResponse.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns4="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerReq.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/BusinessSchemas/Services/Common/CLE/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderReq.xsd" schemaLocation="/BusinessSchemas/Services/Provisioning/CreateOrder/CreateOrderReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/CreateOrderRes.xsd" schemaLocation="/BusinessSchemas/Services/Provisioning/CreateOrder/CreateOrderRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/ContractResourceChangeRequest.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ContractResourceChange/ContractResourceChangeRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/ContractResourceChangeResponse.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ContractResourceChange/ContractResourceChangeRespose.xsd"/>
+    <xsd:import namespace="http://xmlns.zain.com/BSS/ESB/CDM/CustomerOrder" schemaLocation="/CDM/ZainKWCustomerOrder.xsd"/>
+    <xsd:import namespace="http://xmlns.zain.com/BSS/ESB/CDM/ModifyCustomerOrder" schemaLocation="/BusinessSchemas/Services/Modification/CustomerModifyOrder/CustomerOrderModify.xsd"/>
+    <pd:name>BusinessProcesses/Services/Modification/ContractResourceChange/Implementation/ContractResourceChange.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>84</pd:x>
+        <pd:y>122</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Modification/ContractResourceChange/BPI_Request_ResourceChangeQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1026</pd:endX>
+    <pd:endY>122</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442397282862</pd:targetNamespace>
+    <pd:activity name="ParseRequest">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>267</pd:x>
+        <pd:y>121</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx6:CustomerOrderModifyRequest"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_Storage_Medium_Search">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>419</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Modification/ContractResourceChange/HelperProcess/ESI_BSCS_Storage_Medium_Search.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx3:CreateOrderReq>
+                    <ns4:ZainCustomerOrderItem>
+                        <simNumber>
+                            <xsl:value-of select="$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:ZainCustomerOrderItem[1]/pfx5:NewResource/ns9:SIMSerialNumber"/>
+                        </simNumber>
+                    </ns4:ZainCustomerOrderItem>
+                </pfx3:CreateOrderReq>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <StartTimeStamp>
+                    <xsl:value-of select="if(exists($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_Contract_ResourceChange">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>536</pd:x>
+        <pd:y>121</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Modification/ContractResourceChange/HelperProcess/ESI_BSCS_Contract_ResourceChange.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx6:CustomerOrderModifyRequest>
+                    <xsl:copy-of select="$ParseRequest/pfx6:CustomerOrderModifyRequest/ns9:Header"/>
+                    <xsl:for-each select="$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder">
+                        <pfx5:ZainCustomerOrder>
+                            <xsl:if test="pfx5:orderChannel">
+                                <pfx5:orderChannel>
+                                    <xsl:value-of select="pfx5:orderChannel"/>
+                                </pfx5:orderChannel>
+                            </xsl:if>
+                            <xsl:copy-of select="ns9:orderId"/>
+                            <xsl:if test="pfx5:orderType">
+                                <pfx5:orderType>
+                                    <xsl:value-of select="pfx5:orderType"/>
+                                </pfx5:orderType>
+                            </xsl:if>
+                            <xsl:if test="pfx5:orderSubType">
+                                <pfx5:orderSubType>
+                                    <xsl:value-of select="pfx5:orderSubType"/>
+                                </pfx5:orderSubType>
+                            </xsl:if>
+                            <xsl:if test="pfx5:creationDateTime">
+                                <pfx5:creationDateTime>
+                                    <xsl:value-of select="pfx5:creationDateTime"/>
+                                </pfx5:creationDateTime>
+                            </xsl:if>
+                            <xsl:if test="pfx5:dueDate">
+                                <pfx5:dueDate>
+                                    <xsl:value-of select="pfx5:dueDate"/>
+                                </pfx5:dueDate>
+                            </xsl:if>
+                            <xsl:if test="pfx5:orderFulfilmentDate">
+                                <pfx5:orderFulfilmentDate>
+                                    <xsl:value-of select="pfx5:orderFulfilmentDate"/>
+                                </pfx5:orderFulfilmentDate>
+                            </xsl:if>
+                            <xsl:if test="pfx5:assignedPriority">
+                                <pfx5:assignedPriority>
+                                    <xsl:value-of select="pfx5:assignedPriority"/>
+                                </pfx5:assignedPriority>
+                            </xsl:if>
+                            <xsl:copy-of select="pfx5:SalesChannel"/>
+                            <xsl:copy-of select="pfx5:SourceOrderID"/>
+                            <xsl:if test="pfx5:businessUnit">
+                                <pfx5:businessUnit>
+                                    <xsl:value-of select="pfx5:businessUnit"/>
+                                </pfx5:businessUnit>
+                            </xsl:if>
+                            <xsl:copy-of select="pfx5:CustomerInfo"/>
+                            <xsl:if test="pfx5:totalNRCAmount">
+                                <pfx5:totalNRCAmount>
+                                    <xsl:value-of select="pfx5:totalNRCAmount"/>
+                                </pfx5:totalNRCAmount>
+                            </xsl:if>
+                            <xsl:if test="pfx5:totalMRCAmount">
+                                <pfx5:totalMRCAmount>
+                                    <xsl:value-of select="pfx5:totalMRCAmount"/>
+                                </pfx5:totalMRCAmount>
+                            </xsl:if>
+                            <xsl:if test="pfx5:totalNRCUpfront">
+                                <pfx5:totalNRCUpfront>
+                                    <xsl:value-of select="pfx5:totalNRCUpfront"/>
+                                </pfx5:totalNRCUpfront>
+                            </xsl:if>
+                            <xsl:if test="pfx5:totalRCAdvance">
+                                <pfx5:totalRCAdvance>
+                                    <xsl:value-of select="pfx5:totalRCAdvance"/>
+                                </pfx5:totalRCAdvance>
+                            </xsl:if>
+                            <xsl:if test="pfx5:totalDepositAmount">
+                                <pfx5:totalDepositAmount>
+                                    <xsl:value-of select="pfx5:totalDepositAmount"/>
+                                </pfx5:totalDepositAmount>
+                            </xsl:if>
+                            <xsl:copy-of select="pfx5:ZainCurrency"/>
+                            <xsl:if test="pfx5:orderReceiptNumber">
+                                <pfx5:orderReceiptNumber>
+                                    <xsl:value-of select="pfx5:orderReceiptNumber"/>
+                                </pfx5:orderReceiptNumber>
+                            </xsl:if>
+                            <xsl:if test="pfx5:orderReason">
+                                <pfx5:orderReason>
+                                    <xsl:value-of select="pfx5:orderReason"/>
+                                </pfx5:orderReason>
+                            </xsl:if>
+                            <xsl:copy-of select="pfx5:batchDetails"/>
+                            <xsl:copy-of select="ns10:Agreement"/>
+                            <xsl:if test="pfx5:escalationFlag">
+                                <pfx5:escalationFlag>
+                                    <xsl:value-of select="pfx5:escalationFlag"/>
+                                </pfx5:escalationFlag>
+                            </xsl:if>
+                            <xsl:if test="pfx5:estimationTime">
+                                <pfx5:estimationTime>
+                                    <xsl:value-of select="pfx5:estimationTime"/>
+                                </pfx5:estimationTime>
+                            </xsl:if>
+                            <xsl:if test="pfx5:revision">
+                                <pfx5:revision>
+                                    <xsl:value-of select="pfx5:revision"/>
+                                </pfx5:revision>
+                            </xsl:if>
+                            <xsl:if test="pfx5:comment">
+                                <pfx5:comment>
+                                    <xsl:value-of select="pfx5:comment"/>
+                                </pfx5:comment>
+                            </xsl:if>
+                            <xsl:for-each select="pfx5:ZainCustomerOrderItem">
+                                <pfx5:ZainCustomerOrderItem>
+                                    <xsl:for-each select="pfx5:Product">
+                                        <pfx5:Product>
+                                            <xsl:if test="ns13:name">
+                                                <ns13:name>
+                                                    <xsl:value-of select="ns13:name"/>
+                                                </ns13:name>
+                                            </xsl:if>
+                                            <xsl:if test="ns13:ProductId">
+                                                <ns13:ProductId>
+                                                    <xsl:value-of select="ns13:ProductId"/>
+                                                </ns13:ProductId>
+                                            </xsl:if>
+                                            <xsl:if test="ns13:MarketCode">
+                                                <ns13:MarketCode>
+                                                    <xsl:value-of select="ns13:MarketCode"/>
+                                                </ns13:MarketCode>
+                                            </xsl:if>
+                                            <xsl:for-each select="ns13:ProductCodes">
+                                                <ns13:ProductCodes>
+                                                    <xsl:for-each select="ns13:CRMProductCode">
+                                                        <ns13:CRMProductCode>
+                                                            <xsl:if test="ns13:productType">
+                                                                <ns13:productType>
+                                                                    <xsl:value-of select="ns13:productType"/>
+                                                                </ns13:productType>
+                                                            </xsl:if>
+                                                            <xsl:if test="ns13:productSubType">
+                                                                <ns13:productSubType>
+                                                                    <xsl:value-of select="ns13:productSubType"/>
+                                                                </ns13:productSubType>
+                                                            </xsl:if>
+                                                            <xsl:if test="ns13:parentProductcode">
+                                                                <ns13:parentProductcode>
+                                                                    <xsl:value-of select="ns13:parentProductcode"/>
+                                                                </ns13:parentProductcode>
+                                                            </xsl:if>
+                                                        </ns13:CRMProductCode>
+                                                    </xsl:for-each>
+                                                    <xsl:for-each select="ns13:BillingProductCode">
+                                                        <ns13:BillingProductCode>
+                                                            <xsl:if test="ns13:RatePlanCode">
+                                                                <ns13:RatePlanCode>
+                                                                    <xsl:value-of select="ns13:RatePlanCode"/>
+                                                                </ns13:RatePlanCode>
+                                                            </xsl:if>
+                                                            <xsl:if test="ns13:ServicePackageCode">
+                                                                <ns13:ServicePackageCode>
+                                                                    <xsl:value-of select="ns13:ServicePackageCode"/>
+                                                                </ns13:ServicePackageCode>
+                                                            </xsl:if>
+                                                            <xsl:if test="ns13:ServiceCode">
+                                                                <ns13:ServiceCode>
+                                                                    <xsl:value-of select="ns13:ServiceCode"/>
+                                                                </ns13:ServiceCode>
+                                                            </xsl:if>
+                                                        </ns13:BillingProductCode>
+                                                    </xsl:for-each>
+                                                    <xsl:for-each select="ns13:ChargingProductCode">
+                                                        <ns13:ChargingProductCode>
+                                                            <ns13:serviceClass>
+                                                                <xsl:value-of select="ns13:serviceClass"/>
+                                                            </ns13:serviceClass>
+                                                            <ns13:ServiceClassName>
+                                                                <xsl:value-of select="ns13:ServiceClassName"/>
+                                                            </ns13:ServiceClassName>
+                                                        </ns13:ChargingProductCode>
+                                                    </xsl:for-each>
+                                                </ns13:ProductCodes>
+                                            </xsl:for-each>
+                                            <xsl:if test="ns13:description">
+                                                <ns13:description>
+                                                    <xsl:value-of select="ns13:description"/>
+                                                </ns13:description>
+                                            </xsl:if>
+                                            <xsl:if test="ns13:productType">
+                                                <ns13:productType>
+                                                    <xsl:value-of select="ns13:productType"/>
+                                                </ns13:productType>
+                                            </xsl:if>
+                                            <xsl:if test="ns13:productPaymentType">
+                                                <ns13:productPaymentType>
+                                                    <xsl:value-of select="ns13:productPaymentType"/>
+                                                </ns13:productPaymentType>
+                                            </xsl:if>
+                                            <xsl:if test="ns13:status">
+                                                <ns13:status>
+                                                    <xsl:value-of select="ns13:status"/>
+                                                </ns13:status>
+                                            </xsl:if>
+                                            <xsl:for-each select="ns13:validFor">
+                                                <ns13:validFor>
+                                                    <xsl:if test="ns9:endDateTime">
+                                                        <ns9:endDateTime>
+                                                            <xsl:value-of select="ns9:endDateTime"/>
+                                                        </ns9:endDateTime>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns9:startDateTime">
+                                                        <ns9:startDateTime>
+                                                            <xsl:value-of select="ns9:startDateTime"/>
+                                                        </ns9:startDateTime>
+                                                    </xsl:if>
+                                                </ns13:validFor>
+                                            </xsl:for-each>
+                                            <xsl:if test="ns13:isChargeable">
+                                                <ns13:isChargeable>
+                                                    <xsl:value-of select="ns13:isChargeable"/>
+                                                </ns13:isChargeable>
+                                            </xsl:if>
+                                            <xsl:if test="ns13:price">
+                                                <ns13:price>
+                                                    <xsl:value-of select="ns13:price"/>
+                                                </ns13:price>
+                                            </xsl:if>
+                                            <xsl:if test="ns13:tax">
+                                                <ns13:tax>
+                                                    <xsl:value-of select="ns13:tax"/>
+                                                </ns13:tax>
+                                            </xsl:if>
+                                            <xsl:if test="pfx5:actionCode">
+                                                <pfx5:actionCode>
+                                                    <xsl:value-of select="pfx5:actionCode"/>
+                                                </pfx5:actionCode>
+                                            </xsl:if>
+                                        </pfx5:Product>
+                                    </xsl:for-each>
+                                    <xsl:if test="pfx5:CRMIntegrationID">
+                                        <pfx5:CRMIntegrationID>
+                                            <xsl:value-of select="pfx5:CRMIntegrationID"/>
+                                        </pfx5:CRMIntegrationID>
+                                    </xsl:if>
+                                    <xsl:if test="pfx5:reasonCode">
+                                        <pfx5:reasonCode>
+                                            <xsl:value-of select="pfx5:reasonCode"/>
+                                        </pfx5:reasonCode>
+                                    </xsl:if>
+                                    <xsl:if test="pfx5:refundFlag">
+                                        <pfx5:refundFlag>
+                                            <xsl:value-of select="pfx5:refundFlag"/>
+                                        </pfx5:refundFlag>
+                                    </xsl:if>
+                                    <xsl:if test="pfx5:upfrontFlag">
+                                        <pfx5:upfrontFlag>
+                                            <xsl:value-of select="pfx5:upfrontFlag"/>
+                                        </pfx5:upfrontFlag>
+                                    </xsl:if>
+                                    <xsl:if test="pfx5:isPriceOverride">
+                                        <pfx5:isPriceOverride>
+                                            <xsl:value-of select="pfx5:isPriceOverride"/>
+                                        </pfx5:isPriceOverride>
+                                    </xsl:if>
+                                    <xsl:for-each select="pfx5:ListOfServiceParameters">
+                                        <pfx5:ListOfServiceParameters>
+                                            <xsl:for-each select="pfx5:ServiceParameters">
+                                                <pfx5:ServiceParameters>
+                                                    <xsl:if test="pfx5:ActionCode">
+                                                        <pfx5:ActionCode>
+                                                            <xsl:value-of select="pfx5:ActionCode"/>
+                                                        </pfx5:ActionCode>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx5:Name">
+                                                        <pfx5:Name>
+                                                            <xsl:value-of select="pfx5:Name"/>
+                                                        </pfx5:Name>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx5:Value">
+                                                        <pfx5:Value>
+                                                            <xsl:value-of select="pfx5:Value"/>
+                                                        </pfx5:Value>
+                                                    </xsl:if>
+                                                    <xsl:if test="pfx5:OldValue">
+                                                        <pfx5:OldValue>
+                                                            <xsl:value-of select="pfx5:OldValue"/>
+                                                        </pfx5:OldValue>
+                                                    </xsl:if>
+                                                </pfx5:ServiceParameters>
+                                            </xsl:for-each>
+                                        </pfx5:ListOfServiceParameters>
+                                    </xsl:for-each>
+                                    <xsl:if test="pfx5:ChangeReason">
+                                        <pfx5:ChangeReason>
+                                            <xsl:value-of select="pfx5:ChangeReason"/>
+                                        </pfx5:ChangeReason>
+                                    </xsl:if>
+                                    <xsl:for-each select="ns10:BillingContract">
+                                        <ns10:BillingContract>
+                                            <ns10:MSISDN>
+                                                <xsl:value-of select="ns10:MSISDN"/>
+                                            </ns10:MSISDN>
+                                            <xsl:for-each select="ns10:IndividualName">
+                                                <ns10:IndividualName>
+                                                    <xsl:if test="ns10:AristocraticTitle">
+                                                        <ns10:AristocraticTitle>
+                                                            <xsl:value-of select="ns10:AristocraticTitle"/>
+                                                        </ns10:AristocraticTitle>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:ArabicAristocraticTitle">
+                                                        <ns10:ArabicAristocraticTitle>
+                                                            <xsl:value-of select="ns10:ArabicAristocraticTitle"/>
+                                                        </ns10:ArabicAristocraticTitle>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:familyNamePrefix">
+                                                        <ns10:familyNamePrefix>
+                                                            <xsl:value-of select="ns10:familyNamePrefix"/>
+                                                        </ns10:familyNamePrefix>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:familyNames">
+                                                        <ns10:familyNames>
+                                                            <xsl:value-of select="ns10:familyNames"/>
+                                                        </ns10:familyNames>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:formattedName">
+                                                        <ns10:formattedName>
+                                                            <xsl:value-of select="ns10:formattedName"/>
+                                                        </ns10:formattedName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:formOfAddress">
+                                                        <ns10:formOfAddress>
+                                                            <xsl:value-of select="ns10:formOfAddress"/>
+                                                        </ns10:formOfAddress>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:fullName">
+                                                        <ns10:fullName>
+                                                            <xsl:value-of select="ns10:fullName"/>
+                                                        </ns10:fullName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:ArabicFullName">
+                                                        <ns10:ArabicFullName>
+                                                            <xsl:value-of select="ns10:ArabicFullName"/>
+                                                        </ns10:ArabicFullName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:givenNames">
+                                                        <ns10:givenNames>
+                                                            <xsl:value-of select="ns10:givenNames"/>
+                                                        </ns10:givenNames>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:legalName">
+                                                        <ns10:legalName>
+                                                            <xsl:value-of select="ns10:legalName"/>
+                                                        </ns10:legalName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:FirstName">
+                                                        <ns10:FirstName>
+                                                            <xsl:value-of select="ns10:FirstName"/>
+                                                        </ns10:FirstName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:SecondName">
+                                                        <ns10:SecondName>
+                                                            <xsl:value-of select="ns10:SecondName"/>
+                                                        </ns10:SecondName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:ThirdName">
+                                                        <ns10:ThirdName>
+                                                            <xsl:value-of select="ns10:ThirdName"/>
+                                                        </ns10:ThirdName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:ArabicFirstName">
+                                                        <ns10:ArabicFirstName>
+                                                            <xsl:value-of select="ns10:ArabicFirstName"/>
+                                                        </ns10:ArabicFirstName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:ArabicSecondName">
+                                                        <ns10:ArabicSecondName>
+                                                            <xsl:value-of select="ns10:ArabicSecondName"/>
+                                                        </ns10:ArabicSecondName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:ArabicThirdName">
+                                                        <ns10:ArabicThirdName>
+                                                            <xsl:value-of select="ns10:ArabicThirdName"/>
+                                                        </ns10:ArabicThirdName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:preferredName">
+                                                        <ns10:preferredName>
+                                                            <xsl:value-of select="ns10:preferredName"/>
+                                                        </ns10:preferredName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:SponsorName">
+                                                        <ns10:SponsorName>
+                                                            <xsl:value-of select="ns10:SponsorName"/>
+                                                        </ns10:SponsorName>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns10:Behaviors">
+                                                        <ns10:Behaviors>
+                                                            <xsl:value-of select="ns10:Behaviors"/>
+                                                        </ns10:Behaviors>
+                                                    </xsl:if>
+                                                </ns10:IndividualName>
+                                            </xsl:for-each>
+                                            <xsl:if test="ns10:CRMBillingProfileID">
+                                                <ns10:CRMBillingProfileID>
+                                                    <xsl:value-of select="ns10:CRMBillingProfileID"/>
+                                                </ns10:CRMBillingProfileID>
+                                            </xsl:if>
+                                            <ns10:BillingContractID>
+                                                <xsl:value-of select="ns10:BillingContractID"/>
+                                            </ns10:BillingContractID>
+                                            <xsl:if test="ns10:contractType">
+                                                <ns10:contractType>
+                                                    <xsl:value-of select="ns10:contractType"/>
+                                                </ns10:contractType>
+                                            </xsl:if>
+                                            <ns10:lineType>
+                                                <xsl:value-of select="ns10:lineType"/>
+                                            </ns10:lineType>
+                                            <xsl:for-each select="ns10:ContractPeriod">
+                                                <ns10:ContractPeriod>
+                                                    <xsl:if test="ns9:endDateTime">
+                                                        <ns9:endDateTime>
+                                                            <xsl:value-of select="ns9:endDateTime"/>
+                                                        </ns9:endDateTime>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns9:startDateTime">
+                                                        <ns9:startDateTime>
+                                                            <xsl:value-of select="ns9:startDateTime"/>
+                                                        </ns9:startDateTime>
+                                                    </xsl:if>
+                                                </ns10:ContractPeriod>
+                                            </xsl:for-each>
+                                            <xsl:for-each select="ns9:Language">
+                                                <ns9:Language>
+                                                    <xsl:if test="ns9:LanguageCode">
+                                                        <ns9:LanguageCode>
+                                                            <xsl:value-of select="ns9:LanguageCode"/>
+                                                        </ns9:LanguageCode>
+                                                    </xsl:if>
+                                                    <xsl:if test="ns9:strLanguage">
+                                                        <ns9:strLanguage>
+                                                            <xsl:value-of select="ns9:strLanguage"/>
+                                                        </ns9:strLanguage>
+                                                    </xsl:if>
+                                                </ns9:Language>
+                                            </xsl:for-each>
+                                            <xsl:if test="ns10:SDPID">
+                                                <ns10:SDPID>
+                                                    <xsl:value-of select="ns10:SDPID"/>
+                                                </ns10:SDPID>
+                                            </xsl:if>
+                                            <xsl:if test="ns10:Status">
+                                                <ns10:Status>
+                                                    <xsl:value-of select="ns10:Status"/>
+                                                </ns10:Status>
+                                            </xsl:if>
+                                            <xsl:for-each select="ns10:SpendLimit">
+                                                <ns10:SpendLimit>
+                                                    <xsl:for-each select="ns9:Money">
+                                                        <ns9:Money>
+                                                            <xsl:if test="ns9:amount">
+                                                                <ns9:amount>
+                                                                    <xsl:value-of select="ns9:amount"/>
+                                                                </ns9:amount>
+                                                            </xsl:if>
+                                                            <xsl:if test="ns9:units">
+                                                                <ns9:units>
+                                                                    <xsl:value-of select="ns9:units"/>
+                                                                </ns9:units>
+                                                            </xsl:if>
+                                                        </ns9:Money>
+                                                    </xsl:for-each>
+                                                </ns10:SpendLimit>
+                                            </xsl:for-each>
+                                            <xsl:for-each select="ns10:CreditLimit">
+                                                <ns10:CreditLimit>
+                                                    <xsl:for-each select="ns9:Money">
+                                                        <ns9:Money>
+                                                            <xsl:if test="ns9:amount">
+                                                                <ns9:amount>
+                                                                    <xsl:value-of select="ns9:amount"/>
+                                                                </ns9:amount>
+                                                            </xsl:if>
+                                                            <xsl:if test="ns9:units">
+                                                                <ns9:units>
+                                                                    <xsl:value-of select="ns9:units"/>
+                                                                </ns9:units>
+                                                            </xsl:if>
+                                                        </ns9:Money>
+                                                    </xsl:for-each>
+                                                </ns10:CreditLimit>
+                                            </xsl:for-each>
+                                            <xsl:if test="ns10:salesPromotionFlag">
+                                                <ns10:salesPromotionFlag>
+                                                    <xsl:value-of select="ns10:salesPromotionFlag"/>
+                                                </ns10:salesPromotionFlag>
+                                            </xsl:if>
+                                            <xsl:if test="ns10:callDetailsFlag">
+                                                <ns10:callDetailsFlag>
+                                                    <xsl:value-of select="ns10:callDetailsFlag"/>
+                                                </ns10:callDetailsFlag>
+                                            </xsl:if>
+                                        </ns10:BillingContract>
+                                    </xsl:for-each>
+                                    <xsl:for-each select="pfx5:OldResource">
+                                        <pfx5:OldResource>
+                                            <xsl:if test="ns9:MSISDN">
+                                                <ns9:MSISDN>
+                                                    <xsl:value-of select="ns9:MSISDN"/>
+                                                </ns9:MSISDN>
+                                            </xsl:if>
+                                            <xsl:if test="ns9:IMSI">
+                                                <ns9:IMSI>
+                                                    <xsl:value-of select="ns9:IMSI"/>
+                                                </ns9:IMSI>
+                                            </xsl:if>
+                                            <xsl:if test="ns9:SIMSerialNumber">
+                                                <ns9:SIMSerialNumber>
+                                                    <xsl:value-of select="ns9:SIMSerialNumber"/>
+                                                </ns9:SIMSerialNumber>
+                                            </xsl:if>
+                                        </pfx5:OldResource>
+                                    </xsl:for-each>
+                                    <xsl:for-each select="pfx5:NewResource">
+                                        <pfx5:NewResource>
+                                            <xsl:if test="ns9:MSISDN">
+                                                <ns9:MSISDN>
+                                                    <xsl:value-of select="ns9:MSISDN"/>
+                                                </ns9:MSISDN>
+                                            </xsl:if>
+                                            <xsl:if test="ns9:IMSI">
+                                                <ns9:IMSI>
+                                                    <xsl:value-of select="ns9:IMSI"/>
+                                                </ns9:IMSI>
+                                            </xsl:if>
+                                            <xsl:if test="ns9:SIMSerialNumber">
+                                                <ns9:SIMSerialNumber>
+                                                    <xsl:value-of select="$Call_Storage_Medium_Search/ns7:CreateOrderRes/ns4:Response/ResponseRefernces/Reference[Name='smId']/Value"/>
+                                                </ns9:SIMSerialNumber>
+                                            </xsl:if>
+                                        </pfx5:NewResource>
+                                    </xsl:for-each>
+                                </pfx5:ZainCustomerOrderItem>
+                            </xsl:for-each>
+                            <xsl:copy-of select="ns11:ZainCustomerPayment"/>
+                            <xsl:copy-of select="ns11:ZainInstallment"/>
+                        </pfx5:ZainCustomerOrder>
+                    </xsl:for-each>
+                </pfx6:CustomerOrderModifyRequest>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                    <StartTimeStamp>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply to JMS Message">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>857</pd:x>
+        <pd:y>131</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns3:ActivityInput>
+                <OtherProperties>
+                    <TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TransactionID>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID">
+                        <ReplyToEngineID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID"/>
+                        </ReplyToEngineID>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName">
+                        <ReplyToDeploymentName>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName"/>
+                        </ReplyToDeploymentName>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                        <StartTimeStamp>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </StartTimeStamp>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/CorrelationId">
+                        <CorrelationId>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/CorrelationId"/>
+                        </CorrelationId>
+                    </xsl:if>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionDetails">
+                        <TransactionDetails>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionDetails"/>
+                        </TransactionDetails>
+                    </xsl:if>
+                </OtherProperties>
+                <xsl:choose>
+                    <xsl:when test="exists($Call_Contract_ResourceChange)">
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($Call_Contract_ResourceChange/pfx6:CustomerOrderModifyResponse)"/>
+                        </Body>
+                    </xsl:when>
+                    <xsl:when test="exists($Call_TerminateContract)">
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($Call_TerminateContract)"/>
+                        </Body>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($Call_RatePlanChange)"/>
+                        </Body>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </ns3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSReceiverError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>85</pd:x>
+        <pd:y>257</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParsingError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>271</pd:x>
+        <pd:y>246</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonErrors/ParsingErrorCode"/>
+                </messageCode>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>183</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Modification/ContractResourceChange/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/CREATE_ORDER"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <ns22:Message>
+                        <xsl:value-of select="tib:render-xml($JMS-Queue-Receiver/ns3:ActivityOutput/Body)"/>
+                    </ns22:Message>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>697</pd:x>
+        <pd:y>120</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Modification/ContractResourceChange/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                    <xsl:if test="if($ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder[1]/pfx5:orderSubType='CHANGESIM')&#xA;then&#xA;$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:ZainCustomerOrderItem[1]/pfx5:OldResource/ns9:SIMSerialNumber&#xA;else if($ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:orderType='CHANGERATEPLAN')&#xA;then&#xA;$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:ZainCustomerOrderItem[1]/pfx5:Product/ns13:ProductCodes/ns13:BillingProductCode/ns13:RatePlanCode&#xA;else&#xA;$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:ZainCustomerOrderItem[1]/pfx5:OldResource/ns9:MSISDN">
+                        <ns22:InterfaceID>
+                            <xsl:value-of select="if($ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder[1]/pfx5:orderSubType='CHANGESIM')&#xA;then&#xA;$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:ZainCustomerOrderItem[1]/pfx5:OldResource/ns9:SIMSerialNumber&#xA;else if($ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:orderType='CHANGERATEPLAN')&#xA;then&#xA;$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:ZainCustomerOrderItem[1]/pfx5:Product/ns13:ProductCodes/ns13:BillingProductCode/ns13:RatePlanCode&#xA;else&#xA;$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:ZainCustomerOrderItem[1]/pfx5:OldResource/ns9:MSISDN"/>
+                        </ns22:InterfaceID>
+                    </xsl:if>
+                    <xsl:choose>
+                        <xsl:when test="exists($Call_Contract_ResourceChange)">
+                            <ns22:Message>
+                                <xsl:value-of select="tib:render-xml($Call_Contract_ResourceChange)"/>
+                            </ns22:Message>
+                        </xsl:when>
+                        <xsl:when test="exists($Call_TerminateContract)">
+                            <ns22:Message>
+                                <xsl:value-of select="tib:render-xml($Call_TerminateContract)"/>
+                            </ns22:Message>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <ns22:Message>
+                                <xsl:value-of select="tib:render-xml($Call_RatePlanChange)"/>
+                            </ns22:Message>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>166</pd:x>
+        <pd:y>365</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>296</pd:x>
+        <pd:y>366</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ExceptionRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Modification/ContractResourceChange/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                        <ns22:TransactionID>
+                            <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                        </ns22:TransactionID>
+                    </xsl:if>
+                </ns22:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+                <xsl:if test="$_error/ns2:ErrorReport/StackTrace">
+                    <StackTrace>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                    </StackTrace>
+                </xsl:if>
+            </pfx2:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CLE_to_CDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>431</pd:x>
+        <pd:y>370</pd:y>
+        <config>
+            <element ref="pfx6:CustomerOrderModifyResponse"/>
+        </config>
+        <pd:inputBindings>
+            <pfx6:CustomerOrderModifyResponse>
+                <ns9:Response>
+                    <ns9:ResponseCode>
+                        <xsl:value-of select="$ErrorHandler/pfx2:ExceptionRequest/ExceptionCode"/>
+                    </ns9:ResponseCode>
+                    <xsl:if test="$ErrorHandler/pfx2:ExceptionRequest/StackTrace">
+                        <ns9:ResponseDescription>
+                            <xsl:value-of select="$ErrorHandler/pfx2:ExceptionRequest/StackTrace"/>
+                        </ns9:ResponseDescription>
+                    </xsl:if>
+                </ns9:Response>
+            </pfx6:CustomerOrderModifyResponse>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SendErrorReplyToJMS">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>606</pd:x>
+        <pd:y>369</pd:y>
+        <config>
+            <processName>/CommonProcesses/HelperProcesses/Common_EAI_EMSSender.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <MessageBody>
+                    <xsl:value-of select="tib:render-xml($CLE_to_CDM/pfx6:CustomerOrderModifyResponse)"/>
+                </MessageBody>
+                <TransactionID>
+                    <xsl:value-of select="$ErrorHandler/pfx2:ExceptionRequest/ns22:Header/ns22:TransactionID"/>
+                </TransactionID>
+                <EMS_DestinationQueue>
+                    <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/JMSHeaders/ns3:JMSReplyTo"/>
+                </EMS_DestinationQueue>
+                <TransactionDomain>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                </TransactionDomain>
+                <TransactionType>
+                    <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                </TransactionType>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID">
+                    <ReplyToEngineID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToEngineID"/>
+                    </ReplyToEngineID>
+                </xsl:if>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName">
+                    <ReplyToDeployment>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/ReplyToDeploymentName"/>
+                    </ReplyToDeployment>
+                </xsl:if>
+                <StartTimeStamp>
+                    <xsl:value-of select="if(exists($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>766</pd:x>
+        <pd:y>365</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns22:Header>
+                    <ns22:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns22:ApplicationID>
+                    <ns22:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/Modification/ContractResourceChange/ComponentName"/>
+                    </ns22:ComponentName>
+                    <ns22:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns22:Hostname>
+                    <ns22:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns22:Timestamp>
+                    <ns22:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFICATION"/>
+                    </ns22:TransactionDomain>
+                    <ns22:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns2:ProcessContext/ProcessId))"/>
+                    </ns22:TransactionType>
+                    <ns22:TransactionID>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </ns22:TransactionID>
+                </ns22:Header>
+                <TimeDuration>
+                    <xsl:value-of select="tib:timestamp()-$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                </TimeDuration>
+                <xsl:if test="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError">
+                    <Category>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                    </Category>
+                </xsl:if>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>598</pd:x>
+        <pd:y>495</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns6:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns2:ErrorReport/StackTrace"/>
+                </message>
+                <xsl:if test="$_error/ns2:ErrorReport/MsgCode">
+                    <msgCode>
+                        <xsl:value-of select="$_error/ns2:ErrorReport/MsgCode"/>
+                    </msgCode>
+                </xsl:if>
+            </ns6:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorNoResId">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>669</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:if test="$Call_Storage_Medium_Search/ns7:CreateOrderRes/ns4:Response/ResponseDescription">
+                    <message>
+                        <xsl:value-of select="$Call_Storage_Medium_Search/ns7:CreateOrderRes/ns4:Response/ResponseDescription"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$Call_Storage_Medium_Search/ns7:CreateOrderRes/ns4:Response/ResponseCode">
+                    <messageCode>
+                        <xsl:value-of select="$Call_Storage_Medium_Search/ns7:CreateOrderRes/ns4:Response/ResponseCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_RatePlanChange">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>473</pd:x>
+        <pd:y>199</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Modification/ContractResourceChange/HelperProcess/ESI_BSCS_RatePlanChange.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx6:CustomerOrderModifyRequest>
+                    <xsl:copy-of select="$ParseRequest/pfx6:CustomerOrderModifyRequest/ns9:Header"/>
+                    <xsl:copy-of select="$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder"/>
+                </pfx6:CustomerOrderModifyRequest>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                    <StartTimeStamp>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_TerminateContract">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>483</pd:x>
+        <pd:y>306</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Modification/ContractResourceChange/HelperProcess/ESI_BSCS_TerminateContract.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <xsl:copy-of select="$ParseRequest/pfx6:CustomerOrderModifyRequest"/>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID">
+                    <TrackingId>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/TransactionID"/>
+                    </TrackingId>
+                </xsl:if>
+                <xsl:if test="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp">
+                    <StartTimeStamp>
+                        <xsl:value-of select="$JMS-Queue-Receiver/ns3:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                    </StartTimeStamp>
+                </xsl:if>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseRequest</pd:from>
+        <pd:to>Call_Storage_Medium_Search</pd:to>
+        <pd:xpathDescription>for SIM change</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:orderSubType='CHANGESIM'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply to JMS Message</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>JMSReceiverError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseRequest</pd:from>
+        <pd:to>ParsingError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>ParseRequest</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>Reply to JMS Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>CLE_to_CDM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_to_CDM</pd:from>
+        <pd:to>SendErrorReplyToJMS</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SendErrorReplyToJMS</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_to_CDM</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SendErrorReplyToJMS</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65536</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_Storage_Medium_Search</pd:from>
+        <pd:to>Call_Contract_ResourceChange</pd:to>
+        <pd:xpathDescription>ResId exists</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>exists($Call_Storage_Medium_Search/ns7:CreateOrderRes/ns4:Response/ResponseRefernces/Reference[1]/Value) 
+and string-length($Call_Storage_Medium_Search/ns7:CreateOrderRes/ns4:Response/ResponseRefernces/Reference[1]/Value)&gt;0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_Contract_ResourceChange</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_Storage_Medium_Search</pd:from>
+        <pd:to>ErrorNoResId</pd:to>
+        <pd:xpathDescription>NoResId</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-3407872</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseRequest</pd:from>
+        <pd:to>Call_Contract_ResourceChange</pd:to>
+        <pd:xpathDescription>MSISDNChange</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseRequest</pd:from>
+        <pd:to>Call_RatePlanChange</pd:to>
+        <pd:xpathDescription>ChangeRatePlan</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:orderType='CHANGERATEPLAN'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_RatePlanChange</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseRequest</pd:from>
+        <pd:to>Call_TerminateContract</pd:to>
+        <pd:xpathDescription>ContractTerminate</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:orderType='TERMINATE' or
+$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:orderType='SUSPEND' or
+$ParseRequest/pfx6:CustomerOrderModifyRequest/pfx5:ZainCustomerOrder/pfx5:orderType='RESUME'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_TerminateContract</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

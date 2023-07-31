@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://xmlns.tibco.com/encodings/mime" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <pd:name>Eserv/Process Definition.process</pd:name>
+    <pd:startName>HTTP Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="HTTP Receiver">
+        <pd:type>com.tibco.plugin.http.HTTPEventSource</pd:type>
+        <pd:resourceType>httppalette.httpEventSource</pd:resourceType>
+        <pd:x>157</pd:x>
+        <pd:y>69</pd:y>
+        <config>
+            <outputMode>String</outputMode>
+            <defaultEncoding>ISO8859_1</defaultEncoding>
+            <inputOutputVersion>5.3.0</inputOutputVersion>
+            <newMimeSupport>true</newMimeSupport>
+            <sharedChannel>/Eserv/EservStubConnection.sharedhttp</sharedChannel>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Accept" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Charset" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Accept-Encoding" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Length" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Connection" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>704</pd:endX>
+    <pd:endY>75</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1461840111635</pd:targetNamespace>
+    <pd:activity name="Send HTTP Response">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>418</pd:x>
+        <pd:y>72</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <xsl:choose>
+                    <xsl:when test="contains($HTTP-Receiver/ProcessStarterOutput/PostData,&quot; &lt;soapenv:Body>&#xA;      &lt;soap:openSession>&#xA;         &lt;userName>Ericsson&lt;/userName>&#xA;         &lt;password>Ericsson&lt;/password>&#xA;&quot;)">
+                        <asciiContent>
+                            <xsl:value-of select="'&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://soaptopupsuite.eservglobal.com/&quot;>   &lt;soapenv:Header/>   &lt;soapenv:Body>      &lt;soap:openSessionResponse>         &lt;session>            &lt;!--Optional:-->            &lt;actorId>2815&lt;/actorId>            &lt;!--Optional:-->            &lt;language>eng-GB&lt;/language>            &lt;!--Optional:-->            &lt;sessionId>117443&lt;/sessionId>         &lt;/session>      &lt;/soap:openSessionResponse>   &lt;/soapenv:Body>&lt;/soapenv:Envelope>'"/>
+                        </asciiContent>
+                    </xsl:when>
+                    <xsl:when test="contains($HTTP-Receiver/ProcessStarterOutput/PostData,&quot;&lt;soap:voucherOnDemand>&quot;)">
+                        <asciiContent>
+                            <xsl:value-of select="'&lt;env:Envelope xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;>&#xA;   &lt;env:Header/>&#xA;   &lt;env:Body>&#xA;      &lt;soap:voucherOnDemandResponse xmlns:soap=&quot;http://soaptopupsuite.eservglobal.com/&quot;>&#xA;         &lt;voucherInfo>&#xA;            &lt;activationDate/>&#xA;            &lt;creationDate>1461581233954&lt;/creationDate>&#xA;            &lt;deliveryDate/>&#xA;            &lt;denominationValue>500000&lt;/denominationValue>&#xA;            &lt;expiryDate>1462445233946&lt;/expiryDate>&#xA;            &lt;externalSerialNumber>88749604015992&lt;/externalSerialNumber>&#xA;            &lt;inventoryPacketId/>&#xA;            &lt;inventorySerialNumber/>&#xA;            &lt;isoCurrencyUnitId>1&lt;/isoCurrencyUnitId>&#xA;            &lt;lastUpdate/>&#xA;            &lt;lockedDate/>&#xA;            &lt;multiHrnQuality/>&#xA;            &lt;producedDate/>&#xA;            &lt;retailerId>0&lt;/retailerId>&#xA;            &lt;scenarioId/>&#xA;            &lt;serialNumber>20758466&lt;/serialNumber>&#xA;            &lt;state/>&#xA;            &lt;voucherCategoryId>143&lt;/voucherCategoryId>&#xA;            &lt;voucherCategoryName>Voucher On Demand 5 KD&lt;/voucherCategoryName>&#xA;            &lt;voucherClass>811&lt;/voucherClass>&#xA;            &lt;voucherRechargeInfoList>&#xA;               &lt;voucherRechargeInfo>&#xA;                  &lt;externalSerialNumber>88749604015992&lt;/externalSerialNumber>&#xA;                  &lt;hrn>88749604015992&lt;/hrn>&#xA;                  &lt;lastUpdate/>&#xA;                  &lt;rechargeMode/>&#xA;                  &lt;serialNumber>20758466&lt;/serialNumber>&#xA;                  &lt;state/>&#xA;                  &lt;subscriberMSISDN/>&#xA;               &lt;/voucherRechargeInfo>&#xA;            &lt;/voucherRechargeInfoList>&#xA;         &lt;/voucherInfo>&#xA;      &lt;/soap:voucherOnDemandResponse>&#xA;   &lt;/env:Body>&#xA;&lt;/env:Envelope>'"/>
+                        </asciiContent>
+                    </xsl:when>
+                    <xsl:when test="contains($HTTP-Receiver/ProcessStarterOutput/PostData,&quot;&lt;soap:getVoucherInfo>&quot;)">
+                        <asciiContent>
+                            <xsl:value-of select="'&lt;env:Envelope xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;>&#xA;   &lt;env:Header/>&#xA;   &lt;env:Body>&#xA;      &lt;soap:getVoucherInfoResponse xmlns:soap=&quot;http://soaptopupsuite.eservglobal.com/&quot;>&#xA;         &lt;voucherInfo>&#xA;            &lt;activationDate>1462176310852&lt;/activationDate>&#xA;            &lt;creationDate>1462176310852&lt;/creationDate>&#xA;            &lt;deliveryDate/>&#xA;            &lt;denominationValue>500000&lt;/denominationValue>&#xA;            &lt;expiryDate>1463040310843&lt;/expiryDate>&#xA;            &lt;externalSerialNumber>02899475491099&lt;/externalSerialNumber>&#xA;            &lt;inventoryPacketId/>&#xA;            &lt;inventorySerialNumber/>&#xA;            &lt;isoCurrencyUnitId>1&lt;/isoCurrencyUnitId>&#xA;            &lt;lastUpdate>1462176310852&lt;/lastUpdate>&#xA;            &lt;lockedDate/>&#xA;            &lt;multiHrnQuality>12&lt;/multiHrnQuality>&#xA;            &lt;producedDate/>&#xA;            &lt;retailerId>0&lt;/retailerId>&#xA;            &lt;scenarioId>143&lt;/scenarioId>&#xA;            &lt;scenarioName>Voucher On Demand 5 KD&lt;/scenarioName>&#xA;            &lt;scenarioNumber>1&lt;/scenarioNumber>&#xA;            &lt;serialNumber>20758487&lt;/serialNumber>&#xA;            &lt;state>68&lt;/state>&#xA;            &lt;voucherCategoryId>143&lt;/voucherCategoryId>&#xA;            &lt;voucherCategoryName>Voucher On Demand 5 KD&lt;/voucherCategoryName>&#xA;            &lt;voucherClass>811&lt;/voucherClass>&#xA;            &lt;voucherRechargeInfoList>&#xA;               &lt;voucherRechargeInfo>&#xA;                  &lt;externalSerialNumber>02899475491099&lt;/externalSerialNumber>&#xA;                  &lt;lastUpdate>1462176310852&lt;/lastUpdate>&#xA;                  &lt;rechargeMode/>&#xA;                  &lt;serialNumber>20758487&lt;/serialNumber>&#xA;                  &lt;state>68&lt;/state>&#xA;                  &lt;subscriberMSISDN/>&#xA;               &lt;/voucherRechargeInfo>&#xA;            &lt;/voucherRechargeInfoList>&#xA;         &lt;/voucherInfo>&#xA;      &lt;/soap:getVoucherInfoResponse>&#xA;   &lt;/env:Body>&#xA;&lt;/env:Envelope>'"/>
+                        </asciiContent>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <asciiContent>
+                            <xsl:value-of select="'&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:soap=&quot;http://soaptopupsuite.eservglobal.com/&quot;>   &lt;soapenv:Header/>   &lt;soapenv:Body>      &lt;soap:openSessionResponse>         &lt;session>            &lt;!--Optional:-->            &lt;actorId>2815&lt;/actorId>            &lt;!--Optional:-->            &lt;language>eng-GB&lt;/language>            &lt;!--Optional:-->            &lt;sessionId>117443&lt;/sessionId>         &lt;/session>      &lt;/soap:openSessionResponse>   &lt;/soapenv:Body>&lt;/soapenv:Envelope>'"/>
+                        </asciiContent>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <Headers>
+                    <Content-Type>
+                        <xsl:value-of select="&quot;text/xml;charset=UTF-8&quot;"/>
+                    </Content-Type>
+                    <xsl:if test="$HTTP-Receiver/ProcessStarterOutput/Headers/Pragma">
+                        <Pragma>
+                            <xsl:value-of select="$HTTP-Receiver/ProcessStarterOutput/Headers/Pragma"/>
+                        </Pragma>
+                    </xsl:if>
+                </Headers>
+                <xsl:copy-of select="$HTTP-Receiver/ProcessStarterOutput/DynamicHeaders"/>
+                <xsl:copy-of select="$HTTP-Receiver/ProcessStarterOutput/ns:mimeEnvelopeElement"/>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send-HTTP-Response-1">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>422</pd:x>
+        <pd:y>156</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <asciiContent>
+                    <xsl:value-of select="'&lt;env:Envelope xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;>&#xA;   &lt;env:Header/>&#xA;   &lt;env:Body>&#xA;      &lt;soap:voucherOnDemandResponse xmlns:soap=&quot;http://soaptopupsuite.eservglobal.com/&quot;>&#xA;         &lt;voucherInfo>&#xA;            &lt;activationDate/>&#xA;            &lt;creationDate>1461581233954&lt;/creationDate>&#xA;            &lt;deliveryDate/>&#xA;            &lt;denominationValue>500000&lt;/denominationValue>&#xA;            &lt;expiryDate>1462445233946&lt;/expiryDate>&#xA;            &lt;externalSerialNumber>88749604015992&lt;/externalSerialNumber>&#xA;            &lt;inventoryPacketId/>&#xA;            &lt;inventorySerialNumber/>&#xA;            &lt;isoCurrencyUnitId>1&lt;/isoCurrencyUnitId>&#xA;            &lt;lastUpdate/>&#xA;            &lt;lockedDate/>&#xA;            &lt;multiHrnQuality/>&#xA;            &lt;producedDate/>&#xA;            &lt;retailerId>0&lt;/retailerId>&#xA;            &lt;scenarioId/>&#xA;            &lt;serialNumber>20758466&lt;/serialNumber>&#xA;            &lt;state/>&#xA;            &lt;voucherCategoryId>143&lt;/voucherCategoryId>&#xA;            &lt;voucherCategoryName>Voucher On Demand 5 KD&lt;/voucherCategoryName>&#xA;            &lt;voucherClass>811&lt;/voucherClass>&#xA;            &lt;voucherRechargeInfoList>&#xA;               &lt;voucherRechargeInfo>&#xA;                  &lt;externalSerialNumber>88749604015992&lt;/externalSerialNumber>&#xA;                  &lt;hrn>88749604015992&lt;/hrn>&#xA;                  &lt;lastUpdate/>&#xA;                  &lt;rechargeMode/>&#xA;                  &lt;serialNumber>20758466&lt;/serialNumber>&#xA;                  &lt;state/>&#xA;                  &lt;subscriberMSISDN/>&#xA;               &lt;/voucherRechargeInfo>&#xA;            &lt;/voucherRechargeInfoList>&#xA;         &lt;/voucherInfo>&#xA;      &lt;/soap:voucherOnDemandResponse>&#xA;   &lt;/env:Body>&#xA;&lt;/env:Envelope>'"/>
+                </asciiContent>
+                <xsl:for-each select="$HTTP-Receiver/ProcessStarterOutput/Headers">
+                    <Headers>
+                        <xsl:if test="Content-Type">
+                            <Content-Type>
+                                <xsl:value-of select="Content-Type"/>
+                            </Content-Type>
+                        </xsl:if>
+                        <xsl:if test="Pragma">
+                            <Pragma>
+                                <xsl:value-of select="Pragma"/>
+                            </Pragma>
+                        </xsl:if>
+                    </Headers>
+                </xsl:for-each>
+                <xsl:copy-of select="$HTTP-Receiver/ProcessStarterOutput/DynamicHeaders"/>
+                <xsl:copy-of select="$HTTP-Receiver/ProcessStarterOutput/ns:mimeEnvelopeElement"/>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send-HTTP-Response-2">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>427</pd:x>
+        <pd:y>232</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <asciiContent>
+                    <xsl:value-of select="'&lt;env:Envelope xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;>&#xA;   &lt;env:Header/>&#xA;   &lt;env:Body>&#xA;      &lt;soap:rechargeByHRNResponse xmlns:soap=&quot;http://soaptopupsuite.eservglobal.com/&quot;>&#xA;         &lt;rechargeResult>&#xA;            &lt;status>2&lt;/status>&#xA;            &lt;transactionGlobalId>441401&lt;/transactionGlobalId>&#xA;            &lt;voucherInfo>&#xA;               &lt;activationDate>1462272891239&lt;/activationDate>&#xA;               &lt;creationDate>1462272891239&lt;/creationDate>&#xA;               &lt;deliveryDate/>&#xA;               &lt;denominationValue>500000&lt;/denominationValue>&#xA;               &lt;expiryDate>1463136891231&lt;/expiryDate>&#xA;               &lt;externalSerialNumber>03794232976093&lt;/externalSerialNumber>&#xA;               &lt;inventoryPacketId/>&#xA;               &lt;inventorySerialNumber/>&#xA;               &lt;isoCurrencyUnitId>1&lt;/isoCurrencyUnitId>&#xA;               &lt;lastUpdate>1462272912485&lt;/lastUpdate>&#xA;               &lt;lockedDate/>&#xA;               &lt;multiHrnQuality>12&lt;/multiHrnQuality>&#xA;               &lt;producedDate/>&#xA;               &lt;retailerId>0&lt;/retailerId>&#xA;               &lt;scenarioId>143&lt;/scenarioId>&#xA;               &lt;scenarioName>Voucher On Demand 5 KD&lt;/scenarioName>&#xA;               &lt;scenarioNumber>1&lt;/scenarioNumber>&#xA;               &lt;serialNumber>20758489&lt;/serialNumber>&#xA;               &lt;state>61&lt;/state>&#xA;               &lt;voucherCategoryId>143&lt;/voucherCategoryId>&#xA;               &lt;voucherCategoryName>Voucher On Demand 5 KD&lt;/voucherCategoryName>&#xA;               &lt;voucherClass>811&lt;/voucherClass>&#xA;               &lt;voucherRechargeInfoList>&#xA;                  &lt;voucherRechargeInfo>&#xA;                     &lt;externalSerialNumber>03794232976093&lt;/externalSerialNumber>&#xA;                     &lt;hrn>03794232976093&lt;/hrn>&#xA;                     &lt;lastUpdate>1462272912485&lt;/lastUpdate>&#xA;                     &lt;rechargeMode>794&lt;/rechargeMode>&#xA;                     &lt;rechargedProductList>&#xA;                        &lt;rechargedProduct>&#xA;                           &lt;beParameterList>&#xA;                              &lt;beParameter>&#xA;                                 &lt;parameterId>1627&lt;/parameterId>&#xA;                                 &lt;parameterValuesList>&#xA;                                    &lt;parameterValue>1&lt;/parameterValue>&#xA;                                 &lt;/parameterValuesList>&#xA;                              &lt;/beParameter>&#xA;                           &lt;/beParameterList>&#xA;                           &lt;bonusQuantity>0&lt;/bonusQuantity>&#xA;                           &lt;productId>1&lt;/productId>&#xA;                           &lt;quantity>50800200&lt;/quantity>&#xA;                           &lt;rechargedProductLifeCycles>&#xA;                              &lt;activePeriodDuration>4&lt;/activePeriodDuration>&#xA;                              &lt;activePeriodEndDate>1619952912384&lt;/activePeriodEndDate>&#xA;                              &lt;gracePeriodDuration>7&lt;/gracePeriodDuration>&#xA;                              &lt;gracePeriodEndDate>1620557712384&lt;/gracePeriodEndDate>&#xA;                              &lt;rechargeablePeriodDuration/>&#xA;                              &lt;rechargeablePeriodEndDate/>&#xA;                           &lt;/rechargedProductLifeCycles>&#xA;                           &lt;voucherQuantity>500000&lt;/voucherQuantity>&#xA;                        &lt;/rechargedProduct>&#xA;                     &lt;/rechargedProductList>&#xA;                     &lt;serialNumber>20758489&lt;/serialNumber>&#xA;                     &lt;state>61&lt;/state>&#xA;                     &lt;subscriberMSISDN>96598900250&lt;/subscriberMSISDN>&#xA;                  &lt;/voucherRechargeInfo>&#xA;               &lt;/voucherRechargeInfoList>&#xA;            &lt;/voucherInfo>&#xA;         &lt;/rechargeResult>&#xA;      &lt;/soap:rechargeByHRNResponse>&#xA;   &lt;/env:Body>&#xA;&lt;/env:Envelope>'"/>
+                </asciiContent>
+                <xsl:for-each select="$HTTP-Receiver/ProcessStarterOutput/Headers">
+                    <Headers>
+                        <xsl:if test="Content-Type">
+                            <Content-Type>
+                                <xsl:value-of select="Content-Type"/>
+                            </Content-Type>
+                        </xsl:if>
+                        <xsl:if test="Pragma">
+                            <Pragma>
+                                <xsl:value-of select="Pragma"/>
+                            </Pragma>
+                        </xsl:if>
+                    </Headers>
+                </xsl:for-each>
+                <xsl:copy-of select="$HTTP-Receiver/ProcessStarterOutput/DynamicHeaders"/>
+                <xsl:copy-of select="$HTTP-Receiver/ProcessStarterOutput/ns:mimeEnvelopeElement"/>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Send-HTTP-Authorize Credit">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>431</pd:x>
+        <pd:y>324</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <asciiContent>
+                    <xsl:value-of select="'&lt;soapenv:Envelope xmlns:soapenv=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot; xmlns:mas=&quot;http://mastercard.zain.com/&quot;>&#xA;   &lt;soapenv:Header/>&#xA;   &lt;soapenv:Body>&#xA;      &lt;mas:secondPartyPaymentResponse>&#xA;         &lt;!--Optional:-->&#xA;         &lt;return>&#xA;&#x9;&#x9;&#x9;&lt;ResponseCode>0&lt;/ResponseCode>&#xA;&#x9;&#x9;&#x9;&lt;Message>Success&lt;/Message>&#xA;&#x9;&#x9;&#x9;&lt;MerchantID/>&#xA;&#x9;&#x9;&#x9;&lt;MerchTxnRef/>&#xA;&#x9;&#x9;&#x9;&lt;Amount>5&lt;/Amount>&#xA;&#x9;&#x9;&#x9;&lt;ReceiptNo/>&#xA;&#x9;&#x9;&#x9;&lt;AuthorizeID/>&#xA;&#x9;&#x9;&#x9;&lt;TransactionNo/>&#xA;&#x9;&#x9;&#x9;&lt;AcqResponseCode/>&#xA;&#x9;&#x9;&#x9;&lt;CardType/>&#xA;&#x9;&#x9;&#x9;&lt;OrderInfo/>&#xA;&#x9;&#x9;&lt;/return>&#xA;      &lt;/mas:secondPartyPaymentResponse>&#xA;   &lt;/soapenv:Body>&#xA;&lt;/soapenv:Envelope>'"/>
+                </asciiContent>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SubscriberInfo">
+        <pd:type>com.tibco.plugin.http.HTTPResponseActivity</pd:type>
+        <pd:resourceType>httppalette.httpWebResponse</pd:resourceType>
+        <pd:x>433</pd:x>
+        <pd:y>426</pd:y>
+        <config>
+            <closeConnection>true</closeConnection>
+            <eventSource>HTTP Receiver</eventSource>
+            <Headers>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StatusLine" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Content-Type" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Set-Cookie" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Pragma" type="xsd:string" minOccurs="0"/>
+                            <xsd:element name="Location" type="xsd:string" minOccurs="0"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </Headers>
+        </config>
+        <pd:inputBindings>
+            <ResponseActivityInput>
+                <asciiContent>
+                    <xsl:value-of select="'&lt;env:Envelope xmlns:env=&quot;http://schemas.xmlsoap.org/soap/envelope/&quot;>&#xA;   &lt;env:Header/>&#xA;   &lt;env:Body>&#xA;      &lt;soap:getSubscriberInfoResponse xmlns:soap=&quot;http://soaptopupsuite.eservglobal.com/&quot;>&#xA;         &lt;subscriberInfo>&#xA;            &lt;commentList>&#xA;               &lt;comment>&#xA;                  &lt;type>1737&lt;/type>&#xA;                  &lt;value>TEST&lt;/value>&#xA;               &lt;/comment>&#xA;            &lt;/commentList>&#xA;            &lt;firstCall>1202488792000&lt;/firstCall>&#xA;            &lt;firstName/>&#xA;            &lt;globalState>68&lt;/globalState>&#xA;            &lt;lastCall>1464446837546&lt;/lastCall>&#xA;            &lt;lastDateRechargedKO>1464446837546&lt;/lastDateRechargedKO>&#xA;            &lt;lastDateRechargedOK>1462901596215&lt;/lastDateRechargedOK>&#xA;            &lt;lastHrnKO>85&lt;/lastHrnKO>&#xA;            &lt;lastName/>&#xA;            &lt;lastRechargeErrorCode>504&lt;/lastRechargeErrorCode>&#xA;            &lt;lastRechargeErrorLabel/>&#xA;            &lt;lastRechargeStatus>11&lt;/lastRechargeStatus>&#xA;            &lt;lastRechargedBE>2&lt;/lastRechargedBE>&#xA;            &lt;lastRechargedVoucherKO/>&#xA;            &lt;lastRechargedVoucherOK>49459263028516&lt;/lastRechargedVoucherOK>&#xA;            &lt;lastUpdate>1464446837546&lt;/lastUpdate>&#xA;            &lt;msisdn>96597326568&lt;/msisdn>&#xA;            &lt;statisticsRecharge>&#xA;               &lt;fraudByMASOList>&#xA;                  &lt;fraudByfraudByMASO>&#xA;                     &lt;aliasCategory>270&lt;/aliasCategory>&#xA;                     &lt;dailyFraud>1&lt;/dailyFraud>&#xA;                     &lt;monthlyFraud>15&lt;/monthlyFraud>&#xA;                     &lt;successiveFraud>14&lt;/successiveFraud>&#xA;                     &lt;totalNbSuspension>7&lt;/totalNbSuspension>&#xA;                  &lt;/fraudByfraudByMASO>&#xA;               &lt;/fraudByMASOList>&#xA;               &lt;nbRechargeKOsinceLastRecharge>14&lt;/nbRechargeKOsinceLastRecharge>&#xA;               &lt;totalNbRechargeKO>376&lt;/totalNbRechargeKO>&#xA;               &lt;totalNbRechargeOK>65&lt;/totalNbRechargeOK>&#xA;            &lt;/statisticsRecharge>&#xA;            &lt;subscriberProductList>&#xA;               &lt;subscriberProduct>&#xA;                  &lt;activePeriodEndDate>1620550800000&lt;/activePeriodEndDate>&#xA;                  &lt;gracePeriodEndDate>1621155600000&lt;/gracePeriodEndDate>&#xA;                  &lt;id>1&lt;/id>&#xA;                  &lt;rechargeablePeriodEndDate/>&#xA;               &lt;/subscriberProduct>&#xA;            &lt;/subscriberProductList>&#xA;            &lt;subscriberProfile/>&#xA;            &lt;suspended>false&lt;/suspended>&#xA;         &lt;/subscriberInfo>&#xA;      &lt;/soap:getSubscriberInfoResponse>&#xA;   &lt;/env:Body>&#xA;&lt;/env:Envelope>&#xA;'"/>
+                </asciiContent>
+            </ResponseActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>HTTP Receiver</pd:from>
+        <pd:to>Send HTTP Response</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send HTTP Response</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>HTTP Receiver</pd:from>
+        <pd:to>Send-HTTP-Response-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains($HTTP-Receiver/ProcessStarterOutput/PostData,'voucherOnDemand')</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send-HTTP-Response-1</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>HTTP Receiver</pd:from>
+        <pd:to>Send-HTTP-Response-2</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains($HTTP-Receiver/ProcessStarterOutput/PostData,':rechargeByHRN')</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send-HTTP-Response-2</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>HTTP Receiver</pd:from>
+        <pd:to>Send-HTTP-Authorize Credit</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains($HTTP-Receiver/ProcessStarterOutput/PostData,"secondPartyPayment")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Send-HTTP-Authorize Credit</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>HTTP Receiver</pd:from>
+        <pd:to>SubscriberInfo</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains($HTTP-Receiver/ProcessStarterOutput/PostData,"soap:getSubscriberInfo")</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SubscriberInfo</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:ns="http://www.tibco.com/xmlns/ae2xsd/2002/05/ae/FileAdapter/wire/FileAdapterConfiguration" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pfx5="http://www.tibco.com/BPI_FinMgmt/ErrRec" xmlns:pfx4="http://www.tibco.com/BPI_FinMgmt/SuccessRec" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:pfx2="http://www.zain.com/ZESB/Types/Common" xmlns:pfx8="http://www.zainkw.com/Schemas/BulkPaymentAdjustments/BulkPaymentAdjustResRec.xsd" xmlns:pfx7="http://www.zainkw.com/Schemas/BulkPaymentAdjustments/BulkPaymentAdjustReqRec.xsd" xmlns:pfx6="http://www.tibco.com/pe/SignalInActivitySchema" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns9="http://www.tibco.com/xmlns/ae2xsd/2002/05/ae/baseDocument" xmlns:ns12="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns5="www.tibco.com/plugin/java/JavaMethodActivityOutput" xmlns:ns13="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:ns6="http://www.tibco.com/xmlns/ae2xsd/2002/05/ae/FileAdapter/wire/BulkPaymentFileAdapterConfiguration" xmlns:pfx="http://xmlns.example.com/1470206323838" xmlns:ns7="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns10="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/Update/BulkPaymentAdjustment/Resources/PaymentFileSchema.xsd" xmlns:ns11="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns8="http://www.tibco.com/xmlns/ae2xsd/2002/05/ae/FileAdapter/wire/BPFileAdapterConfiguration" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.zain.com/ZESB/Services/AuthorizeCredit/Types" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="www.tibco.com/plugin/java/JavaMethodActivityInput" xmlns:ns3="http://www.tibco.com/namespaces/tnt/plugins/file" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.zain.com/ZESB/Types/Common" schemaLocation="/WSDL/External/AuthorizeCreditInbound.wsdl"/>
+    <xsd:import namespace="http://www.tibco.com/BPI_FinMgmt/SuccessRec" schemaLocation="/BusinessProcesses/Services/Update/BulkPaymentAdjustment/Resources/SuccessRecords.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/BPI_FinMgmt/ErrRec" schemaLocation="/BusinessProcesses/Services/Update/BulkPaymentAdjustment/Resources/ErrorRecordsSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/BusinessProcesses/Services/Update/BulkPaymentAdjustment/Resources/PaymentFileSchema.xsd" schemaLocation="/BusinessProcesses/Services/Update/BulkPaymentAdjustment/Resources/PaymentFileSchema.xsd"/>
+    <xsd:import namespace="http://www.zainkw.com/Schemas/BulkPaymentAdjustments/BulkPaymentAdjustReqRec.xsd" schemaLocation="/BusinessProcesses/Services/Update/BulkPaymentAdjustment/Resources/BulkPaymentAdjustReqRec.xsd"/>
+    <xsd:import namespace="http://www.zainkw.com/Schemas/BulkPaymentAdjustments/BulkPaymentAdjustResRec.xsd" schemaLocation="/BusinessProcesses/Services/Update/BulkPaymentAdjustment/Resources/BulkPaymentAdjustResRec.xsd"/>
+    <wsdl:import namespace="http://xmlns.example.com/1470206323838" location="/WSDL/External/AuthorizeCreditInbound.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Update/BulkPaymentAdjustment/Implementation/BulkPaymentAdjustmentImpl.process</pd:name>
+    <pd:startName>RecBulkPayRecord</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="RecBulkPayRecord">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>89</pd:x>
+        <pd:y>206</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Update/BulkPaymentUpdate/RequestQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1020</pd:endX>
+    <pd:endY>203</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1470121401301</pd:targetNamespace>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>313</pd:x>
+        <pd:y>406</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ESI_Call_AuthorizeCredit">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>489</pd:x>
+        <pd:y>203</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Update/BulkPaymentAdjustment/HelperProcess/ESI_Call_AuthorizeCredit.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns2:AuthorizationInput>
+                    <ns2:MerchantId>
+                        <xsl:value-of select="$_globalVariables/ns7:GlobalVariables/BusinessProcesses/Services/Update/BulkPaymentUpdate/MechantID"/>
+                    </ns2:MerchantId>
+                    <ns2:AccessCode>
+                        <xsl:value-of select="$_globalVariables/ns7:GlobalVariables/BusinessProcesses/Services/Update/BulkPaymentUpdate/AccessCode"/>
+                    </ns2:AccessCode>
+                    <ns2:Amount>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:AMOUNT"/>
+                    </ns2:Amount>
+                    <ns2:TransactionReference>
+                        <xsl:value-of select="concat($_globalVariables/ns7:GlobalVariables/BusinessProcesses/Services/Update/BulkPaymentUpdate/TRFPrefix,$GUID/GUID/TransactionID)"/>
+                    </ns2:TransactionReference>
+                    <ns2:CardDetails>
+                        <ns2:CardNumber>
+                            <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:CARDNO"/>
+                        </ns2:CardNumber>
+                        <ns2:ExpiryDate>
+                            <xsl:value-of select="concat(substring-after(&#xA;$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:CCEXPDATE,&quot;/&quot;),&#xA;substring-before($RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:CCEXPDATE,&quot;/&quot;))"/>
+                        </ns2:ExpiryDate>
+                        <xsl:if test="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:CVVNUMBER">
+                            <ns2:CVV>
+                                <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:CVVNUMBER"/>
+                            </ns2:CVV>
+                        </xsl:if>
+                    </ns2:CardDetails>
+                    <ns2:OrderInfo>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:MSISDN"/>
+                    </ns2:OrderInfo>
+                    <xsl:if test="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:MSISDN">
+                        <ns2:TicketNo>
+                            <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:MSISDN"/>
+                        </ns2:TicketNo>
+                    </xsl:if>
+                </ns2:AuthorizationInput>
+                <TrackingId>
+                    <xsl:value-of select="$GUID/GUID/TransactionID"/>
+                </TrackingId>
+                <StartTimeStamp>
+                    <xsl:value-of select="$GUID/GUID/StartTimeStamp"/>
+                </StartTimeStamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GUID">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>343</pd:x>
+        <pd:y>205</pd:y>
+        <config>
+            <processName>/CommonProcesses/Utilities/GUID.process</processName>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>561</pd:x>
+        <pd:y>405</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <pfx3:ActivityInput>
+                <message>
+                    <xsl:value-of select="concat(&quot;Error in Processing Bulk Payment:::: &quot;, &quot;Request--- > &quot; , tib:render-xml($RecBulkPayRecord/ns11:ActivityOutput/Body), &quot;Error Message ::&quot;, $_error/ns1:ErrorReport/Msg)"/>
+                </message>
+                <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                    <msgCode>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                    </msgCode>
+                </xsl:if>
+            </pfx3:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SendPaymentRecResponse">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>824</pd:x>
+        <pd:y>203</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/Update/BulkPaymentUpdate/ResponseQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings>
+            <ns11:ActivityInput>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($MapResponse/pfx8:BulkPaymentAdjustResRec)"/>
+                </Body>
+            </ns11:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GenErr">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>92</pd:x>
+        <pd:y>311</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns12:ActivityInput>
+                <message>
+                    <xsl:value-of select="concat($_error/ns1:ErrorReport/Msg,$_error/ns1:ErrorReport/StackTrace)"/>
+                </message>
+                <xsl:if test="$_error/ns1:ErrorReport/MsgCode">
+                    <messageCode>
+                        <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                    </messageCode>
+                </xsl:if>
+            </ns12:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="RecBulkPayRecordParseXML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>204</pd:x>
+        <pd:y>206</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>false</validateOutput>
+            <term ref="pfx7:BulkPaymentAdjustReqRec"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$RecBulkPayRecord/ns11:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="MapResponse">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>669</pd:x>
+        <pd:y>203</pd:y>
+        <config>
+            <element ref="pfx8:BulkPaymentAdjustResRec"/>
+        </config>
+        <pd:inputBindings>
+            <pfx8:BulkPaymentAdjustResRec>
+                <pfx8:PaymentDetailsRec>
+                    <pfx8:RECTYPE>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:RECTYPE"/>
+                    </pfx8:RECTYPE>
+                    <xsl:choose>
+                        <xsl:when test="$ESI_Call_AuthorizeCredit/root/ns2:AuthorizationOutput/ns2:AcquirerResponseCode">
+                            <pfx8:Payment_Res_Code>
+                                <xsl:value-of select="$ESI_Call_AuthorizeCredit/root/ns2:AuthorizationOutput/ns2:AcquirerResponseCode"/>
+                            </pfx8:Payment_Res_Code>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <pfx8:Payment_Res_Code>
+                                <xsl:value-of select="$ESI_Call_AuthorizeCredit/root/ns13:ErrorResponse/ns13:Error_SourceErrCode"/>
+                            </pfx8:Payment_Res_Code>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <xsl:choose>
+                        <xsl:when test="$ESI_Call_AuthorizeCredit/root/ns2:AuthorizationOutput/ns2:AuthorizationStatus">
+                            <pfx8:Payment_Res_Description>
+                                <xsl:value-of select="$ESI_Call_AuthorizeCredit/root/ns2:AuthorizationOutput/ns2:AuthorizationStatus"/>
+                            </pfx8:Payment_Res_Description>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <pfx8:Payment_Res_Description>
+                                <xsl:value-of select="$ESI_Call_AuthorizeCredit/root/ns13:ErrorResponse/ns13:Error_SourceErrDesc"/>
+                            </pfx8:Payment_Res_Description>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <pfx8:REVERSAL_FLAG>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:REVERSAL_FLAG"/>
+                    </pfx8:REVERSAL_FLAG>
+                    <xsl:choose>
+                        <xsl:when test="string-length(tib:trim($ESI_Call_AuthorizeCredit/root/ns2:AuthorizationOutput/ns2:ShoppingTransactionReference))>0">
+                            <pfx8:PAYMENT_REF>
+                                <xsl:value-of select="concat(&quot;PG&quot;,$ESI_Call_AuthorizeCredit/root/ns2:AuthorizationOutput/ns2:ShoppingTransactionReference)"/>
+                            </pfx8:PAYMENT_REF>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <pfx8:PAYMENT_REF>
+                                <xsl:value-of select="$ESI_Call_AuthorizeCredit/root/ns2:AuthorizationOutput/ns2:ShoppingTransactionReference"/>
+                            </pfx8:PAYMENT_REF>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <pfx8:PAYMENT_DATE>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:PAYMENT_DATE"/>
+                    </pfx8:PAYMENT_DATE>
+                    <pfx8:CUSTOMER_REF>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:CUSTOMER_REF"/>
+                    </pfx8:CUSTOMER_REF>
+                    <pfx8:AMOUNT>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:AMOUNT"/>
+                    </pfx8:AMOUNT>
+                    <pfx8:CURRENCY>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:CURRENCY"/>
+                    </pfx8:CURRENCY>
+                    <pfx8:DOCUMENT_REF>
+                        <xsl:value-of select="&quot;&quot;"/>
+                    </pfx8:DOCUMENT_REF>
+                    <pfx8:COMMENT>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:COMMENT"/>
+                    </pfx8:COMMENT>
+                    <pfx8:HANDLING_REASON_CODE>
+                        <xsl:value-of select="&quot;&quot;"/>
+                    </pfx8:HANDLING_REASON_CODE>
+                    <pfx8:MSISDN>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:MSISDN"/>
+                    </pfx8:MSISDN>
+                    <pfx8:CARDNO>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:CARDNO"/>
+                    </pfx8:CARDNO>
+                    <pfx8:CARDNAME>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:CARDNAME"/>
+                    </pfx8:CARDNAME>
+                    <pfx8:CARD_TYPE>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:CARDTYPE"/>
+                    </pfx8:CARD_TYPE>
+                    <pfx8:BANK_GRP>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:BANK_GRP"/>
+                    </pfx8:BANK_GRP>
+                    <xsl:choose>
+                        <xsl:when test="exists($ESI_Call_AuthorizeCredit/root/ns2:AuthorizationOutput/ns2:AcquirerResponseCode)&#xA;and&#xA;string-length($ESI_Call_AuthorizeCredit/root/ns2:AuthorizationOutput/ns2:AcquirerResponseCode)>0">
+                            <pfx8:BANK_PROCESS_FLAG>
+                                <xsl:value-of select="&quot;Y&quot;"/>
+                            </pfx8:BANK_PROCESS_FLAG>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <pfx8:BANK_PROCESS_FLAG>
+                                <xsl:value-of select="&quot;N&quot;"/>
+                            </pfx8:BANK_PROCESS_FLAG>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                    <pfx8:GL_CODE>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:GL_CODE"/>
+                    </pfx8:GL_CODE>
+                    <pfx8:RECORD_ID>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:RECORD_ID"/>
+                    </pfx8:RECORD_ID>
+                    <pfx8:UserDefinedField-1>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:UserDefinedField-1"/>
+                    </pfx8:UserDefinedField-1>
+                    <pfx8:UserDefinedField-2>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:UserDefinedField-2"/>
+                    </pfx8:UserDefinedField-2>
+                    <pfx8:Billing_Account>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:Billing_Account"/>
+                    </pfx8:Billing_Account>
+                    <pfx8:USER_NAME>
+                        <xsl:value-of select="substring-before($RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:COMMENT,&quot;/&quot;)"/>
+                    </pfx8:USER_NAME>
+                    <pfx8:BANK_ID>
+                        <xsl:value-of select="substring-after($RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:COMMENT, &quot;/&quot;)"/>
+                    </pfx8:BANK_ID>
+                    <pfx8:Row_ID>
+                        <xsl:value-of select="$RecBulkPayRecordParseXML/pfx7:BulkPaymentAdjustReqRec/pfx7:PaymentDetailsRec/pfx7:Row_ID"/>
+                    </pfx8:Row_ID>
+                    <pfx8:AUTH_CODE>
+                        <xsl:value-of select="$ESI_Call_AuthorizeCredit/root/ns2:AuthorizationOutput/ns2:AuthorizationID"/>
+                    </pfx8:AUTH_CODE>
+                </pfx8:PaymentDetailsRec>
+            </pfx8:BulkPaymentAdjustResRec>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>ESI_Call_AuthorizeCredit</pd:from>
+        <pd:to>MapResponse</pd:to>
+        <pd:xpathDescription>Success</pd:xpathDescription>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GUID</pd:from>
+        <pd:to>ESI_Call_AuthorizeCredit</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SendPaymentRecResponse</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>RecBulkPayRecord</pd:from>
+        <pd:to>GenErr</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>RecBulkPayRecord</pd:from>
+        <pd:to>RecBulkPayRecordParseXML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>RecBulkPayRecordParseXML</pd:from>
+        <pd:to>GUID</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>MapResponse</pd:from>
+        <pd:to>SendPaymentRecResponse</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:label>
+        <pd:name>Label</pd:name>
+        <pd:description>Interface process the  Payment Files created by BSCS in the month end.
+Flow is 
+BSCS/CAC -&gt;ESB-&gt;PGW-&gt;ESB-&gt;BSCS/CAC</pd:description>
+        <pd:x>292</pd:x>
+        <pd:y>35</pd:y>
+        <pd:width>514</pd:width>
+        <pd:height>63</pd:height>
+        <pd:fontName>Dialog.bold-plain-11</pd:fontName>
+        <pd:fontColor>-16777216</pd:fontColor>
+        <pd:color>-13210</pd:color>
+        <pd:type>dash</pd:type>
+        <pd:thickness>2</pd:thickness>
+        <pd:fade>true</pd:fade>
+    </pd:label>
+    <pd:label>
+        <pd:name>Label (1)</pd:name>
+        <pd:description>Receive Payment Adjustment record from CAC , one message per record and hit PGW get the response after retry if required and 
+then send the response in another Queue for CAC. </pd:description>
+        <pd:x>449</pd:x>
+        <pd:y>289</pd:y>
+        <pd:width>640</pd:width>
+        <pd:height>67</pd:height>
+        <pd:fontName>Dialog.plain-plain-11</pd:fontName>
+        <pd:fontColor>-16777216</pd:fontColor>
+        <pd:color>-13369549</pd:color>
+        <pd:type>solid</pd:type>
+        <pd:thickness>1</pd:thickness>
+        <pd:fade>true</pd:fade>
+    </pd:label>
+</pd:ProcessDefinition>

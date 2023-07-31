@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pfx="http://www.huawei.com/CDM/ES/" xmlns:pfx2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:pfx3="http://schemas.ericsson.com/ema/UserProvisioning/SPGSV/" xmlns:pfx4="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESFactoryReset/triggerSubscriptionRecoveryReqSchema.xsd" xmlns:pfx5="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESCommonError/SESCommonErrorSchema.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://ericsson.com/services/ws_CMI_5/sessionchange" xmlns:ns3="http://ericsson.com/services/ws_CMI_5/storagemediumdetailsread" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns6="http://siebel.com/CustomUI" xmlns:ns5="http://schemas.ericsson.com/cai3g1.2/" xmlns:ns8="http://www.siebel.com/xml/CBiO2TransfereSIMSubsSecondaryDevice" xmlns:ns7="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/StorageMediumDetailsRead.xsd" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns9="http://www.siebel.com/xml/CBiO2AppleiWatchFactoryResetIO" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns10="http://www.siebel.com/xml/CBiO2SIMTransfereSIMTremblant" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:format="java://MSISDNFormatter" xmlns:pd="http://xmlns.tibco.com/bw/process/2003">
+    <xsd:import namespace="http://www.huawei.com/CDM/ES/" schemaLocation="/Resources/WSDL/EntitleServer/soap.wsdl"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESFactoryReset/triggerSubscriptionRecoveryReqSchema.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/AppleiWatchSESFactoryReset/triggerSubscriptionRecoveryReqSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/Services/SESEntServer/Resources/XSD/AppleiWatchSESCommonError/SESCommonErrorSchema.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/AppleiWatchSESCommonError/SESCommonErrorSchema.xsd"/>
+    <pd:name>Services/SESEntServer/factoryReset/HelperProcesses/factoryResetImpl.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx4:root"/>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>44</pd:startX>
+    <pd:startY>220</pd:startY>
+    <pd:returnBindings>
+        <xsl:choose>
+            <xsl:when test="$Call_CRM_Tremblant_Transfer">
+                <root>
+                    <error>
+                        <xsl:value-of select="$Call_CRM_Tremblant_Transfer/ns6:ChangeSIMRequest_Output/ns6:Error_SourceErrCode"/>
+                    </error>
+                    <error_description>
+                        <xsl:value-of select="$Call_CRM_Tremblant_Transfer/ns6:ChangeSIMRequest_Output/ns6:Error_SourceErrDesc"/>
+                    </error_description>
+                </root>
+            </xsl:when>
+            <xsl:otherwise>
+                <root>
+                    <error>
+                        <xsl:value-of select="$CallCRMFactoryReset/ns6:CBiO2AppleiWatchFactoryResetWS_Output/ns6:Error_SourceErrCode"/>
+                    </error>
+                    <error_description>
+                        <xsl:value-of select="$CallCRMFactoryReset/ns6:CBiO2AppleiWatchFactoryResetWS_Output/ns6:Error_SourceErrDesc"/>
+                    </error_description>
+                </root>
+            </xsl:otherwise>
+        </xsl:choose>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx5:root"/>
+    <pd:endX>1027</pd:endX>
+    <pd:endY>201</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1539231524072</pd:targetNamespace>
+    <pd:activity name="CallCRMFactoryReset">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>657</pd:x>
+        <pd:y>103</pd:y>
+        <config>
+            <processName>/Services/EntServer/eSIMProv/ComHelpProc/CRMFactoryResetImpl/CallCRMFactoryReset.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns6:CBiO2AppleiWatchFactoryResetWS_Input>
+                    <ns9:CBiO2AppleiWatchFactoryReset>
+                        <ns9:CBiO2OrderDetails>
+                            <xsl:if test="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryMsisdn">
+                                <ns9:SubscriberNumber>
+                                    <xsl:value-of select="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryMsisdn"/>
+                                </ns9:SubscriberNumber>
+                            </xsl:if>
+                            <ns9:TransactionId>
+                                <xsl:value-of select="$Start/root/root/uniqueId"/>
+                            </ns9:TransactionId>
+                            <ns9:CBiO2sourceSecondaryDeviceInfo>
+                                <ns9:iccid>
+                                    <xsl:value-of select="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryIccid"/>
+                                </ns9:iccid>
+                                <ns9:msisdn>
+                                    <xsl:value-of select="$Start/root/root/subscriptionInfo/eSimSubscriptionInfo/msisdn"/>
+                                </ns9:msisdn>
+                                <ns9:imsi>
+                                    <xsl:value-of select="$Start/root/root/subscriptionInfo/eSimSubscriptionInfo/imsi"/>
+                                </ns9:imsi>
+                                <ns9:primarymsisdn>
+                                    <xsl:value-of select="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryMsisdn"/>
+                                </ns9:primarymsisdn>
+                                <xsl:if test="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryImsi">
+                                    <ns9:primaryimsi>
+                                        <xsl:value-of select="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryImsi"/>
+                                    </ns9:primaryimsi>
+                                </xsl:if>
+                                <ns9:eid>
+                                    <xsl:value-of select="$Start/root/root/deviceInfo/euiccInfo/eid"/>
+                                </ns9:eid>
+                            </ns9:CBiO2sourceSecondaryDeviceInfo>
+                            <ns9:UserName>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/eSIMProv/UserName"/>
+                            </ns9:UserName>
+                            <ns9:CBiO2targetSecondaryDeviceInfo>
+                                <ns9:KI>
+                                    <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:ki"/>
+                                </ns9:KI>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:pin2">
+                                    <ns9:PIN1>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:pin2"/>
+                                    </ns9:PIN1>
+                                </xsl:if>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:pin2">
+                                    <ns9:PIN2>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:pin2"/>
+                                    </ns9:PIN2>
+                                </xsl:if>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:puk1">
+                                    <ns9:PUK1>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:puk1"/>
+                                    </ns9:PUK1>
+                                </xsl:if>
+                                <ns9:PUK2>
+                                    <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:puk2"/>
+                                </ns9:PUK2>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:simType">
+                                    <ns9:SIMType>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:simType"/>
+                                    </ns9:SIMType>
+                                </xsl:if>
+                                <ns9:ReservedFlag>
+                                    <xsl:value-of select="&quot;Y&quot;"/>
+                                </ns9:ReservedFlag>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:simSerialnum">
+                                    <ns9:SimSerialNo>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:simSerialnum"/>
+                                    </ns9:SimSerialNo>
+                                </xsl:if>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:transportKey">
+                                    <ns9:transportKey>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:transportKey"/>
+                                    </ns9:transportKey>
+                                </xsl:if>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:vendcode">
+                                    <ns9:VendorCode>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:vendcode"/>
+                                    </ns9:VendorCode>
+                                </xsl:if>
+                                <ns9:eid>
+                                    <xsl:value-of select="$Start/root/root/deviceInfo/euiccInfo/eid"/>
+                                </ns9:eid>
+                                <ns9:hlcodepub>
+                                    <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:hlcodepub"/>
+                                </ns9:hlcodepub>
+                                <ns9:iccid>
+                                    <xsl:value-of select="$Start/root/root/deviceInfo/euiccInfo/iccid"/>
+                                </ns9:iccid>
+                                <ns9:imei>
+                                    <xsl:value-of select="$Start/root/root/deviceInfo/euiccInfo/imei"/>
+                                </ns9:imei>
+                                <ns9:IMSI>
+                                    <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:imsi"/>
+                                </ns9:IMSI>
+                            </ns9:CBiO2targetSecondaryDeviceInfo>
+                            <ns9:Channel>
+                                <xsl:value-of select="&quot;SES&quot;"/>
+                            </ns9:Channel>
+                            <ns9:OrderReason>
+                                <xsl:value-of select="&quot;iWatch Factory Reset&quot;"/>
+                            </ns9:OrderReason>
+                            <ns9:OrderType>
+                                <xsl:value-of select="&quot;Modify&quot;"/>
+                            </ns9:OrderType>
+                        </ns9:CBiO2OrderDetails>
+                    </ns9:CBiO2AppleiWatchFactoryReset>
+                </ns6:CBiO2AppleiWatchFactoryResetWS_Input>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TransactionID>
+                <StartTimestamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimestamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="EligibilityCheckFailed">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>454</pd:x>
+        <pd:y>27</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="EligibilityCheckFailed-1">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>217</pd:x>
+        <pd:y>26</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="concat($EligibilityCheckProcess/pfx:queryServiceStatusResponse/pfx:RESULT_DESC,&quot; STATUS - &quot;, $EligibilityCheckProcess/pfx:queryServiceStatusResponse/pfx:STATUS)"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/EntServer/CheckEligibilityService/ValidationErrCode"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="EligibilityCheckProcess">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>342</pd:x>
+        <pd:y>103</pd:y>
+        <config>
+            <processName>/Services/EntServer/eSIMProv/eSIMProvOperationImpl/queryServiceStatusFactoryReset/EligibilityFactoryResetCheckProcess.process</processName>
+        </config>
+        <pd:inputBindings>
+            <group>
+                <pfx:queryServiceStatusRequest>
+                    <pfx:SERVICE>
+                        <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                    </pfx:SERVICE>
+                    <pfx:IMSI>
+                        <xsl:value-of select="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryImsi"/>
+                    </pfx:IMSI>
+                    <pfx:MSISDN>
+                        <xsl:value-of select="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryMsisdn"/>
+                    </pfx:MSISDN>
+                </pfx:queryServiceStatusRequest>
+                <TrackingId>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TrackingId>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+                <Eid>
+                    <xsl:value-of select="$Start/root/root/deviceInfo/euiccInfo/eid"/>
+                </Eid>
+            </group>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ESI_StorageMediumDetailsRead">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>236</pd:x>
+        <pd:y>219</pd:y>
+        <config>
+            <processName>/Services/EntServer/eSIMProv/ComHelpProc/ESI_StorageMediumDetailsRead.process</processName>
+        </config>
+        <pd:inputBindings>
+            <group>
+                <ns7:StorageMediumDetailsReadInput>
+                    <ns7:smserialno>
+                        <xsl:value-of select="substring($Start/root/root/deviceInfo/euiccInfo/iccid,1, 18)"/>
+                    </ns7:smserialno>
+                </ns7:StorageMediumDetailsReadInput>
+                <TrackingId>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TrackingId>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+            </group>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GenErrStorageMedRead">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>153</pd:x>
+        <pd:y>327</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <xsl:if test="$ESI_StorageMediumDetailsRead/root/Error/ErrorMsg">
+                    <message>
+                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/Error/ErrorMsg"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$ESI_StorageMediumDetailsRead/root/Error/ErrorCode">
+                    <messageCode>
+                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/Error/ErrorCode"/>
+                    </messageCode>
+                </xsl:if>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-In">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>135</pd:x>
+        <pd:y>220</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/factoryReset/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/root/deviceInfo/euiccInfo/iccid"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>845</pd:x>
+        <pd:y>203</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/SES/factoryReset/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns2:TransactionID>
+                    <ns2:InterfaceID>
+                        <xsl:value-of select="$Start/root/root/deviceInfo/euiccInfo/iccid"/>
+                    </ns2:InterfaceID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($CallCRMFactoryReset/ns6:CBiO2AppleiWatchFactoryResetWS_Output)"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="concat(tib:render-xml($ESI_StorageMediumDetailsRead),tib:render-xml($EligibilityCheckProcess),tib:render-xml($CallCRMFactoryReset),tib:render-xml($Call_CRM_Tremblant_Transfer))"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_CRM_Tremblant_Transfer">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>664</pd:x>
+        <pd:y>355</pd:y>
+        <config>
+            <processName>/Services/SESEntServer/transferSharedSecondaryDeviceEsimSub/HelperProcesses/Call_CRM_Tremblant_Transfer.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns6:ChangeSIMRequest_Input>
+                    <ns10:CBiO2SIMTransfereSIMTremblant>
+                        <ns10:CBiO2OrderDetails>
+                            <xsl:if test="$Start/root/root/subscriptionInfo/eSimSubscriptionInfo/msisdn">
+                                <ns10:SubscriberNumber>
+                                    <xsl:value-of select="$Start/root/root/subscriptionInfo/eSimSubscriptionInfo/msisdn"/>
+                                </ns10:SubscriberNumber>
+                            </xsl:if>
+                            <ns10:TransactionId>
+                                <xsl:value-of select="$Start/root/root/uniqueId"/>
+                            </ns10:TransactionId>
+                            <ns10:CBiO2sourceDeviceInfo>
+                                <ns10:iccid>
+                                    <xsl:value-of select="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryIccid"/>
+                                </ns10:iccid>
+                                <xsl:if test="$Start/root/root/subscriptionInfo/eSimSubscriptionInfo/msisdn">
+                                    <ns10:msisdn>
+                                        <xsl:value-of select="$Start/root/root/subscriptionInfo/eSimSubscriptionInfo/msisdn"/>
+                                    </ns10:msisdn>
+                                </xsl:if>
+                                <xsl:if test="$Start/root/root/subscriptionInfo/eSimSubscriptionInfo/imsi">
+                                    <ns10:imsi>
+                                        <xsl:value-of select="$Start/root/root/subscriptionInfo/eSimSubscriptionInfo/imsi"/>
+                                    </ns10:imsi>
+                                </xsl:if>
+                                <ns10:primarymsisdn>
+                                    <xsl:value-of select="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryMsisdn"/>
+                                </ns10:primarymsisdn>
+                                <ns10:primaryimsi>
+                                    <xsl:value-of select="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryImsi"/>
+                                </ns10:primaryimsi>
+                                <ns10:eid>
+                                    <xsl:value-of select="$Start/root/root/deviceInfo/euiccInfo/eid"/>
+                                </ns10:eid>
+                            </ns10:CBiO2sourceDeviceInfo>
+                            <ns10:UserName>
+                                <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/eSIMProv/UserName"/>
+                            </ns10:UserName>
+                            <ns10:CBiO2targetDeviceInfo>
+                                <ns10:KI>
+                                    <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:ki"/>
+                                </ns10:KI>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:pin2">
+                                    <ns10:PIN1>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:pin2"/>
+                                    </ns10:PIN1>
+                                </xsl:if>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:pin2">
+                                    <ns10:PIN2>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:pin2"/>
+                                    </ns10:PIN2>
+                                </xsl:if>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:puk1">
+                                    <ns10:PUK1>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:puk1"/>
+                                    </ns10:PUK1>
+                                </xsl:if>
+                                <ns10:PUK2>
+                                    <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:puk2"/>
+                                </ns10:PUK2>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:simType">
+                                    <ns10:SIMType>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:simType"/>
+                                    </ns10:SIMType>
+                                </xsl:if>
+                                <ns10:ReservedFlag>
+                                    <xsl:value-of select="&quot;Y&quot;"/>
+                                </ns10:ReservedFlag>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:simSerialnum">
+                                    <ns10:SimSerialNo>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:simSerialnum"/>
+                                    </ns10:SimSerialNo>
+                                </xsl:if>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:transportKey">
+                                    <ns10:transportKey>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:transportKey"/>
+                                    </ns10:transportKey>
+                                </xsl:if>
+                                <xsl:if test="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:vendcode">
+                                    <ns10:VendorCode>
+                                        <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:vendcode"/>
+                                    </ns10:VendorCode>
+                                </xsl:if>
+                                <ns10:eid>
+                                    <xsl:value-of select="$Start/root/root/deviceInfo/euiccInfo/eid"/>
+                                </ns10:eid>
+                                <ns10:hlcodepub>
+                                    <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:hlcodepub"/>
+                                </ns10:hlcodepub>
+                                <ns10:iccid>
+                                    <xsl:value-of select="$Start/root/root/deviceInfo/euiccInfo/iccid"/>
+                                </ns10:iccid>
+                                <ns10:imei>
+                                    <xsl:value-of select="$Start/root/root/deviceInfo/euiccInfo/imei"/>
+                                </ns10:imei>
+                                <ns10:imsi>
+                                    <xsl:value-of select="$ESI_StorageMediumDetailsRead/root/ns3:storageMediumDetailsReadResponse/ns3:simDetailList/ns3:item[1]/ns3:imsi"/>
+                                </ns10:imsi>
+                            </ns10:CBiO2targetDeviceInfo>
+                            <ns10:Channel>
+                                <xsl:value-of select="&quot;SES&quot;"/>
+                            </ns10:Channel>
+                            <ns10:OrderType>
+                                <xsl:value-of select="'eSIM Tremblant Factory Reset'"/>
+                            </ns10:OrderType>
+                        </ns10:CBiO2OrderDetails>
+                    </ns10:CBiO2SIMTransfereSIMTremblant>
+                </ns6:ChangeSIMRequest_Input>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TransactionID>
+                <StartTimestamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimestamp>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>338</pd:x>
+        <pd:y>223</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="EligibilityFactResTremblCheckProcess">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>342</pd:x>
+        <pd:y>356</pd:y>
+        <config>
+            <processName>/Services/EntServer/eSIMProv/eSIMProvOperationImpl/queryServiceStatusFactoryReset/EligibilityFactResTremblCheckProcess.process</processName>
+        </config>
+        <pd:inputBindings>
+            <group>
+                <pfx:queryServiceStatusRequest>
+                    <pfx:SERVICE>
+                        <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                    </pfx:SERVICE>
+                    <pfx:IMSI>
+                        <xsl:value-of select="$Start/root/root/subscriptionInfo/eSimSubscriptionInfo/imsi"/>
+                    </pfx:IMSI>
+                    <pfx:MSISDN>
+                        <xsl:value-of select="$Start/root/root/subscriptionInfo/eSimSubscriptionInfo/msisdn"/>
+                    </pfx:MSISDN>
+                </pfx:queryServiceStatusRequest>
+                <TrackingId>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TrackingId>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+                <Eid>
+                    <xsl:value-of select="&quot;&quot;"/>
+                </Eid>
+                <xsl:if test="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryMsisdn">
+                    <PrimaryMSISDN>
+                        <xsl:value-of select="$Start/root/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryMsisdn"/>
+                    </PrimaryMSISDN>
+                </xsl:if>
+            </group>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="EligibilityCheckFailed-1-1">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>222</pd:x>
+        <pd:y>419</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$EligibilityFactResTremblCheckProcess/pfx:queryServiceStatusResponse/pfx:RESULT_DESC"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/EntServer/CheckEligibilityService/ValidationErrCode"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="EligibilityCheckFailed-1-1-1">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>460</pd:x>
+        <pd:y>416</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$EligibilityFactResTremblCheckProcess/pfx:queryServiceStatusResponse/pfx:RESULT_DESC"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$EligibilityFactResTremblCheckProcess/pfx:queryServiceStatusResponse/pfx:RESULT_CODE"/>
+                </messageCode>
+            </pfx2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log_Msg-In</pd:to>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-Out</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-In</pd:from>
+        <pd:to>ESI_StorageMediumDetailsRead</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ESI_StorageMediumDetailsRead</pd:from>
+        <pd:to>GenErrStorageMedRead</pd:to>
+        <pd:xpathDescription>NoDataFound</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-39373</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>exists($ESI_StorageMediumDetailsRead/root/Error)</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ESI_StorageMediumDetailsRead</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EligibilityCheckProcess</pd:from>
+        <pd:to>EligibilityCheckFailed</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EligibilityCheckProcess</pd:from>
+        <pd:to>EligibilityCheckFailed-1</pd:to>
+        <pd:xpathDescription>NotEligible</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-39322</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$EligibilityCheckProcess/pfx:queryServiceStatusResponse/pfx:STATUS = 0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EligibilityCheckProcess</pd:from>
+        <pd:to>CallCRMFactoryReset</pd:to>
+        <pd:xpathDescription>Rio</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallCRMFactoryReset</pd:from>
+        <pd:to>Log_Msg-Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_CRM_Tremblant_Transfer</pd:from>
+        <pd:to>Log_Msg-Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>EligibilityCheckProcess</pd:to>
+        <pd:xpathDescription>Rio</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>EligibilityFactResTremblCheckProcess</pd:to>
+        <pd:xpathDescription>Tremblant</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/root/subscriptionInfo/numberPlanType=0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EligibilityFactResTremblCheckProcess</pd:from>
+        <pd:to>Call_CRM_Tremblant_Transfer</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EligibilityFactResTremblCheckProcess</pd:from>
+        <pd:to>EligibilityCheckFailed-1-1</pd:to>
+        <pd:xpathDescription>Eligible</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65485</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$EligibilityFactResTremblCheckProcess/pfx:queryServiceStatusResponse/pfx:STATUS = 0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EligibilityFactResTremblCheckProcess</pd:from>
+        <pd:to>EligibilityCheckFailed-1-1-1</pd:to>
+        <pd:xpathDescription>SPError</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$EligibilityFactResTremblCheckProcess/pfx:queryServiceStatusResponse/pfx:RESULT_CODE!=0</pd:xpath>
+    </pd:transition>
+</pd:ProcessDefinition>

@@ -1,0 +1,776 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pfx5="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortRequest.xsd" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx3="http://lhsgroup.com/lhsws/money" xmlns:pfx2="http://ericsson.com/services/ws_CIL_5/portinmsisdncheck" xmlns:pfx7="http://www.zain.com/ZESB/Services/Query/PaymentReportQuery.xsd" xmlns:pfx6="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/PortinMsisdnCheckService/PortinMsisdnCheckService.xsd" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns9="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:format="java://MSISDNFormatter" xmlns:ns5="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns12="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns6="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns10="http://ericsson.com/services/ws_CIL_5/sessionchange" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GMDRequestDetailsRead.xsd" xmlns:ns7="http://www.tibco.com/pe/EngineTypes" xmlns:ns8="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://xmlns.zain.com/BSS/ESB/CDM/Base" xmlns:ns1="http://www.ericsson.com/ZainKW/CommonProject/BusinessSchemas/Services/Modification/MNP/MNPReqRes.xsd" xmlns:ns4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortResponse.xsd" xmlns:ns3="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace="http://lhsgroup.com/lhsws/money" schemaLocation="/BusinessWSDLS/Services/BSCS/PortingRequestWrite/ws_CMI_5_PortingRequestWriteService.wsdl"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/CommonProject/BusinessSchemas/Services/Modification/MNP/MNPReqRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/MNP/MNPReqRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortRequest.xsd" schemaLocation="/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortResponse.xsd" schemaLocation="/BusinessSchemas/Services/EOMtoBSCS_PortRequest/EOM_PortResponse.xsd"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/Query/PaymentReportQuery.xsd" schemaLocation="/BusinessSchemas/Services/Query/PaymentReportQuery/PaymentReportQuery.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/PortinMsisdnCheckService/PortinMsisdnCheckService.xsd" schemaLocation="/BusinessSchemas/Services/Applications/ConceptWave/PortinMsisdnCheckService/PortinMsisdnCheckService.xsd"/>
+    <xsd:import namespace="http://ericsson.com/services/ws_CIL_5/portinmsisdncheck" schemaLocation="/BusinessWSDLS/Services/BSCS/PortinMsisdnCheckService/PortinMsisdnCheckService.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Query/PortInMsisdnCheck/Implementation/PortInMsisdnCheck.process</pd:name>
+    <pd:startName>JMS Queue Receiver</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="JMS Queue Receiver">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>77</pd:x>
+        <pd:y>154</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/BSCS/Query/PortInMsisdnCheck/ESI_RequestQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ApplicationProperties/>
+            <ConnectionReference>/CommonResources/Connections/JMS/External/CRMtoGW_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1190</pd:endX>
+    <pd:endY>180</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1523319828336</pd:targetNamespace>
+    <pd:activity name="Parse XML">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>227</pd:x>
+        <pd:y>166</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx6:PortinMsisdnCheckServiceRequest"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$JMS-Queue-Receiver/ns5:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="PortInMsisdnCheckProcessCall">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>488</pd:x>
+        <pd:y>172</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Query/PortInMsisdnCheck/HelperProcess/PortInMsisdnCheckHelperProcess.process</processName>
+            <processNameXPath/>
+        </config>
+        <pd:inputBindings>
+            <group>
+                <ReqString>
+                    <xsl:value-of select="tib:render-xml($Mapper_PortInMsisdn/pfx2:portinMsisdnCheckRequest)"/>
+                </ReqString>
+                <TrackingId>
+                    <xsl:value-of select="$GenerateTransactionID/GUID/TransactionID"/>
+                </TrackingId>
+                <StartTimeStamp>
+                    <xsl:value-of select="$GenerateTransactionID/GUID/StartTimeStamp"/>
+                </StartTimeStamp>
+            </group>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="PortinRequestWriteProcessCall">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>732</pd:x>
+        <pd:y>52</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Query/PortInMsisdnCheck/HelperProcess/PortIN_Call_Helper.process</processName>
+        </config>
+        <pd:inputBindings>
+            <group>
+                <xsl:copy-of select="$Map-Data-1/pfx5:EOM_PortRequest"/>
+                <TrackingId>
+                    <xsl:value-of select="$GenerateTransactionID/GUID/TransactionID"/>
+                </TrackingId>
+                <StartTimeStamp>
+                    <xsl:value-of select="$GenerateTransactionID/GUID/StartTimeStamp"/>
+                </StartTimeStamp>
+            </group>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>820</pd:x>
+        <pd:y>173</pd:y>
+        <config>
+            <element ref="pfx6:PortinMsisdnCheckServiceResponse"/>
+        </config>
+        <pd:inputBindings>
+            <pfx6:PortinMsisdnCheckServiceResponse>
+                <xsl:copy-of select="$Parse-XML/pfx6:PortinMsisdnCheckServiceRequest/pfx6:orderHeader"/>
+                <xsl:if test="$PortInMsisdnCheckProcessCall/PortInMsisdnCheckService/pfx2:portinMsisdnCheckResponse/pfx2:response">
+                    <pfx6:isPortedIn>
+                        <xsl:value-of select="$PortInMsisdnCheckProcessCall/PortInMsisdnCheckService/pfx2:portinMsisdnCheckResponse/pfx2:response"/>
+                    </pfx6:isPortedIn>
+                </xsl:if>
+                <pfx6:ResponseCode>
+                    <xsl:value-of select="if (contains($PortInMsisdnCheckProcessCall/PortInMsisdnCheckService/pfx2:portinMsisdnCheckResponse/pfx2:response,'FALSE')) then '0'&#xA;else if(contains($PortinRequestWriteProcessCall/ns4:EOM_PortResponse/ns4:response/ns4:responseCode,'0')) then '0'&#xA;else '1'"/>
+                </pfx6:ResponseCode>
+                <pfx6:ResponseMessage>
+                    <xsl:value-of select="if (contains($PortInMsisdnCheckProcessCall/PortInMsisdnCheckService/pfx2:portinMsisdnCheckResponse/pfx2:response,'FALSE')) then 'Success'&#xA;else if(contains($PortinRequestWriteProcessCall/ns4:EOM_PortResponse/ns4:response/ns4:responseMessage,'Success')) then 'Success'&#xA;else&#xA;'Error'"/>
+                </pfx6:ResponseMessage>
+                <pfx6:ErrorResponse>
+                    <pfx6:Error_SourceErrCode>
+                        <xsl:value-of select="if(string-length($PortInMsisdnCheckProcessCall/PortInMsisdnCheckService/ResponseCode)>0) then &#xA;$PortInMsisdnCheckProcessCall/PortInMsisdnCheckService/ResponseCode&#xA;else ''"/>
+                    </pfx6:Error_SourceErrCode>
+                    <pfx6:Error_SourceErrDesc>
+                        <xsl:value-of select="if(string-length($PortInMsisdnCheckProcessCall/PortInMsisdnCheckService/ResponseDescription)>0) then &#xA;$PortInMsisdnCheckProcessCall/PortInMsisdnCheckService/ResponseDescription&#xA;else ''"/>
+                    </pfx6:Error_SourceErrDesc>
+                </pfx6:ErrorResponse>
+            </pfx6:PortinMsisdnCheckServiceResponse>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>232</pd:x>
+        <pd:y>284</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx4:ActivityInput/>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map-Data-1">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>568</pd:x>
+        <pd:y>50</pd:y>
+        <config>
+            <element ref="pfx5:EOM_PortRequest"/>
+        </config>
+        <pd:inputBindings>
+            <pfx5:EOM_PortRequest>
+                <xsl:for-each select="$Parse-XML/pfx6:PortinMsisdnCheckServiceRequest/pfx6:orderHeader">
+                    <pfx5:RequestHeader>
+                        <xsl:if test="pfx6:correlationID">
+                            <pfx5:correlationID>
+                                <xsl:value-of select="pfx6:correlationID"/>
+                            </pfx5:correlationID>
+                        </xsl:if>
+                        <xsl:if test="pfx6:serviceOrderId">
+                            <pfx5:serviceOrderId>
+                                <xsl:value-of select="pfx6:serviceOrderId"/>
+                            </pfx5:serviceOrderId>
+                        </xsl:if>
+                        <xsl:if test="pfx6:salesOrderId">
+                            <pfx5:salesOrderId>
+                                <xsl:value-of select="pfx6:salesOrderId"/>
+                            </pfx5:salesOrderId>
+                        </xsl:if>
+                        <xsl:if test="pfx6:buIdPubKey">
+                            <pfx5:buIdPubKey>
+                                <xsl:value-of select="pfx6:buIdPubKey"/>
+                            </pfx5:buIdPubKey>
+                        </xsl:if>
+                        <xsl:if test="pfx6:buIdPubValue">
+                            <pfx5:buIdPubValue>
+                                <xsl:value-of select="pfx6:buIdPubValue"/>
+                            </pfx5:buIdPubValue>
+                        </xsl:if>
+                    </pfx5:RequestHeader>
+                </xsl:for-each>
+                <pfx5:PortRequest>
+                    <pfx5:msisdn>
+                        <xsl:value-of select="format:FormatMSISDN($Parse-XML/pfx6:PortinMsisdnCheckServiceRequest/pfx6:MSISDN, $_globalVariables/ns6:GlobalVariables/MSISDNBaseLength)"/>
+                    </pfx5:msisdn>
+                    <pfx5:portingDate>
+                        <xsl:value-of select="substring-before(current-date(),&quot;+&quot;)"/>
+                    </pfx5:portingDate>
+                </pfx5:PortRequest>
+            </pfx5:EOM_PortRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GenerateTransactionID">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>151</pd:x>
+        <pd:y>58</pd:y>
+        <config>
+            <processName>/CommonProcesses/Utilities/GUID.process</processName>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>130</pd:x>
+        <pd:y>379</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>262</pd:x>
+        <pd:y>379</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns8:ExceptionRequest>
+                <ns9:Header>
+                    <ns9:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns9:ApplicationID>
+                    <ns9:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/BusinessProcesses/Services/BSCS/Query/PortInMsisdnCheck/ComponentName"/>
+                    </ns9:ComponentName>
+                    <ns9:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns9:Hostname>
+                    <ns9:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns9:Timestamp>
+                    <ns9:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns9:TransactionDomain>
+                    <ns9:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns7:ProcessContext/ProcessId))"/>
+                    </ns9:TransactionType>
+                    <ns9:TransactionID>
+                        <xsl:value-of select="$GenerateTransactionID/GUID/TransactionID"/>
+                    </ns9:TransactionID>
+                    <ns9:Filename>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/Deployment"/>
+                    </ns9:Filename>
+                    <ns9:Message>
+                        <xsl:value-of select="$_error/ns7:ErrorReport/StackTrace"/>
+                    </ns9:Message>
+                </ns9:Header>
+                <ExceptionCode>
+                    <xsl:value-of select="$_error/ns7:ErrorReport/MsgCode"/>
+                </ExceptionCode>
+                <xsl:if test="$_error/ns7:ErrorReport/Msg">
+                    <StackTrace>
+                        <xsl:value-of select="$_error/ns7:ErrorReport/Msg"/>
+                    </StackTrace>
+                </xsl:if>
+            </ns8:ExceptionRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CLE_To_CDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>405</pd:x>
+        <pd:y>381</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="pfx6:PortinMsisdnCheckServiceResponse"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <pfx6:PortinMsisdnCheckServiceResponse>
+                    <xsl:copy-of select="$Parse-XML/pfx6:PortinMsisdnCheckServiceRequest/pfx6:orderHeader"/>
+                    <pfx6:ResponseCode>
+                        <xsl:value-of select="'1'"/>
+                    </pfx6:ResponseCode>
+                    <pfx6:ResponseMessage>
+                        <xsl:value-of select="'Error'"/>
+                    </pfx6:ResponseMessage>
+                    <pfx6:ErrorResponse>
+                        <pfx6:Error_SourceSystem>
+                            <xsl:value-of select="'BSCS'"/>
+                        </pfx6:Error_SourceSystem>
+                        <pfx6:Error_SourceErrCode>
+                            <xsl:value-of select="$ErrorHandler/ns8:ExceptionRequest/ExceptionCode"/>
+                        </pfx6:Error_SourceErrCode>
+                        <pfx6:Error_SourceErrDesc>
+                            <xsl:value-of select="$ErrorHandler/ns8:ExceptionRequest/StackTrace"/>
+                        </pfx6:Error_SourceErrDesc>
+                    </pfx6:ErrorResponse>
+                </pfx6:PortinMsisdnCheckServiceResponse>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ReplyOnError">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>556</pd:x>
+        <pd:y>279</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>JMS Queue Receiver</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/External/CRMtoGW_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings>
+            <ns5:ActivityInput>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($CLE_To_CDM/root)"/>
+                </Body>
+            </ns5:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>703</pd:x>
+        <pd:y>382</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns9:Header>
+                    <ns9:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns9:ApplicationID>
+                    <ns9:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/BusinessProcesses/Services/BSCS/Query/PortInMsisdnCheck/ComponentName"/>
+                    </ns9:ComponentName>
+                    <ns9:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns9:Hostname>
+                    <ns9:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns9:Timestamp>
+                    <ns9:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns9:TransactionDomain>
+                    <ns9:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns7:ProcessContext/ProcessId))"/>
+                    </ns9:TransactionType>
+                    <ns9:TransactionID>
+                        <xsl:value-of select="$GenerateTransactionID/GUID/TransactionID"/>
+                    </ns9:TransactionID>
+                    <ns9:Filename>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/Deployment"/>
+                    </ns9:Filename>
+                    <ns9:Message>
+                        <xsl:value-of select="tib:render-xml($CLE_To_CDM/root)"/>
+                    </ns9:Message>
+                    <ns9:Transaction>
+                        <xsl:value-of select="$_error/ns7:ErrorReport/StackTrace"/>
+                    </ns9:Transaction>
+                </ns9:Header>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>562</pd:x>
+        <pd:y>533</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns12:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns7:ErrorReport/StackTrace"/>
+                </message>
+                <msgCode>
+                    <xsl:value-of select="$_error/ns7:ErrorReport/MsgCode"/>
+                </msgCode>
+            </ns12:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>416</pd:x>
+        <pd:y>66</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns9:Header>
+                    <ns9:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns9:ApplicationID>
+                    <ns9:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/BusinessProcesses/Services/BSCS/Query/PortInMsisdnCheck/ComponentName"/>
+                    </ns9:ComponentName>
+                    <ns9:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns9:Hostname>
+                    <ns9:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns9:Timestamp>
+                    <ns9:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns9:TransactionDomain>
+                    <ns9:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns7:ProcessContext/ProcessId))"/>
+                    </ns9:TransactionType>
+                    <ns9:TransactionID>
+                        <xsl:value-of select="$GenerateTransactionID/GUID/TransactionID"/>
+                    </ns9:TransactionID>
+                    <ns9:InterfaceID>
+                        <xsl:value-of select="$Parse-XML/pfx6:PortinMsisdnCheckServiceRequest/pfx6:MSISDN"/>
+                    </ns9:InterfaceID>
+                    <ns9:Filename>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/Deployment"/>
+                    </ns9:Filename>
+                    <ns9:Message>
+                        <xsl:value-of select="tib:render-xml($Parse-XML/pfx6:PortinMsisdnCheckServiceRequest)"/>
+                    </ns9:Message>
+                </ns9:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$GenerateTransactionID/GUID/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>899</pd:x>
+        <pd:y>60</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns9:Header>
+                    <ns9:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns9:ApplicationID>
+                    <ns9:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/BusinessProcesses/Services/BSCS/Query/PortInMsisdnCheck/ComponentName"/>
+                    </ns9:ComponentName>
+                    <ns9:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns9:Hostname>
+                    <ns9:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns9:Timestamp>
+                    <ns9:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns9:TransactionDomain>
+                    <ns9:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns7:ProcessContext/ProcessId))"/>
+                    </ns9:TransactionType>
+                    <ns9:TransactionID>
+                        <xsl:value-of select="$GenerateTransactionID/GUID/TransactionID"/>
+                    </ns9:TransactionID>
+                    <ns9:InterfaceID>
+                        <xsl:value-of select="$Parse-XML/pfx6:PortinMsisdnCheckServiceRequest/pfx6:MSISDN"/>
+                    </ns9:InterfaceID>
+                    <ns9:Filename>
+                        <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/Deployment"/>
+                    </ns9:Filename>
+                    <ns9:Message>
+                        <xsl:value-of select="tib:render-xml($Map-Data/pfx6:PortinMsisdnCheckServiceResponse)"/>
+                    </ns9:Message>
+                </ns9:Header>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Mapper_PortInMsisdn">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>286</pd:x>
+        <pd:y>65</pd:y>
+        <config>
+            <element ref="pfx2:portinMsisdnCheckRequest"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:portinMsisdnCheckRequest>
+                <pfx2:inputAttributes>
+                    <pfx2:dnnum>
+                        <xsl:value-of select="format:FormatMSISDN($Parse-XML/pfx6:PortinMsisdnCheckServiceRequest/pfx6:MSISDN, $_globalVariables/ns6:GlobalVariables/MSISDNBaseLength)"/>
+                    </pfx2:dnnum>
+                </pfx2:inputAttributes>
+                <pfx2:sessionChangeRequest>
+                    <ns10:values>
+                        <ns10:item>
+                            <ns10:key>
+                                <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/BusinessProcesses/CommonSettings/BSCSSession/SessionKey"/>
+                            </ns10:key>
+                            <ns10:value>
+                                <xsl:value-of select="$_globalVariables/ns6:GlobalVariables/BusinessProcesses/CommonSettings/BSCSSession/SessionValue"/>
+                            </ns10:value>
+                        </ns10:item>
+                    </ns10:values>
+                </pfx2:sessionChangeRequest>
+            </pfx2:portinMsisdnCheckRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>841</pd:x>
+        <pd:y>384</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/BSCS/Query/PortInMsisdnCheck/ESI_ResponseQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/External/CRMtoGW_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings>
+            <ns5:ActivityInput>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($CLE_To_CDM/root/pfx6:PortinMsisdnCheckServiceResponse)"/>
+                </Body>
+            </ns5:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMS-Queue-Sender-1">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>1004</pd:x>
+        <pd:y>183</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/BSCS/Query/PortInMsisdnCheck/ESI_ResponseQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/External/CRMtoGW_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings>
+            <ns5:ActivityInput>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($Map-Data/pfx6:PortinMsisdnCheckServiceResponse)"/>
+                </Body>
+            </ns5:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>JMS Queue Receiver</pd:from>
+        <pd:to>GenerateTransactionID</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>PortinRequestWriteProcessCall</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>PortInMsisdnCheckProcessCall</pd:from>
+        <pd:to>Map-Data-1</pd:to>
+        <pd:xpathDescription>Success</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains($PortInMsisdnCheckProcessCall/PortInMsisdnCheckService/pfx2:portinMsisdnCheckResponse/pfx2:response,'TRUE')</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>PortInMsisdnCheckProcessCall</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map-Data-1</pd:from>
+        <pd:to>PortinRequestWriteProcessCall</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GenerateTransactionID</pd:from>
+        <pd:to>Parse XML</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>CLE_To_CDM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_To_CDM</pd:from>
+        <pd:to>ReplyOnError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>1=2</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReplyOnError</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_To_CDM</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReplyOnError</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>PortInMsisdnCheckProcessCall</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Parse XML</pd:from>
+        <pd:to>Mapper_PortInMsisdn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Mapper_PortInMsisdn</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>JMS-Queue-Sender-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS-Queue-Sender-1</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_To_CDM</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

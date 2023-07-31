@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zain.com/ZESB/Services/ServiceGifting" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:typ="http://www.zain.com/ZESB/Services/ServiceGifting/Types" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://www.zain.com/ZESB/Services/ServiceGifting">
+	<wsdl:types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/ServiceGifting/Types">
+			<xs:simpleType name="LanguageType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Ar"/>
+					<xs:enumeration value="En"/>
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:complexType name="ServiceType">
+				<xs:sequence>
+					<xs:element name="ServiceCode" type="xs:string"/>
+					<xs:element name="Price" type="xs:decimal" minOccurs="0"/>
+					<xs:element minOccurs="0" name="Volume">
+						<xs:complexType>
+							<xs:simpleContent>
+								<xs:extension base="xs:decimal">
+									<xs:attribute name="unit" type="xs:string"/>
+								</xs:extension>
+							</xs:simpleContent>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ServiceListType">
+				<xs:sequence>
+					<xs:element name="Service" type="typ:ServiceType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="GetEligibleServicesInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="RecipientMsisdn" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetEligibleServicesOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ServiceList" type="typ:ServiceListType" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CheckPossiblityInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SenderMsisdn" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="RecipientMsisdn" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="CheckPossiblityOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="1" maxOccurs="1" name="Result" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PerformGiftingInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SenderMsisdn" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="RecipientMsisdn" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="ServiceCode" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="MessageId" type="xs:int" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="SendSms" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Language" type="typ:LanguageType" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PerformGiftingOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="1" maxOccurs="1" name="Result" type="xs:string"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="MessageType">
+				<xs:sequence>
+					<xs:element name="MessageId" type="xs:int"/>
+					<xs:element name="MessageText" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="MessageListType">
+				<xs:sequence>
+					<xs:element name="Message" type="typ:MessageType" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="GetMessagesInput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Language" type="typ:LanguageType" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="GetMessagesOutput">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="MessageList" type="typ:MessageListType" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="GetEligibleServicesRequest">
+		<wsdl:part name="parameters" element="typ:GetEligibleServicesInput"/>
+	</wsdl:message>
+	<wsdl:message name="GetEligibleServicesResponse">
+		<wsdl:part name="parameters" element="typ:GetEligibleServicesOutput"/>
+	</wsdl:message>
+	<wsdl:message name="CheckPossiblityRequest">
+		<wsdl:part name="parameters" element="typ:CheckPossiblityInput"/>
+	</wsdl:message>
+	<wsdl:message name="CheckPossiblityResponse">
+		<wsdl:part name="parameters" element="typ:CheckPossiblityOutput"/>
+	</wsdl:message>
+	<wsdl:message name="PerformGiftingRequest">
+		<wsdl:part name="parameters" element="typ:PerformGiftingInput"/>
+	</wsdl:message>
+	<wsdl:message name="PerformGiftingResponse">
+		<wsdl:part name="parameters" element="typ:PerformGiftingOutput"/>
+	</wsdl:message>
+	<wsdl:message name="GetMessagesRequest">
+		<wsdl:part name="parameters" element="typ:GetMessagesInput"/>
+	</wsdl:message>
+	<wsdl:message name="GetMessagesResponse">
+		<wsdl:part name="parameters" element="typ:GetMessagesOutput"/>
+	</wsdl:message>
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType"/>
+	</wsdl:message>
+	<wsdl:portType name="ServiceGiftingPort">
+		<wsdl:operation name="GetEligibleServices">
+			<wsdl:input message="tns:GetEligibleServicesRequest"/>
+			<wsdl:output message="tns:GetEligibleServicesResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="CheckPossiblity">
+			<wsdl:input message="tns:CheckPossiblityRequest"/>
+			<wsdl:output message="tns:CheckPossiblityResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="PerformGifting">
+			<wsdl:input message="tns:PerformGiftingRequest"/>
+			<wsdl:output message="tns:PerformGiftingResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+		<wsdl:operation name="GetMessages">
+			<wsdl:input message="tns:GetMessagesRequest"/>
+			<wsdl:output message="tns:GetMessagesResponse"/>
+			<wsdl:fault name="fault" message="tns:faultMessage"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="ServiceGiftingBinding" type="tns:ServiceGiftingPort">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="GetEligibleServices">
+			<soap:operation soapAction="GetEligibleServices" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="CheckPossiblity">
+			<soap:operation soapAction="CheckPossiblity" style="document"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="PerformGifting">
+			<soap:operation soapAction="PerformGifting"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="GetMessages">
+			<soap:operation soapAction="GetMessages"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+			<wsdl:fault name="fault">
+				<soap:fault name="fault" use="literal"/>
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="ServiceGifting">
+		<wsdl:port name="ServiceGiftingPort" binding="tns:ServiceGiftingBinding">
+			<soap:address location="/ZESB/ServiceGifting"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

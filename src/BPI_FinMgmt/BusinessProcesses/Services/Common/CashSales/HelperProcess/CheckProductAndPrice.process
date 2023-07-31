@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:pfx="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" schemaLocation="/CDM/ZainKWFault.xsd"/>
+    <pd:name>BusinessProcesses/Services/Common/CashSales/HelperProcess/CheckProductAndPrice.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="Checkprice" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="Amount" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="ProductCode" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>81</pd:startX>
+    <pd:startY>95</pd:startY>
+    <pd:returnBindings>
+        <xsl:choose>
+            <xsl:when test="$Start/root/Checkprice='Y'">
+                <pfx:ErrorResponse>
+                    <pfx:Error_SourceSystem>
+                        <xsl:value-of select="&quot;CRM&quot;"/>
+                    </pfx:Error_SourceSystem>
+                    <pfx:Error_SourceErrCode>
+                        <xsl:value-of select="if($Start/root/Amount=$CheckPrice/resultSet/Record/STD_PRI_UNIT)&#xA;then&#xA;0&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/CashSales/CheckPriceValidationCode"/>
+                    </pfx:Error_SourceErrCode>
+                    <pfx:Error_SourceErrDesc>
+                        <xsl:value-of select="if($Start/root/Amount=$CheckPrice/resultSet/Record/STD_PRI_UNIT)&#xA;then&#xA;&quot;Success&quot;&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/CashSales/CheckPriceValidationMessage"/>
+                    </pfx:Error_SourceErrDesc>
+                    <pfx:Error_Additional_Desc2>
+                        <xsl:value-of select="$CheckPrice/resultSet/Record[1]/ROW_ID"/>
+                    </pfx:Error_Additional_Desc2>
+                </pfx:ErrorResponse>
+            </xsl:when>
+            <xsl:otherwise>
+                <pfx:ErrorResponse>
+                    <pfx:Error_SourceSystem>
+                        <xsl:value-of select="&quot;CRM&quot;"/>
+                    </pfx:Error_SourceSystem>
+                    <pfx:Error_SourceErrCode>
+                        <xsl:value-of select="if(count($CheckProduct/resultSet/Record)>0)&#xA;then&#xA;0&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/CashSales/CheckProductValCode"/>
+                    </pfx:Error_SourceErrCode>
+                    <pfx:Error_SourceErrDesc>
+                        <xsl:value-of select="if(count($CheckProduct/resultSet/Record)>0)&#xA;then&#xA;&quot;Success&quot;&#xA;else&#xA;$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Common/CashSales/CheckProductValDesc"/>
+                    </pfx:Error_SourceErrDesc>
+                    <xsl:if test="$CheckProduct/resultSet/Record[1]/ROW_ID">
+                        <pfx:Error_Additional_Desc2>
+                            <xsl:value-of select="$CheckProduct/resultSet/Record[1]/ROW_ID"/>
+                        </pfx:Error_Additional_Desc2>
+                    </xsl:if>
+                </pfx:ErrorResponse>
+            </xsl:otherwise>
+        </xsl:choose>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:ErrorResponse"/>
+    <pd:endX>655</pd:endX>
+    <pd:endY>88</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1497695225909</pd:targetNamespace>
+    <pd:activity name="CheckPrice">
+        <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+        <pd:x>344</pd:x>
+        <pd:y>67</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/External/SEIBELLOVServ/Timeout%%</timeout>
+            <commit>false</commit>
+            <maxRows>%%CommonResources/Connections/JDBC/External/SEIBELLOVServ/MaxConnections%%</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/External/SeibelLOVConnection.sharedjdbc</jdbcSharedConfig>
+            <statement>SELECT PROD.PART_NUM, PROD.X_CBIO2_ERP_ITEM_CODE, PROD.NAME , PRICE.STD_PRI_UNIT, PROD.PRICE_TYPE_CD,PROD.X_CBIO2_OFFER_TYPE,PROD.ROW_ID  from SIEBEL.S_PRI_LST_ITEM Price , SIEBEL.S_PROD_INT Prod where
+PRICE.PROD_ID=PROD.ROW_ID AND PART_NUM=? and X_POS_FLG='Y'
+
+</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>ERPItemCode</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+            <wizardData/>
+            <oraObjects/>
+            <oraTables/>
+            <QueryOutputCachedSchemaColumns>PART_NUM</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>X_CBIO2_ERP_ITEM_CODE</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>NAME</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>STD_PRI_UNIT</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>2</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>NUMBER</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>PRICE_TYPE_CD</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>X_CBIO2_OFFER_TYPE</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>ROW_ID</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+        </config>
+        <pd:inputBindings>
+            <jdbcQueryActivityInput>
+                <ERPItemCode>
+                    <xsl:value-of select="$Start/root/ProductCode"/>
+                </ERPItemCode>
+            </jdbcQueryActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CheckProduct">
+        <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+        <pd:x>350</pd:x>
+        <pd:y>146</pd:y>
+        <config>
+            <timeout>%%CommonResources/Connections/JDBC/External/SEIBELLOVServ/Timeout%%</timeout>
+            <commit>false</commit>
+            <maxRows>%%CommonResources/Connections/JDBC/External/SEIBELLOVServ/MaxConnections%%</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connections/JDBC/External/SeibelLOVConnection.sharedjdbc</jdbcSharedConfig>
+            <statement>SELECT PROD.PART_NUM, PROD.X_CBIO2_ERP_ITEM_CODE, PROD.NAME ,  PROD.PRICE_TYPE_CD,PROD.X_CBIO2_OFFER_TYPE,PROD.ROW_ID  from  SIEBEL.S_PROD_INT Prod where
+ PART_NUM=? and X_POS_FLG='Y'
+
+
+</statement>
+            <Prepared_Param_DataType>
+                <parameter>
+                    <parameterName>ERPItemCode</parameterName>
+                    <dataType>VARCHAR</dataType>
+                </parameter>
+            </Prepared_Param_DataType>
+            <wizardData/>
+            <oraObjects/>
+            <oraTables/>
+            <QueryOutputCachedSchemaColumns>PART_NUM</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>X_CBIO2_ERP_ITEM_CODE</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>NAME</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>PRICE_TYPE_CD</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>X_CBIO2_OFFER_TYPE</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            <QueryOutputCachedSchemaColumns>ROW_ID</QueryOutputCachedSchemaColumns>
+            <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+            <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+            <QueryOutputCachedSchemaStatus>RequiredElement</QueryOutputCachedSchemaStatus>
+        </config>
+        <pd:inputBindings>
+            <jdbcQueryActivityInput>
+                <ERPItemCode>
+                    <xsl:value-of select="$Start/root/ProductCode"/>
+                </ERPItemCode>
+            </jdbcQueryActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>CheckPrice</pd:to>
+        <pd:xpathDescription>CheckPrice</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/Checkprice='Y'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CheckPrice</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>CheckProduct</pd:to>
+        <pd:xpathDescription>ChechProduct</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CheckProduct</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

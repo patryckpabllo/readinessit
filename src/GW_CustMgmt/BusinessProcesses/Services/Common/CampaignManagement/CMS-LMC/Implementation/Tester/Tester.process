@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pfx2="http://xmlns.example.com/1462884349074" xmlns:pfx="http://com.ttech.cms.ws">
+    <wsdl:import namespace="http://com.ttech.cms.ws" location="/BusinessProcesses/Services/Common/CampaignManagement/CMS-LMC/Implementation/Tester/CMS-LMC.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/CampaignManagement/CMS-LMC/Implementation/Tester/Tester.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>450</pd:endX>
+    <pd:endY>64</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1474622169420</pd:targetNamespace>
+    <pd:activity name="SOAPRequestReply">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>298</pd:x>
+        <pd:y>45</pd:y>
+        <config>
+            <timeout>0</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx:CmsLmcService</service>
+            <servicePort>CmsLmcService</servicePort>
+            <operation>HasVoicePlan</operation>
+            <soapAction>HasVoicePlan</soapAction>
+            <sharedChannels>
+                <jmsChannel>
+                    <NamingURL>tcp://10.103.23.92:7222</NamingURL>
+                    <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+                    <NamingPrincipal>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUserName%%</NamingPrincipal>
+                    <NamingCredential>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIPassword%%</NamingCredential>
+                    <ConnectionFactory>QueueConnectionFactory</ConnectionFactory>
+                    <JMSTo>CBIO.BSS.DOM_ESB.GW.QUERY.CMS-LMC.SVC.Q.EXT.REQ</JMSTo>
+                    <JMSMessageType>Text</JMSMessageType>
+                    <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                    <JMSPriority>4</JMSPriority>
+                    <JMSTimeToLive>0</JMSTimeToLive>
+                    <JMSUserName>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Username%%</JMSUserName>
+                    <JMSPassword>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Password%%</JMSPassword>
+                    <JMSNamingValidateSecurityContext>true</JMSNamingValidateSecurityContext>
+                </jmsChannel>
+            </sharedChannels>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <pfx:HasVoicePlan>
+                    <request>
+                        <xsl:value-of select="'&lt;![CDATA[&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?>&#xA;&lt;ns0:LMCRequest xmlns:ns0=&quot;http://www.ericsson.com/ZainKW/BusinessSchemas/Services/CMS-LMCRequest.xsd&quot;>&lt;ns0:Request>&lt;ns0:targetListId>abc&lt;/ns0:targetListId>&lt;ns0:msisdn>96597000210&lt;/ns0:msisdn>&lt;ns0:campaignId>123&lt;/ns0:campaignId>&lt;ns0:campaignGroupId>456&lt;/ns0:campaignGroupId>&lt;/ns0:Request>&lt;/ns0:LMCRequest>]]>&lt;/request>'"/>
+                    </request>
+                </pfx:HasVoicePlan>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SOAPRequestReply</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

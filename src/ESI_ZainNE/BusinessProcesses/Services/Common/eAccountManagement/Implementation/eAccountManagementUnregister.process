@@ -1,0 +1,628 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pfx16="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Provisioning/eAccountManagerRequest.xsd" xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:pfx15="http://www.ericsson.com/Mozaic/BusinessSchemas/Modification/BillDeliveryMethodRequest.xsd" xmlns:ns="http://www.tibco.com/pe/CheckpointSchema" xmlns:pfx14="http://www.ericsson.com/Mozaic/BusinessSchemas/Query/RTARequest.xsd" xmlns:pfx13="http://www.ericsson.com/Mozaic/BusinessSchemas/Query/GetBalanceInfoReq.xsd" xmlns:pfx12="http://www.ericsson.com/Mozaic/BusinessSchemas/Modification/AddressChangeReq.xsd" xmlns:pfx11="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:pfx10="http://schemas.tibco.com/bw/pe/plugin/5.0/exceptions" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:pfx17="http://www.zain.com/ZESB/Services/eAccountManagement/Types" xmlns:pfx5="http://xmlns.zain.jo.org/CDM/CustomerAndOrder" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" xmlns:pfx3="http://www.tibco.com/ns/no_namespace_schema_location/CustomerAndOrder.xsd" xmlns:pfx2="http://www.ericsson.com/EAI/SchemaDefinitions/CDM/customerAccount" xmlns:pfx9="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx8="http://www.siebel.com/xml/MOZ1%20Serv%20Account%20Creation%20Res" xmlns:pfx7="http://www.tibco.com/ns/no_namespace_schema_location/CDM/CDM.xsd" xmlns:pfx6="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns9="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Provisioning/eAccountManagerResponse.xsd" xmlns:ns5="http://www.ericsson.com/Mozaic/BusinessSchemas/Provisioning/CreateCustomerRes.xsd" xmlns:ns6="http://www.ericsson.com/Mozaic/BusinessSchemas/Modification/AddressChangeRes.xsd" xmlns:ns10="http://schemas.tibco.com/bw/plugins/xml/5.0/xmlExceptions" xmlns:pfx="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:ns7="http://www.ericsson.com/Mozaic/BusinessSchemas/Query/GetBalanceInfoRes.xsd" xmlns:ns11="http://schemas.tibco.com/bw/plugins/jms/5.0/jmsExceptions" xmlns:ns8="http://www.ericsson.com/Mozaic/BusinessSchemas/Query/RTAResponse.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns3="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.ericsson.com/EAI/SchemaDefinitions/CDM/customerAccount" schemaLocation="/CDM/customerAccount.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/CustomerAndOrder.xsd" schemaLocation="/CustomerAndOrder.xsd"/>
+    <xsd:import namespace="http://xmlns.zain.jo.org/CDM/CustomerAndOrder"/>
+    <xsd:import namespace="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" schemaLocation="/CDM/CDM.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/Mozaic/BusinessSchemas/Modification/AddressChangeReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/AddressChange/AddressChangeReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/Mozaic/BusinessSchemas/Query/GetBalanceInfoReq.xsd" schemaLocation="/BusinessSchemas/Services/Query/GetBalance/GetBalanceInfoReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/Mozaic/BusinessSchemas/Query/RTARequest.xsd" schemaLocation="/BusinessSchemas/Services/Query/RTA/RTARequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/Mozaic/BusinessSchemas/Modification/BillDeliveryMethodRequest.xsd" schemaLocation="/BusinessSchemas/Services/Modification/BillDeliveryMethod/BillDeliveryMethodRequest.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Provisioning/eAccountManagerRequest.xsd" schemaLocation="/BusinessSchemas/Services/Modification/eAccountManager/eAccountManagerRequest.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/CommonLE2/namespace/Public/Exception/ExceptionRequest.xsd" schemaLocation="/BusinessSchemas/Services/Common/CLE/ExceptionRequest.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Provisioning/eAccountManagerResponse.xsd" schemaLocation="/BusinessSchemas/Services/Modification/eAccountManager/eAccountManagerResponse.xsd"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/eAccountManagement/Types" schemaLocation="/BusinessWSDLS/Services/WSDLS/eAccountManagement_Custom/eAccountManagementOutbound_Custom.wsdl"/>
+    <pd:name>BusinessProcesses/Services/Common/eAccountManagement/Implementation/eAccountManagementUnregister.process</pd:name>
+    <pd:startName>ReceiveeAccountManagerUnregister</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="ReceiveeAccountManagerUnregister">
+        <pd:type>com.tibco.plugin.jms.JMSQueueEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueEventSource</pd:resourceType>
+        <pd:x>60</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>%%BusinessProcesses/CommonSettings/JMSReceiver/MaxSessions%%</maxSessions>
+                <destination>%%BusinessProcesses/Services/Common/eAccountManager/Unregister/Request_Queue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>938</pd:endX>
+    <pd:endY>35</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1323152787082</pd:targetNamespace>
+    <pd:activity name="ErrorLog">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>942</pd:x>
+        <pd:y>292</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns2:LogRequest>
+                <pfx6:Header>
+                    <pfx6:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx6:ApplicationID>
+                    <pfx6:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/Deployment"/>
+                    </pfx6:ComponentName>
+                    <pfx6:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </pfx6:Hostname>
+                    <pfx6:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx6:Timestamp>
+                    <pfx6:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                    </pfx6:TransactionDomain>
+                    <pfx6:TransactionType>
+                        <xsl:value-of select="BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId)"/>
+                    </pfx6:TransactionType>
+                    <xsl:if test="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/TransactionID">
+                        <pfx6:TransactionID>
+                            <xsl:value-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/TransactionID"/>
+                        </pfx6:TransactionID>
+                    </xsl:if>
+                    <pfx6:Message>
+                        <xsl:value-of select="tib:render-xml($CLE_To_CDM/pfx17:UnregisterResponse)"/>
+                    </pfx6:Message>
+                </pfx6:Header>
+                <TimeDuration>
+                    <xsl:value-of select="if(exists($ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleError"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_ERR_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns2:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogIn">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>442</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns2:LogRequest>
+                <pfx6:Header>
+                    <pfx6:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx6:ApplicationID>
+                    <pfx6:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/BusinessProcesses/Services/Common/eAccountManager/Unregister/ComponentName"/>
+                    </pfx6:ComponentName>
+                    <pfx6:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </pfx6:Hostname>
+                    <pfx6:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx6:Timestamp>
+                    <pfx6:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </pfx6:TransactionDomain>
+                    <pfx6:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </pfx6:TransactionType>
+                    <pfx6:TransactionID>
+                        <xsl:value-of select="$ParseRequest/pfx17:UnregisterRequest/pfx17:TransactionID"/>
+                    </pfx6:TransactionID>
+                    <pfx6:Message>
+                        <xsl:value-of select="tib:render-xml($ParseRequest/pfx17:UnregisterRequest)"/>
+                    </pfx6:Message>
+                </pfx6:Header>
+                <TimeDuration>
+                    <xsl:value-of select="if(exists($ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_REQ_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns2:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOut">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>814</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns2:LogRequest>
+                <pfx6:Header>
+                    <pfx6:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx6:ApplicationID>
+                    <pfx6:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/BusinessProcesses/Services/Common/eAccountManager/Unregister/ComponentName"/>
+                    </pfx6:ComponentName>
+                    <pfx6:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </pfx6:Hostname>
+                    <pfx6:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx6:Timestamp>
+                    <pfx6:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                    </pfx6:TransactionDomain>
+                    <pfx6:TransactionType>
+                        <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </pfx6:TransactionType>
+                    <pfx6:TransactionID>
+                        <xsl:value-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/TransactionID"/>
+                    </pfx6:TransactionID>
+                    <pfx6:Message>
+                        <xsl:value-of select="tib:render-xml($Call_eAccountManagementUnregister/pfx17:UnregisterResponse)"/>
+                    </pfx6:Message>
+                </pfx6:Header>
+                <TimeDuration>
+                    <xsl:value-of select="if(exists($ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp) and string-length($ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp) > 0)&#xA;then $ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp&#xA;else 0"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Status/ESI/ESI_RES_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns2:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Call_eAccountManagementUnregister">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>569</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <processName>/BusinessProcesses/Services/Common/eAccountManagement/HelperProcess/ESI_Call_eAccountManagerUnregister.process</processName>
+        </config>
+        <pd:inputBindings>
+            <pfx17:UnregisterRequest>
+                <xsl:if test="$ParseRequest/pfx17:UnregisterRequest/pfx17:mobileNo">
+                    <pfx17:mobileNo>
+                        <xsl:copy-of select="$ParseRequest/pfx17:UnregisterRequest/pfx17:mobileNo/@xsi:nil"/>
+                        <xsl:value-of select="$ParseRequest/pfx17:UnregisterRequest/pfx17:mobileNo"/>
+                    </pfx17:mobileNo>
+                </xsl:if>
+                <pfx17:TransactionID>
+                    <xsl:value-of select="$ParseRequest/pfx17:UnregisterRequest/pfx17:TransactionID"/>
+                </pfx17:TransactionID>
+                <pfx17:StartTime>
+                    <xsl:value-of select="$ParseRequest/pfx17:UnregisterRequest/pfx17:StartTime"/>
+                </pfx17:StartTime>
+            </pfx17:UnregisterRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>268</pd:x>
+        <pd:y>285</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="CLE_To_CDM">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>598</pd:x>
+        <pd:y>288</pd:y>
+        <config>
+            <element ref="pfx17:UnregisterResponse"/>
+        </config>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="exists($_error_ParseRequest/ActivityErrors)">
+                    <pfx17:UnregisterResponse>
+                        <pfx17:resultMessage>
+                            <xsl:choose>
+                                <xsl:when test="exists($_error_ParseRequest/ActivityErrors/ns10:XMLParseException/msg)">
+                                    <xsl:value-of select="$_error_ParseRequest/ActivityErrors/ns10:XMLParseException/msg"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx17:resultMessage>
+                        <pfx17:resultStatus>
+                            <xsl:choose>
+                                <xsl:when test="exists($_error_ParseRequest/ActivityErrors/ns10:XMLParseException/msgCode)">
+                                    <xsl:value-of select="$_error_ParseRequest/ActivityErrors/ns10:XMLParseException/msgCode"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx17:resultStatus>
+                        <pfx17:TransactionID>
+                            <xsl:value-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/TransactionID"/>
+                        </pfx17:TransactionID>
+                        <pfx17:StartTime>
+                            <xsl:value-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </pfx17:StartTime>
+                    </pfx17:UnregisterResponse>
+                </xsl:when>
+                <xsl:when test="exists($_error_Reply-to-JMS-Message/ActivityErrors)">
+                    <pfx17:UnregisterResponse>
+                        <pfx17:resultMessage>
+                            <xsl:choose>
+                                <xsl:when test="exists($_error_Reply-to-JMS-Message/ActivityErrors/ns11:JMSInvalidInputException/msg)">
+                                    <xsl:value-of select="$_error_Reply-to-JMS-Message/ActivityErrors/ns11:JMSInvalidInputException/msg"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx17:resultMessage>
+                        <pfx17:resultStatus>
+                            <xsl:choose>
+                                <xsl:when test="exists($_error_Reply-to-JMS-Message/ActivityErrors/ns11:JMSInvalidInputException/msgCode)">
+                                    <xsl:value-of select="$_error_Reply-to-JMS-Message/ActivityErrors/ns11:JMSInvalidInputException/msgCode"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx17:resultStatus>
+                        <pfx17:TransactionID>
+                            <xsl:value-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/TransactionID"/>
+                        </pfx17:TransactionID>
+                        <pfx17:StartTime>
+                            <xsl:value-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </pfx17:StartTime>
+                    </pfx17:UnregisterResponse>
+                </xsl:when>
+                <xsl:otherwise>
+                    <pfx17:UnregisterResponse>
+                        <pfx17:resultMessage>
+                            <xsl:choose>
+                                <xsl:when test="exists($ErrorHandler/pfx4:ExceptionRequest/StackTrace)">
+                                    <xsl:value-of select="$ErrorHandler/pfx4:ExceptionRequest/StackTrace"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </pfx17:resultMessage>
+                        <pfx17:resultStatus>
+                            <xsl:value-of select="$ErrorHandler/pfx4:ExceptionRequest/ExceptionCode"/>
+                        </pfx17:resultStatus>
+                        <pfx17:TransactionID>
+                            <xsl:value-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/TransactionID"/>
+                        </pfx17:TransactionID>
+                        <pfx17:StartTime>
+                            <xsl:value-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/StartTimeStamp"/>
+                        </pfx17:StartTime>
+                    </pfx17:UnregisterResponse>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorHandler">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>438</pd:x>
+        <pd:y>287</pd:y>
+        <config>
+            <processName>/CommonProcesses/ErrorHandlingProcess/Exception_Message.process</processName>
+        </config>
+        <pd:coercions>
+            <pd:coercion xpath="$Catch/exceptiondata/*" element="pfx4:ExceptionRequest"/>
+        </pd:coercions>
+        <pd:inputBindings>
+            <xsl:choose>
+                <xsl:when test="exists($Catch/exceptiondata/pfx4:ExceptionRequest/StackTrace)">
+                    <xsl:copy-of select="$Catch/exceptiondata/pfx4:ExceptionRequest"/>
+                </xsl:when>
+                <xsl:otherwise>
+                    <pfx4:ExceptionRequest>
+                        <pfx6:Header>
+                            <pfx6:ApplicationID>
+                                <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                            </pfx6:ApplicationID>
+                            <pfx6:ComponentName>
+                                <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/Deployment"/>
+                            </pfx6:ComponentName>
+                            <pfx6:Hostname>
+                                <xsl:value-of select="BW:getHostName()"/>
+                            </pfx6:Hostname>
+                            <pfx6:Timestamp>
+                                <xsl:value-of select="current-dateTime()"/>
+                            </pfx6:Timestamp>
+                            <pfx6:TransactionDomain>
+                                <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/MODIFY_CUSTOMER"/>
+                            </pfx6:TransactionDomain>
+                            <pfx6:TransactionType>
+                                <xsl:value-of select="zainesbcustom:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                            </pfx6:TransactionType>
+                            <pfx6:TransactionID>
+                                <xsl:value-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties/TransactionID"/>
+                            </pfx6:TransactionID>
+                        </pfx6:Header>
+                        <ExceptionCode>
+                            <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonErrors/MiscErrorCode"/>
+                        </ExceptionCode>
+                    </pfx4:ExceptionRequest>
+                </xsl:otherwise>
+            </xsl:choose>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseRequest">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>312</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx17:UnregisterRequest"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/Body"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GetResCodes">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>188</pd:x>
+        <pd:y>35</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/ResponseCodes.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Reply to JMS Message">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>700</pd:x>
+        <pd:y>43</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>ReceiveeAccountManagerUnregister</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <InDataxsdString ref="pfx17:UnregisterResponse"/>
+        </config>
+        <pd:inputBindings>
+            <pfx:ActivityInput>
+                <xsl:copy-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties"/>
+                <Body>
+                    <pfx17:UnregisterResponse>
+                        <xsl:if test="$Call_eAccountManagementUnregister/pfx17:UnregisterResponse/pfx17:resultMessage">
+                            <pfx17:resultMessage>
+                                <xsl:copy-of select="$Call_eAccountManagementUnregister/pfx17:UnregisterResponse/pfx17:resultMessage/@xsi:nil"/>
+                                <xsl:value-of select="$Call_eAccountManagementUnregister/pfx17:UnregisterResponse/pfx17:resultMessage"/>
+                            </pfx17:resultMessage>
+                        </xsl:if>
+                        <xsl:if test="$Call_eAccountManagementUnregister/pfx17:UnregisterResponse/pfx17:resultStatus">
+                            <pfx17:resultStatus>
+                                <xsl:copy-of select="$Call_eAccountManagementUnregister/pfx17:UnregisterResponse/pfx17:resultStatus/@xsi:nil"/>
+                                <xsl:value-of select="$Call_eAccountManagementUnregister/pfx17:UnregisterResponse/pfx17:resultStatus"/>
+                            </pfx17:resultStatus>
+                        </xsl:if>
+                        <pfx17:TransactionID>
+                            <xsl:value-of select="$Call_eAccountManagementUnregister/pfx17:UnregisterResponse/pfx17:TransactionID"/>
+                        </pfx17:TransactionID>
+                        <pfx17:StartTime>
+                            <xsl:value-of select="$Call_eAccountManagementUnregister/pfx17:UnregisterResponse/pfx17:StartTime"/>
+                        </pfx17:StartTime>
+                    </pfx17:UnregisterResponse>
+                </Body>
+            </pfx:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMSRecieverError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>58</pd:x>
+        <pd:y>146</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx9:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonErrors/JMSErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonErrors/JMSErrorCode"/>
+                </messageCode>
+            </pfx9:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseError">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>312</pd:x>
+        <pd:y>158</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <pfx9:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonErrors/ParsingErrorDesc"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="$_globalVariables/ns4:GlobalVariables/CommonErrors/ParsingErrorCode"/>
+                </messageCode>
+            </pfx9:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Reply-to-JMS-Message-1">
+        <pd:type>com.tibco.plugin.jms.JMSReplyActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSReplyActivity</pd:resourceType>
+        <pd:x>772</pd:x>
+        <pd:y>290</pd:y>
+        <config>
+            <PermittedMessageType>XML Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+                <EventSource>ReceiveeAccountManagerUnregister</EventSource>
+            </ConfigurableHeaders>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSApplicationProperties.sharedjmsapp</ApplicationProperties>
+            <InDataxsdString ref="pfx17:UnregisterResponse"/>
+        </config>
+        <pd:inputBindings>
+            <pfx:ActivityInput>
+                <xsl:copy-of select="$ReceiveeAccountManagerUnregister/pfx:ActivityOutput/OtherProperties"/>
+                <Body>
+                    <xsl:copy-of select="$CLE_To_CDM/pfx17:UnregisterResponse"/>
+                </Body>
+            </pfx:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>ErrorHandler</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorHandler</pd:from>
+        <pd:to>CLE_To_CDM</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOut</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CLE_To_CDM</pd:from>
+        <pd:to>Reply-to-JMS-Message-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseRequest</pd:from>
+        <pd:to>LogIn</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:xpathDescription>otherwise</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReceiveeAccountManagerUnregister</pd:from>
+        <pd:to>GetResCodes</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetResCodes</pd:from>
+        <pd:to>ParseRequest</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIn</pd:from>
+        <pd:to>Call_eAccountManagementUnregister</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Call_eAccountManagementUnregister</pd:from>
+        <pd:to>Reply to JMS Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply to JMS Message</pd:from>
+        <pd:to>LogOut</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ReceiveeAccountManagerUnregister</pd:from>
+        <pd:to>JMSRecieverError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-52429</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseRequest</pd:from>
+        <pd:to>ParseError</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-65485</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Reply-to-JMS-Message-1</pd:from>
+        <pd:to>ErrorLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

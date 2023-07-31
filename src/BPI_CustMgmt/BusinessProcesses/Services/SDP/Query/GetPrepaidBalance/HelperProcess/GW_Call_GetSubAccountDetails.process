@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:BW="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:ns="http://www.tibco.com/pe/DeployedVarsType" xmlns:pfx14="http://xmlns.example.com/1450342523179" xmlns:pfx13="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" xmlns:pfx12="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:pfx11="http://www.zain.com/ZESB/Services/PrepaidBalance/Types" xmlns:pfx10="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetSubAccountDetailsResponse.xsd" xmlns:pfx5="http://www.zain.com/ZESB/Services/ManageFnF/Types" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx4="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" xmlns:pfx3="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" xmlns:pfx2="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" xmlns:pfx9="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetSubAccountDetailsRequest.xsd" xmlns:pfx8="http://www.zain.com/ZESB/Services/GetSubAccounts/Types" xmlns:pfx7="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/UpdateFnF/UpdateFnFRes.xsd" xmlns:pfx6="http://www.ericsson.com/ZainKW/CommonProject/BusinessSchemas/Services/Modification/UpdateFnF/UpdateFnFReq.xsd" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:zainesbcustom1="java://com.commonresources.utilities.CustomFunctions" xmlns:ns12="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:ns5="http://www.ericsson.com/CDM/telecom/FAF" xmlns:ns6="http://www.ericsson.com/CDM/telecom/canonicaldatamodel" xmlns:ns7="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" xmlns:ns2="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://www.ericsson.com/CDM/telecom/Header" xmlns:ns3="http://www.ericsson.com/CDM/telecom/Subscriber" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerReq.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Provisioning/ModifyCustomerRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/ModifyCustomerRes.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileRequest.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileRequest.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Modification/UpdatePaymentProfileResponse.xsd" schemaLocation="/BusinessSchemas/Services/Modification/ModifyCustomer/UpdatePaymentProfileResponse.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/CommonProject/BusinessSchemas/Services/Modification/UpdateFnF/UpdateFnFReq.xsd" schemaLocation="/BusinessSchemas/Services/Modification/UpdateFnF/UpdateFnFRequest.xsd"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/ManageFnF/Types" schemaLocation="/BusinessWSDLS/Services/WSDLS/ManageFnF/ManageFnF_wsdl.wsdl"/>
+    <xsd:import namespace="http://www.tibco.com/schemas/CommonProject/BusinessSchemas/Services/Modification/UpdateFnF/UpdateFnFRes.xsd" schemaLocation="/BusinessSchemas/Services/Modification/UpdateFnF/UpdateFnFResponse.xsd"/>
+    <xsd:import namespace="http://www.xmlns.zain.com/BSS/ESB/ZainKWFault.xsd" schemaLocation="/CDM/ZainKWFault.xsd"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/GetSubAccounts/Types" schemaLocation="/BusinessWSDLS/Services/TIBCO/GetSubAccountDetails.wsdl"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Query/GetSubAccountDetailsResponse.xsd" schemaLocation="/BusinessSchemas/Services/Query/GetSubAccountDetails/GetSubAccountDetailsResponse.xsd"/>
+    <wsdl:import namespace="http://www.zain.com/ZESB/Services/GetSubAccounts/Types" location="/BusinessWSDLS/Services/TIBCO/GetSubAccountDetails.wsdl"/>
+    <pd:name>BusinessProcesses/Services/SDP/Query/GetPrepaidBalance/HelperProcess/GW_Call_GetSubAccountDetails.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element ref="pfx8:GetSubAccountsInput"/>
+                    <xsd:element name="TrackingId" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>51</pd:startX>
+    <pd:startY>123</pd:startY>
+    <pd:returnBindings>
+        <pfx10:GetSubAccountDetailsResponse>
+            <pfx10:GetSubAccountDetailsRes>
+                <pfx10:ListOfAccounts>
+                    <xsl:for-each select="$SOAPRequestReply/outputMessage/pfx8:GetSubAccountsOutput/pfx8:SubAccounts/pfx8:SubAccount">
+                        <pfx10:Account>
+                            <pfx10:AccountName>
+                                <xsl:value-of select="pfx8:AccountName"/>
+                            </pfx10:AccountName>
+                            <pfx10:Balance>
+                                <xsl:value-of select="if(contains(current()/pfx8:Balance,'SSU'))&#xA;then&#xA;current()/pfx8:Balance&#xA;else if(contains(current()/pfx8:Balance,'Minutes'))&#xA;then&#xA;current()/pfx8:Balance*60&#xA;else if(contains(current()/pfx8:Balance,'MONEY'))&#xA;then&#xA;current()/pfx8:Balance&#xA;else if(contains(current()/pfx8:Balance,'TIME'))&#xA;then&#xA;current()/pfx8:Balance*60&#xA;else if(contains(current()/pfx8:Balance,'Data'))&#xA;then&#xA;pfx8:Balance div 1073741824&#xA;else&#xA;pfx8:Balance"/>
+                            </pfx10:Balance>
+                            <xsl:if test="pfx8:ExpiryDate">
+                                <pfx10:ExpiryDate>
+                                    <xsl:value-of select="pfx8:ExpiryDate"/>
+                                </pfx10:ExpiryDate>
+                            </xsl:if>
+                            <pfx10:Unit>
+                                <xsl:value-of select="if(contains(current()/pfx8:AccountName,'SSU'))&#xA;then&#xA;'Instances'&#xA;else if(contains(current()/pfx8:AccountName,'Minutes'))&#xA;then&#xA;'Minutes'&#xA;else if(contains(current()/pfx8:AccountName,'MONEY'))&#xA;then&#xA;'KD'&#xA;else if(contains(current()/pfx8:AccountName,'TIME'))&#xA;then&#xA;'Minutes'&#xA;else if(contains(current()/pfx8:AccountName,'Data'))&#xA;then&#xA;'GB'&#xA;else&#xA;&quot;KD&quot;"/>
+                            </pfx10:Unit>
+                            <xsl:if test="$ESB_DAMapping/root/Records[DA_ID=DA_ID]/UPDATE_FLAG">
+                                <pfx10:Update_flag>
+                                    <xsl:value-of select="$ESB_DAMapping/root/Records[DA_ID=DA_ID]/UPDATE_FLAG"/>
+                                </pfx10:Update_flag>
+                            </xsl:if>
+                            <xsl:if test="$ESB_DAMapping/root/Records[DA_ID=DA_ID]/STAND_ALONE_FLAG">
+                                <pfx10:StandaloneFlag>
+                                    <xsl:value-of select="$ESB_DAMapping/root/Records[DA_ID=DA_ID]/STAND_ALONE_FLAG"/>
+                                </pfx10:StandaloneFlag>
+                            </xsl:if>
+                        </pfx10:Account>
+                    </xsl:for-each>
+                </pfx10:ListOfAccounts>
+                <ns6:Response>
+                    <ResponseCode>
+                        <xsl:value-of select="'0'"/>
+                    </ResponseCode>
+                </ns6:Response>
+            </pfx10:GetSubAccountDetailsRes>
+        </pfx10:GetSubAccountDetailsResponse>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx10:GetSubAccountDetailsResponse"/>
+    <pd:endX>808</pd:endX>
+    <pd:endY>122</pd:endY>
+    <pd:errorSchemas>
+        <Schema1 ref="pfx13:ErrorResponse"/>
+    </pd:errorSchemas>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1442397719743</pd:targetNamespace>
+    <pd:activity name="Log_CDM_Request">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>347</pd:x>
+        <pd:y>125</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Query/GetPrepaidBalance/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </ns2:TransactionID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root/pfx8:GetSubAccountsInput)"/>
+                    </ns2:Message>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_REQ_SENT"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_CDM_Response">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>668</pd:x>
+        <pd:y>122</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+            <spawn>false</spawn>
+        </config>
+        <pd:inputBindings>
+            <ns12:LogRequest>
+                <ns2:Header>
+                    <ns2:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns2:ApplicationID>
+                    <ns2:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/BusinessProcesses/Services/Query/GetPrepaidBalance/ComponentName"/>
+                    </ns2:ComponentName>
+                    <ns2:Hostname>
+                        <xsl:value-of select="BW:getHostName()"/>
+                    </ns2:Hostname>
+                    <ns2:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns2:Timestamp>
+                    <ns2:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns2:TransactionDomain>
+                    <ns2:TransactionType>
+                        <xsl:value-of select="zainesbcustom1:getTransactionType(BW:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId))"/>
+                    </ns2:TransactionType>
+                    <ns2:TransactionID>
+                        <xsl:value-of select="$Start/root/TrackingId"/>
+                    </ns2:TransactionID>
+                    <ns2:Filename>
+                        <xsl:value-of select="$_globalVariables/ns:GlobalVariables/Deployment"/>
+                    </ns2:Filename>
+                    <ns2:Message>
+                        <xsl:value-of select="tib:render-xml($SOAPRequestReply/outputMessage)"/>
+                    </ns2:Message>
+                    <ns2:Transaction>
+                        <xsl:value-of select="tib:render-xml($SOAPRequestReply/outputMessage/pfx8:GetSubAccountsOutput)"/>
+                    </ns2:Transaction>
+                </ns2:Header>
+                <TimeDuration>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </TimeDuration>
+                <Category>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Category/LogRoleInfo"/>
+                </Category>
+                <Status>
+                    <xsl:value-of select="$_globalVariables/ns:GlobalVariables/CommonProcesses/Constants/CLE/Status/BPI/BPI_RES_RECV"/>
+                </Status>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns12:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SOAPRequestReply">
+        <pd:type>com.tibco.plugin.soap.SOAPSendReceiveActivity</pd:type>
+        <pd:resourceType>ae.activities.SOAPSendReceiveUI</pd:resourceType>
+        <pd:x>519</pd:x>
+        <pd:y>124</pd:y>
+        <config>
+            <timeout>0</timeout>
+            <soapAttachmentStyle>SwA</soapAttachmentStyle>
+            <timeoutType>Seconds</timeoutType>
+            <service>pfx8:GetSubAccountsDetails</service>
+            <servicePort>GetSubAccountsPortEndpoint</servicePort>
+            <operation>GetSubAccounts</operation>
+            <soapAction>GetSubAccounts</soapAction>
+            <sharedChannels>
+                <jmsChannel>
+                    <NamingURL>%%BusinessProcesses/Services/Query/GetPrepaidBalance/EMS_IP_SubAcountDetails%%</NamingURL>
+                    <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+                    <NamingPrincipal>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUserName%%</NamingPrincipal>
+                    <NamingCredential>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/Password%%</NamingCredential>
+                    <ConnectionFactory>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/QueueConnectionFactory%%</ConnectionFactory>
+                    <JMSTo>%%BusinessProcesses/Services/Query/GetPrepaidBalance/SubAccount_Queue%%</JMSTo>
+                    <JMSMessageType>Text</JMSMessageType>
+                    <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                    <JMSPriority>4</JMSPriority>
+                    <JMSTimeToLive>0</JMSTimeToLive>
+                    <JMSUserName>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIUserName%%</JMSUserName>
+                    <JMSPassword>%%CommonResources/Connections/JMS/Internal/EAI_EMSConnection/JNDIPassword%%</JMSPassword>
+                </jmsChannel>
+            </sharedChannels>
+        </config>
+        <pd:inputBindings>
+            <inputMessage>
+                <pfx8:GetSubAccountsInput>
+                    <pfx8:Msisdn>
+                        <xsl:value-of select="$Start/root/pfx8:GetSubAccountsInput/pfx8:Msisdn"/>
+                    </pfx8:Msisdn>
+                </pfx8:GetSubAccountsInput>
+            </inputMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Fault">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>522</pd:x>
+        <pd:y>234</pd:y>
+        <config>
+            <faultName>Schema1</faultName>
+        </config>
+        <pd:inputBindings>
+            <ns7:ActivityInput>
+                <xsl:if test="$_error_SOAPRequestReply/ActivityErrors/defaultFaultElement/faultstring">
+                    <message>
+                        <xsl:value-of select="$_error_SOAPRequestReply/ActivityErrors/defaultFaultElement/faultstring"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="$_error_SOAPRequestReply/ActivityErrors/defaultFaultElement/faultcode">
+                    <messageCode>
+                        <xsl:value-of select="$_error_SOAPRequestReply/ActivityErrors/defaultFaultElement/faultcode"/>
+                    </messageCode>
+                </xsl:if>
+                <data>
+                    <pfx13:ErrorResponse>
+                        <xsl:if test="$_error_SOAPRequestReply/ActivityErrors/faultMessage/faultactor">
+                            <pfx13:Error_SourceSystem>
+                                <xsl:value-of select="$_error_SOAPRequestReply/ActivityErrors/faultMessage/faultactor"/>
+                            </pfx13:Error_SourceSystem>
+                        </xsl:if>
+                        <xsl:if test="$_error_SOAPRequestReply/ActivityErrors/faultMessage/faultcode">
+                            <pfx13:Error_SourceErrCode>
+                                <xsl:value-of select="$_error_SOAPRequestReply/ActivityErrors/faultMessage/faultcode"/>
+                            </pfx13:Error_SourceErrCode>
+                        </xsl:if>
+                        <xsl:if test="$_error_SOAPRequestReply/ActivityErrors/faultMessage/faultstring">
+                            <pfx13:Error_SourceErrDesc>
+                                <xsl:value-of select="$_error_SOAPRequestReply/ActivityErrors/faultMessage/faultstring"/>
+                            </pfx13:Error_SourceErrDesc>
+                        </xsl:if>
+                        <xsl:if test="$_error_SOAPRequestReply/ActivityErrors/faultMessage/detail/pfx12:FaultType/pfx12:type">
+                            <pfx13:Error_Type>
+                                <xsl:value-of select="$_error_SOAPRequestReply/ActivityErrors/faultMessage/detail/pfx12:FaultType/pfx12:type"/>
+                            </pfx13:Error_Type>
+                        </xsl:if>
+                        <xsl:if test="$_error_SOAPRequestReply/ActivityErrors/faultMessage/faultcode">
+                            <pfx13:Error_UserErrCode>
+                                <xsl:value-of select="$_error_SOAPRequestReply/ActivityErrors/faultMessage/faultcode"/>
+                            </pfx13:Error_UserErrCode>
+                        </xsl:if>
+                        <xsl:if test="$_error_SOAPRequestReply/ActivityErrors/faultMessage/faultstring">
+                            <pfx13:Error_UserErrDesc>
+                                <xsl:value-of select="$_error_SOAPRequestReply/ActivityErrors/faultMessage/faultstring"/>
+                            </pfx13:Error_UserErrDesc>
+                        </xsl:if>
+                    </pfx13:ErrorResponse>
+                </data>
+            </ns7:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ESB_DAMapping">
+        <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
+        <pd:x>206</pd:x>
+        <pd:y>122</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/ESB_DAMapping.sharedvariable</variableConfig>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ESB_DAMapping</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CDM_Request</pd:from>
+        <pd:to>SOAPRequestReply</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_CDM_Response</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>Log_CDM_Response</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SOAPRequestReply</pd:from>
+        <pd:to>Fault</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-3407872</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ESB_DAMapping</pd:from>
+        <pd:to>Log_CDM_Request</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

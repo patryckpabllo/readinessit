@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/Inventory" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:typ="http://www.zain.com/ZESB/Services/Inventory/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://www.zain.com/ZESB/Services/Inventory">
+    <wsdl:types>
+        <xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:element name="FaultType">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="code" type="xs:string"/>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="sourceSystem" type="xs:string"/>
+                        <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                        <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+        <xs:schema xmlns:typ="http://www.zain.com/ZESB/Services/Inventory/Types" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/Inventory/Types">
+            <xs:complexType name="ItemList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="1" name="ItemCode" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ReserveItemList">
+                <xs:sequence>
+                    <xs:element maxOccurs="1" minOccurs="1" name="ItemCode" type="xs:string"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="Quantity" type="xs:int"/>
+                    <xs:element maxOccurs="1" minOccurs="0" name="SerialNumber" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:simpleType name="ReserveUnit">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Minute"/>
+                    <xs:enumeration value="Hour"/>
+                    <xs:enumeration value="Day"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:complexType name="ReserveDuration">
+                <xs:sequence>
+                    <xs:element maxOccurs="1" minOccurs="1" name="Unit" type="typ:ReserveUnit"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="Duration" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="WarehouseList">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="WarehouseCode" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="CheckAvailabilityInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Items" type="typ:ItemList"/>
+                        <xs:element name="MinQuantity" type="xs:int"/>
+                        <xs:element minOccurs="0" name="Warehouses" type="typ:WarehouseList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="StockItem">
+                <xs:sequence>
+                    <xs:element name="WarehouseCode" type="xs:string"/>
+                    <xs:element name="ItemCode" type="xs:string"/>
+                    <xs:element name="OnHand" type="xs:int"/>
+                    <xs:element name="OnWay" type="xs:int"/>
+                    <xs:element name="Reserved" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Stocks">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Stock" type="typ:StockItem"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="CheckAvailabilityOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="StockList" type="typ:Stocks"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ReserveInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="Items" type="typ:ReserveItemList"/>
+                        <xs:element minOccurs="0" name="Msisdn" type="xs:string"/>
+                        <xs:element minOccurs="1" name="Username" type="xs:string"/>
+                        <xs:element minOccurs="0" name="Duration" type="typ:ReserveDuration"/>
+                        <xs:element minOccurs="0" name="WarehouseCode" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ReserveOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="TransactionRef" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ReleaseInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="1" name="Username" type="xs:string"/>
+                        <xs:element name="TransactionRef" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ReleaseOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Status" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:complexType name="ItemInfo">
+                <xs:sequence>
+                    <xs:element maxOccurs="1" minOccurs="1" name="Code" type="xs:string"/>
+                    <xs:element maxOccurs="1" minOccurs="0" name="Description" type="xs:string"/>
+                    <xs:element maxOccurs="1" minOccurs="0" name="Category" type="xs:string"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="WarehouseCode" type="xs:string"/>
+                    <xs:element maxOccurs="1" minOccurs="0" name="WarehouseDescription" type="xs:string"/>
+                    <xs:element maxOccurs="1" minOccurs="1" name="OnHand" type="xs:int"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Items">
+                <xs:sequence>
+                    <xs:element maxOccurs="unbounded" minOccurs="0" name="Item" type="typ:ItemInfo"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="GetItemInfoInput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="ItemCode" type="xs:string"/>
+                        <xs:element name="SerialNumber" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GetItemInfoOutput">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="1" name="ItemInfoList" type="typ:Items"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="CheckAvailabilityRequest">
+        <wsdl:part element="typ:CheckAvailabilityInput" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="CheckAvailabilityResponse">
+        <wsdl:part element="typ:CheckAvailabilityOutput" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="ReserveRequest">
+        <wsdl:part element="typ:ReserveInput" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="ReserveResponse">
+        <wsdl:part element="typ:ReserveOutput" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="ReleaseRequest">
+        <wsdl:part element="typ:ReleaseInput" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="ReleaseResponse">
+        <wsdl:part element="typ:ReleaseOutput" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="GetItemInfoRequest">
+        <wsdl:part element="typ:GetItemInfoInput" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="GetItemInfoResponse">
+        <wsdl:part element="typ:GetItemInfoOutput" name="parameters"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part element="com:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:portType name="InventoryPort">
+        <wsdl:operation name="CheckAvailability">
+            <wsdl:input message="tns:CheckAvailabilityRequest" name="CheckAvailabilityRequest"/>
+            <wsdl:output message="tns:CheckAvailabilityResponse" name="CheckAvailabilityResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="Reserve">
+            <wsdl:input message="tns:ReserveRequest" name="ReserveRequest"/>
+            <wsdl:output message="tns:ReserveResponse" name="ReserveResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="Release">
+            <wsdl:input message="tns:ReleaseRequest" name="ReleaseRequest"/>
+            <wsdl:output message="tns:ReleaseResponse" name="ReleasResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="GetItemInfo">
+            <wsdl:input message="tns:GetItemInfoRequest" name="GetItemInfoRequest"/>
+            <wsdl:output message="tns:GetItemInfoResponse" name="GetItemInfoResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="InventoryBinding" type="tns:InventoryPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="CheckAvailability">
+            <soap:operation soapAction="CheckAvailability"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="Reserve">
+            <soap:operation soapAction="Reserve"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="Release">
+            <soap:operation soapAction="Release"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="GetItemInfo">
+            <soap:operation soapAction="GetItemInfo"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="InventoryService">
+        <wsdl:port binding="tns:InventoryBinding" name="InventoryPort">
+            <soap:address location="URL"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

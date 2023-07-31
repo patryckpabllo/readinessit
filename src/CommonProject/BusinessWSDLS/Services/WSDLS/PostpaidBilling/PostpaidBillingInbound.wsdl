@@ -1,0 +1,294 @@
+<!-- edited with XMLSpy v2012 rel. 2 sp1 (x64) (http://www.altova.com) by Mahmoud Abu-Ghali (Zain) -->
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:typ="http://www.zain.com/ZESB/Services/PostpaidBilling/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/PostpaidBilling" xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Services/PostpaidBilling">
+	<types>
+		<xs:schema xmlns:com="http://www.zain.com/ZESB/Types/Common" targetNamespace="http://www.zain.com/ZESB/Types/Common" elementFormDefault="qualified">
+			<xs:element name="FaultType">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="type" type="xs:string"/>
+						<xs:element name="code" type="xs:string"/>
+						<xs:element name="description" type="xs:string"/>
+						<xs:element name="sourceSystem" type="xs:string"/>
+						<xs:element name="extErrorCode" type="xs:string" minOccurs="0"/>
+						<xs:element name="detail" type="xs:string" minOccurs="0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>		
+		<xs:schema targetNamespace="http://www.zain.com/ZESB/Services/PostpaidBilling/Types" elementFormDefault="qualified">
+			<xs:element name="Duration">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:long">
+							<xs:attribute name="unit" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="Quantity">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:int">
+							<xs:attribute name="unit" type="xs:string"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>				
+				<xs:complexType name="Usage">
+				<xs:simpleContent>
+					<xs:extension base="xs:decimal">
+						<xs:attribute name="unit" type="xs:string" use="required"/>
+					</xs:extension>
+				</xs:simpleContent>
+			</xs:complexType>
+			
+			<xs:complexType name="DataEntry">
+				<xs:sequence>
+				    <xs:element name="Msisdn" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="ServiceCode" type="xs:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+					<xs:element name="ServiceName" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+					<xs:element name="PartnerUsage" type="typ:Usage" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="PartnerQuota" type="typ:Usage" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="OtherUsage" type="typ:Usage" minOccurs="1" maxOccurs="1"/>
+				    <xs:element name="OtherQuota" type="typ:Usage" minOccurs="1" maxOccurs="1"/>
+				    <xs:element name="PartnerAmount" type="xs:decimal" minOccurs="0" maxOccurs="1" nillable="true"/>
+				    <xs:element name="OtherAmount" type="xs:decimal" minOccurs="0" maxOccurs="1" nillable="true"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			<xs:complexType name="DataEntries">
+				<xs:sequence>
+					<xs:element name="DataEntry" type="typ:DataEntry" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+			
+			
+			<xs:complexType name="Entry">
+				<xs:sequence>
+					<xs:element name="Level" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					<xs:element name="Text" type="xs:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+					<xs:element name="From" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+					<xs:element name="To" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true"/>
+					<xs:element ref="typ:Duration" minOccurs="0"/>
+					<xs:element ref="typ:Quantity" minOccurs="0"/>
+					<xs:element name="Amount" type="xs:decimal" minOccurs="0" maxOccurs="1" nillable="true"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="Entries">
+				<xs:sequence>
+					<xs:element name="Entry" type="typ:Entry" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="BillDetailsResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Entries" type="typ:Entries" minOccurs="0" maxOccurs="1" nillable="true"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BillDetailsRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Msisdn" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="BillDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Language" type="typ:LanguageType" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			
+			
+			<xs:element name="DataRoamingResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Entries" type="typ:DataEntries" minOccurs="0" maxOccurs="1" nillable="true"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="DataRoamingRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Msisdn" type="xs:string" minOccurs="0" maxOccurs="1"/>
+						<xs:element name="UsageDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Language" type="typ:LanguageType" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			
+			
+			<xs:complexType name="Item">
+				<xs:sequence>
+					<xs:element name="Service" type="xs:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+					<xs:element name="Amount" type="xs:decimal" minOccurs="1" maxOccurs="1" nillable="true"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="Summary">
+				<xs:sequence>
+					<xs:element name="Item" type="typ:Item" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>			
+			<xs:element name="BillSummaryResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Summary" type="typ:Summary" minOccurs="0" maxOccurs="1" nillable="true"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="BillSummaryRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Msisdn" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="BillDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Language" type="typ:LanguageType" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="Call">
+				<xs:sequence>
+				   <xs:element name="CallDate" type="xs:string" minOccurs="1" maxOccurs="1"/>
+				   <xs:element name="CallType" type="xs:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+				   <xs:element name="CalledNo" type="xs:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+				   <xs:element name="Country" type="xs:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+				   <xs:element name="Duration" type="xs:string" minOccurs="1" maxOccurs="1" nillable="true"/>
+				   <xs:element name="Cost" type="xs:string" minOccurs="1" maxOccurs="1"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:simpleType name="LanguageType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="En" />
+					<xs:enumeration value="Ar" />
+				</xs:restriction>
+			</xs:simpleType>	
+			<xs:complexType name="Calls">
+				<xs:sequence>
+					<xs:element name="Call" type="typ:Call" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+			</xs:complexType>			
+			<xs:element name="IndividualCallsResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Calls" type="typ:Calls" minOccurs="0" maxOccurs="1" nillable="true"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>					
+			<xs:element name="IndividualCallsRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="ContractId" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Msisdn" type="xs:string" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="BillDate" type="xs:date" minOccurs="1" maxOccurs="1"/>
+						<xs:element name="Language" type="typ:LanguageType" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+	</types>
+	<message name="DataRoamingRequest">
+		<part name="parameters" element="typ:DataRoamingRequest"/>
+	</message>
+	<message name="DataRoamingResponse">
+		<part name="parameters" element="typ:DataRoamingResponse"/>
+	</message>
+	
+	
+	<message name="BillDetailsRequest">
+		<part name="parameters" element="typ:BillDetailsRequest"/>
+	</message>
+	<message name="BillDetailsResponse">
+		<part name="parameters" element="typ:BillDetailsResponse"/>
+	</message>	
+	<message name="BillSummaryRequest">
+		<part name="parameters" element="typ:BillSummaryRequest"/>
+	</message>
+	<message name="BillSummaryResponse">
+		<part name="parameters" element="typ:BillSummaryResponse"/>
+	</message>
+		<message name="IndividualCallsRequest">
+		<part name="parameters" element="typ:IndividualCallsRequest"/>
+	</message>
+	<message name="IndividualCallsResponse">
+		<part name="parameters" element="typ:IndividualCallsResponse"/>
+	</message>
+	<wsdl:message name="faultMessage">
+		<wsdl:part name="fault" element="com:FaultType"/>
+	</wsdl:message>
+	<message name="NewMessage"/>
+	<message name="NewMessage2"/>
+	<portType name="PostpaidBillingPort">
+		<operation name="getBillDetails">
+			<input message="tns:BillDetailsRequest"/>
+			<output message="tns:BillDetailsResponse"/>
+			<fault name="fault" message="tns:faultMessage"/>
+		</operation>
+		<operation name="getBillSummary">
+			<input message="tns:BillSummaryRequest"/>
+			<output message="tns:BillSummaryResponse"/>
+			<fault name="fault" message="tns:faultMessage"/>
+		</operation>
+		<operation name="getIndividualCalls">
+			<input message="tns:IndividualCallsRequest"/>
+			<output message="tns:IndividualCallsResponse"/>
+			<fault name="fault" message="tns:faultMessage"/>
+		</operation>
+		
+		
+		<operation name="GetRoamingUsage">
+			<input message="tns:DataRoamingRequest"/>
+			<output message="tns:DataRoamingResponse"/>
+			<fault name="fault" message="tns:faultMessage"/>
+		</operation>
+		
+	</portType>
+	<binding name="PostpaidBillingBinding" type="tns:PostpaidBillingPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="getBillDetails">
+			<soap:operation soapAction="getBillDetails"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="fault"/>
+		</operation>
+		<operation name="getBillSummary">
+			<soap:operation soapAction="getBillSummary"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="fault"/>
+		</operation>
+		<operation name="getIndividualCalls">
+			<soap:operation soapAction="getIndividualCalls"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="fault"/>
+		</operation>
+		
+		<operation name="GetRoamingUsage">
+			<soap:operation soapAction="GetRoamingUsage"/>
+			<input>
+				<soap:body use="literal"/>
+			</input>
+			<output>
+				<soap:body use="literal"/>
+			</output>
+			<fault name="fault"/>
+		</operation>
+		
+	</binding>
+	<service name="PostpaidBillingService">
+		<port name="PostpaidBillingPort" binding="tns:PostpaidBillingBinding">
+			<soap:address location="ZESB/PostpaidBilling"/>
+		</port>
+	</service>
+</definitions>

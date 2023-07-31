@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Created by TIBCO WSDL-->
+<wsdl:definitions xmlns:ns1="http://www.zain.com/ZESB/Types/Common" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://www.zain.com/ZESB/Services/ManageOffer" xmlns:ns0="http://www.zain.com/ZESB/Services/ManageOffer/Types" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" name="ManageOfferService" targetNamespace="http://www.zain.com/ZESB/Services/ManageOffer">
+    <wsdl:types>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/ManageOffer/Types">
+            <xs:import namespace="http://www.zain.com/ZESB/Types/Common"/>
+            <xs:simpleType name="Action">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Activate"/>
+                    <xs:enumeration value="Deactivate"/>
+                    <xs:enumeration value="Swap"/>
+                </xs:restriction>
+            </xs:simpleType>
+            <xs:complexType name="ManageOfferInput">
+                <xs:sequence>
+                    <xs:element ref="ns0:Msisdn"/>
+                    <xs:element name="OffersList">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded" name="Offer" type="ns0:Offer"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="ManageOfferOutput">
+                <xs:sequence>
+                    <xs:element name="OffersResponseList">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element maxOccurs="unbounded" name="OfferResponse" type="ns0:OfferResponse"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="Offer">
+                <xs:sequence>
+                    <xs:element ref="ns0:OfferID"/>
+                    <xs:element name="Action" type="ns0:Action"/>
+                    <xs:element minOccurs="0" name="Renewable" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="OfferResponse">
+                <xs:sequence>
+                    <xs:element ref="ns0:OfferID"/>
+                    <xs:element name="Action" type="ns0:Action"/>
+                    <xs:element name="ResponseCode" type="xs:string"/>
+                    <xs:element minOccurs="0" name="ResponseDescription" type="xs:string"/>
+                    <xs:element minOccurs="0" name="StartDate" type="xs:dateTime"/>
+                    <xs:element minOccurs="0" name="ExpiryDate" type="xs:dateTime"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="SetAutoRenewalFlagInput">
+                <xs:sequence>
+                    <xs:element ref="ns0:Msisdn"/>
+                    <xs:element ref="ns0:OfferID"/>
+                    <xs:element name="AutoRenewEnabled" type="xs:boolean"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:complexType name="SetAutoRenewalFlagOutput">
+                <xs:sequence>
+                    <xs:element name="Status" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="ManageOfferInput" type="ns0:ManageOfferInput"/>
+            <xs:element name="ManageOfferOutput" type="ns0:ManageOfferOutput"/>
+            <xs:element name="Msisdn" type="xs:string"/>
+            <xs:element name="OfferID" type="xs:string"/>
+            <xs:element name="SetAutoRenewalFlagInput" type="ns0:SetAutoRenewalFlagInput"/>
+            <xs:element name="SetAutoRenewalFlagOutput" type="ns0:SetAutoRenewalFlagOutput"/>
+        </xs:schema>
+        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common">
+            <xs:import namespace="http://www.zain.com/ZESB/Services/ManageOffer/Types"/>
+            <xs:complexType name="FaultType">
+                <xs:sequence>
+                    <xs:element name="type" type="xs:string"/>
+                    <xs:element name="code" type="xs:string"/>
+                    <xs:element name="description" type="xs:string"/>
+                    <xs:element name="sourceSystem" type="xs:string"/>
+                    <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+                    <xs:element minOccurs="0" name="detail" type="xs:string"/>
+                </xs:sequence>
+            </xs:complexType>
+            <xs:element name="FaultType" type="ns1:FaultType"/>
+        </xs:schema>
+    </wsdl:types>
+    <wsdl:message name="ManageOfferRequest">
+        <wsdl:part element="ns0:ManageOfferInput" name="input"/>
+    </wsdl:message>
+    <wsdl:message name="ManageOfferResponse">
+        <wsdl:part element="ns0:ManageOfferOutput" name="output"/>
+    </wsdl:message>
+    <wsdl:message name="faultMessage">
+        <wsdl:part element="ns1:FaultType" name="fault"/>
+    </wsdl:message>
+    <wsdl:message name="SetAutoRenewalFlagRequest">
+        <wsdl:part element="ns0:SetAutoRenewalFlagInput" name="input"/>
+    </wsdl:message>
+    <wsdl:message name="SetAutoRenewalFlagResponse">
+        <wsdl:part element="ns0:SetAutoRenewalFlagOutput" name="output"/>
+    </wsdl:message>
+    <wsdl:portType name="ManageOfferPort">
+        <wsdl:operation name="ManageOffer">
+            <wsdl:input message="tns:ManageOfferRequest"/>
+            <wsdl:output message="tns:ManageOfferResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+        <wsdl:operation name="SetAutoRenewalFlag">
+            <wsdl:input message="tns:SetAutoRenewalFlagRequest"/>
+            <wsdl:output message="tns:SetAutoRenewalFlagResponse"/>
+            <wsdl:fault message="tns:faultMessage" name="fault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ManageOfferPort" type="tns:ManageOfferPort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="ManageOffer">
+            <wsdl:documentation/>
+            <soap:operation soapAction="ManageOffer" style="document"/>
+            <wsdl:input>
+                <soap:body parts="input" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="output" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+        <wsdl:operation name="SetAutoRenewalFlag">
+            <wsdl:documentation/>
+            <soap:operation soapAction="SetAutoRenewalFlag" style="document"/>
+            <wsdl:input>
+                <soap:body parts="input" use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body parts="output" use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="fault">
+                <soap:fault name="fault" use="literal"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ManageOfferService">
+        <wsdl:port binding="tns:ManageOfferPort" name="ManageOfferPort">
+            <soap:address location="http://10.96.11.37:7070/ESB/SOAP/ManageOffer"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

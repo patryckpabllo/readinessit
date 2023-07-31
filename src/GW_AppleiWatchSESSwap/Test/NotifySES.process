@@ -1,0 +1,1017 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EntitleServer/EOM_NotifySES.xsd" xmlns:pfx="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/MSISDNLockUnlock.xsd">
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/Applications/ConceptWave/MSISDNLockUnlock.xsd" schemaLocation="/BusinessSchemas/Services/Applications/ConceptWave/MSISDNLocking/MSISDNLockUnlock.xsd"/>
+    <xsd:import namespace="http://www.ericsson.com/ZainKW/BusinessSchemas/Services/EntitleServer/EOM_NotifySES.xsd" schemaLocation="/Services/SESEntServer/Resources/XSD/NotifySES/EOM_NotifySES.xsd"/>
+    <pd:name>Test/NotifySES.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="lockunlock" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>51</pd:startX>
+    <pd:startY>248</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>898</pd:endX>
+    <pd:endY>278</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1585823930862</pd:targetNamespace>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>624</pd:x>
+        <pd:y>281</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/EOM/NotifySES/RequestQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <xsl:choose>
+                    <xsl:when test="exists($ActivateMapper/pfx2:NotifyUserDataReq)">
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($ActivateMapper/pfx2:NotifyUserDataReq)"/>
+                        </Body>
+                    </xsl:when>
+                    <xsl:when test="exists($DeactivateMapper/pfx2:NotifyUserDataReq)">
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($DeactivateMapper/pfx2:NotifyUserDataReq)"/>
+                        </Body>
+                    </xsl:when>
+                    <xsl:when test="exists($SuspendMapper/pfx2:NotifyUserDataReq)">
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($SuspendMapper/pfx2:NotifyUserDataReq)"/>
+                        </Body>
+                    </xsl:when>
+                    <xsl:when test="exists($ResumeMapper/pfx2:NotifyUserDataReq)">
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($ResumeMapper/pfx2:NotifyUserDataReq)"/>
+                        </Body>
+                    </xsl:when>
+                    <xsl:when test="exists($CleanUpMapper/pfx2:NotifyUserDataReq)">
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($CleanUpMapper/pfx2:NotifyUserDataReq)"/>
+                        </Body>
+                    </xsl:when>
+                    <xsl:when test="exists($LockMapper/pfx2:NotifyUserDataReq)">
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($LockMapper/pfx2:NotifyUserDataReq)"/>
+                        </Body>
+                    </xsl:when>
+                    <xsl:when test="exists($UnLockMapper/pfx2:NotifyUserDataReq)">
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($UnLockMapper/pfx2:NotifyUserDataReq)"/>
+                        </Body>
+                    </xsl:when>
+                    <xsl:when test="exists($ChangeSIMMapper/pfx2:NotifyUserDataReq)">
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($ChangeSIMMapper/pfx2:NotifyUserDataReq)"/>
+                        </Body>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <Body>
+                            <xsl:value-of select="tib:render-xml($ErrorMapper/pfx2:NotifyUserDataReq)"/>
+                        </Body>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Get JMS Queue Message">
+        <pd:type>com.tibco.plugin.jms.JMSQueueGetMessageActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueGetMessageActivity</pd:resourceType>
+        <pd:x>783</pd:x>
+        <pd:y>287</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/EOM/NotifySES/ResponseQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <selector>
+                    <xsl:value-of select="$JMS-Queue-Sender/ns:aEmptyOutputClass/ns:MessageID"/>
+                </selector>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ActivateMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>342</pd:x>
+        <pd:y>27</pd:y>
+        <config>
+            <element ref="pfx2:NotifyUserDataReq"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:NotifyUserDataReq>
+                <pfx2:OrderHeader>
+                    <pfx2:correlationID>
+                        <xsl:value-of select="&quot;ACT04&quot;"/>
+                    </pfx2:correlationID>
+                    <pfx2:serviceOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:serviceOrderId>
+                    <pfx2:salesOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:salesOrderId>
+                    <pfx2:buIdPubValue>
+                        <xsl:value-of select="$Start/root/lockunlock"/>
+                    </pfx2:buIdPubValue>
+                </pfx2:OrderHeader>
+                <pfx2:SERVICE>
+                    <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                </pfx2:SERVICE>
+                <pfx2:TRADE_TYPE>
+                    <xsl:value-of select="1"/>
+                </pfx2:TRADE_TYPE>
+                <pfx2:MAIN_USER>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;96590910176&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419002230596148&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;8996591009916361485&quot;"/>
+                    </pfx2:ICCID>
+                </pfx2:MAIN_USER>
+                <pfx2:ATTACH_USERS>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;899659100007773025&quot;"/>
+                    </pfx2:ICCID>
+                    <pfx2:STATUS>
+                        <xsl:value-of select="1"/>
+                    </pfx2:STATUS>
+                    <pfx2:EID>
+                        <xsl:value-of select="&quot;8986010110231170984S&quot;"/>
+                    </pfx2:EID>
+                </pfx2:ATTACH_USERS>
+                <pfx2:NameValuePairs>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;CHANNEL_NAME&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;SES&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;OPERATION&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;ADD&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                </pfx2:NameValuePairs>
+            </pfx2:NotifyUserDataReq>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="DeactivateMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>336</pd:x>
+        <pd:y>85</pd:y>
+        <config>
+            <element ref="pfx2:NotifyUserDataReq"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:NotifyUserDataReq>
+                <pfx2:OrderHeader>
+                    <pfx2:correlationID>
+                        <xsl:value-of select="&quot;DEACT04&quot;"/>
+                    </pfx2:correlationID>
+                    <pfx2:serviceOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:serviceOrderId>
+                    <pfx2:salesOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:salesOrderId>
+                    <pfx2:buIdPubValue>
+                        <xsl:value-of select="$Start/root/lockunlock"/>
+                    </pfx2:buIdPubValue>
+                </pfx2:OrderHeader>
+                <pfx2:SERVICE>
+                    <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                </pfx2:SERVICE>
+                <pfx2:TRADE_TYPE>
+                    <xsl:value-of select="2"/>
+                </pfx2:TRADE_TYPE>
+                <pfx2:MAIN_USER>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;96590910176&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419002230596148&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;8996591009916361485&quot;"/>
+                    </pfx2:ICCID>
+                </pfx2:MAIN_USER>
+                <pfx2:ATTACH_USERS>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;899659100007773025&quot;"/>
+                    </pfx2:ICCID>
+                    <pfx2:STATUS>
+                        <xsl:value-of select="4"/>
+                    </pfx2:STATUS>
+                    <pfx2:EID>
+                        <xsl:value-of select="&quot;8986010110231170984S&quot;"/>
+                    </pfx2:EID>
+                </pfx2:ATTACH_USERS>
+                <pfx2:NameValuePairs>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;CHANNEL_NAME&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;SES&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;OPERATION&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;DELETE&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                </pfx2:NameValuePairs>
+            </pfx2:NotifyUserDataReq>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SuspendMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>341</pd:x>
+        <pd:y>151</pd:y>
+        <config>
+            <element ref="pfx2:NotifyUserDataReq"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:NotifyUserDataReq>
+                <pfx2:OrderHeader>
+                    <pfx2:correlationID>
+                        <xsl:value-of select="&quot;SUSPEND04&quot;"/>
+                    </pfx2:correlationID>
+                    <pfx2:serviceOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:serviceOrderId>
+                    <pfx2:salesOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:salesOrderId>
+                    <pfx2:buIdPubValue>
+                        <xsl:value-of select="$Start/root/lockunlock"/>
+                    </pfx2:buIdPubValue>
+                </pfx2:OrderHeader>
+                <pfx2:SERVICE>
+                    <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                </pfx2:SERVICE>
+                <pfx2:TRADE_TYPE>
+                    <xsl:value-of select="2"/>
+                </pfx2:TRADE_TYPE>
+                <pfx2:MAIN_USER>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;96590910176&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419002230596148&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;8996591009916361485&quot;"/>
+                    </pfx2:ICCID>
+                </pfx2:MAIN_USER>
+                <pfx2:ATTACH_USERS>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;419022305430595&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419022305430595&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;899659100991155827&quot;"/>
+                    </pfx2:ICCID>
+                    <pfx2:STATUS>
+                        <xsl:value-of select="2"/>
+                    </pfx2:STATUS>
+                    <pfx2:EID>
+                        <xsl:value-of select="&quot;8986010110231170KRISN&quot;"/>
+                    </pfx2:EID>
+                </pfx2:ATTACH_USERS>
+                <pfx2:NameValuePairs>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;CHANNEL_NAME&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;SES&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;OPERATION&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;SUSPEND&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                </pfx2:NameValuePairs>
+            </pfx2:NotifyUserDataReq>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ResumeMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>343</pd:x>
+        <pd:y>222</pd:y>
+        <config>
+            <element ref="pfx2:NotifyUserDataReq"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:NotifyUserDataReq>
+                <pfx2:OrderHeader>
+                    <pfx2:correlationID>
+                        <xsl:value-of select="&quot;RESUME04&quot;"/>
+                    </pfx2:correlationID>
+                    <pfx2:serviceOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:serviceOrderId>
+                    <pfx2:salesOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:salesOrderId>
+                    <pfx2:buIdPubValue>
+                        <xsl:value-of select="$Start/root/lockunlock"/>
+                    </pfx2:buIdPubValue>
+                </pfx2:OrderHeader>
+                <pfx2:SERVICE>
+                    <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                </pfx2:SERVICE>
+                <pfx2:TRADE_TYPE>
+                    <xsl:value-of select="2"/>
+                </pfx2:TRADE_TYPE>
+                <pfx2:MAIN_USER>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;96590910176&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419002230596148&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;8996591009916361485&quot;"/>
+                    </pfx2:ICCID>
+                </pfx2:MAIN_USER>
+                <pfx2:ATTACH_USERS>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;419022305430595&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419022305430595&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;899659100991155827&quot;"/>
+                    </pfx2:ICCID>
+                    <pfx2:STATUS>
+                        <xsl:value-of select="1"/>
+                    </pfx2:STATUS>
+                    <pfx2:EID>
+                        <xsl:value-of select="&quot;8986010110231170KRISN&quot;"/>
+                    </pfx2:EID>
+                </pfx2:ATTACH_USERS>
+                <pfx2:NameValuePairs>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;CHANNEL_NAME&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;SES&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;OPERATION&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;RESUME&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                </pfx2:NameValuePairs>
+            </pfx2:NotifyUserDataReq>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LockMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>343</pd:x>
+        <pd:y>304</pd:y>
+        <config>
+            <element ref="pfx2:NotifyUserDataReq"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:NotifyUserDataReq>
+                <pfx2:OrderHeader>
+                    <pfx2:correlationID>
+                        <xsl:value-of select="&quot;LOCK04&quot;"/>
+                    </pfx2:correlationID>
+                    <pfx2:serviceOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:serviceOrderId>
+                    <pfx2:salesOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:salesOrderId>
+                    <pfx2:buIdPubValue>
+                        <xsl:value-of select="$Start/root/lockunlock"/>
+                    </pfx2:buIdPubValue>
+                </pfx2:OrderHeader>
+                <pfx2:SERVICE>
+                    <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                </pfx2:SERVICE>
+                <pfx2:TRADE_TYPE>
+                    <xsl:value-of select="2"/>
+                </pfx2:TRADE_TYPE>
+                <pfx2:MAIN_USER>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;96590910176&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419002230596148&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;8996591009916361485&quot;"/>
+                    </pfx2:ICCID>
+                </pfx2:MAIN_USER>
+                <pfx2:ATTACH_USERS>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;899659100007773025&quot;"/>
+                    </pfx2:ICCID>
+                    <pfx2:STATUS>
+                        <xsl:value-of select="2"/>
+                    </pfx2:STATUS>
+                    <pfx2:EID>
+                        <xsl:value-of select="&quot;8986010110231170984S&quot;"/>
+                    </pfx2:EID>
+                </pfx2:ATTACH_USERS>
+                <pfx2:NameValuePairs>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;CHANNEL_NAME&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;CRM&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;OPERATION&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;SUSPEND&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                </pfx2:NameValuePairs>
+            </pfx2:NotifyUserDataReq>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="UnLockMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>345</pd:x>
+        <pd:y>371</pd:y>
+        <config>
+            <element ref="pfx2:NotifyUserDataReq"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:NotifyUserDataReq>
+                <pfx2:OrderHeader>
+                    <pfx2:correlationID>
+                        <xsl:value-of select="&quot;UNLOCK04&quot;"/>
+                    </pfx2:correlationID>
+                    <pfx2:serviceOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:serviceOrderId>
+                    <pfx2:salesOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:salesOrderId>
+                    <pfx2:buIdPubValue>
+                        <xsl:value-of select="$Start/root/lockunlock"/>
+                    </pfx2:buIdPubValue>
+                </pfx2:OrderHeader>
+                <pfx2:SERVICE>
+                    <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                </pfx2:SERVICE>
+                <pfx2:TRADE_TYPE>
+                    <xsl:value-of select="2"/>
+                </pfx2:TRADE_TYPE>
+                <pfx2:MAIN_USER>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;96590910176&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419002230596148&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;8996591009916361485&quot;"/>
+                    </pfx2:ICCID>
+                </pfx2:MAIN_USER>
+                <pfx2:ATTACH_USERS>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;899659100007773025&quot;"/>
+                    </pfx2:ICCID>
+                    <pfx2:STATUS>
+                        <xsl:value-of select="1"/>
+                    </pfx2:STATUS>
+                    <pfx2:EID>
+                        <xsl:value-of select="&quot;8986010110231170984S&quot;"/>
+                    </pfx2:EID>
+                </pfx2:ATTACH_USERS>
+                <pfx2:NameValuePairs>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;CHANNEL_NAME&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;CRM&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;OPERATION&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;RESUME&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                </pfx2:NameValuePairs>
+            </pfx2:NotifyUserDataReq>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CleanUpMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>357</pd:x>
+        <pd:y>447</pd:y>
+        <config>
+            <element ref="pfx2:NotifyUserDataReq"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:NotifyUserDataReq>
+                <pfx2:OrderHeader>
+                    <pfx2:correlationID>
+                        <xsl:value-of select="&quot;CLEANUP04&quot;"/>
+                    </pfx2:correlationID>
+                    <pfx2:serviceOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:serviceOrderId>
+                    <pfx2:salesOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:salesOrderId>
+                    <pfx2:buIdPubValue>
+                        <xsl:value-of select="$Start/root/lockunlock"/>
+                    </pfx2:buIdPubValue>
+                </pfx2:OrderHeader>
+                <pfx2:SERVICE>
+                    <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                </pfx2:SERVICE>
+                <pfx2:TRADE_TYPE>
+                    <xsl:value-of select="2"/>
+                </pfx2:TRADE_TYPE>
+                <pfx2:MAIN_USER>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;96590910176&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419002230596148&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;8996591009916361485&quot;"/>
+                    </pfx2:ICCID>
+                </pfx2:MAIN_USER>
+                <pfx2:ATTACH_USERS>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;899659100007773025&quot;"/>
+                    </pfx2:ICCID>
+                    <pfx2:STATUS>
+                        <xsl:value-of select="4"/>
+                    </pfx2:STATUS>
+                    <pfx2:EID>
+                        <xsl:value-of select="&quot;8986010110231170984S&quot;"/>
+                    </pfx2:EID>
+                </pfx2:ATTACH_USERS>
+                <pfx2:NameValuePairs>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;CHANNEL_NAME&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;CRM&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;OPERATION&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;DELETE&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                </pfx2:NameValuePairs>
+            </pfx2:NotifyUserDataReq>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ChangeSIMMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>355</pd:x>
+        <pd:y>521</pd:y>
+        <config>
+            <element ref="pfx2:NotifyUserDataReq"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:NotifyUserDataReq>
+                <pfx2:OrderHeader>
+                    <pfx2:correlationID>
+                        <xsl:value-of select="&quot;CHANGESIM04&quot;"/>
+                    </pfx2:correlationID>
+                    <pfx2:serviceOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:serviceOrderId>
+                    <pfx2:salesOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:salesOrderId>
+                    <pfx2:buIdPubValue>
+                        <xsl:value-of select="$Start/root/lockunlock"/>
+                    </pfx2:buIdPubValue>
+                </pfx2:OrderHeader>
+                <pfx2:SERVICE>
+                    <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                </pfx2:SERVICE>
+                <pfx2:TRADE_TYPE>
+                    <xsl:value-of select="4"/>
+                </pfx2:TRADE_TYPE>
+                <pfx2:MAIN_USER>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;96590910176&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419002230596148&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;8996591009916361485&quot;"/>
+                    </pfx2:ICCID>
+                </pfx2:MAIN_USER>
+                <pfx2:ATTACH_USERS>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419021107773025&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;899659100007773025&quot;"/>
+                    </pfx2:ICCID>
+                    <pfx2:STATUS>
+                        <xsl:value-of select="1"/>
+                    </pfx2:STATUS>
+                    <pfx2:EID>
+                        <xsl:value-of select="&quot;8986010110231170984S&quot;"/>
+                    </pfx2:EID>
+                </pfx2:ATTACH_USERS>
+                <pfx2:NameValuePairs>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;CHANNEL_NAME&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;CRM&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;OPERATION&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;CHANGESIM&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;oldImsi&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;419002230596150&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                </pfx2:NameValuePairs>
+            </pfx2:NotifyUserDataReq>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ErrorMapper">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>365</pd:x>
+        <pd:y>598</pd:y>
+        <config>
+            <element ref="pfx2:NotifyUserDataReq"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:NotifyUserDataReq>
+                <pfx2:OrderHeader>
+                    <pfx2:correlationID>
+                        <xsl:value-of select="&quot;ERROR04&quot;"/>
+                    </pfx2:correlationID>
+                    <pfx2:serviceOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:serviceOrderId>
+                    <pfx2:salesOrderId>
+                        <xsl:value-of select="&quot;404&quot;"/>
+                    </pfx2:salesOrderId>
+                    <pfx2:buIdPubValue>
+                        <xsl:value-of select="$Start/root/lockunlock"/>
+                    </pfx2:buIdPubValue>
+                </pfx2:OrderHeader>
+                <pfx2:SERVICE>
+                    <xsl:value-of select="&quot;Multi-SIM&quot;"/>
+                </pfx2:SERVICE>
+                <pfx2:TRADE_TYPE>
+                    <xsl:value-of select="2"/>
+                </pfx2:TRADE_TYPE>
+                <pfx2:MAIN_USER>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;96590910176&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419002230596148&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;8996591009916361485&quot;"/>
+                    </pfx2:ICCID>
+                </pfx2:MAIN_USER>
+                <pfx2:ATTACH_USERS>
+                    <pfx2:MSISDN>
+                        <xsl:value-of select="&quot;419022305430595&quot;"/>
+                    </pfx2:MSISDN>
+                    <pfx2:IMSI>
+                        <xsl:value-of select="&quot;419022305430595&quot;"/>
+                    </pfx2:IMSI>
+                    <pfx2:ICCID>
+                        <xsl:value-of select="&quot;899659100991155827&quot;"/>
+                    </pfx2:ICCID>
+                    <pfx2:STATUS>
+                        <xsl:value-of select="-1"/>
+                    </pfx2:STATUS>
+                    <pfx2:EID>
+                        <xsl:value-of select="&quot;8986010110231170KRISN&quot;"/>
+                    </pfx2:EID>
+                </pfx2:ATTACH_USERS>
+                <pfx2:NameValuePairs>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;CHANNEL_NAME&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;SES&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;OPERATION&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;SUSPEND&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;ERROR_CODE&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;SES_INTERNAL_ERROR&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                    <pfx2:NameValuePair>
+                        <pfx2:Name>
+                            <xsl:value-of select="&quot;ERROR_DESC&quot;"/>
+                        </pfx2:Name>
+                        <pfx2:Value>
+                            <xsl:value-of select="&quot;SES internal error, Suspend Error Scenario Check.&quot;"/>
+                        </pfx2:Value>
+                    </pfx2:NameValuePair>
+                </pfx2:NameValuePairs>
+            </pfx2:NotifyUserDataReq>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ActivateMapper</pd:to>
+        <pd:xpathDescription>SESActivate</pd:xpathDescription>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/lockunlock="ADD"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>Get JMS Queue Message</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Get JMS Queue Message</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ActivateMapper</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>DeactivateMapper</pd:to>
+        <pd:xpathDescription>SESDeactivate</pd:xpathDescription>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/lockunlock="SESDELETE"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>DeactivateMapper</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>SuspendMapper</pd:to>
+        <pd:xpathDescription>SESSuspend</pd:xpathDescription>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/lockunlock="SESSUSPEND"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SuspendMapper</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ResumeMapper</pd:to>
+        <pd:xpathDescription>SESResume</pd:xpathDescription>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/lockunlock="SESRESUME"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ResumeMapper</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>LockMapper</pd:to>
+        <pd:xpathDescription>CRMLock</pd:xpathDescription>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/lockunlock="LOCK"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LockMapper</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>UnLockMapper</pd:to>
+        <pd:xpathDescription>CRMUnlock</pd:xpathDescription>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/lockunlock="UNLOCK"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>UnLockMapper</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>CleanUpMapper</pd:to>
+        <pd:xpathDescription>CRMCleanup</pd:xpathDescription>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/lockunlock="CRMDELETE"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CleanUpMapper</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ChangeSIMMapper</pd:to>
+        <pd:xpathDescription>CRMChangeSIM</pd:xpathDescription>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/lockunlock="CHANGESIM"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ChangeSIMMapper</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>ErrorMapper</pd:to>
+        <pd:lineType>Curved</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$Start/root/lockunlock="ERROR"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ErrorMapper</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>S-Shaped</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

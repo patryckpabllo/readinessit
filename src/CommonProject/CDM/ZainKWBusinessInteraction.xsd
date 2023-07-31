@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	 xmlns:bs="http://xmlns.zain.com/BSS/ESB/CDM/Base"
+	 xmlns:bi="http://xmlns.zain.com/BSS/ESB/CDM/BusinessInteraction"
+	 targetNamespace="http://xmlns.zain.com/BSS/ESB/CDM/BusinessInteraction"
+	 elementFormDefault="qualified"
+	 attributeFormDefault="unqualified">
+	<xs:import namespace="http://xmlns.zain.com/BSS/ESB/CDM/Base" schemaLocation="ZainKWBaseEntities.xsd"/>
+	<xs:complexType name="BusinessInteractionActor">
+		<xs:sequence>
+			<xs:element name="InteractionRole">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="ORIGINATOR"/>
+						<xs:enumeration value="REQUESTER"/>
+						<xs:enumeration value="RESPONDER"/>
+						<xs:enumeration value="RECIPIENT"/>
+						<xs:enumeration value="OTHER"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ActorID" type="xs:string"/>
+			<xs:element name="ActorType">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="CUSTOMER"/>
+						<xs:enumeration value="KEYACCOUNTMANAGER"/>
+						<xs:enumeration value="SUPPLIER"/>
+						<xs:enumeration value="DEALER"/>
+						<xs:enumeration value="PARTNER"/>
+						<xs:enumeration value="SYSTEM"/>
+						<xs:enumeration value="BUSINESS"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="BusinessInteractionItem">
+		<xs:annotation>
+			<xs:documentation> The purpose for the BusinessInteractionItem  is to define a product, service, ProductSpecification, ProductOffering, ServiceSpecification or ResourceSpecification that is being referenced in the interaction. For example- a service which is being referred to in a problemticket </xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+	<xs:complexType name="BusinessInteraction">
+		<xs:annotation>
+			<xs:documentation> A BusinessInteraction is an arrangement, communication, ticket or joint activity between one or more PartyRoles, ResourceRoles, or CustomerAccounts. A BusinessInteraction may consist of one or more BusinessInteractionItems. A BusinessInteractionItem may refer to a Product, Service, Resource, or one of their specifications. One BusinessInteraction may reference another BusinessInteraction and one BusinessInteractionItem may reference another BusinessInteractionItem on the same or different BusinessInteraction.  </xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="ID" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> Unique identifier for Interaction. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="TimePeriod" type="bs:TimePeriod" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> Date interaction initiated. </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="BusinessInteractionActor" type="bi:BusinessInteractionActor" maxOccurs="unbounded"/>
+			<xs:element name="description" type="xs:string" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation> Narrative that explains the interaction and details about the interaction, such as why the interaction is taking place.
+                    </xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="status" type="xs:string" minOccurs="0"/>
+			<xs:element name="BusinessInteractionItem" type="bi:BusinessInteractionItem" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="Notification" abstract="true">
+		<xs:annotation>
+			<xs:documentation> A communication  usually that informs about something that has or will happen. The notification can be in form of an email, SMS or semilar medium. A Notification is one sided and there is no response.  Notification can be created as the result of a Request; for example, a Trouble Report may result in Notifications being sent to affected Parties. A Notification is a type of Business Interaction , and the parties involved may be customer, organization, partners, delaers, suppliers, operator , IT staff etc. </xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+	<xs:element name="Notification">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:restriction base="bi:BusinessInteraction">
+					<xs:sequence>
+						<xs:element name="ID" type="xs:string" minOccurs="0"/>
+						<xs:element name="StartDateTime" type="xs:string" minOccurs="0"/>
+						<xs:element name="Sender" type="bi:Sender"/>
+						<xs:element name="Receiver" type="bi:Receiver" minOccurs="0" maxOccurs="unbounded"/>
+						<xs:element name="description" type="xs:string" minOccurs="0"/>
+						<xs:element name="EndDateTime" type="xs:string" minOccurs="0"/>
+						<xs:element name="Status" type="xs:string" minOccurs="0"/>
+						<xs:element name="BusinessInteractionItem" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:restriction>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="NotificationType">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:enumeration value="SMS"/>
+				<xs:enumeration value="EMAIL"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	<xs:complexType name="Sender">
+		<xs:complexContent>
+			<xs:restriction base="bi:BusinessInteractionActor">
+				<xs:sequence>
+					<xs:element name="InteractionRole" type="xs:string" fixed="REQUESTER"/>
+					<xs:element name="ActorID" type="xs:string"/>
+					<xs:element name="ActorType" type="xs:string"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="Receiver">
+		<xs:complexContent>
+			<xs:restriction base="bi:BusinessInteractionActor">
+				<xs:sequence>
+					<xs:element name="InteractionRole" type="xs:string" fixed="RECIPIENT"/>
+					<xs:element name="ActorID" type="xs:string"/>
+					<xs:element name="ActorType" type="xs:string"/>
+				</xs:sequence>
+			</xs:restriction>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="CustomerActivity">
+		<xs:annotation>
+			<xs:documentation> Entity to represent any customer interactions from or to. </xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="bi:BusinessInteraction"/>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

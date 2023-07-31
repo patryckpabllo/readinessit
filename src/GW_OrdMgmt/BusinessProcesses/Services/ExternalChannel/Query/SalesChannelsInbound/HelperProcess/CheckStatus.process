@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions">
+    <pd:name>BusinessProcesses/Services/ExternalChannel/Query/SalesChannelsInbound/HelperProcess/CheckStatus.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="ListOfShiftHour">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="ShiftHour" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="EndDay" type="xsd:string"/>
+                                <xsd:element name="EndTime" type="xsd:string"/>
+                                <xsd:element name="StartDay" type="xsd:string"/>
+                                <xsd:element name="StartTime" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>27</pd:startX>
+    <pd:startY>100</pd:startY>
+    <pd:returnBindings>
+        <xsl:choose>
+            <xsl:when test="count($CheckTimeFlagAccm/AccumulatedOutput/root[contains(TimeFlag,&quot;true&quot;)] ) >=1">
+                <root>
+                    <ShopOpenOrClosed>
+                        <xsl:value-of select="&quot;Open&quot;"/>
+                    </ShopOpenOrClosed>
+                </root>
+            </xsl:when>
+            <xsl:when test="count($CheckTimeFlagAccm/AccumulatedOutput/root[contains(TimeFlag,&quot;true&quot;)] ) = 0">
+                <root>
+                    <ShopOpenOrClosed>
+                        <xsl:value-of select="&quot;Closed&quot;"/>
+                    </ShopOpenOrClosed>
+                </root>
+            </xsl:when>
+            <xsl:otherwise>
+                <root>
+                    <ShopOpenOrClosed>
+                        <xsl:value-of select="&quot;Closed&quot;"/>
+                    </ShopOpenOrClosed>
+                </root>
+            </xsl:otherwise>
+        </xsl:choose>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="ShopOpenOrClosed" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>1369</pd:endX>
+    <pd:endY>78</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables>
+        <ShopOpenFlag>
+            <xsd:element name="root">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ShopOpenFlag" type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </ShopOpenFlag>
+    </pd:processVariables>
+    <pd:targetNamespace>http://xmlns.example.com/1513172921527</pd:targetNamespace>
+    <pd:activity name="GetCurrrDayNumAndTime">
+        <pd:type>com.tibco.plugin.java.JavaActivity</pd:type>
+        <pd:resourceType>ae.javapalette.javaActivity</pd:resourceType>
+        <pd:x>126</pd:x>
+        <pd:y>101</pd:y>
+        <config>
+            <fullsource>package BusinessProcesses.Services.ExternalChannel.Query.SalesChannelsInbound.HelperProcess.CheckStatus;
+import java.util.*;
+import java.io.*;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+public class CheckStatusGetCurrrDayNumAndTime{
+/****** START SET/GET METHOD, DO NOT MODIFY *****/
+	protected int curr_day_Number = 0;
+	protected String curr_time = "";
+	public int getcurr_day_Number() {
+		return curr_day_Number;
+	}
+	public void setcurr_day_Number(int val) {
+		curr_day_Number = val;
+	}
+	public String getcurr_time() {
+		return curr_time;
+	}
+	public void setcurr_time(String val) {
+		curr_time = val;
+	}
+/****** END SET/GET METHOD, DO NOT MODIFY *****/
+	public CheckStatusGetCurrrDayNumAndTime() {
+	}
+	public void invoke() throws Exception {
+/* Available Variables: DO NOT MODIFY
+	Out : int curr_day_Number
+	Out : String curr_time
+* Available Variables: DO NOT MODIFY *****/
+Calendar localCalendar = Calendar.getInstance(TimeZone.getDefault());
+curr_day_Number= localCalendar.get(Calendar.DAY_OF_WEEK);
+curr_day_Number=curr_day_Number +1;
+if ( curr_day_Number ==8 ) 
+curr_day_Number=1;
+else
+curr_day_Number=curr_day_Number;
+//GetTime
+       //out_var_2= localCalendar.getTime().toString();
+        DateFormat dateFormat = new SimpleDateFormat("kk:mm:ss");
+        Date date = new Date();
+        String formattedDateTime = dateFormat.format(date);
+curr_time=formattedDateTime;}
+}
+</fullsource>
+            <fileName>CheckStatusGetCurrrDayNumAndTime</fileName>
+            <packageName>BusinessProcesses.Services.ExternalChannel.Query.SalesChannelsInbound.HelperProcess.CheckStatus</packageName>
+            <outputData>
+                <row>
+                    <fieldName>curr_day_Number</fieldName>
+                    <fieldType>int</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+                <row>
+                    <fieldName>curr_time</fieldName>
+                    <fieldType>string</fieldType>
+                    <fieldRequired>optional</fieldRequired>
+                </row>
+            </outputData>
+            <byteCode>
+                <class>
+                    <name>CheckStatusGetCurrrDayNumAndTime</name>
+                    <byteCode>yv66vgAAADMARAkADgAnCQAOACgKAA8AKQgAKgoAKwAsCgAtAC4KAC0ALwcAMAgAMQoACAAyBwAzCgALACkKADQANQcANgcANwEAD2N1cnJfZGF5X051bWJlcgEAAUkBAAljdXJyX3RpbWUBABJMamF2YS9sYW5nL1N0cmluZzsBABJnZXRjdXJyX2RheV9OdW1iZXIBAAMoKUkBAARDb2RlAQAPTGluZU51bWJlclRhYmxlAQASc2V0Y3Vycl9kYXlfTnVtYmVyAQAEKEkpVgEADGdldGN1cnJfdGltZQEAFCgpTGphdmEvbGFuZy9TdHJpbmc7AQAMc2V0Y3Vycl90aW1lAQAVKExqYXZhL2xhbmcvU3RyaW5nOylWAQAGPGluaXQ+AQADKClWAQAGaW52b2tlAQANU3RhY2tNYXBUYWJsZQcAOAEACkV4Y2VwdGlvbnMHADkBAApTb3VyY2VGaWxlAQAlQ2hlY2tTdGF0dXNHZXRDdXJyckRheU51bUFuZFRpbWUuamF2YQwAEAARDAASABMMAB4AHwEAAAcAOgwAOwA8BwA4DAA9AD4MAD8AQAEAGmphdmEvdGV4dC9TaW1wbGVEYXRlRm9ybWF0AQAIa2s6bW06c3MMAB4AHQEADmphdmEvdXRpbC9EYXRlBwBBDABCAEMBAIBCdXNpbmVzc1Byb2Nlc3Nlcy9TZXJ2aWNlcy9FeHRlcm5hbENoYW5uZWwvUXVlcnkvU2FsZXNDaGFubmVsc0luYm91bmQvSGVscGVyUHJvY2Vzcy9DaGVja1N0YXR1cy9DaGVja1N0YXR1c0dldEN1cnJyRGF5TnVtQW5kVGltZQEAEGphdmEvbGFuZy9PYmplY3QBABJqYXZhL3V0aWwvQ2FsZW5kYXIBABNqYXZhL2xhbmcvRXhjZXB0aW9uAQASamF2YS91dGlsL1RpbWVab25lAQAKZ2V0RGVmYXVsdAEAFigpTGphdmEvdXRpbC9UaW1lWm9uZTsBAAtnZXRJbnN0YW5jZQEAKihMamF2YS91dGlsL1RpbWVab25lOylMamF2YS91dGlsL0NhbGVuZGFyOwEAA2dldAEABChJKUkBABRqYXZhL3RleHQvRGF0ZUZvcm1hdAEABmZvcm1hdAEAJChMamF2YS91dGlsL0RhdGU7KUxqYXZhL2xhbmcvU3RyaW5nOwAhAA4ADwAAAAIABAAQABEAAAAEABIAEwAAAAYAAQAUABUAAQAWAAAAHQABAAEAAAAFKrQAAawAAAABABcAAAAGAAEAAAAMAAEAGAAZAAEAFgAAACIAAgACAAAABiobtQABsQAAAAEAFwAAAAoAAgAAAA8ABQAQAAEAGgAbAAEAFgAAAB0AAQABAAAABSq0AAKwAAAAAQAXAAAABgABAAAAEgABABwAHQABABYAAAAiAAIAAgAAAAYqK7UAArEAAAABABcAAAAKAAIAAAAVAAUAFgABAB4AHwABABYAAAA0AAIAAQAAABAqtwADKgO1AAEqEgS1AAKxAAAAAQAXAAAAEgAEAAAAGAAEAAkACQAKAA8AGQABACAAHwACABYAAACfAAMABQAAAFS4AAW4AAZMKisQB7YAB7UAASoqtAABBGC1AAEqtAABEAigAAsqBLUAAacACyoqtAABtQABuwAIWRIJtwAKTbsAC1m3AAxOLC22AA06BCoZBLUAArEAAAACABcAAAAqAAoAAAAfAAcAIAARACEAGwAiACQAIwAsACUANAAoAD4AKQBGACoATQArACEAAAAJAAL8ACwHACIHACMAAAAEAAEAJAABACUAAAACACY=</byteCode>
+                </class>
+            </byteCode>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>224</pd:x>
+        <pd:y>207</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="DayNameNumber" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="Name" type="xsd:string"/>
+                                        <xsd:element name="Number" type="xsd:int"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <DayNameNumber>
+                    <Name>
+                        <xsl:value-of select="&quot;Sunday&quot;"/>
+                    </Name>
+                    <Number>
+                        <xsl:value-of select="2"/>
+                    </Number>
+                </DayNameNumber>
+                <DayNameNumber>
+                    <Name>
+                        <xsl:value-of select="&quot;Monday&quot;"/>
+                    </Name>
+                    <Number>
+                        <xsl:value-of select="3"/>
+                    </Number>
+                </DayNameNumber>
+                <DayNameNumber>
+                    <Name>
+                        <xsl:value-of select="&quot;Tuesday&quot;"/>
+                    </Name>
+                    <Number>
+                        <xsl:value-of select="4"/>
+                    </Number>
+                </DayNameNumber>
+                <DayNameNumber>
+                    <Name>
+                        <xsl:value-of select="&quot;Wednesday&quot;"/>
+                    </Name>
+                    <Number>
+                        <xsl:value-of select="5"/>
+                    </Number>
+                </DayNameNumber>
+                <DayNameNumber>
+                    <Name>
+                        <xsl:value-of select="&quot;Thursday&quot;"/>
+                    </Name>
+                    <Number>
+                        <xsl:value-of select="6"/>
+                    </Number>
+                </DayNameNumber>
+                <DayNameNumber>
+                    <Name>
+                        <xsl:value-of select="&quot;Friday&quot;"/>
+                    </Name>
+                    <Number>
+                        <xsl:value-of select="7"/>
+                    </Number>
+                </DayNameNumber>
+                <DayNameNumber>
+                    <Name>
+                        <xsl:value-of select="&quot;Saturday&quot;"/>
+                    </Name>
+                    <Number>
+                        <xsl:value-of select="1"/>
+                    </Number>
+                </DayNameNumber>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="PrepareTime">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>807</pd:x>
+        <pd:y>50</pd:y>
+        <config>
+            <element>
+                <xsd:element name="ListOfShiftHour">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="ShiftHour" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="EndDay" type="xsd:string"/>
+                                        <xsd:element name="EndTime" type="xsd:string"/>
+                                        <xsd:element name="StartDay" type="xsd:string"/>
+                                        <xsd:element name="StartTime" type="xsd:string"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <ListOfShiftHour>
+                <xsl:for-each select="$Start/ListOfShiftHour/ShiftHour">
+                    <ShiftHour>
+                        <EndDay>
+                            <xsl:value-of select="EndDay"/>
+                        </EndDay>
+                        <EndTime>
+                            <xsl:value-of select="if(starts-with(current()/EndTime,'00:00'))&#xA;then '23:59:00'&#xA;else if(tib:right(current()/EndTime,2)='PM' and starts-with(current()/EndTime,'12:'))&#xA; then concat(tib:trim(substring-before(current()/EndTime,'PM')),':00')&#xA;else if(tib:right(current()/EndTime,2)='PM')&#xA;then  tib:add-to-time(tib:format-time('HH:mm:ss',tib:parse-time('HH:mm:ss',concat(tib:trim(substring-before(current()/EndTime,'PM')),':00'))),12,0,0)&#xA;else tib:format-time('HH:mm:ss',tib:parse-time('HH:mm:ss',concat(tib:trim(substring-before(current()/EndTime,'AM')),':00')))"/>
+                        </EndTime>
+                        <StartDay>
+                            <xsl:value-of select="StartDay"/>
+                        </StartDay>
+                        <StartTime>
+                            <xsl:value-of select="if(starts-with(current()/StartTime,'00:00'))&#xA;then '23:59:00'&#xA;else if(tib:right(current()/StartTime,2)='PM' and starts-with(current()/StartTime,'12:'))&#xA; then concat(tib:trim(substring-before(current()/StartTime,'PM')),':00')&#xA;else if(tib:right(current()/StartTime,2)='PM')&#xA;then  tib:add-to-time(tib:format-time('HH:mm:ss',tib:parse-time('HH:mm:ss',concat(tib:trim(substring-before(current()/StartTime,'PM')),':00'))),12,0,0)&#xA;else tib:format-time('HH:mm:ss',tib:parse-time('HH:mm:ss',concat(tib:trim(substring-before(current()/StartTime,'AM')),':00')))"/>
+                        </StartTime>
+                    </ShiftHour>
+                </xsl:for-each>
+            </ListOfShiftHour>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Null">
+        <pd:type>com.tibco.plugin.timer.NullActivity</pd:type>
+        <pd:resourceType>ae.activities.null</pd:resourceType>
+        <pd:x>809</pd:x>
+        <pd:y>229</pd:y>
+        <config/>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>289</pd:x>
+        <pd:y>4</pd:y>
+        <pd:width>330</pd:width>
+        <pd:height>180</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$Start/ListOfShiftHour/ShiftHour</pd:over>
+            <pd:iterationElementSlot>dayCheck</pd:iterationElementSlot>
+            <pd:indexSlot>dayCheckIndex</pd:indexSlot>
+            <pd:outSlot>CompareDateAccm</pd:outSlot>
+            <pd:activityOutputName>CompareDate</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>CompareDate</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Assign</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Curved</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CompareDate</pd:from>
+            <pd:to>end</pd:to>
+            <pd:xpathDescription>CarryOn</pd:xpathDescription>
+            <pd:lineType>Multiple Bends</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CompareDate</pd:from>
+            <pd:to>Assign</pd:to>
+            <pd:xpathDescription>Open</pd:xpathDescription>
+            <pd:lineType>Curved</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>xpath</pd:conditionType>
+            <pd:xpath>contains($CompareDate/root/DateFlag,'true')</pd:xpath>
+        </pd:transition>
+        <pd:activity name="CompareDate">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>371</pd:x>
+            <pd:y>68</pd:y>
+            <config>
+                <element>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="DateFlag" type="xsd:string"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </element>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <DateFlag>
+                        <xsl:value-of select="if($GetCurrrDayNumAndTime/javaCodeActivityOutput/curr_day_Number>=$Map-Data/root/DayNameNumber[Name=$Start/ListOfShiftHour/ShiftHour[$dayCheckIndex]/StartDay]/Number&#xA;&#xA;and&#xA;&#xA;$GetCurrrDayNumAndTime/javaCodeActivityOutput/curr_day_Number&lt;=$Map-Data/root/DayNameNumber[Name=$Start/ListOfShiftHour/ShiftHour[$dayCheckIndex]/EndDay]/Number&#xA;)&#xA;then concat('true',$dayCheckIndex)&#xA;else&#xA;&quot;false&quot;"/>
+                    </DateFlag>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Assign">
+            <pd:type>com.tibco.pe.core.AssignActivity</pd:type>
+            <pd:resourceType>ae.activities.assignActivity</pd:resourceType>
+            <pd:x>477</pd:x>
+            <pd:y>130</pd:y>
+            <config>
+                <variableName>ShopOpenFlag</variableName>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <ShopOpenFlag>
+                        <xsl:value-of select="$CompareDate/root/DateFlag"/>
+                    </ShopOpenFlag>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:group name="Group (1)">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>971</pd:x>
+        <pd:y>5</pd:y>
+        <pd:width>242</pd:width>
+        <pd:height>139</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>inputLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:over>$CompareDateAccm/AccumulatedOutput/root[contains(DateFlag,"true")]/DateFlag</pd:over>
+            <pd:iterationElementSlot>TimeCheckElement</pd:iterationElementSlot>
+            <pd:indexSlot>TimeCheck</pd:indexSlot>
+            <pd:outSlot>CheckTimeFlagAccm</pd:outSlot>
+            <pd:activityOutputName>CheckTimeFlag</pd:activityOutputName>
+            <pd:accumulateOutput>true</pd:accumulateOutput>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>CheckTimeFlag</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>CheckTimeFlag</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="CheckTimeFlag">
+            <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+            <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+            <pd:x>1089</pd:x>
+            <pd:y>78</pd:y>
+            <config>
+                <element>
+                    <xsd:element name="root">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="TimeFlag" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                </element>
+            </config>
+            <pd:inputBindings>
+                <root>
+                    <TimeFlag>
+                        <xsl:value-of select="if((tib:compare-time($GetCurrrDayNumAndTime/javaCodeActivityOutput/curr_time, $PrepareTime/ListOfShiftHour/ShiftHour[number(tib:right($TimeCheckElement/DateFlag, 1))]/StartTime) =1&#xA;or&#xA;tib:compare-time($GetCurrrDayNumAndTime/javaCodeActivityOutput/curr_time, $PrepareTime/ListOfShiftHour/ShiftHour[number(tib:right($TimeCheckElement/DateFlag, 1))]/StartTime) =0&#xA;)&#xA;and&#xA;(&#xA;tib:compare-time($GetCurrrDayNumAndTime/javaCodeActivityOutput/curr_time, $PrepareTime/ListOfShiftHour/ShiftHour[number(tib:right($TimeCheckElement/DateFlag, 1))]/EndTime)=-1&#xA;or&#xA;tib:compare-time($GetCurrrDayNumAndTime/javaCodeActivityOutput/curr_time, $PrepareTime/ListOfShiftHour/ShiftHour[number(tib:right($TimeCheckElement/DateFlag, 1))]/EndTime)=0&#xA;)&#xA;)&#xA;then&#xA;&quot;true&quot;&#xA;else&#xA;&quot;false&quot;"/>
+                    </TimeFlag>
+                </root>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GetCurrrDayNumAndTime</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GetCurrrDayNumAndTime</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Null</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>PrepareTime</pd:to>
+        <pd:xpathDescription>ShopOpen-Date</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>contains($ShopOpenFlag/root/ShopOpenFlag,'true')</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>Null</pd:to>
+        <pd:xpathDescription>ShopClose</pd:xpathDescription>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>PrepareTime</pd:from>
+        <pd:to>Group (1)</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group (1)</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

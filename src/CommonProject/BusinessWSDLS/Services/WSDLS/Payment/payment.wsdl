@@ -1,0 +1,254 @@
+<wsdl:definitions targetNamespace="http://www.zain.com/ZESB/Services/Payment" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy" xmlns:tns="http://www.zain.com/ZESB/Services/Payment" xmlns:typ="http://www.zain.com/ZESB/Services/Payment/Types" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+  <wsp:Policy wsu:Id="policy-1-1fb7fc97ce269329a68621a4cab2416f" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"/>
+  <wsdl:types>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Types/Common" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zain.com/ZESB/Services/Payment" xmlns:typ="http://www.zain.com/ZESB/Services/Payment/Types" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="FaultType">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="type" type="xs:string"/>
+            <xs:element name="code" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="sourceSystem" type="xs:string"/>
+            <xs:element minOccurs="0" name="extErrorCode" type="xs:string"/>
+            <xs:element minOccurs="0" name="detail" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+    <xs:schema elementFormDefault="qualified" targetNamespace="http://www.zain.com/ZESB/Services/Payment/Types" xmlns:com="http://www.zain.com/ZESB/Types/Common" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://www.zain.com/ZESB/Services/Payment" xmlns:typ="http://www.zain.com/ZESB/Services/Payment/Types" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:complexType name="CardInfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="CardType" type="xs:string"/>
+          <xs:element minOccurs="0" name="HolderName" type="xs:string"/>
+          <xs:element name="MerchantId" type="xs:string"/>
+          <xs:element name="MerchantPassword" type="xs:string"/>
+          <xs:element name="TerminalId" type="xs:string"/>
+          <xs:element minOccurs="0" name="AuthCode" type="xs:string"/>
+          <xs:element name="CardNumber" type="xs:string"/>
+          <xs:element name="ExpiryDate" type="xs:string"/>
+          <xs:element minOccurs="0" name="CVV" type="xs:string"/>
+          <xs:element minOccurs="0" name="IssuingBank" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Chequelnfo">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="Bank" type="xs:string"/>
+          <xs:element minOccurs="0" name="Branch" type="xs:string"/>
+          <xs:element minOccurs="0" name="ChequeNumber" type="xs:string"/>
+          <xs:element minOccurs="0" name="AccountNumber" type="xs:string"/>
+          <xs:element minOccurs="0" name="IssueDate" type="xs:date"/>
+          <xs:element minOccurs="0" name="ExpiryDate" type="xs:date"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="NotificationMedia">
+        <xs:sequence>
+          <xs:element name="Media" type="xs:string"/>
+          <xs:element name="Address" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="PayContractInput">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ContractId" type="xs:string"/>
+            <xs:element name="Amount" type="xs:decimal"/>
+            <xs:element name="UserName" type="xs:string"/>
+            <xs:element name="PaymentMethod" type="xs:string"/>
+            <xs:element name="AuthorizeCredit">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="N"/>
+                  <xs:enumeration value="Y"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+            <xs:element name="TransactionReference" type="xs:string"/>
+            <xs:element minOccurs="0" name="CardDetails" type="typ:CardInfo"/>
+            <xs:element minOccurs="0" name="ChequeDetail" type="typ:Chequelnfo"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="NotificationMedia" type="typ:NotificationMedia"/>
+            <xs:element minOccurs="0" name="Params" type="typ:Params"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="SubscriberInfo">
+        <xs:sequence>
+          <xs:element name="Msisdn" type="xs:string"/>
+          <xs:element name="Area" type="xs:string"/>
+          <xs:element name="Amount" type="xs:decimal"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="SubscribersList">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="1" name="Subscriber" type="typ:SubscriberInfo"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="PaySubscribersInput">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element minOccurs="0" name="ContractId" type="xs:string"/>
+            <xs:element name="SubscribersList" type="typ:SubscribersList"/>
+            <xs:element name="UserName" type="xs:string"/>
+            <xs:element name="PaymentMethod" type="xs:string"/>
+            <xs:element name="AuthorizeCredit">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="N"/>
+                  <xs:enumeration value="Y"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+            <xs:element name="TransactionReference" type="xs:string"/>
+            <xs:element minOccurs="0" name="CardDetails" type="typ:CardInfo"/>
+            <xs:element minOccurs="0" name="ChequeDetail" type="typ:Chequelnfo"/>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="NotificationMedia" type="typ:NotificationMedia"/>
+            <xs:element minOccurs="0" name="Params" type="typ:Params"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="Authorization">
+        <xs:sequence>
+          <xs:element minOccurs="0" name="MerchantId" type="xs:string"/>
+          <xs:element minOccurs="0" name="Amount" type="xs:decimal"/>
+          <xs:element minOccurs="0" name="TransactionReference" type="xs:string"/>
+          <xs:element minOccurs="0" name="ShoppingTransactionReference" type="xs:string"/>
+          <xs:element minOccurs="0" name="CardType" type="xs:string"/>
+          <xs:element minOccurs="0" name="OrderInfo" type="xs:string"/>
+          <xs:element minOccurs="0" name="AuthorizationStatus" type="xs:string"/>
+          <xs:element minOccurs="0" name="ReceiptNumber" type="xs:string"/>
+          <xs:element minOccurs="0" name="AuthorizationID" type="xs:string"/>
+          <xs:element minOccurs="0" name="AcquirerResponseCode" type="xs:string"/>
+          <xs:element minOccurs="0" name="SettlementDate" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:element name="GeneralOutput">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="RequestStatus" type="xs:string"/>
+            <xs:element minOccurs="0" name="ReceiptNumber" type="xs:string"/>
+            <xs:element name="Authorization" type="typ:Authorization"/>
+            <xs:element minOccurs="0" name="Params" type="typ:Params"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:complexType name="Param">
+        <xs:sequence>
+          <xs:element name="Name" type="xs:string"/>
+          <xs:element name="Value" type="xs:string"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:complexType name="Params">
+        <xs:sequence>
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="Param" type="typ:Param"/>
+        </xs:sequence>
+      </xs:complexType>
+      <xs:simpleType name="MessageType">
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="Successful"/>
+          <xs:enumeration value="PartiallySuccessful"/>
+          <xs:enumeration value="Failed"/>
+          <xs:enumeration value="NotFound"/>
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="QueryStatusInput">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="UserName" type="xs:string"/>
+            <xs:element name="TransactionReference" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="QueryStatusOutput">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="TransactionStatus" type="typ:MessageType"/>
+            <xs:element minOccurs="0" name="ReceiptNumber" type="xs:string"/>
+            <xs:element minOccurs="0" name="Authorization" type="typ:Authorization"/>
+            <xs:element minOccurs="0" name="Params" type="typ:Params"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:message name="PayContractRequest">
+    <wsdl:part element="typ:PayContractInput" name="request"/>
+  </wsdl:message>
+  <wsdl:message name="PayContractResponse">
+    <wsdl:part element="typ:GeneralOutput" name="response"/>
+  </wsdl:message>
+  <wsdl:message name="faultMessage">
+    <wsdl:part element="com:FaultType" name="fault"/>
+  </wsdl:message>
+  <wsdl:message name="PaySubscribersRequest">
+    <wsdl:part element="typ:PaySubscribersInput" name="request"/>
+  </wsdl:message>
+  <wsdl:message name="PaySubscribersResponse">
+    <wsdl:part element="typ:GeneralOutput" name="response"/>
+  </wsdl:message>
+  <wsdl:message name="QueryStatusRequest">
+    <wsdl:part element="typ:QueryStatusInput" name="request"/>
+  </wsdl:message>
+  <wsdl:message name="QueryStatusResponse">
+    <wsdl:part element="typ:QueryStatusOutput" name="response"/>
+  </wsdl:message>
+  <wsdl:portType name="PaymentPort">
+    <wsdl:operation name="PayContract">
+      <wsdl:input message="tns:PayContractRequest"/>
+      <wsdl:output message="tns:PayContractResponse"/>
+      <wsdl:fault message="tns:faultMessage" name="fault"/>
+    </wsdl:operation>
+    <wsdl:operation name="PaySubscribers">
+      <wsdl:input message="tns:PaySubscribersRequest"/>
+      <wsdl:output message="tns:PaySubscribersResponse"/>
+      <wsdl:fault message="tns:faultMessage" name="fault"/>
+    </wsdl:operation>
+    <wsdl:operation name="QueryStatus">
+      <wsdl:input message="tns:QueryStatusRequest"/>
+      <wsdl:output message="tns:QueryStatusResponse"/>
+      <wsdl:fault message="tns:faultMessage" name="fault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="PaymentBinding" type="tns:PaymentPort">
+    <wsp:PolicyReference URI="#policy-1-1fb7fc97ce269329a68621a4cab2416f" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy"/>
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="PayContract">
+      <soap:operation soapAction="PayContract"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="fault">
+        <soap:fault name="fault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="PaySubscribers">
+      <soap:operation soapAction="PaySubscribers"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="fault">
+        <soap:fault name="fault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="QueryStatus">
+      <soap:operation soapAction="QueryStatus"/>
+      <wsdl:input>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="fault">
+        <soap:fault name="fault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Payment">
+    <wsdl:port binding="tns:PaymentBinding" name="PaymentPort">
+      <soap:address location="http://api.kw.zain.com/soap/payment"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -1,0 +1,952 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:ns2="http://www.tibco.com/namespaces/tnt/plugins/file" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="http://www.zain.com/schemas/CommonProject/BusinessSchemas/Common/CRM/ListOfValues.xsd" xmlns:ns="http://www.zain.com/schemas/CommonProject/BusinessSchemas/Common/ListOfValues.xsd" xmlns:ns3="com/tibco/pe/commands" xmlns:ns0="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx3="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:pfx2="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns5="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariable/Internal/ResponseCodes.xsd" xmlns:ns6="http://www.tibco.com/schemas/CommonProject/CommonResources/SharedVariable/Internal/IdMapping.xsd" xmlns:pfx="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:ns02="www.tibco.com/plugin/Sleep">
+    <pd:name>CommonProcesses/RecachingProcess/Recaching_FetchEligibilityServices.process</pd:name>
+    <pd:startName>ELIGIBLE_TSubscriber</pd:startName>
+    <pd:startX>0</pd:startX>
+    <pd:startY>0</pd:startY>
+    <pd:returnBindings/>
+    <pd:starter name="ELIGIBLE_TSubscriber">
+        <pd:type>com.tibco.plugin.jms.JMSTopicEventSource</pd:type>
+        <pd:resourceType>ae.activities.JMSTopicEventSource</pd:resourceType>
+        <pd:x>64</pd:x>
+        <pd:y>132</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>%%CommonProcesses/RecachingProcess/RecachingTopic%%1MsgSelector='CROSSREF'10<destination>%%CommonProcesses/RecachingProcess/RecachingTopic%%</destination>
+                <acknowledgeMode>1</acknowledgeMode>
+                <selector>MsgSelector='ELIGIBLE'</selector>
+                <receiverTimeout>10</receiverTimeout>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+            <ApplicationProperties>/CommonResources/Connections/JMS/Internal/EAI_EMSTopicProperty.sharedjmsapp</ApplicationProperties>
+        </config>
+        <pd:inputBindings/>
+    </pd:starter>
+    <pd:endName>End</pd:endName>
+    <pd:endX>1222</pd:endX>
+    <pd:endY>130</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1329293454605</pd:targetNamespace>
+    <pd:activity name="Catch">
+        <pd:type>com.tibco.pe.core.CatchActivity</pd:type>
+        <pd:resourceType>ae.activities.catch</pd:resourceType>
+        <pd:x>896</pd:x>
+        <pd:y>306</pd:y>
+        <pd:handler>true</pd:handler>
+        <config>
+            <catchAll>true</catchAll>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>1001</pd:x>
+        <pd:y>305</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <pfx:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/StackTrace"/>
+                </message>
+                <msgCode>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/MsgCode"/>
+                </msgCode>
+            </pfx:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="EngineShutdownCommand">
+        <pd:type>com.tibco.pe.core.EngineCommandActivity</pd:type>
+        <pd:resourceType>ae.activities.enginecommand</pd:resourceType>
+        <pd:x>1222</pd:x>
+        <pd:y>309</pd:y>
+        <config>
+            <command>Shutdown</command>
+        </config>
+        <pd:inputBindings>
+            <ns3:input>
+                <MaxDelayInSeconds>
+                    <xsl:value-of select="$_globalVariables/pfx2:GlobalVariables/CommonProcesses/OnStartUpProcess/EngineShutdownDelay_InSeconds"/>
+                </MaxDelayInSeconds>
+                <WaitForCheckpoints>
+                    <xsl:value-of select="true()"/>
+                </WaitForCheckpoints>
+            </ns3:input>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:group name="Group">
+        <pd:type>com.tibco.pe.core.LoopGroup</pd:type>
+        <pd:resourceType>ae.process.group</pd:resourceType>
+        <pd:x>129</pd:x>
+        <pd:y>9</pd:y>
+        <pd:width>512</pd:width>
+        <pd:height>236</pd:height>
+        <pd:collapsedWidth>57</pd:collapsedWidth>
+        <pd:collapsedHeight>70</pd:collapsedHeight>
+        <pd:groupVariables/>
+        <pd:joinToggle>inherit</pd:joinToggle>
+        <config>
+            <pd:groupType>errorLoop</pd:groupType>
+            <pd:serializable>false</pd:serializable>
+            <pd:indexSlot>err_cnt</pd:indexSlot>
+            <pd:errorCondition>$err_cnt&gt;=$_globalVariables/pfx2:GlobalVariables/CommonProcesses/ErrorHandling/Retry/MaxRetryCount</pd:errorCondition>
+            <pd:suspendAfterErrorRetry>false</pd:suspendAfterErrorRetry>
+        </config>
+        <pd:inputBindings/>
+        <pd:expanded>true</pd:expanded>
+        <pd:transition>
+            <pd:from>start</pd:from>
+            <pd:to>FetchEligibility_Services</pd:to>
+            <pd:lineType>Multiple Bends</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchService_Fees</pd:from>
+            <pd:to>end</pd:to>
+            <pd:lineType>Multiple Bends</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchEligibility_Services</pd:from>
+            <pd:to>Sleep</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-65485</pd:lineColor>
+            <pd:conditionType>error</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>Sleep</pd:from>
+            <pd:to>Generate Error</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchEligibility_Services</pd:from>
+            <pd:to>FetchServices_Definition</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchServices_Definition</pd:from>
+            <pd:to>FetchService_Specs</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:transition>
+            <pd:from>FetchService_Specs</pd:from>
+            <pd:to>FetchService_Fees</pd:to>
+            <pd:lineType>Default</pd:lineType>
+            <pd:lineColor>-16777216</pd:lineColor>
+            <pd:conditionType>always</pd:conditionType>
+        </pd:transition>
+        <pd:activity name="FetchEligibility_Services">
+            <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+            <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+            <pd:x>202</pd:x>
+            <pd:y>65</pd:y>
+            <config>
+                <timeout>%%CommonResources/Connections/JDBC/Internal/LocalTIBDBServerConnection/QueryTimeout%%</timeout>
+                <commit>false</commit>
+                <maxRows>%%CommonResources/Connections/JDBC/Internal/LocalTIBDBServerConnection/Maxrows%%</maxRows>
+                <emptyStrAsNil>false</emptyStrAsNil>
+                <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+                <statement>select * from Eligibility_Services</statement>
+                <wizardData/>
+                <oraObjects/>
+                <oraTables/>
+                <QueryOutputCachedSchemaColumns>LOYALTY</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>BILLINGTYPE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>BASICSERVICETYPE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>CATEGORY</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>SERVICE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>PROMOTIONID</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>PRODUCTID</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>SERVICECATEGORY</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            </config>
+            <pd:inputBindings>
+                <jdbcQueryActivityInput/>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Sleep">
+            <pd:type>com.tibco.plugin.timer.SleepActivity</pd:type>
+            <pd:resourceType>ae.activities.sleep</pd:resourceType>
+            <pd:x>205</pd:x>
+            <pd:y>169</pd:y>
+            <config/>
+            <pd:inputBindings>
+                <ns02:SleepInputSchema>
+                    <IntervalInMillisec>
+                        <xsl:value-of select="$_globalVariables/pfx2:GlobalVariables/CommonProcesses/ErrorHandling/Retry/RetryInterval_millisec"/>
+                    </IntervalInMillisec>
+                </ns02:SleepInputSchema>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="Generate Error">
+            <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+            <pd:resourceType>ae.activities.throw</pd:resourceType>
+            <pd:x>284</pd:x>
+            <pd:y>169</pd:y>
+            <config>
+                <faultName/>
+            </config>
+            <pd:inputBindings>
+                <ns0:ActivityInput>
+                    <message>
+                        <xsl:value-of select="$_globalVariables/pfx2:GlobalVariables/CommonErrors/CRMTimeOutErrorDesc"/>
+                    </message>
+                    <messageCode>
+                        <xsl:value-of select="$_globalVariables/pfx2:GlobalVariables/CommonErrors/CRMTimeOutErrorCode"/>
+                    </messageCode>
+                </ns0:ActivityInput>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="FetchServices_Definition">
+            <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+            <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+            <pd:x>314</pd:x>
+            <pd:y>65</pd:y>
+            <config>
+                <timeout>%%CommonResources/Connections/JDBC/Internal/LocalTIBDBServerConnection/QueryTimeout%%</timeout>
+                <commit>false</commit>
+                <maxRows>%%CommonResources/Connections/JDBC/Internal/LocalTIBDBServerConnection/Maxrows%%</maxRows>
+                <emptyStrAsNil>false</emptyStrAsNil>
+                <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+                <statement>select * from services_definition</statement>
+                <wizardData/>
+                <oraObjects/>
+                <oraTables/>
+                <QueryOutputCachedSchemaColumns>SERVICE_CODE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>NAME</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>AR_NAME</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>SERVICE_CATEGORY</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>SERVICE_SUB_CATEGORY</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>SERVICE_CLASS</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>PROMOTIONID</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>PRODUCTID</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            </config>
+            <pd:inputBindings>
+                <jdbcQueryActivityInput/>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="FetchService_Specs">
+            <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+            <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+            <pd:x>439</pd:x>
+            <pd:y>65</pd:y>
+            <config>
+                <timeout>%%CommonResources/Connections/JDBC/Internal/LocalTIBDBServerConnection/QueryTimeout%%</timeout>
+                <commit>false</commit>
+                <maxRows>%%CommonResources/Connections/JDBC/Internal/LocalTIBDBServerConnection/Maxrows%%</maxRows>
+                <emptyStrAsNil>false</emptyStrAsNil>
+                <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+                <statement>select * from service_specs</statement>
+                <wizardData/>
+                <oraObjects/>
+                <oraTables/>
+                <QueryOutputCachedSchemaColumns>SERVICE_CODE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>SPEC_CODE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>SPEC_VALUE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>SPEC_MEASURE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            </config>
+            <pd:inputBindings>
+                <jdbcQueryActivityInput/>
+            </pd:inputBindings>
+        </pd:activity>
+        <pd:activity name="FetchService_Fees">
+            <pd:type>com.tibco.plugin.jdbc.JDBCQueryActivity</pd:type>
+            <pd:resourceType>ae.activities.JDBCQueryActivity</pd:resourceType>
+            <pd:x>562</pd:x>
+            <pd:y>65</pd:y>
+            <config>
+                <timeout>%%CommonResources/Connections/JDBC/Internal/LocalTIBDBServerConnection/QueryTimeout%%</timeout>
+                <commit>false</commit>
+                <maxRows>%%CommonResources/Connections/JDBC/Internal/LocalTIBDBServerConnection/Maxrows%%</maxRows>
+                <emptyStrAsNil>false</emptyStrAsNil>
+                <jdbcSharedConfig>/CommonResources/Connections/JDBC/Internal/TIBCOAppDB.sharedjdbc</jdbcSharedConfig>
+                <statement>select * from service_fees</statement>
+                <wizardData/>
+                <oraObjects/>
+                <oraTables/>
+                <QueryOutputCachedSchemaColumns>SERVICE_CODE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>FEE_CODE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>FEE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>2</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>NUMBER</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>RECURRENCY</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+                <QueryOutputCachedSchemaColumns>RECURRENCY_VALUE</QueryOutputCachedSchemaColumns>
+                <QueryOutputCachedSchemaDataTypes>12</QueryOutputCachedSchemaDataTypes>
+                <QueryOutputCachedSchemaDataTypesName>VARCHAR2</QueryOutputCachedSchemaDataTypesName>
+                <QueryOutputCachedSchemaStatus>OptionalElement</QueryOutputCachedSchemaStatus>
+            </config>
+            <pd:inputBindings>
+                <jdbcQueryActivityInput/>
+            </pd:inputBindings>
+        </pd:activity>
+    </pd:group>
+    <pd:activity name="SetVariable">
+        <pd:type>com.tibco.pe.core.SetSharedVariableActivity</pd:type>
+        <pd:resourceType>ae.activities.setSharedVariable</pd:resourceType>
+        <pd:x>991</pd:x>
+        <pd:y>133</pd:y>
+        <config>
+            <variableConfig>/CommonResources/SharedVariables/Internal/FetchEligibility_Services.sharedvariable</variableConfig>
+            <showResult>false</showResult>
+        </config>
+        <pd:inputBindings>
+            <FetchEligibility_Services>
+                <xsl:copy-of select="$Specs_Mapping/FetchEligibility_Services/Record"/>
+            </FetchEligibility_Services>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Definition_Mapping">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>705</pd:x>
+        <pd:y>134</pd:y>
+        <config>
+            <element>
+                <xsd:element name="FetchEligibility_Services">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Record" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="ServiceCode" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="DisplayName" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ArabicDisplayName" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ServiceCategory" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="SubCategory" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ServiceBillingType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Classification" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ProductSpecs" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="Value" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="Measure" type="xsd:string" minOccurs="0"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="ProductFees" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="Amount" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="RecurrencyType" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="RecurrencyValue" type="xsd:string" minOccurs="0"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="PromotionID" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ProductID" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="BillingType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="BasicServiceType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Loyalty" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Category" type="xsd:string" minOccurs="0"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <FetchEligibility_Services>
+                <xsl:for-each select="$FetchEligibility_Services/resultSet/Record">
+                    <xsl:variable name="var2" select="current()/SERVICE"/>
+                    <xsl:choose>
+                        <xsl:when test="$FetchServices_Definition/resultSet/Record[$var2=SERVICE_CODE]/SERVICE_CODE">
+                            <Record>
+                                <ServiceCode>
+                                    <xsl:value-of select="$var2"/>
+                                </ServiceCode>
+                                <DisplayName>
+                                    <xsl:value-of select="$FetchServices_Definition/resultSet/Record[$var2=SERVICE_CODE]/NAME"/>
+                                </DisplayName>
+                                <ArabicDisplayName>
+                                    <xsl:value-of select="$FetchServices_Definition/resultSet/Record[$var2=SERVICE_CODE]/AR_NAME"/>
+                                </ArabicDisplayName>
+                                <ServiceCategory>
+                                    <xsl:value-of select="$FetchServices_Definition/resultSet/Record[$var2=SERVICE_CODE]/SERVICE_CATEGORY"/>
+                                </ServiceCategory>
+                                <SubCategory>
+                                    <xsl:value-of select="$FetchServices_Definition/resultSet/Record[$var2=SERVICE_CODE]/SERVICE_SUB_CATEGORY"/>
+                                </SubCategory>
+                                <Classification>
+                                    <xsl:value-of select="$FetchServices_Definition/resultSet/Record[$var2=SERVICE_CODE]/SERVICE_CLASS"/>
+                                </Classification>
+                                <PromotionID>
+                                    <xsl:value-of select="$FetchServices_Definition/resultSet/Record[$var2=SERVICE_CODE]/PROMOTIONID"/>
+                                </PromotionID>
+                                <ProductID>
+                                    <xsl:value-of select="$FetchServices_Definition/resultSet/Record[$var2=SERVICE_CODE]/PRODUCTID"/>
+                                </ProductID>
+                                <xsl:if test="current()/BILLINGTYPE">
+                                    <BillingType>
+                                        <xsl:value-of select="current()/BILLINGTYPE"/>
+                                    </BillingType>
+                                </xsl:if>
+                                <xsl:if test="current()/BASICSERVICETYPE">
+                                    <BasicServiceType>
+                                        <xsl:value-of select="current()/BASICSERVICETYPE"/>
+                                    </BasicServiceType>
+                                </xsl:if>
+                                <xsl:if test="current()/LOYALTY">
+                                    <Loyalty>
+                                        <xsl:value-of select="current()/LOYALTY"/>
+                                    </Loyalty>
+                                </xsl:if>
+                                <xsl:if test="current()/CATEGORY">
+                                    <Category>
+                                        <xsl:value-of select="current()/CATEGORY"/>
+                                    </Category>
+                                </xsl:if>
+                            </Record>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <Record>
+                                <ServiceCode>
+                                    <xsl:value-of select="$var2"/>
+                                </ServiceCode>
+                                <xsl:if test="current()/BILLINGTYPE">
+                                    <BillingType>
+                                        <xsl:value-of select="current()/BILLINGTYPE"/>
+                                    </BillingType>
+                                </xsl:if>
+                                <xsl:if test="current()/BASICSERVICETYPE">
+                                    <BasicServiceType>
+                                        <xsl:value-of select="current()/BASICSERVICETYPE"/>
+                                    </BasicServiceType>
+                                </xsl:if>
+                                <xsl:if test="current()/LOYALTY">
+                                    <Loyalty>
+                                        <xsl:value-of select="current()/LOYALTY"/>
+                                    </Loyalty>
+                                </xsl:if>
+                                <xsl:if test="current()/CATEGORY">
+                                    <Category>
+                                        <xsl:value-of select="current()/CATEGORY"/>
+                                    </Category>
+                                </xsl:if>
+                            </Record>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:for-each>
+            </FetchEligibility_Services>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Fees_Mapping">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>793</pd:x>
+        <pd:y>229</pd:y>
+        <config>
+            <element>
+                <xsd:element name="FetchEligibility_Services">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Record" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="ServiceCode" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="DisplayName" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ArabicDisplayName" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ServiceCategory" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="SubCategory" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ServiceBillingType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Classification" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ProductSpecs" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="Value" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="Measure" type="xsd:string" minOccurs="0"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="ProductFees" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="Amount" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="RecurrencyType" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="RecurrencyValue" type="xsd:string" minOccurs="0"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="PromotionID" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ProductID" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="BillingType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="BasicServiceType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Loyalty" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Category" type="xsd:string" minOccurs="0"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <FetchEligibility_Services>
+                <xsl:for-each select="$Definition_Mapping/FetchEligibility_Services/Record">
+                    <Record>
+                        <xsl:variable name="var" select="current()/ServiceCode"/>
+                        <xsl:if test="$var">
+                            <ServiceCode>
+                                <xsl:value-of select="$var"/>
+                            </ServiceCode>
+                        </xsl:if>
+                        <xsl:if test="current()/DisplayName">
+                            <DisplayName>
+                                <xsl:value-of select="current()/DisplayName"/>
+                            </DisplayName>
+                        </xsl:if>
+                        <xsl:if test="current()/ArabicDisplayName">
+                            <ArabicDisplayName>
+                                <xsl:value-of select="current()/ArabicDisplayName"/>
+                            </ArabicDisplayName>
+                        </xsl:if>
+                        <xsl:if test="current()/ServiceCategory">
+                            <ServiceCategory>
+                                <xsl:value-of select="current()/ServiceCategory"/>
+                            </ServiceCategory>
+                        </xsl:if>
+                        <xsl:if test="current()/SubCategory">
+                            <SubCategory>
+                                <xsl:value-of select="current()/SubCategory"/>
+                            </SubCategory>
+                        </xsl:if>
+                        <xsl:if test="current()/ServiceBillingType">
+                            <ServiceBillingType>
+                                <xsl:value-of select="current()/ServiceBillingType"/>
+                            </ServiceBillingType>
+                        </xsl:if>
+                        <xsl:if test="current()/Classification">
+                            <Classification>
+                                <xsl:value-of select="current()/Classification"/>
+                            </Classification>
+                        </xsl:if>
+                        <xsl:for-each select="$FetchService_Fees/resultSet/Record">
+                            <xsl:choose>
+                                <xsl:when test="$var=current()/SERVICE_CODE">
+                                    <ProductFees>
+                                        <xsl:if test="current()/FEE_CODE">
+                                            <Name>
+                                                <xsl:value-of select="current()/FEE_CODE"/>
+                                            </Name>
+                                        </xsl:if>
+                                        <xsl:if test="current()/FEE">
+                                            <Amount>
+                                                <xsl:value-of select="current()/FEE"/>
+                                            </Amount>
+                                        </xsl:if>
+                                        <xsl:if test="current()/RECURRENCY">
+                                            <RecurrencyType>
+                                                <xsl:value-of select="current()/RECURRENCY"/>
+                                            </RecurrencyType>
+                                        </xsl:if>
+                                        <xsl:if test="current()/RECURRENCY_VALUE">
+                                            <RecurrencyValue>
+                                                <xsl:value-of select="current()/RECURRENCY_VALUE"/>
+                                            </RecurrencyValue>
+                                        </xsl:if>
+                                    </ProductFees>
+                                </xsl:when>
+                                <xsl:otherwise/>
+                            </xsl:choose>
+                        </xsl:for-each>
+                        <xsl:if test="current()/PromotionID">
+                            <PromotionID>
+                                <xsl:value-of select="current()/PromotionID"/>
+                            </PromotionID>
+                        </xsl:if>
+                        <xsl:if test="current()/ProductID">
+                            <ProductID>
+                                <xsl:value-of select="current()/ProductID"/>
+                            </ProductID>
+                        </xsl:if>
+                        <xsl:if test="current()/BillingType">
+                            <BillingType>
+                                <xsl:value-of select="current()/BillingType"/>
+                            </BillingType>
+                        </xsl:if>
+                        <xsl:if test="current()/BasicServiceType">
+                            <BasicServiceType>
+                                <xsl:value-of select="current()/BasicServiceType"/>
+                            </BasicServiceType>
+                        </xsl:if>
+                        <xsl:if test="current()/Loyalty">
+                            <Loyalty>
+                                <xsl:value-of select="current()/Loyalty"/>
+                            </Loyalty>
+                        </xsl:if>
+                        <xsl:if test="current()/Category">
+                            <Category>
+                                <xsl:value-of select="current()/Category"/>
+                            </Category>
+                        </xsl:if>
+                    </Record>
+                </xsl:for-each>
+            </FetchEligibility_Services>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Specs_Mapping">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>882</pd:x>
+        <pd:y>134</pd:y>
+        <config>
+            <element>
+                <xsd:element name="FetchEligibility_Services">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Record" minOccurs="0" maxOccurs="unbounded">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="ServiceCode" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="DisplayName" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ArabicDisplayName" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ServiceCategory" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="SubCategory" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ServiceBillingType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Classification" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ProductSpecs" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="Value" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="Measure" type="xsd:string" minOccurs="0"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="ProductFees" minOccurs="0" maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="Amount" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="RecurrencyType" type="xsd:string" minOccurs="0"/>
+                                                    <xsd:element name="RecurrencyValue" type="xsd:string" minOccurs="0"/>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="PromotionID" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="ProductID" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="BillingType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="BasicServiceType" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Loyalty" type="xsd:string" minOccurs="0"/>
+                                        <xsd:element name="Category" type="xsd:string" minOccurs="0"/>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <FetchEligibility_Services>
+                <xsl:for-each select="$Fees_Mapping/FetchEligibility_Services/Record">
+                    <Record>
+                        <xsl:variable name="var" select="current()/ServiceCode"/>
+                        <xsl:if test="$var">
+                            <ServiceCode>
+                                <xsl:value-of select="$var"/>
+                            </ServiceCode>
+                        </xsl:if>
+                        <xsl:if test="current()/DisplayName">
+                            <DisplayName>
+                                <xsl:value-of select="current()/DisplayName"/>
+                            </DisplayName>
+                        </xsl:if>
+                        <xsl:if test="current()/ArabicDisplayName">
+                            <ArabicDisplayName>
+                                <xsl:value-of select="current()/ArabicDisplayName"/>
+                            </ArabicDisplayName>
+                        </xsl:if>
+                        <xsl:if test="current()/ServiceCategory">
+                            <ServiceCategory>
+                                <xsl:value-of select="current()/ServiceCategory"/>
+                            </ServiceCategory>
+                        </xsl:if>
+                        <xsl:if test="current()/SubCategory">
+                            <SubCategory>
+                                <xsl:value-of select="current()/SubCategory"/>
+                            </SubCategory>
+                        </xsl:if>
+                        <xsl:if test="current()/ServiceBillingType">
+                            <ServiceBillingType>
+                                <xsl:value-of select="current()/ServiceBillingType"/>
+                            </ServiceBillingType>
+                        </xsl:if>
+                        <xsl:if test="current()/Classification">
+                            <Classification>
+                                <xsl:value-of select="current()/Classification"/>
+                            </Classification>
+                        </xsl:if>
+                        <xsl:for-each select="$FetchService_Specs/resultSet/Record">
+                            <xsl:choose>
+                                <xsl:when test="$var=current()/SERVICE_CODE">
+                                    <ProductSpecs>
+                                        <xsl:if test="current()/SPEC_CODE">
+                                            <Name>
+                                                <xsl:value-of select="current()/SPEC_CODE"/>
+                                            </Name>
+                                        </xsl:if>
+                                        <xsl:if test="current()/SPEC_VALUE">
+                                            <Value>
+                                                <xsl:value-of select="current()/SPEC_VALUE"/>
+                                            </Value>
+                                        </xsl:if>
+                                        <xsl:if test="current()/SPEC_MEASURE">
+                                            <Measure>
+                                                <xsl:value-of select="current()/SPEC_MEASURE"/>
+                                            </Measure>
+                                        </xsl:if>
+                                    </ProductSpecs>
+                                </xsl:when>
+                                <xsl:otherwise/>
+                            </xsl:choose>
+                        </xsl:for-each>
+                        <xsl:for-each select="current()/ProductFees">
+                            <ProductFees>
+                                <xsl:if test="current()/Name">
+                                    <Name>
+                                        <xsl:value-of select="current()/Name"/>
+                                    </Name>
+                                </xsl:if>
+                                <xsl:if test="current()/Amount">
+                                    <Amount>
+                                        <xsl:value-of select="current()/Amount"/>
+                                    </Amount>
+                                </xsl:if>
+                                <xsl:if test="current()/RecurrencyType">
+                                    <RecurrencyType>
+                                        <xsl:value-of select="current()/RecurrencyType"/>
+                                    </RecurrencyType>
+                                </xsl:if>
+                                <xsl:if test="current()/RecurrencyValue">
+                                    <RecurrencyValue>
+                                        <xsl:value-of select="current()/RecurrencyValue"/>
+                                    </RecurrencyValue>
+                                </xsl:if>
+                            </ProductFees>
+                        </xsl:for-each>
+                        <xsl:if test="current()/PromotionID">
+                            <PromotionID>
+                                <xsl:value-of select="current()/PromotionID"/>
+                            </PromotionID>
+                        </xsl:if>
+                        <xsl:if test="current()/ProductID">
+                            <ProductID>
+                                <xsl:value-of select="current()/ProductID"/>
+                            </ProductID>
+                        </xsl:if>
+                        <xsl:if test="current()/BillingType">
+                            <BillingType>
+                                <xsl:value-of select="current()/BillingType"/>
+                            </BillingType>
+                        </xsl:if>
+                        <xsl:if test="current()/BasicServiceType">
+                            <BasicServiceType>
+                                <xsl:value-of select="current()/BasicServiceType"/>
+                            </BasicServiceType>
+                        </xsl:if>
+                        <xsl:if test="current()/Loyalty">
+                            <Loyalty>
+                                <xsl:value-of select="current()/Loyalty"/>
+                            </Loyalty>
+                        </xsl:if>
+                        <xsl:if test="current()/Category">
+                            <Category>
+                                <xsl:value-of select="current()/Category"/>
+                            </Category>
+                        </xsl:if>
+                    </Record>
+                </xsl:for-each>
+            </FetchEligibility_Services>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SuccessLog">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>1099</pd:x>
+        <pd:y>132</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <pfx:ActivityInput>
+                <message>
+                    <xsl:value-of select="&quot;LOV REFRESHED SUCCESSFULLY&quot;"/>
+                </message>
+                <msgCode>
+                    <xsl:value-of select="&quot;ESB-LOV-SUCCESS&quot;"/>
+                </msgCode>
+            </pfx:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Catch</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>EngineShutdownCommand</pd:to>
+        <pd:xpathDescription>Engine-ShutDown</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$ELIGIBLE_TSubscriber/pfx3:ActivityOutput/Body='true'</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>EngineShutdownCommand</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>One Bend</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Group</pd:from>
+        <pd:to>Definition_Mapping</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SetVariable</pd:from>
+        <pd:to>SuccessLog</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Definition_Mapping</pd:from>
+        <pd:to>Fees_Mapping</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Fees_Mapping</pd:from>
+        <pd:to>Specs_Mapping</pd:to>
+        <pd:lineType>Multiple Bends</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Specs_Mapping</pd:from>
+        <pd:to>SetVariable</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SuccessLog</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ELIGIBLE_TSubscriber</pd:from>
+        <pd:to>Group</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

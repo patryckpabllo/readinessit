@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns="http://www.tibco.com/namespaces/tnt/plugins/jms" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:pfx2="http://www.siebel.com/xml/CBiO2%20Charge%20Plan%20IO" xmlns:pfx="http://www.siebel.com/xml/CBiO2DataSharingReqIO">
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2DataSharingReqIO" schemaLocation="/BusinessSchemas/Services/Applications/CRM/Update/listOfCbio2DataSharingReqIo.xsd"/>
+    <xsd:import namespace="http://www.siebel.com/xml/CBiO2%20Charge%20Plan%20IO" schemaLocation="/BusinessSchemas/Services/Applications/CRM/Transaction/CBiO2ChargePlanExternalIO.xsd"/>
+    <pd:name>Tester/Sender.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startX>150</pd:startX>
+    <pd:startY>64</pd:startY>
+    <pd:returnBindings/>
+    <pd:endName>End</pd:endName>
+    <pd:endX>630</pd:endX>
+    <pd:endY>58</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1470312814667</pd:targetNamespace>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>275</pd:x>
+        <pd:y>66</pd:y>
+        <config>
+            <element ref="pfx2:SiebelMessage"/>
+        </config>
+        <pd:inputBindings>
+            <pfx2:SiebelMessage>
+                <pfx2:ListOfCbio2ChargePlanIo>
+                    <pfx2:ChargePlan>
+                        <pfx2:AgreementId>
+                            <xsl:value-of select="'1-9765434567'"/>
+                        </pfx2:AgreementId>
+                        <pfx2:PayableAmount>
+                            <xsl:value-of select="'296.214'"/>
+                        </pfx2:PayableAmount>
+                        <pfx2:BillCode>
+                            <xsl:value-of select="'WPV'"/>
+                        </pfx2:BillCode>
+                        <pfx2:ProdName>
+                            <xsl:value-of select="'iPhone7'"/>
+                        </pfx2:ProdName>
+                        <pfx2:SalesRep>
+                            <xsl:value-of select="'M000147'"/>
+                        </pfx2:SalesRep>
+                        <pfx2:MSISDN>
+                            <xsl:value-of select="'93303882'"/>
+                        </pfx2:MSISDN>
+                        <pfx2:POSMSISDN>
+                            <xsl:value-of select="'96593303882'"/>
+                        </pfx2:POSMSISDN>
+                        <pfx2:Remark>
+                            <xsl:value-of select="'test'"/>
+                        </pfx2:Remark>
+                        <pfx2:ShopId>
+                            <xsl:value-of select="'DEFAULT'"/>
+                        </pfx2:ShopId>
+                        <pfx2:SubscriberNo>
+                            <xsl:value-of select="'4790987'"/>
+                        </pfx2:SubscriberNo>
+                        <pfx2:Channel>
+                            <xsl:value-of select="'CRM'"/>
+                        </pfx2:Channel>
+                        <pfx2:Category>
+                            <xsl:value-of select="'3'"/>
+                        </pfx2:Category>
+                        <pfx2:RecurringFlag>
+                            <xsl:value-of select="'N'"/>
+                        </pfx2:RecurringFlag>
+                        <pfx2:OCCId>
+                            <xsl:value-of select="'1-1LAO0T'"/>
+                        </pfx2:OCCId>
+                        <pfx2:Quantity>
+                            <xsl:value-of select="'1'"/>
+                        </pfx2:Quantity>
+                    </pfx2:ChargePlan>
+                </pfx2:ListOfCbio2ChargePlanIo>
+            </pfx2:SiebelMessage>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JMS Queue Sender">
+        <pd:type>com.tibco.plugin.jms.JMSQueueSendActivity</pd:type>
+        <pd:resourceType>ae.activities.JMSQueueSendActivity</pd:resourceType>
+        <pd:x>477</pd:x>
+        <pd:y>59</pd:y>
+        <config>
+            <PermittedMessageType>Text</PermittedMessageType>
+            <SessionAttributes>
+                <transacted>false</transacted>
+                <acknowledgeMode>1</acknowledgeMode>
+                <maxSessions>1</maxSessions>
+                <destination>%%BusinessProcesses/Services/CRM/Update/ChargePlanPosting/CRMRequestQueue%%</destination>
+            </SessionAttributes>
+            <ConfigurableHeaders>
+                <JMSDeliveryMode>PERSISTENT</JMSDeliveryMode>
+                <JMSExpiration>0</JMSExpiration>
+                <JMSPriority>4</JMSPriority>
+            </ConfigurableHeaders>
+            <ConnectionReference>/CommonResources/Connections/JMS/Internal/EAI_EMSConnection.sharedjmscon</ConnectionReference>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <Body>
+                    <xsl:value-of select="tib:render-xml($Map-Data/pfx2:SiebelMessage)"/>
+                </Body>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>JMS Queue Sender</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JMS Queue Sender</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>
