@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.tibco.com/schemas/GW_Insurance/CommonResources/XMLSchema/InsuranceSchema.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:pfx2="http://www.tibco.com/ns/no_namespace_schema_location/CommonResources/XMLSchema/CRMResultSchema.xsd" xmlns:ns="http://www.tibco.com/pe/WriteToLogActivitySchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <xsd:import namespace="http://www.tibco.com/schemas/GW_Insurance/CommonResources/XMLSchema/InsuranceSchema.xsd" schemaLocation="/CommonResources/XMLSchema/InsuranceSchema.xsd"/>
+    <xsd:import namespace="http://www.tibco.com/ns/no_namespace_schema_location/CommonResources/XMLSchema/CRMResultSchema.xsd" schemaLocation="/CommonResources/XMLSchema/CRMResultSchema.xsd"/>
+    <pd:name>BusinessProcesses/Services/CRM/InsuranceQuotation.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:InsuranceRq"/>
+    <pd:startX>114</pd:startX>
+    <pd:startY>105</pd:startY>
+    <pd:returnBindings>
+        <pfx:InsuranceRp>
+            <pfx:installmentPeriod>
+                <xsl:value-of select="$ParseCRMResult/Resultsets/ResultSet1/Record1/INSTALLMENT_PERIOD"/>
+            </pfx:installmentPeriod>
+            <pfx:value>
+                <xsl:value-of select="$ParseCRMResult/Resultsets/ResultSet1/Record1/CASH_VALUE"/>
+            </pfx:value>
+        </pfx:InsuranceRp>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx:InsuranceRp"/>
+    <pd:endX>883</pd:endX>
+    <pd:endY>106</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1695767007481</pd:targetNamespace>
+    <pd:activity name="Log">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>261</pd:x>
+        <pd:y>108</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="concat(&quot;Received deviceType=&quot;,$Start/pfx:InsuranceRq/pfx:deviceType)"/>
+                </message>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="CallCRMpcedure">
+        <pd:type>com.tibco.plugin.jdbc.JDBCCallActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCCallActivity</pd:resourceType>
+        <pd:x>412</pd:x>
+        <pd:y>107</pd:y>
+        <config>
+            <timeout>%%CommonResources/BusinessProcesses/Services/CRM/Insurance/timeout%%</timeout>
+            <maxRows>100</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/CommonResources/Connection/JDBC/CRM_JDBC_Connection.sharedjdbc</jdbcSharedConfig>
+            <schema/>
+            <ProcedureName>%%CommonResources/BusinessProcesses/Services/CRM/Insurance/procName%%</ProcedureName>
+            <useSchema>false</useSchema>
+            <oraObjects/>
+            <oraTables/>
+            <parameterTypes>
+                <parameter>
+                    <colName>P_DEVICE_TYPE_IN</colName>
+                    <colType>1</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_RESULT_OUT</colName>
+                    <colType>3</colType>
+                    <dataType>-10</dataType>
+                    <typeName>REF CURSOR</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_ERRORCODE_OUT</colName>
+                    <colType>4</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>P_ERRORMSG_OUT</colName>
+                    <colType>4</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+            </parameterTypes>
+        </config>
+        <pd:inputBindings>
+            <inputs>
+                <inputSet>
+                    <P_DEVICE_TYPE_IN>
+                        <xsl:value-of select="$Start/pfx:InsuranceRq/pfx:deviceType"/>
+                    </P_DEVICE_TYPE_IN>
+                </inputSet>
+            </inputs>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log-1">
+        <pd:type>com.tibco.pe.core.WriteToLogActivity</pd:type>
+        <pd:resourceType>ae.activities.log</pd:resourceType>
+        <pd:x>746</pd:x>
+        <pd:y>108</pd:y>
+        <config>
+            <role>User</role>
+        </config>
+        <pd:inputBindings>
+            <ns:ActivityInput>
+                <message>
+                    <xsl:value-of select="tib:render-xml($CallCRMpcedure)"/>
+                </message>
+            </ns:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="ParseCRMResult">
+        <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
+        <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
+        <pd:x>598</pd:x>
+        <pd:y>108</pd:y>
+        <config>
+            <inputStyle>text</inputStyle>
+            <xsdVersion>default</xsdVersion>
+            <validateOutput>true</validateOutput>
+            <term ref="pfx2:Resultsets"/>
+        </config>
+        <pd:inputBindings>
+            <xmlString>
+                <xsl:value-of select="$CallCRMpcedure/resultSet/UnresolvedResultsets"/>
+            </xmlString>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Generate Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>417</pd:x>
+        <pd:y>382</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns2:ActivityInput>
+                <xsl:if test="not(($CallCRMpcedure/resultSet/outputSet/P_ERRORMSG_OUT/@xsi:nil=(&quot;true&quot;)) or ($CallCRMpcedure/resultSet/outputSet/P_ERRORMSG_OUT/@xsi:nil=(&quot;1&quot;)))">
+                    <message>
+                        <xsl:value-of select="$CallCRMpcedure/resultSet/outputSet/P_ERRORMSG_OUT"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="not(($CallCRMpcedure/resultSet/outputSet/P_ERRORCODE_OUT/@xsi:nil=(&quot;true&quot;)) or ($CallCRMpcedure/resultSet/outputSet/P_ERRORCODE_OUT/@xsi:nil=(&quot;1&quot;)))">
+                    <messageCode>
+                        <xsl:value-of select="$CallCRMpcedure/resultSet/outputSet/P_ERRORCODE_OUT"/>
+                    </messageCode>
+                </xsl:if>
+            </ns2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SetContext">
+        <pd:type>com.tibco.ae.tools.palettes.servicepalette.SetContextActivity</pd:type>
+        <pd:resourceType>service.activity.setContext</pd:resourceType>
+        <pd:x>414</pd:x>
+        <pd:y>247</pd:y>
+        <config>
+            <variableConfig>/CommonResources/Context/FaultContextResource.contextResource</variableConfig>
+        </config>
+        <pd:inputBindings>
+            <Fault>
+                <FaultCode>
+                    <xsl:value-of select="$CallCRMpcedure/resultSet/outputSet/P_ERRORCODE_OUT"/>
+                </FaultCode>
+                <FaultMessage>
+                    <xsl:value-of select="$CallCRMpcedure/resultSet/outputSet/P_ERRORMSG_OUT"/>
+                </FaultMessage>
+            </Fault>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log</pd:from>
+        <pd:to>CallCRMpcedure</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log-1</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallCRMpcedure</pd:from>
+        <pd:to>ParseCRMResult</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$CallCRMpcedure/resultSet/outputSet/P_ERRORCODE_OUT = "0"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>ParseCRMResult</pd:from>
+        <pd:to>Log-1</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>CallCRMpcedure</pd:from>
+        <pd:to>SetContext</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SetContext</pd:from>
+        <pd:to>Generate Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

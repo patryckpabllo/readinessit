@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns5="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:ns="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns2="http://www.tibco.com/pe/GenerateErrorActivity/InputSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns1="http://www.tibco.com/pe/EngineTypes" xmlns:ns4="java://com.tibco.pe.core.JavaCustomXPATHFunctions" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns3="http://www.tibco.com/pe/DeployedVarsType">
+    <pd:name>Services/SESEntServer/MSISDN2IMSI/Implementation/MSISDN2IMSIProcessImpl.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="xmlIn" type="xsd:string"/>
+                    <xsd:element name="NameValuePairs" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="NameValue" minOccurs="0" maxOccurs="unbounded">
+                                    <xsd:complexType>
+                                        <xsd:sequence>
+                                            <xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+                                            <xsd:element name="Value" type="xsd:string" minOccurs="0"/>
+                                        </xsd:sequence>
+                                    </xsd:complexType>
+                                </xsd:element>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:startType>
+    <pd:startX>115</pd:startX>
+    <pd:startY>110</pd:startY>
+    <pd:returnBindings>
+        <root>
+            <xmlOut>
+                <xsl:value-of select="concat( '&lt;root>&lt;imsi>',$Map-Data/root/msisdn,'&lt;/imsi>&lt;/root>')"/>
+            </xmlOut>
+            <xsl:copy-of select="$Start/root/NameValuePairs"/>
+            <TransactionID>
+                <xsl:value-of select="$Start/root/TransactionID"/>
+            </TransactionID>
+            <StartTimeStamp>
+                <xsl:value-of select="$Start/root/StartTimeStamp"/>
+            </StartTimeStamp>
+        </root>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType>
+        <xsd:element name="root">
+            <xsd:complexType>
+                <xsd:sequence>
+                    <xsd:element name="xmlOut" type="xsd:string"/>
+                    <xsd:element name="NameValuePairs" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="NameValue" minOccurs="0" maxOccurs="unbounded">
+                                    <xsd:complexType>
+                                        <xsd:sequence>
+                                            <xsd:element name="Name" type="xsd:string" minOccurs="0"/>
+                                            <xsd:element name="Value" type="xsd:string" minOccurs="0"/>
+                                        </xsd:sequence>
+                                    </xsd:complexType>
+                                </xsd:element>
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="TransactionID" type="xsd:string"/>
+                    <xsd:element name="StartTimeStamp" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:element>
+    </pd:endType>
+    <pd:endX>951</pd:endX>
+    <pd:endY>113</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1700771488994</pd:targetNamespace>
+    <pd:activity name="Log_Msg-In">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>247</pd:x>
+        <pd:y>112</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns5:Header>
+                    <ns5:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns5:ApplicationID>
+                    <ns5:ComponentName>
+                        <xsl:value-of select="ns4:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId)"/>
+                    </ns5:ComponentName>
+                    <ns5:Hostname>
+                        <xsl:value-of select="ns4:getHostName()"/>
+                    </ns5:Hostname>
+                    <ns5:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns5:Timestamp>
+                    <ns5:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns5:TransactionDomain>
+                    <ns5:TransactionType>
+                        <xsl:value-of select="ns4:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId)"/>
+                    </ns5:TransactionType>
+                    <ns5:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns5:TransactionID>
+                    <ns5:CorrelationID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns5:CorrelationID>
+                    <ns5:Filename>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/Deployment"/>
+                    </ns5:Filename>
+                    <ns5:Message>
+                        <xsl:value-of select="tib:render-xml($Start/root)"/>
+                    </ns5:Message>
+                </ns5:Header>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Log_Msg-Out">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>813</pd:x>
+        <pd:y>114</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <ns5:Header>
+                    <ns5:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </ns5:ApplicationID>
+                    <ns5:ComponentName>
+                        <xsl:value-of select="ns4:getCurrentProcessName($_processContext/ns1:ProcessContext/ProcessId)"/>
+                    </ns5:ComponentName>
+                    <ns5:Hostname>
+                        <xsl:value-of select="ns4:getHostName()"/>
+                    </ns5:Hostname>
+                    <ns5:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </ns5:Timestamp>
+                    <ns5:TransactionDomain>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/CommonProcesses/Constants/CLE/Header/TransactionDomain/QUERY"/>
+                    </ns5:TransactionDomain>
+                    <ns5:TransactionID>
+                        <xsl:value-of select="$Start/root/TransactionID"/>
+                    </ns5:TransactionID>
+                    <ns5:Filename>
+                        <xsl:value-of select="$_globalVariables/ns3:GlobalVariables/Deployment"/>
+                    </ns5:Filename>
+                    <ns5:Message>
+                        <xsl:value-of select="tib:render-xml($JDBC-Call-Procedure/resultSet)"/>
+                    </ns5:Message>
+                </ns5:Header>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="JDBC Call Procedure">
+        <pd:type>com.tibco.plugin.jdbc.JDBCCallActivity</pd:type>
+        <pd:resourceType>ae.activities.JDBCCallActivity</pd:resourceType>
+        <pd:x>617</pd:x>
+        <pd:y>119</pd:y>
+        <config>
+            <timeout>10</timeout>
+            <maxRows>100</maxRows>
+            <emptyStrAsNil>false</emptyStrAsNil>
+            <jdbcSharedConfig>/Test/JDBC Connection.sharedjdbc</jdbcSharedConfig>
+            <schema>NKADM</schema>
+            <ProcedureName>MSISDN2IMSI</ProcedureName>
+            <parameterTypes>
+                <parameter>
+                    <colName>IN_MSIDN</colName>
+                    <colType>1</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>OUT_IMSI</colName>
+                    <colType>4</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>ERROR_CODE</colName>
+                    <colType>4</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+                <parameter>
+                    <colName>ERROR_MESSAGE</colName>
+                    <colType>4</colType>
+                    <dataType>12</dataType>
+                    <typeName>VARCHAR2</typeName>
+                </parameter>
+            </parameterTypes>
+        </config>
+        <pd:inputBindings>
+            <inputs>
+                <inputSet>
+                    <IN_MSIDN>
+                        <xsl:value-of select="$Map-Data/root/msisdn"/>
+                    </IN_MSIDN>
+                </inputSet>
+            </inputs>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Map Data">
+        <pd:type>com.tibco.plugin.mapper.MapperActivity</pd:type>
+        <pd:resourceType>ae.activities.MapperActivity</pd:resourceType>
+        <pd:x>390</pd:x>
+        <pd:y>111</pd:y>
+        <config>
+            <element>
+                <xsd:element name="root">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="msisdn" type="xsd:string"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </element>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <msisdn>
+                    <xsl:value-of select="$Start/root/NameValuePairs/NameValue[Name=&quot;msisdn&quot;]/Value"/>
+                </msisdn>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Technical Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>620</pd:x>
+        <pd:y>301</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns2:ActivityInput>
+                <message>
+                    <xsl:value-of select="$_error/ns1:ErrorReport/Msg"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="&quot;BACKEND_SYSTEM_ERROR&quot;"/>
+                </messageCode>
+            </ns2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Invalid Parameter">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>394</pd:x>
+        <pd:y>287</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns2:ActivityInput>
+                <message>
+                    <xsl:value-of select="&quot;MSISDN shall be input&quot;"/>
+                </message>
+                <messageCode>
+                    <xsl:value-of select="&quot;MSISDN_MISSING&quot;"/>
+                </messageCode>
+            </ns2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="Functional Error">
+        <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
+        <pd:resourceType>ae.activities.throw</pd:resourceType>
+        <pd:x>813</pd:x>
+        <pd:y>295</pd:y>
+        <config>
+            <faultName/>
+        </config>
+        <pd:inputBindings>
+            <ns2:ActivityInput>
+                <xsl:if test="not(($JDBC-Call-Procedure/resultSet/outputSet/ERROR_MESSAGE/@xsi:nil=(&quot;true&quot;)) or ($JDBC-Call-Procedure/resultSet/outputSet/ERROR_MESSAGE/@xsi:nil=(&quot;1&quot;)))">
+                    <message>
+                        <xsl:value-of select="$JDBC-Call-Procedure/resultSet/outputSet/ERROR_MESSAGE"/>
+                    </message>
+                </xsl:if>
+                <xsl:if test="not(($JDBC-Call-Procedure/resultSet/outputSet/ERROR_CODE/@xsi:nil=(&quot;true&quot;)) or ($JDBC-Call-Procedure/resultSet/outputSet/ERROR_CODE/@xsi:nil=(&quot;1&quot;)))">
+                    <messageCode>
+                        <xsl:value-of select="$JDBC-Call-Procedure/resultSet/outputSet/ERROR_CODE"/>
+                    </messageCode>
+                </xsl:if>
+            </ns2:ActivityInput>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>Log_Msg-In</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-Out</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JDBC Call Procedure</pd:from>
+        <pd:to>Log_Msg-Out</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$JDBC-Call-Procedure/resultSet/outputSet/OUT_IMSI="0"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Log_Msg-In</pd:from>
+        <pd:to>Map Data</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>JDBC Call Procedure</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>string-length($Map-Data/root/msisdn) &gt; 0</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JDBC Call Procedure</pd:from>
+        <pd:to>Technical Error</pd:to>
+        <pd:xpathDescription>Techincal Error</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>error</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Map Data</pd:from>
+        <pd:to>Invalid Parameter</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>JDBC Call Procedure</pd:from>
+        <pd:to>Functional Error</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

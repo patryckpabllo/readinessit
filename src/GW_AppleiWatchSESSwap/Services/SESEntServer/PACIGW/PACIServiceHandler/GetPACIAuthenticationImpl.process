@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pd:ProcessDefinition xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:pfx="http://www.zain.com/ZESB/Services/GetPACIAuthenticationRequest.xsd" xmlns:pd="http://xmlns.tibco.com/bw/process/2003" xmlns:pfx2="http://www.zain.com/ZESB/Services/GetPACIAuthenticationResponse.xsd" xmlns:ns="http://www.tibco.com/CommonLE2/namespace/Public/Logging/LogRequest.xsd" xmlns:pfx3="http://www.tibco.com/CommonLE2/namespace/Public/Common/RequestHeader.xsd" xmlns:zainesbcustom="java://com.commonresources.utilities.CustomFunctions" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tib="http://www.tibco.com/bw/xslt/custom-functions" xmlns:ns2="http://www.tibco.com/pe/EngineTypes" xmlns:ns1="http://www.tibco.com/pe/DeployedVarsType" xmlns:ns3="java://com.tibco.pe.core.JavaCustomXPATHFunctions">
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/GetPACIAuthenticationRequest.xsd" schemaLocation="/BusinessSchemas/Services/Query/GetPACIAuthentication/GetPACIAuthenticationRequest.xsd"/>
+    <xsd:import namespace="http://www.zain.com/ZESB/Services/GetPACIAuthenticationResponse.xsd" schemaLocation="/BusinessSchemas/Services/Query/GetPACIAuthentication/GetPACIAuthenticationResponse.xsd"/>
+    <pd:name>Services/SESEntServer/PACIGW/PACIServiceHandler/GetPACIAuthenticationImpl.process</pd:name>
+    <pd:startName>Start</pd:startName>
+    <pd:startType ref="pfx:GetPACIAuthenticationRequest"/>
+    <pd:startX>102</pd:startX>
+    <pd:startY>110</pd:startY>
+    <pd:returnBindings>
+        <xsl:for-each select="$GetPACIAuthenticationHelper/root/pfx2:GetPACIAuthenticationResponse">
+            <pfx2:GetPACIAuthenticationResponse>
+                <pfx2:status>
+                    <xsl:value-of select="pfx2:status"/>
+                </pfx2:status>
+                <xsl:if test="pfx2:ErrorText">
+                    <pfx2:ErrorText>
+                        <xsl:value-of select="pfx2:ErrorText"/>
+                    </pfx2:ErrorText>
+                </xsl:if>
+                <xsl:if test="pfx2:QRcode">
+                    <pfx2:QRcode>
+                        <xsl:value-of select="pfx2:QRcode"/>
+                    </pfx2:QRcode>
+                </xsl:if>
+                <xsl:if test="pfx2:QRcodeFileType">
+                    <pfx2:QRcodeFileType>
+                        <xsl:value-of select="pfx2:QRcodeFileType"/>
+                    </pfx2:QRcodeFileType>
+                </xsl:if>
+            </pfx2:GetPACIAuthenticationResponse>
+        </xsl:for-each>
+    </pd:returnBindings>
+    <pd:endName>End</pd:endName>
+    <pd:endType ref="pfx2:GetPACIAuthenticationResponse"/>
+    <pd:endX>908</pd:endX>
+    <pd:endY>113</pd:endY>
+    <pd:errorSchemas/>
+    <pd:processVariables/>
+    <pd:targetNamespace>http://xmlns.example.com/1699298039661</pd:targetNamespace>
+    <pd:activity name="GetPACIAuthenticationHelper">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>530</pd:x>
+        <pd:y>111</pd:y>
+        <config>
+            <processName>/Services/SESEntServer/PACIGW/GetPACIAuthentication/GetPACIAuthenticationHelper.process</processName>
+        </config>
+        <pd:inputBindings>
+            <group>
+                <xsl:for-each select="$Start/pfx:GetPACIAuthenticationRequest">
+                    <pfx:GetPACIAuthenticationRequest>
+                        <pfx:RequestId>
+                            <xsl:value-of select="pfx:RequestId"/>
+                        </pfx:RequestId>
+                        <pfx:ChannelName>
+                            <xsl:value-of select="pfx:ChannelName"/>
+                        </pfx:ChannelName>
+                        <xsl:if test="pfx:CallBackURL">
+                            <pfx:CallBackURL>
+                                <xsl:value-of select="pfx:CallBackURL"/>
+                            </pfx:CallBackURL>
+                        </xsl:if>
+                        <pfx:Operation>
+                            <xsl:value-of select="pfx:Operation"/>
+                        </pfx:Operation>
+                        <pfx:ServiceDescriptionAr>
+                            <xsl:value-of select="pfx:ServiceDescriptionAr"/>
+                        </pfx:ServiceDescriptionAr>
+                        <pfx:ServiceDescriptionEn>
+                            <xsl:value-of select="pfx:ServiceDescriptionEn"/>
+                        </pfx:ServiceDescriptionEn>
+                        <pfx:AuthenticationReasonAr>
+                            <xsl:value-of select="pfx:AuthenticationReasonAr"/>
+                        </pfx:AuthenticationReasonAr>
+                        <pfx:AuthenticationReasonEn>
+                            <xsl:value-of select="pfx:AuthenticationReasonEn"/>
+                        </pfx:AuthenticationReasonEn>
+                        <xsl:if test="pfx:CivilId">
+                            <pfx:CivilId>
+                                <xsl:value-of select="pfx:CivilId"/>
+                            </pfx:CivilId>
+                        </xsl:if>
+                    </pfx:GetPACIAuthenticationRequest>
+                </xsl:for-each>
+                <TrackingId>
+                    <xsl:value-of select="$GUID/GUID/TransactionID"/>
+                </TrackingId>
+                <StartTimeStamp>
+                    <xsl:value-of select="$GUID/GUID/StartTimeStamp"/>
+                </StartTimeStamp>
+            </group>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="GUID">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>240</pd:x>
+        <pd:y>112</pd:y>
+        <config>
+            <processName>/CommonProcesses/Utilities/GUID.process</processName>
+        </config>
+        <pd:inputBindings/>
+    </pd:activity>
+    <pd:activity name="LogIN">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>373</pd:x>
+        <pd:y>112</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <pfx3:Header>
+                    <pfx3:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx3:ApplicationID>
+                    <pfx3:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/SES/PACIGW/GetPACIAuthentication/ComponentName"/>
+                    </pfx3:ComponentName>
+                    <pfx3:Hostname>
+                        <xsl:value-of select="ns3:getHostName()"/>
+                    </pfx3:Hostname>
+                    <pfx3:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx3:Timestamp>
+                    <pfx3:TransactionID>
+                        <xsl:value-of select="$GUID/GUID/TransactionID"/>
+                    </pfx3:TransactionID>
+                    <pfx3:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </pfx3:Filename>
+                    <pfx3:Message>
+                        <xsl:value-of select="tib:render-xml($Start/pfx:GetPACIAuthenticationRequest)"/>
+                    </pfx3:Message>
+                </pfx3:Header>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="LogOUT">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>704</pd:x>
+        <pd:y>111</pd:y>
+        <config>
+            <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
+        </config>
+        <pd:inputBindings>
+            <ns:LogRequest>
+                <pfx3:Header>
+                    <pfx3:ApplicationID>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/CommonProcesses/Constants/CLE/Header/ApplicationID"/>
+                    </pfx3:ApplicationID>
+                    <pfx3:ComponentName>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/BusinessProcesses/Services/SES/PACIGW/GetPACIAuthentication/ComponentName"/>
+                    </pfx3:ComponentName>
+                    <pfx3:Hostname>
+                        <xsl:value-of select="ns3:getHostName()"/>
+                    </pfx3:Hostname>
+                    <pfx3:Timestamp>
+                        <xsl:value-of select="current-dateTime()"/>
+                    </pfx3:Timestamp>
+                    <pfx3:TransactionID>
+                        <xsl:value-of select="$GUID/GUID/TransactionID"/>
+                    </pfx3:TransactionID>
+                    <pfx3:Filename>
+                        <xsl:value-of select="$_globalVariables/ns1:GlobalVariables/Deployment"/>
+                    </pfx3:Filename>
+                    <pfx3:Message>
+                        <xsl:value-of select="tib:render-xml($GetPACIAuthenticationHelper/root/pfx2:GetPACIAuthenticationResponse)"/>
+                    </pfx3:Message>
+                </pfx3:Header>
+                <Audit>
+                    <xsl:value-of select="0"/>
+                </Audit>
+            </ns:LogRequest>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:transition>
+        <pd:from>GetPACIAuthenticationHelper</pd:from>
+        <pd:to>LogOUT</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>Start</pd:from>
+        <pd:to>GUID</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>GUID</pd:from>
+        <pd:to>LogIN</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogIN</pd:from>
+        <pd:to>GetPACIAuthenticationHelper</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>LogOUT</pd:from>
+        <pd:to>End</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
+    </pd:transition>
+</pd:ProcessDefinition>

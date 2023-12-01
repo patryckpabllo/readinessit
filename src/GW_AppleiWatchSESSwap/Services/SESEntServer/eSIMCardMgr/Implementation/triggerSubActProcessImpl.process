@@ -33,7 +33,7 @@
             </xsd:complexType>
         </xsd:element>
     </pd:startType>
-    <pd:startX>20</pd:startX>
+    <pd:startX>26</pd:startX>
     <pd:startY>169</pd:startY>
     <pd:returnBindings>
         <root>
@@ -75,16 +75,16 @@
             </xsd:complexType>
         </xsd:element>
     </pd:endType>
-    <pd:endX>837</pd:endX>
-    <pd:endY>171</pd:endY>
+    <pd:endX>904</pd:endX>
+    <pd:endY>170</pd:endY>
     <pd:errorSchemas/>
     <pd:processVariables/>
     <pd:targetNamespace>http://xmlns.example.com/1594286379235</pd:targetNamespace>
     <pd:activity name="eSIMCardMgrImpl">
         <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
         <pd:resourceType>ae.process.subprocess</pd:resourceType>
-        <pd:x>472</pd:x>
-        <pd:y>170</pd:y>
+        <pd:x>485</pd:x>
+        <pd:y>173</pd:y>
         <config>
             <processName>/Services/SESEntServer/eSIMCardMgr/HelperProcesses/eSIMCardMgrImpl.process</processName>
         </config>
@@ -143,8 +143,8 @@
     <pd:activity name="ParseReq">
         <pd:type>com.tibco.plugin.xml.XMLParseActivity</pd:type>
         <pd:resourceType>ae.activities.XMLParseActivity</pd:resourceType>
-        <pd:x>228</pd:x>
-        <pd:y>169</pd:y>
+        <pd:x>215</pd:x>
+        <pd:y>168</pd:y>
         <config>
             <inputStyle>text</inputStyle>
             <xsdVersion>default</xsdVersion>
@@ -214,8 +214,8 @@
     <pd:activity name="Log_Msg-Out">
         <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
         <pd:resourceType>ae.process.subprocess</pd:resourceType>
-        <pd:x>728</pd:x>
-        <pd:y>170</pd:y>
+        <pd:x>792</pd:x>
+        <pd:y>172</pd:y>
         <config>
             <processName>/CommonProcesses/LoggingProcess/Logging_Message.process</processName>
         </config>
@@ -271,8 +271,8 @@
     <pd:activity name="InserSESRecord">
         <pd:type>com.tibco.plugin.jdbc.JDBCUpdateActivity</pd:type>
         <pd:resourceType>ae.activities.JDBCUpdateActivity</pd:resourceType>
-        <pd:x>582</pd:x>
-        <pd:y>168</pd:y>
+        <pd:x>620</pd:x>
+        <pd:y>173</pd:y>
         <config>
             <timeout>%%CommonResources/Connections/JDBC/Internal/TIBCOAppDB/LoginTimeout%%</timeout>
             <commit>false</commit>
@@ -363,6 +363,50 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)</statement>
                         </SEC_IMSI>
                         <SEC_ICCID>
                             <xsl:value-of select="$SamsungAndriodAddWatch/ns:eSIMCardMgrResponse/ns:ATTACH_USERS/ns:ICCID"/>
+                        </SEC_ICCID>
+                        <SEC_EID xsi:nil="true"/>
+                        <TRX_TYPE>
+                            <xsl:value-of select="&quot;ADD&quot;"/>
+                        </TRX_TYPE>
+                        <STATUS>
+                            <xsl:value-of select="&quot;IN-PROGRESS&quot;"/>
+                        </STATUS>
+                        <TIME_STAMP xsi:nil="true"/>
+                        <RECORD_FLAG xsi:nil="true"/>
+                    </jdbcUpdateActivityInput>
+                </xsl:when>
+                <xsl:when test="exists($SamsungAndriodAddWatchHuawei/ns:eSIMCardMgrResponse)&#xA;and&#xA;string-length($SamsungAndriodAddWatchHuawei)>0">
+                    <jdbcUpdateActivityInput>
+                        <SES_ID>
+                            <xsl:value-of select="$ParseReq/root/uniqueId"/>
+                        </SES_ID>
+                        <ESB_ID>
+                            <xsl:value-of select="$Start/root/TransactionID"/>
+                        </ESB_ID>
+                        <PRM_MSISDN>
+                            <xsl:choose>
+                                <xsl:when test="exists($SamsungAndriodAddWatchHuawei/ns:eSIMCardMgrResponse/ns:MAIN_USER/ns:MSISDN)">
+                                    <xsl:value-of select="$SamsungAndriodAddWatchHuawei/ns:eSIMCardMgrResponse/ns:MAIN_USER/ns:MSISDN"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:attribute name="xsi:nil">true</xsl:attribute>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </PRM_MSISDN>
+                        <PRIM_IMSI>
+                            <xsl:value-of select="$SamsungAndriodAddWatchHuawei/ns:eSIMCardMgrResponse/ns:MAIN_USER/ns:IMSI"/>
+                        </PRIM_IMSI>
+                        <PRIM_ICCID>
+                            <xsl:value-of select="$SamsungAndriodAddWatchHuawei/ns:eSIMCardMgrResponse/ns:MAIN_USER/ns:ICCID"/>
+                        </PRIM_ICCID>
+                        <SEC_MSISDN>
+                            <xsl:value-of select="$SamsungAndriodAddWatchHuawei/ns:eSIMCardMgrResponse/ns:ATTACH_USERS/ns:MSISDN"/>
+                        </SEC_MSISDN>
+                        <SEC_IMSI>
+                            <xsl:value-of select="$SamsungAndriodAddWatchHuawei/ns:eSIMCardMgrResponse/ns:ATTACH_USERS/ns:IMSI"/>
+                        </SEC_IMSI>
+                        <SEC_ICCID>
+                            <xsl:value-of select="$SamsungAndriodAddWatchHuawei/ns:eSIMCardMgrResponse/ns:ATTACH_USERS/ns:ICCID"/>
                         </SEC_ICCID>
                         <SEC_EID xsi:nil="true"/>
                         <TRX_TYPE>
@@ -503,8 +547,8 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)</statement>
     <pd:activity name="TremblantInsertSubscriber">
         <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
         <pd:resourceType>ae.process.subprocess</pd:resourceType>
-        <pd:x>720</pd:x>
-        <pd:y>337</pd:y>
+        <pd:x>620</pd:x>
+        <pd:y>408</pd:y>
         <config>
             <processName>/Services/SESEntServer/eSIMCardMgr/HelperProcesses/TremblantInsertSubscriber.process</processName>
         </config>
@@ -607,8 +651,8 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)</statement>
     <pd:activity name="GetVariable">
         <pd:type>com.tibco.pe.core.GetSharedVariableActivity</pd:type>
         <pd:resourceType>ae.activities.getSharedVariable</pd:resourceType>
-        <pd:x>473</pd:x>
-        <pd:y>339</pd:y>
+        <pd:x>477</pd:x>
+        <pd:y>406</pd:y>
         <config>
             <variableConfig>/CommonResources/SharedVariables/External/LOVs.sharedvariable</variableConfig>
         </config>
@@ -617,8 +661,8 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)</statement>
     <pd:activity name="CheckWhiteListFlag">
         <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
         <pd:resourceType>ae.process.subprocess</pd:resourceType>
-        <pd:x>197</pd:x>
-        <pd:y>337</pd:y>
+        <pd:x>335</pd:x>
+        <pd:y>406</pd:y>
         <config>
             <processName>/Services/SESEntServer/eSIMCardMgr/HelperProcesses/WhitelistMSISDNCheck.process</processName>
         </config>
@@ -641,8 +685,8 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)</statement>
     <pd:activity name="Mandatory param missing">
         <pd:type>com.tibco.pe.core.GenerateErrorActivity</pd:type>
         <pd:resourceType>ae.activities.throw</pd:resourceType>
-        <pd:x>309</pd:x>
-        <pd:y>447</pd:y>
+        <pd:x>327</pd:x>
+        <pd:y>540</pd:y>
         <config>
             <faultName/>
         </config>
@@ -660,8 +704,8 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)</statement>
     <pd:activity name="SamsungAndriodAddWatch">
         <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
         <pd:resourceType>ae.process.subprocess</pd:resourceType>
-        <pd:x>455</pd:x>
-        <pd:y>26</pd:y>
+        <pd:x>485</pd:x>
+        <pd:y>62</pd:y>
         <config>
             <processName>/Services/SESEntServer/eSIMCardMgr/HelperProcesses/SamsungAndriodAddWatch.process</processName>
         </config>
@@ -788,6 +832,14 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)</statement>
                                     <xsl:value-of select="&quot;Apple&quot;"/>
                                 </DeviceVendor>
                             </xsl:when>
+                            <xsl:when test="$ParseReq/root/deviceInfo/deviceType=7">
+                                <DecideImplementation>
+                                    <xsl:value-of select="&quot;Huawei&quot;"/>
+                                </DecideImplementation>
+                                <DeviceVendor>
+                                    <xsl:value-of select="&quot;Huawei&quot;"/>
+                                </DeviceVendor>
+                            </xsl:when>
                             <xsl:otherwise>
                                 <DecideImplementation>
                                     <xsl:value-of select="&quot;NA&quot;"/>
@@ -796,6 +848,69 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)</statement>
                         </xsl:choose>
                     </xsl:otherwise>
                 </xsl:choose>
+            </root>
+        </pd:inputBindings>
+    </pd:activity>
+    <pd:activity name="SamsungAndriodAddWatchHuawei">
+        <pd:type>com.tibco.pe.core.CallProcessActivity</pd:type>
+        <pd:resourceType>ae.process.subprocess</pd:resourceType>
+        <pd:x>488</pd:x>
+        <pd:y>286</pd:y>
+        <config>
+            <processName>/Services/SESEntServer/eSIMCardMgr/HelperProcesses/SamsungAndriodAddWatch.process</processName>
+        </config>
+        <pd:inputBindings>
+            <root>
+                <ns:eSIMCardMgrRequest>
+                    <ns:TRADE_TYPE>
+                        <xsl:value-of select="1"/>
+                    </ns:TRADE_TYPE>
+                    <ns:MAIN_USER>
+                        <ns:MSISDN>
+                            <xsl:value-of select="$ParseReq/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryMsisdn"/>
+                        </ns:MSISDN>
+                        <ns:IMSI>
+                            <xsl:value-of select="$ParseReq/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryImsi"/>
+                        </ns:IMSI>
+                        <ns:ICCID>
+                            <xsl:value-of select="$ParseReq/root/subscriptionInfo/existingPrimarySubscriptionInfo/primaryIccid"/>
+                        </ns:ICCID>
+                    </ns:MAIN_USER>
+                    <ns:ATTACH_USERS>
+                        <xsl:if test="$ParseReq/root/subscriptionInfo/eSimSubscriptionInfo/msisdn">
+                            <ns:MSISDN>
+                                <xsl:value-of select="$ParseReq/root/subscriptionInfo/eSimSubscriptionInfo/msisdn"/>
+                            </ns:MSISDN>
+                        </xsl:if>
+                        <xsl:if test="$ParseReq/root/subscriptionInfo/eSimSubscriptionInfo/imsi">
+                            <ns:IMSI>
+                                <xsl:value-of select="$ParseReq/root/subscriptionInfo/eSimSubscriptionInfo/imsi"/>
+                            </ns:IMSI>
+                        </xsl:if>
+                        <ns:ICCID>
+                            <xsl:value-of select="$ParseReq/root/deviceInfo/euiccInfo/iccid"/>
+                        </ns:ICCID>
+                        <ns:EID>
+                            <xsl:value-of select="$ParseReq/root/deviceInfo/euiccInfo/eid"/>
+                        </ns:EID>
+                        <xsl:if test="$ParseReq/root/deviceInfo/displayName">
+                            <ns:NICKNAME>
+                                <xsl:value-of select="$ParseReq/root/deviceInfo/displayName"/>
+                            </ns:NICKNAME>
+                        </xsl:if>
+                    </ns:ATTACH_USERS>
+                </ns:eSIMCardMgrRequest>
+                <TransactionID>
+                    <xsl:value-of select="$Start/root/TransactionID"/>
+                </TransactionID>
+                <StartTimeStamp>
+                    <xsl:value-of select="$Start/root/StartTimeStamp"/>
+                </StartTimeStamp>
+                <xsl:if test="$DecideImplementation/root/DeviceVendor">
+                    <DeviceVendorName>
+                        <xsl:value-of select="$DecideImplementation/root/DeviceVendor"/>
+                    </DeviceVendorName>
+                </xsl:if>
             </root>
         </pd:inputBindings>
     </pd:activity>
@@ -911,6 +1026,22 @@ VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)</statement>
         <pd:lineType>Default</pd:lineType>
         <pd:lineColor>-65536</pd:lineColor>
         <pd:conditionType>otherwise</pd:conditionType>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>DecideImplementation</pd:from>
+        <pd:to>SamsungAndriodAddWatchHuawei</pd:to>
+        <pd:xpathDescription>Huawei</pd:xpathDescription>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>xpath</pd:conditionType>
+        <pd:xpath>$DecideImplementation/root/DecideImplementation="Huawei"</pd:xpath>
+    </pd:transition>
+    <pd:transition>
+        <pd:from>SamsungAndriodAddWatchHuawei</pd:from>
+        <pd:to>InserSESRecord</pd:to>
+        <pd:lineType>Default</pd:lineType>
+        <pd:lineColor>-16777216</pd:lineColor>
+        <pd:conditionType>always</pd:conditionType>
     </pd:transition>
     <pd:label>
         <pd:name>Label</pd:name>
